@@ -30,6 +30,34 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       </div>
+      <div className="grid">
+        <div className="s12 m6">
+          <div className="card fill surface-container-low round padding">
+            <h6 className="bold">Quick Overview</h6>
+            <p className="secondary-text">Summary of items and closet status.</p>
+          </div>
+        </div>
+        <div className="s12 m6">
+          <div className="card fill surface-container-low round padding">
+            <h6 className="bold">Recent Additions</h6>
+            <p className="secondary-text">Placeholder for recently cataloged outfits.</p>
+          </div>
+        </div>
+      </div>
+      <div className="grid">
+        <div className="s12 m6">
+          <div className="card fill surface-container-low round padding">
+            <h6 className="bold">Quick Overview</h6>
+            <p className="secondary-text">Summary of items and closet status.</p>
+          </div>
+        </div>
+        <div className="s12 m6">
+          <div className="card fill surface-container-low round padding">
+            <h6 className="bold">Recent Additions</h6>
+            <p className="secondary-text">Placeholder for recently cataloged outfits.</p>
+          </div>
+        </div>
+      </div>
     </article>
   );
 };

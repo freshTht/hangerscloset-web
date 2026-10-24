@@ -3,37 +3,36 @@ import { NavLink } from 'react-router-dom';
 
 export const Header: React.FC = () => {
   return (
-    <header className="fixed surface top">
-      <div className="header-content responsive">
-        <div className="header-brand">
-          <h5 className="no-margin bold primary-text">Hanger's Closet</h5>
-        </div>
+    <header className="fixed blur surface top s">
+      {/* Top App Bar with Hanger Icon (Small screens) */}
+      <nav className="top-app-bar center-align">
+        <i className="extra primary-text">checkroom</i>
+      </nav>
 
-        {/* Navigation tabbed from Beer CSS NAVIGATION.md */}
-        <nav className="tabbed">
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => (isActive ? 'active' : '')}
-          >
-            <i>home</i>
-            <div>Home</div>
-          </NavLink>
-          <NavLink
-            to="/inventory"
-            className={({ isActive }) => (isActive ? 'active' : '')}
-          >
-            <i>inventory_2</i>
-            <div>Inventory</div>
-          </NavLink>
-          <NavLink
-            to="/settings"
-            className={({ isActive }) => (isActive ? 'active' : '')}
-          >
-            <i>settings</i>
-            <div>Settings</div>
-          </NavLink>
-        </nav>
+      {/* Default Tabs on small screens */}
+      <div className="tabs s">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => (isActive ? 'active' : '')}
+        >
+          <i>home</i>
+          <span>Home</span>
+        </NavLink>
+        <NavLink
+          to="/inventory"
+          className={({ isActive }) => (isActive ? 'active' : '')}
+        >
+          <i>inventory_2</i>
+          <span>Inventory</span>
+        </NavLink>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) => (isActive ? 'active' : '')}
+        >
+          <i>settings</i>
+          <span>Settings</span>
+        </NavLink>
       </div>
     </header>
   );

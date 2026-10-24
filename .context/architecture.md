@@ -39,8 +39,12 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
   - `*` &rarr; Fallback redirect to `/` via `<Navigate to="/" replace />`.
 
 ## Navigation Model
-- The navigation bar is placed inside `<header className="fixed surface top">`.
-- It consists of:
-  1. **Brand Title**: Simple text ("Hanger's Closet") without icon (ready for future logo image).
-  2. **Navigation Tabbed**: Follows Beer CSS's `<nav className="tabbed">` pattern with React Router's `<NavLink>`. Active route styling is handled automatically via `.active` class assignment.
+- **Small Screens ($\le 600\text{px}$)**:
+  - Mobile Top App Bar with fixed sticky behavior (`<header className="fixed surface top s">`).
+  - Displays centered hanger icon (`checkroom`) in the top app bar and Beer CSS default tabs (`<nav className="tabs s">`) below with active indicator underlines.
+  - No left navigation rail is shown.
+- **Medium Screens ($601\text{px} \text{ and above}$)**:
+  - Top header is hidden.
+  - Navigation switches to a compact Left Navigation Rail (`<nav className="left m">`).
+  - Hanger icon (`checkroom`) is top-aligned, while tab navigation links are middle-aligned in the center of the rail.
 - **Theme Switching**: Dark mode toggle is located in the Settings page (`SettingsPage.tsx`) using Beer CSS's `<label className="switch icon">`.

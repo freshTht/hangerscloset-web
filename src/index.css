@@ -8,25 +8,21 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
 }
 
+/* Let Beer CSS :has(> main) grid layout take effect */
 .app-container {
-  display: flex;
-  flex-direction: column;
   min-height: 100dvh;
   width: 100%;
 }
 
+/* Mobile Top App Bar with fixed sticky behavior */
 header.fixed {
   position: sticky;
   top: 0;
@@ -34,73 +30,98 @@ header.fixed {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--surface-variant);
-  padding: 0.5rem 1rem;
+  background-color: var(--surface);
+  padding: 0;
+  padding-top: env(safe-area-inset-top, 0);
 }
 
-.header-content {
+header.fixed nav.top-app-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-  gap: 1.5rem;
-}
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-/* Beer CSS Navigation tabbed enhancements */
-nav.tabbed {
-  margin: 0;
-}
-
-nav.tabbed > a {
   justify-content: center;
+  min-height: 3rem;
+  padding: 0.5rem 1rem 0.25rem 1rem;
+}
+
+/* Default Tabs on Mobile */
+header.fixed nav.tabs {
+  margin: 0;
+  width: 100%;
+  border-top: 1px solid var(--surface-variant);
+  border-bottom: none;
+}
+
+header.fixed nav.tabs > a {
+  justify-content: center;
+  align-items: center;
   text-decoration: none;
   cursor: pointer;
   touch-action: manipulation;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 0.35rem;
+  transition: color 0.15s ease;
 }
 
-nav.tabbed > a.active {
-  color: var(--on-primary-container);
-  font-weight: 600;
+/* Left Navigation Rail (Medium and Large screens) */
+nav.left {
+  border-right: 1px solid var(--surface-variant);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Mobile-first responsive adjustments */
-@media (max-width: 640px) {
-  header.fixed {
-    padding: 0.5rem 0.75rem;
-  }
+/* Top-aligned hanger icon in rail */
+.rail-top {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  margin-top: 0.5rem;
+}
 
-  .header-content {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
-  }
+nav.left.m .rail-top {
+  justify-content: center;
+  width: 100%;
+}
 
-  .header-brand {
-    justify-content: center;
-    padding-top: 0.25rem;
-  }
+nav.left.max.l .rail-top {
+  justify-content: flex-start;
+  padding: 0 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  nav.tabbed {
-    width: 100%;
-    block-size: 3.5rem;
-  }
+/* Middle-aligned destinations group */
+.rail-nav-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
-  nav.tabbed > a {
-    padding-inline: 0.5rem;
-    font-size: 0.85rem;
-    gap: 0.35rem;
-  }
+.rail-nav-group > a {
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  margin-bottom: 0.5rem;
+}
 
-  nav.tabbed > a i {
-    font-size: 1.25rem;
+nav.left.max > .rail-nav-group > a {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Balancer spacer to keep middle alignment centered */
+.rail-bottom-spacer {
+  min-height: 3rem;
+  margin-bottom: 0.5rem;
+  visibility: hidden;
+}
+
+/* Responsive Switching Rules (Breakpoint 600px) */
+@media (max-width: 600px) {
+  nav.left {
+    display: none !important;
   }
 
   main.responsive {
@@ -108,13 +129,23 @@ nav.tabbed > a.active {
   }
 }
 
+@media (min-width: 601px) {
+  /* Hide mobile header app bar when nav rail is active */
+  header.fixed {
+    display: none !important;
+  }
+
+  main.responsive {
+    padding: 2rem 1.5rem !important;
+  }
+}
+
 main.responsive {
-  flex: 1;
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.5rem 1rem;
   box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .page-content {
