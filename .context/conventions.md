@@ -21,6 +21,7 @@
 ## UI & Styling Conventions
 - **Beer CSS First**: Always check and use what Beer CSS provides out-of-the-box before introducing custom CSS.
 - Combine Beer CSS semantic elements (`<header>`, `<nav>`, `<main>`, `<article>`) and utility classes (`fixed`, `bottom`, `center`, `margin`, `front`, `elevate`, `space`, `extra-space`) to achieve layouts and floating controls.
+- **No Manual `fontSize` in Style Attributes**: Do NOT use `fontSize` (or font sizing styles) inside inline `style={{ ... }}` attributes. Always use Beer CSS typography classes (`h1`–`h6`, `.small`, `.large`, `.small-text`, `.medium-text`, `.large-text`) or pre-declared generic CSS classes (e.g. `.micro-text`, `.status-badge.small`) in stylesheet files so typography remains consistent and reusable.
 - Do NOT write custom CSS overrides or classes when Beer CSS utility helpers exist for the use case.
 
 ## Git Conventions

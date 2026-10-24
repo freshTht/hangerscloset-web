@@ -36,6 +36,9 @@ Material Symbols Outlined are bundled locally with Beer CSS and used via the `<i
 <i>checkroom</i>
 <i>light_mode</i>
 <i>dark_mode</i>
+<i>sell</i>
+<i>palette</i>
+<i>height</i>
 ```
 
 ## Theme Management

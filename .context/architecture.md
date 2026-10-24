@@ -89,16 +89,17 @@ interface InventoryItem {
 ### InventoryCard Component (`src/components/InventoryCard.tsx`)
 Displays a single item card with React-bound responsive layout adaptation (`useIsMobile` hook) and 100% native Beer CSS typography/styling (no custom CSS):
 - **Responsive Hook (`src/hooks/useIsMobile.ts`)**: Uses `useSyncExternalStore` listening to `window.matchMedia('(max-width: 600px)')` for clean, reactive viewport adaptation.
-- **Mobile (`s` $\le 600\text{px}$)**: Compact horizontal row layout (`article.no-padding.round.row.no-space`, 160px height) with 3:4 aspect ratio photo on the left (120px * 160px with `.left-round`) and compacted metadata on the right (`.small-padding.max.vertical`).
-- **Medium & Large (`m / l` $> 600\text{px}$)**: Vertical card using native Beer CSS `<article className="no-padding round vertical">` with edge-to-edge flush top photo (`responsive small top-round`), semantic `<h6>` title, attributes, and bottom rental prices pill.
+- **Mobile (`s` $\le 600\text{px}$)**: Horizontal row layout (`article.no-padding.round.row.no-space`, dynamic height with `minHeight: 160px`) with fixed 120px width photo on the left filling full row height (`alignSelf: 'stretch'`, `objectFit: 'cover'`, matching 3:4 aspect ratio at minimum height), top block (Code + dark-mode blended Status badge, and 2-line clamped title), and bottom-aligned group (`marginTop: 'auto'`) containing wrapped Brand/Color/Size attributes and connected rental price buttons.
+- **Medium & Large (`m / l` $> 600\text{px}$)**: Vertical card using native Beer CSS `<article className="no-padding round vertical">` with 1:1 square aspect ratio edge-to-edge top photo (`top-round`, `aspectRatio: '1 / 1'`), flex-stretched content body (`flex: 1`), semantic `<h6>` title, attributes, and connected rental prices buttons bottom-aligned via `marginTop: 'auto'`.
 - **Typography & Beer CSS Helpers**:
   - **Title**: Semantic `<h6>` (with `small bold` on mobile) avoiding clipping.
-  - **Smaller Texts**: Beer CSS `small-text` and `small` modifiers for item code, status chip, attributes, and pricing labels.
-  - **Rental Prices**: Native Beer CSS `.row.surface-container.round.center-align` with `.divider.vertical` separating 1 วัน, 3 วัน, and 5 วัน rental durations.
+  - **Smaller Texts**: Beer CSS `small-text` and `small` modifiers for item code, attributes with Material Symbols (`sell` for Brand, `palette` for Color, `height` for Size), and pricing labels.
+  - **Status Badges**: Dual-theme adaptive badges (`.status-badge-available`, `.status-badge-reserved`, `.status-badge-laundry`) with soft translucent tints in dark mode to prevent glare.
+  - **Rental Prices**: Connected button group (`nav.group.connected.max`) with `small fill` buttons (`button.small.fill`) and individual dummy click actions on each rental duration.
 
 ### InventoryPage (`src/pages/InventoryPage.tsx`)
 - Renders a Beer CSS responsive grid (`<div className="grid">`).
-- Column sizing: 1 col on `s` ($\le 600px$), 2 cols on $601-767px$, 3 cols starting at 768px, 4 cols on large screens ($\ge 993px$).
+- Column sizing: 1 col on `s` ($\le 600px$), 2 cols on medium (`m6`, 601–992px, e.g. iPad Mini portrait and landscape), 3 cols on large (`l4`, $\ge 993px$).
 - Top header text removed for a clean catalog presentation.
 - Bottom floating toolbar using 100% native Beer CSS classes: centered on small screens (`.fixed.bottom.center.margin.front.s`) and right-aligned on medium/large screens (`.fixed.bottom.right.margin.front.m.l`), pairing a toolbar pill (total item count `{count} ชุด`, edit button `edit`, and sorting button `sort`) with a circular primary Add FAB (`add`).
 - Responsive placeholder dialog: displays as a bottom sheet (`dialog.bottom.medium-padding.s`) on small screens and as a default centered modal dialog (`dialog.medium-padding.m.l`) on medium/large screens.

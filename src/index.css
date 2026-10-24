@@ -153,17 +153,59 @@ main.responsive {
   animation: fadeIn 0.2s ease-in-out;
 }
 
-/* Responsive Grid Columns: 3 columns starting at 768px, 4 columns on large (993px+) */
-@media (min-width: 768px) {
-  .grid > .inventory-grid-col {
-    grid-area: auto / span 4;
-  }
+/* Status badge styling with dark mode blending */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 600;
+  white-space: nowrap;
+  height: 24px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
-@media (min-width: 993px) {
-  .grid > .inventory-grid-col {
-    grid-area: auto / span 3;
-  }
+.status-badge.small {
+  height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+}
+
+/* Micro text utility for compact metadata (e.g. SKU codes) */
+.micro-text {
+  font-size: 11px;
+  line-height: normal;
+}
+
+.status-badge-available {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+}
+
+.status-badge-reserved {
+  background-color: #fff3e0;
+  color: #b74700;
+}
+
+.status-badge-laundry {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
+body.dark .status-badge-available {
+  background-color: rgba(76, 175, 80, 0.22);
+  color: #81c784;
+}
+
+body.dark .status-badge-reserved {
+  background-color: rgba(255, 152, 0, 0.22);
+  color: #ffb74d;
+}
+
+body.dark .status-badge-laundry {
+  background-color: rgba(3, 169, 244, 0.22);
+  color: #81d4fa;
 }
 
 @keyframes fadeIn {

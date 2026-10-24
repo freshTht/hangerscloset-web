@@ -1,4 +1,5 @@
 import React from 'react';
+import ui from 'beercss';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 
@@ -6,10 +7,10 @@ interface InventoryCardProps {
   item: InventoryItem;
 }
 
-const STATUS_META: Record<InventoryStatus, { label: string; chipClass: string }> = {
-  available: { label: 'พร้อมเช่า', chipClass: 'green' },
-  reserved: { label: 'จองแล้ว', chipClass: 'orange' },
-  laundry: { label: 'ส่งซัก', chipClass: 'blue' },
+const STATUS_META: Record<InventoryStatus, { label: string }> = {
+  available: { label: 'พร้อมเช่า' },
+  reserved: { label: 'จองแล้ว' },
+  laundry: { label: 'ส่งซัก' },
 };
 
 const formatPrice = (amount: number): string =>
@@ -19,57 +20,87 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
   const isMobile = useIsMobile();
   const status = STATUS_META[item.status];
 
+  const handlePriceAction = (e: React.MouseEvent, days: number, price: number) => {
+    e.stopPropagation();
+    const dialogId = isMobile ? 'dialog-coming-soon-s' : 'dialog-coming-soon-m';
+    const dialog = document.getElementById(dialogId);
+    if (dialog) {
+      void ui(`#${dialogId}`);
+    } else {
+      alert(`เลือกเช่า ${days} วัน ราคา ${formatPrice(price)} (Coming soon)`);
+    }
+  };
+
   const renderPrices = () => (
-    <nav className="no-margin">
-      <div
-        className="row surface-container round no-margin center-align max"
-        style={{
-          padding: isMobile ? '0.2rem 0.35rem' : '0.35rem 0.5rem',
-          borderRadius: isMobile ? '0.375rem' : '0.5rem',
-          justifyContent: 'space-around',
-          gap: 0,
-        }}
+    <nav className="group connected max no-margin">
+      <button
+        className="left-round max vertical small fill no-margin"
+        type="button"
+        onClick={(e) => handlePriceAction(e, 1, item.rentalPrices.oneDay)}
       >
-        <div className="center-align">
-          <div className="small-text secondary-text" style={{ fontSize: isMobile ? '0.625rem' : undefined }}>
-            1 วัน
-          </div>
-          <div className={`bold ${isMobile ? 'small-text' : 'medium-text'}`}>
-            {formatPrice(item.rentalPrices.oneDay)}
-          </div>
-        </div>
-        <div className="divider vertical" style={{ minBlockSize: isMobile ? '1.15rem' : '1.5rem' }}></div>
-        <div className="center-align">
-          <div className="small-text secondary-text" style={{ fontSize: isMobile ? '0.625rem' : undefined }}>
-            3 วัน
-          </div>
-          <div className={`bold ${isMobile ? 'small-text' : 'medium-text'}`}>
-            {formatPrice(item.rentalPrices.threeDays)}
-          </div>
-        </div>
-        <div className="divider vertical" style={{ minBlockSize: isMobile ? '1.15rem' : '1.5rem' }}></div>
-        <div className="center-align">
-          <div className="small-text secondary-text" style={{ fontSize: isMobile ? '0.625rem' : undefined }}>
-            5 วัน
-          </div>
-          <div className={`bold ${isMobile ? 'small-text' : 'medium-text'}`}>
-            {formatPrice(item.rentalPrices.fiveDays)}
-          </div>
-        </div>
-      </div>
+        <span>1 วัน</span>
+        <span className="bold">{formatPrice(item.rentalPrices.oneDay)}</span>
+      </button>
+      <button
+        className="no-round max vertical small fill no-margin"
+        type="button"
+        onClick={(e) => handlePriceAction(e, 3, item.rentalPrices.threeDays)}
+      >
+        <span>3 วัน</span>
+        <span className="bold">{formatPrice(item.rentalPrices.threeDays)}</span>
+      </button>
+      <button
+        className="right-round max vertical small fill no-margin"
+        type="button"
+        onClick={(e) => handlePriceAction(e, 5, item.rentalPrices.fiveDays)}
+      >
+        <span>5 วัน</span>
+        <span className="bold">{formatPrice(item.rentalPrices.fiveDays)}</span>
+      </button>
     </nav>
+  );
+
+  const renderAttributes = () => (
+    <div
+      className="row no-margin tiny-space small-text secondary-text wrap"
+      style={{ alignItems: 'center', gap: 8 }}
+    >
+      <span
+        className="middle-align"
+        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        title={`แบรนด์: ${item.brand}`}
+      >
+        <i className="tiny">sell</i>
+        <b className="on-surface-text">{item.brand}</b>
+      </span>
+      <span className="medium-opacity">•</span>
+      <span
+        className="middle-align"
+        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        title={`สี: ${item.color}`}
+      >
+        <i className="tiny">palette</i>
+        <span className="on-surface-text">{item.color}</span>
+      </span>
+      <span className="medium-opacity">•</span>
+      <span
+        className="middle-align"
+        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        title={`ไซส์: ${item.size}`}
+      >
+        <i className="tiny">height</i>
+        <b className="on-surface-text">{item.size}</b>
+      </span>
+    </div>
   );
 
   if (isMobile) {
     return (
       <article
-        className="no-padding round row no-space"
+        className="no-padding round row no-space no-scroll"
         style={{
-          height: 160,
           minHeight: 160,
-          maxHeight: 160,
           alignItems: 'stretch',
-          overflow: 'hidden',
         }}
       >
         <img
@@ -81,62 +112,57 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
             width: 120,
             minWidth: 120,
             maxWidth: 120,
-            height: 160,
+            alignSelf: 'stretch',
             objectFit: 'cover',
             flexShrink: 0,
           }}
         />
         <div
-          className="small-padding max vertical"
+          className="max vertical"
           style={{
             minWidth: 0,
-            height: 160,
-            justifyContent: 'space-between',
-            boxSizing: 'border-box',
+            padding: '10px 14px 10px 12px',
           }}
         >
-          {/* Top Row: Code & Status */}
-          <div className="row no-margin align-center no-space">
-            <span className="small-text secondary-text">{item.code}</span>
-            <div className="max"></div>
-            <span
-              className={`chip small fill ${status.chipClass} no-margin`}
-              style={{
-                minHeight: '1.35rem',
-                height: '1.35rem',
-                padding: '0 0.5rem',
-                borderRadius: '0.35rem',
-              }}
-            >
-              <span className="small-text" style={{ fontSize: '0.6875rem', lineHeight: 1 }}>
+          {/* Top: Code & Status, and Title */}
+          <div className="vertical" style={{ gap: 4 }}>
+            {/* Top Row: Code & Refined Status Badge */}
+            <div className="row no-margin align-center no-space">
+              <span className="micro-text secondary-text medium">
+                {item.code}
+              </span>
+              <div className="max"></div>
+              <span className={`status-badge small status-badge-${item.status}`}>
                 {status.label}
               </span>
-            </span>
+            </div>
+
+            {/* Title: 2 lines max with Beer typography h6.small.bold */}
+            <h6
+              className="small bold no-margin"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                lineHeight: 1.25,
+              }}
+            >
+              {item.name}
+            </h6>
           </div>
 
-          {/* Title: 2 lines max with Beer typography h6.small.bold */}
-          <h6
-            className="small bold no-margin"
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              lineHeight: 1.25,
-              fontSize: '0.875rem',
-            }}
-          >
-            {item.name}
-          </h6>
+          {/* Anything below card title is bottom aligned with margin-top: auto */}
+          <div className="vertical" style={{ marginTop: 'auto' }}>
+            {/* Attributes with Sell, Palette, Height icons */}
+            {renderAttributes()}
 
-          {/* Attributes: small-text with truncate */}
-          <p className="small-text secondary-text no-margin truncate" style={{ fontSize: '0.6875rem' }}>
-            แบรนด์: <b className="on-surface-text">{item.brand}</b> • สี: <span className="on-surface-text">{item.color}</span> • ไซส์: <b className="on-surface-text">{item.size}</b>
-          </p>
-
-          {/* Rental Prices */}
-          {renderPrices()}
+            {/* Price section with some margin top */}
+            <div style={{ marginTop: 8 }}>
+              {renderPrices()}
+            </div>
+          </div>
         </div>
       </article>
     );
@@ -145,39 +171,50 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
   return (
     <article
       className="no-padding round vertical"
-      style={{ height: '100%' }}
+      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
     >
       <img
-        className="responsive small top-round"
+        className="top-round"
         src={item.imageUrl}
         alt={item.name}
         loading="lazy"
+        style={{
+          width: '100%',
+          aspectRatio: '1 / 1',
+          objectFit: 'cover',
+          display: 'block',
+        }}
       />
       <div
-        className="padding max vertical"
-        style={{ justifyContent: 'space-between', gap: '0.75rem' }}
+        className="padding vertical"
+        style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
       >
-        {/* Top Row: Code & Status */}
-        <div className="row no-margin align-center">
-          <span className="small-text secondary-text">{item.code}</span>
-          <div className="max"></div>
-          <span className={`chip small fill ${status.chipClass} no-margin`}>
-            <span className="small-text">{status.label}</span>
-          </span>
+        {/* Top: Code & Status, and Title */}
+        <div className="vertical" style={{ gap: 6 }}>
+          <div className="row no-margin align-center">
+            <span className="small-text secondary-text">{item.code}</span>
+            <div className="max"></div>
+            <span className={`status-badge status-badge-${item.status}`}>
+              {status.label}
+            </span>
+          </div>
+
+          {/* Title: Beer typography h6 */}
+          <h6 className="bold no-margin">
+            {item.name}
+          </h6>
         </div>
 
-        {/* Title: Beer typography h6 */}
-        <h6 className="bold no-margin">
-          {item.name}
-        </h6>
+        {/* Anything below card title is bottom aligned with margin-top: auto */}
+        <div className="vertical" style={{ marginTop: 'auto' }}>
+          {/* Attributes with Sell, Palette, Height icons */}
+          {renderAttributes()}
 
-        {/* Attributes: Beer typography small-text */}
-        <p className="small-text secondary-text no-margin">
-          แบรนด์: <b className="on-surface-text">{item.brand}</b> • สี: <span className="on-surface-text">{item.color}</span> • ไซส์: <b className="on-surface-text">{item.size}</b>
-        </p>
-
-        {/* Rental Prices */}
-        {renderPrices()}
+          {/* Price section with some margin top */}
+          <div style={{ marginTop: 12 }}>
+            {renderPrices()}
+          </div>
+        </div>
       </div>
     </article>
   );

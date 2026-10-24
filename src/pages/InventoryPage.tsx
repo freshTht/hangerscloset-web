@@ -87,7 +87,7 @@ export const InventoryPage: React.FC = () => {
     <>
       <div className="grid">
         {mockInventory.map((item) => (
-          <div key={item.id} className="s12 m6 l3 inventory-grid-col">
+          <div key={item.id} className="s12 m6 l4">
             <InventoryCard item={item} />
           </div>
         ))}
