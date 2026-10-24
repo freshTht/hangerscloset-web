@@ -19,6 +19,7 @@
 - Path aliases: standard relative imports or Vite-configured paths.
 
 ## Git Conventions
+- **No Auto-Committing**: Do NOT automatically commit changes at the end of each turn. Only make git commits when explicitly requested by the user.
 - Maintain a clean working directory.
 - Avoid committing build artifacts (`dist/`, `*.tsbuildinfo`, `node_modules`).
 - Commit messages should follow conventional commit formatting:

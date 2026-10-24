@@ -12,3 +12,4 @@ Welcome to `hangerscloset-web`. Detailed project context and operational guides 
 - **Pages**: Home (`/`), Inventory (`/inventory`), Settings (`/settings`)
 - **Theme**: Light / Dark mode via Beer CSS `ui('mode')`
 - **Mobile First**: Prioritize touch targets ($\ge 48\text{px}$) and responsive tab layouts
+- **No Auto-Committing**: Do NOT create git commits automatically unless explicitly requested by the user.
