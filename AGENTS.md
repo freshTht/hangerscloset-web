@@ -12,5 +12,6 @@ Welcome to `hangerscloset-web`. Detailed project context and operational guides 
 - **Pages**: Home (`/`), Inventory (`/inventory`), Settings (`/settings`)
 - **Inventory**: 30 mock rental clothing items (`InventoryItem`), rendered as `InventoryCard` in a responsive `s12 m6 l4` grid. Statuses: `available` | `reserved` | `laundry`.
 - **Theme**: Light / Dark mode via Beer CSS `ui('mode')`
+- **Beer CSS First**: Always explore and use Beer CSS built-in semantic elements and utility classes before writing custom CSS.
 - **Mobile First**: Prioritize touch targets ($\ge 48\text{px}$) and responsive tab layouts
 - **No Auto-Committing**: Do NOT create git commits automatically unless explicitly requested by the user.

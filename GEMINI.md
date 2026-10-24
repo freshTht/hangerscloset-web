@@ -14,7 +14,7 @@ Detailed, agent-agnostic project documentation is maintained in the [`.context/`
 
 ## Agent Operational Quick Rules
 1. **Package Manager**: Always use `pnpm` (`pnpm install`, `pnpm add`, `pnpm dev`, `pnpm build`).
-2. **UI Framework**: Use [Beer CSS](https://www.beercss.com/) semantic classes and Material Design 3 patterns. Avoid adding arbitrary external styling libraries unless requested.
+2. **UI Framework & Native First**: Always explore and use what [Beer CSS](https://www.beercss.com/) provides natively before writing any custom CSS. Leverage Beer CSS semantic elements (`<nav class="toolbar">`), positioning helpers (`fixed`, `bottom`, `center`), margins, elevations (`medium-elevate`), and depth (`front`). Avoid writing custom CSS unless Beer CSS fundamentally lacks the capability.
 3. **Icons**: Use Material Symbols via `<i>icon_name</i>` (e.g., `home`, `inventory_2`, `settings`, `checkroom`).
 4. **Mobile First**: Prioritize responsive touch targets ($\ge 48\text{px}$), adaptive tab layouts, and safe areas on mobile screens.
 5. **Validation**: After modifying code, always verify by running `pnpm build` (`tsc -b && vite build`) to ensure type safety and bundling pass without errors.

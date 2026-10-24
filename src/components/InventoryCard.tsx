@@ -18,57 +18,62 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
   const status = STATUS_META[item.status];
 
   return (
-    <article className="inventory-card no-padding round border">
+    <article className="inventory-card no-padding border">
       <img
         className="inventory-card-photo"
         src={item.imageUrl}
         alt={item.name}
         loading="lazy"
       />
-      <div className="padding">
-        <h5 className="no-margin bold">{item.name}</h5>
-        <p className="no-margin secondary-text">{item.code}</p>
-
-        <div className="space"></div>
-
-        <div className="row no-margin">
-          <span className="secondary-text">แบรนด์</span>
-          <span className="max"></span>
-          <span>{item.brand}</span>
-        </div>
-        <div className="row no-margin">
-          <span className="secondary-text">สี</span>
-          <span className="max"></span>
-          <span>{item.color}</span>
-        </div>
-        <div className="row no-margin">
-          <span className="secondary-text">ไซส์</span>
-          <span className="max"></span>
-          <span>{item.size}</span>
+      <div className="inventory-card-content padding">
+        {/* Top: Code & Status Chip */}
+        <div className="card-top-row">
+          <span className="secondary-text small-text">{item.code}</span>
+          <span className={`chip fill ${status.chipClass} no-margin card-status-chip`}>
+            {status.label}
+          </span>
         </div>
 
-        <div className="space"></div>
-
-        <p className="no-margin secondary-text">ราคาเช่า</p>
-        <div className="row no-margin">
-          <span className="secondary-text">1 วัน</span>
-          <span className="max"></span>
-          <span>{formatPrice(item.rentalPrices.oneDay)}</span>
-        </div>
-        <div className="row no-margin">
-          <span className="secondary-text">3 วัน</span>
-          <span className="max"></span>
-          <span>{formatPrice(item.rentalPrices.threeDays)}</span>
-        </div>
-        <div className="row no-margin">
-          <span className="secondary-text">5 วัน</span>
-          <span className="max"></span>
-          <span>{formatPrice(item.rentalPrices.fiveDays)}</span>
+        {/* Outfit Name */}
+        <div className="card-title bold">
+          {item.name}
         </div>
 
-        <div className="space"></div>
+        {/* Middle: Attributes (Brand, Color, Size) */}
+        <div className="card-attributes small-text">
+          <span>
+            <span className="secondary-text">แบรนด์: </span>
+            <span className="bold">{item.brand}</span>
+          </span>
+          <span className="attr-dot">•</span>
+          <span>
+            <span className="secondary-text">สี: </span>
+            <span>{item.color}</span>
+          </span>
+          <span className="attr-dot">•</span>
+          <span>
+            <span className="secondary-text">ไซส์: </span>
+            <span className="bold">{item.size}</span>
+          </span>
+        </div>
 
-        <span className={`chip fill ${status.chipClass}`}>{status.label}</span>
+        {/* Bottom: Compact Rental Prices */}
+        <div className="card-prices round">
+          <div className="price-item">
+            <span className="secondary-text small-text">1 วัน</span>
+            <span className="bold medium-text">{formatPrice(item.rentalPrices.oneDay)}</span>
+          </div>
+          <div className="price-divider"></div>
+          <div className="price-item">
+            <span className="secondary-text small-text">3 วัน</span>
+            <span className="bold medium-text">{formatPrice(item.rentalPrices.threeDays)}</span>
+          </div>
+          <div className="price-divider"></div>
+          <div className="price-item">
+            <span className="secondary-text small-text">5 วัน</span>
+            <span className="bold medium-text">{formatPrice(item.rentalPrices.fiveDays)}</span>
+          </div>
+        </div>
       </div>
     </article>
   );

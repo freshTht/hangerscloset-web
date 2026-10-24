@@ -1,29 +1,121 @@
 import React from 'react';
+import ui from 'beercss';
 import { InventoryCard } from '../components/InventoryCard';
 import { mockInventory } from '../data/mockInventory';
 
 export const InventoryPage: React.FC = () => {
+  const itemCount = mockInventory.length;
+
+  const openDialog = (id: string) => {
+    void ui(`#${id}`);
+  };
+
+  const closeDialog = (id?: string) => {
+    const dialogs = id
+      ? [document.getElementById(id) as HTMLDialogElement | null]
+      : [
+          document.getElementById('dialog-coming-soon-s') as HTMLDialogElement | null,
+          document.getElementById('dialog-coming-soon-m') as HTMLDialogElement | null,
+        ];
+
+    dialogs.forEach((dialog) => {
+      if (dialog) {
+        const overlay = dialog.previousElementSibling;
+        if (overlay && overlay.classList.contains('overlay')) {
+          overlay.classList.remove('active');
+        }
+        dialog.classList.remove('active');
+        if (dialog.open) {
+          dialog.close();
+        }
+      }
+    });
+  };
+
+  const renderFloatingBar = (dialogId: string) => (
+    <nav className="center-align tiny-space">
+      <nav className="toolbar secondary-container medium-elevate">
+        <span className="bold">{itemCount} ชุด</span>
+        <button
+          className="circle transparent no-margin"
+          type="button"
+          onClick={() => openDialog(dialogId)}
+          aria-label="แก้ไข"
+          title="แก้ไข"
+        >
+          <i>edit</i>
+        </button>
+        <button
+          className="circle transparent no-margin"
+          type="button"
+          onClick={() => openDialog(dialogId)}
+          aria-label="จัดเรียง"
+          title="จัดเรียง"
+        >
+          <i>sort</i>
+        </button>
+      </nav>
+      <button
+        className="extra circle primary medium-elevate no-margin"
+        type="button"
+        onClick={() => openDialog(dialogId)}
+        aria-label="เพิ่มชุด"
+        title="เพิ่มชุด"
+      >
+        <i>add</i>
+      </button>
+    </nav>
+  );
+
+  const renderDialogContent = (dialogId: string) => (
+    <>
+      <h5>Coming soon</h5>
+      <p>Thanks for your interest :)</p>
+      <nav className="right-align">
+        <button
+          className="border"
+          type="button"
+          onClick={() => closeDialog(dialogId)}
+        >
+          ปิด
+        </button>
+      </nav>
+    </>
+  );
+
   return (
     <>
-      <div className="row items-center gap">
-        <i className="extra primary-text">inventory_2</i>
-        <div className="max">
-          <h5 className="no-margin bold">คลังสินค้า</h5>
-          <p className="no-margin secondary-text">
-            ทั้งหมด {mockInventory.length} ชุดในตู้เสื้อผ้า
-          </p>
-        </div>
-      </div>
-
-      <div className="space"></div>
-
       <div className="grid">
         {mockInventory.map((item) => (
-          <div key={item.id} className="s12 m6 l4">
+          <div key={item.id} className="s12 m6 l3 inventory-grid-col">
             <InventoryCard item={item} />
           </div>
         ))}
       </div>
+
+      {/* Spacing using Beer CSS built-in helpers */}
+      <div className="extra-space"></div>
+      <div className="large-space"></div>
+
+      {/* Small screens: centered floating bottom toolbar */}
+      <div className="fixed bottom center margin front s">
+        {renderFloatingBar('dialog-coming-soon-s')}
+      </div>
+
+      {/* Medium & Large screens: right-aligned floating bottom toolbar */}
+      <div className="fixed bottom right margin front m l">
+        {renderFloatingBar('dialog-coming-soon-m')}
+      </div>
+
+      {/* Small screens: Bottom Dialog */}
+      <dialog id="dialog-coming-soon-s" className="bottom medium-padding s">
+        {renderDialogContent('dialog-coming-soon-s')}
+      </dialog>
+
+      {/* Medium & Large screens: Default Centered Dialog */}
+      <dialog id="dialog-coming-soon-m" className="medium-padding m l">
+        {renderDialogContent('dialog-coming-soon-m')}
+      </dialog>
     </>
   );
 };

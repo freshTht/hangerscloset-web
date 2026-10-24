@@ -29,8 +29,8 @@ hangerscloset-web/
     ├── types/
     │   └── inventory.ts        # TypeScript types: InventoryItem, InventoryStatus, RentalPrices
     └── pages/
-        ├── HomePage.tsx        # Home tab placeholder ('/')
-        ├── InventoryPage.tsx   # Inventory grid — renders InventoryCard for each item ('/inventory')
+        ├── HomePage.tsx        # Simple "Coming soon" placeholder ('/')
+        ├── InventoryPage.tsx   # Inventory grid with floating add toolbar ('/inventory')
         └── SettingsPage.tsx    # Settings tab with dark mode switch ('/settings')
 ```
 
@@ -39,9 +39,9 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
 
 - Root layout route: `Layout` component wraps all view routes.
 - Child routes:
-  - `/` &rarr; `HomePage`: Default landing page and activity overview.
-  - `/inventory` &rarr; `InventoryPage`: Responsive grid of rental clothing items, each rendered as an `InventoryCard`.
-  - `/settings` &rarr; `SettingsPage`: App preferences, account, and configuration.
+  - `/` &rarr; `HomePage`: Simple "Coming soon" placeholder.
+  - `/inventory` &rarr; `InventoryPage`: Responsive grid of rental clothing items with bottom floating add toolbar.
+  - `/settings` &rarr; `SettingsPage`: App preferences containing dark mode switch.
   - `*` &rarr; Fallback redirect to `/` via `<Navigate to="/" replace />`.
 
 ## Navigation Model
@@ -87,14 +87,18 @@ interface InventoryItem {
 - Statuses are mixed: `available`, `reserved`, `laundry`.
 
 ### InventoryCard Component (`src/components/InventoryCard.tsx`)
-Displays a single item card with:
-- **Photo**: Lazy-loaded image (`loading="lazy"`) from Unsplash.
-- **Name & Code**: Item name as `h5`, item code as secondary text.
-- **Attributes**: Brand (แบรนด์), Color (สี), Size (ไซส์) in a label/value row layout.
-- **Rental Prices (ราคาเช่า)**: Formatted in Thai Baht (฿) for 1 วัน, 3 วัน, and 5 วัน durations.
-- **Status Chip**: Beer CSS color chip (`green`, `orange`, `blue`) for `พร้อมเช่า` (available), `จองแล้ว` (reserved), `ส่งซัก` (laundry) respectively.
+Displays a single item card with responsive layout adaptation:
+- **Mobile (`s`)**: Compact horizontal row card (160px in height) with photo on the left (120px * 160px at 3:4 aspect ratio, full height) and compacted metadata on the right.
+- **Desktop (`m / l`)**: Vertical card in responsive grid with photo on top (3:4 aspect ratio) and metadata below.
+- **Card Content**:
+  - **Photo**: Lazy-loaded image (`loading="lazy"`) from Unsplash with exact 3:4 aspect ratio on both mobile and desktop.
+  - **Header**: Top row with item code (`secondary-text`) and status chip (`พร้อมเช่า`, `จองแล้ว`, `ส่งซัก`), followed by outfit name across the full width without rounded corner clipping.
+  - **Attributes**: Brand (แบรนด์), Color (สี), Size (ไซส์) in a clean inline attribute list.
+  - **Rental Prices**: Compact 3-column pill for 1 วัน, 3 วัน, and 5 วัน rental durations.
 
 ### InventoryPage (`src/pages/InventoryPage.tsx`)
 - Renders a Beer CSS responsive grid (`<div className="grid">`).
-- Column sizing: `s12 m6 l4` — full width on mobile, 2-col on medium, 3-col on large.
-- Displays item count from `mockInventory.length` in the page header (ทั้งหมด X ชุดในตู้เสื้อผ้า).
+- Column sizing: 1 col on `s` ($\le 600px$), 2 cols on $601-767px$, 3 cols starting at 768px, 4 cols on large screens ($\ge 993px$).
+- Top header text removed for a clean catalog presentation.
+- Bottom floating toolbar using 100% native Beer CSS classes: centered on small screens (`.fixed.bottom.center.margin.front.s`) and right-aligned on medium/large screens (`.fixed.bottom.right.margin.front.m.l`), pairing a toolbar pill (total item count `{count} ชุด`, edit button `edit`, and sorting button `sort`) with a circular primary Add FAB (`add`).
+- Responsive placeholder dialog: displays as a bottom sheet (`dialog.bottom.medium-padding.s`) on small screens and as a default centered modal dialog (`dialog.medium-padding.m.l`) on medium/large screens.

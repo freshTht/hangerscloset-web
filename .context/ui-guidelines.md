@@ -3,6 +3,9 @@
 ## Beer CSS Design System
 The project uses [Beer CSS](https://www.beercss.com/) which implements Material Design 3. Instead of heavy JavaScript component libraries, UI components are styled using semantic HTML and Beer CSS utility classes.
 
+> [!IMPORTANT]
+> **Beer CSS Native-First Rule**: Always check and use what Beer CSS provides natively out-of-the-box before writing any custom CSS. Beer CSS includes semantic components (like `<nav class="toolbar">`), positioning helpers (`fixed`, `bottom`, `center`, `front`), spacing helpers (`space`, `large-space`, `extra-space`), and elevation helpers (`elevate`, `medium-elevate`). Custom CSS should only be written if Beer CSS fundamentally lacks the feature.
+
 ### Common Semantic Elements & Classes
 - **Surfaces & Cards**:
   - `<article className="border round">` &mdash; Outlined content card container.
