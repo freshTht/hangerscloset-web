@@ -1,0 +1,19 @@
+export type InventoryStatus = 'available' | 'reserved' | 'laundry';
+
+export interface RentalPrices {
+  oneDay: number;
+  threeDays: number;
+  fiveDays: number;
+}
+
+export interface InventoryItem {
+  id: string;
+  name: string;
+  code: string;
+  brand: string;
+  color: string;
+  size: string;
+  imageUrl: string;
+  rentalPrices: RentalPrices;
+  status: InventoryStatus;
+}

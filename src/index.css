@@ -142,7 +142,7 @@ nav.left.max > .rail-nav-group > a {
 
 main.responsive {
   width: 100%;
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   overflow-y: auto;
@@ -151,6 +151,23 @@ main.responsive {
 .page-content {
   width: 100%;
   animation: fadeIn 0.2s ease-in-out;
+}
+
+.inventory-card {
+  height: 100%;
+  overflow: hidden;
+}
+
+.inventory-card-photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  display: block;
+}
+
+.inventory-card .row {
+  min-height: 1.75rem;
+  align-items: center;
 }
 
 @keyframes fadeIn {
