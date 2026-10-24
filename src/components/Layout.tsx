@@ -9,9 +9,9 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: '/', label: 'Home', icon: 'home' },
-  { to: '/inventory', label: 'Inventory', icon: 'inventory_2' },
-  { to: '/settings', label: 'Settings', icon: 'settings' },
+  { to: '/', label: 'หน้าหลัก', icon: 'home' },
+  { to: '/inventory', label: 'คลังสินค้า', icon: 'inventory_2' },
+  { to: '/settings', label: 'การตั้งค่า', icon: 'settings' },
 ];
 
 export const Layout: React.FC = () => {

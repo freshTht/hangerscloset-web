@@ -17,21 +17,21 @@ export const Header: React.FC = () => {
           className={({ isActive }) => (isActive ? 'active' : '')}
         >
           <i>home</i>
-          <span>Home</span>
+          <span>หน้าหลัก</span>
         </NavLink>
         <NavLink
           to="/inventory"
           className={({ isActive }) => (isActive ? 'active' : '')}
         >
           <i>inventory_2</i>
-          <span>Inventory</span>
+          <span>คลังสินค้า</span>
         </NavLink>
         <NavLink
           to="/settings"
           className={({ isActive }) => (isActive ? 'active' : '')}
         >
           <i>settings</i>
-          <span>Settings</span>
+          <span>การตั้งค่า</span>
         </NavLink>
       </div>
     </header>

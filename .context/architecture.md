@@ -90,11 +90,11 @@ interface InventoryItem {
 Displays a single item card with:
 - **Photo**: Lazy-loaded image (`loading="lazy"`) from Unsplash.
 - **Name & Code**: Item name as `h5`, item code as secondary text.
-- **Attributes**: Brand, Color, Size in a label/value row layout.
-- **Rental Prices**: Formatted in Thai Baht (฿) for 1-day, 3-day, and 5-day durations.
-- **Status Chip**: Beer CSS color chip (`green`, `orange`, `blue`) for `available`, `reserved`, `laundry` respectively.
+- **Attributes**: Brand (แบรนด์), Color (สี), Size (ไซส์) in a label/value row layout.
+- **Rental Prices (ราคาเช่า)**: Formatted in Thai Baht (฿) for 1 วัน, 3 วัน, and 5 วัน durations.
+- **Status Chip**: Beer CSS color chip (`green`, `orange`, `blue`) for `พร้อมเช่า` (available), `จองแล้ว` (reserved), `ส่งซัก` (laundry) respectively.
 
 ### InventoryPage (`src/pages/InventoryPage.tsx`)
 - Renders a Beer CSS responsive grid (`<div className="grid">`).
 - Column sizing: `s12 m6 l4` — full width on mobile, 2-col on medium, 3-col on large.
-- Displays item count from `mockInventory.length` in the page header.
+- Displays item count from `mockInventory.length` in the page header (ทั้งหมด X ชุดในตู้เสื้อผ้า).

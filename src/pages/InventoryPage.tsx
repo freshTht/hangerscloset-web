@@ -8,9 +8,9 @@ export const InventoryPage: React.FC = () => {
       <div className="row items-center gap">
         <i className="extra primary-text">inventory_2</i>
         <div className="max">
-          <h5 className="no-margin bold">Inventory</h5>
+          <h5 className="no-margin bold">คลังสินค้า</h5>
           <p className="no-margin secondary-text">
-            {mockInventory.length} outfits in the closet
+            ทั้งหมด {mockInventory.length} ชุดในตู้เสื้อผ้า
           </p>
         </div>
       </div>
