@@ -1,6 +1,6 @@
 # Project Context for AI Agents
 
-Welcome to `hangerscloset-web`. Detailed project context and operational guides are organized modularly in the [`.context/`](.context/) directory:
+Welcome to `hangerscloset-web`. Detailed project context and operational guides are organized modularly in the [`.context/`](.context/) directory. Cursor loads those modules through [`.cursor/rules/`](.cursor/rules/).
 
 - [Project Overview](.context/overview.md) &mdash; Project summary, goals, and technology stack.
 - [Architecture & Routing](.context/architecture.md) &mdash; Directory layout, React Router setup, and component hierarchy.

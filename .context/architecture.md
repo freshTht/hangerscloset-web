@@ -8,6 +8,7 @@ hangerscloset-web/
 │   ├── architecture.md         # Directory structure & routing architecture
 │   ├── ui-guidelines.md        # Beer CSS patterns & responsive design rules
 │   └── conventions.md          # Tooling, package management & development rules
+├── .cursor/rules/              # Cursor project rules that @-link into .context/
 ├── GEMINI.md                   # Antigravity-specific workspace rules & context loader
 ├── AGENTS.md                   # Agent-agnostic workspace context loader
 ├── index.html                  # HTML entry point with viewport & theme setup

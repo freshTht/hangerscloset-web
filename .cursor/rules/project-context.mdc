@@ -1,0 +1,21 @@
+---
+description: Load agent-agnostic project context from .context/ before changing this repo
+alwaysApply: true
+---
+
+# Project context
+
+Canonical project docs live in `.context/`. Read the relevant module before making changes; do not copy those docs into other rule files.
+
+- @.context/overview.md — stack, goals, mobile-first philosophy
+- @.context/architecture.md — layout, routing, navigation shell
+- @.context/ui-guidelines.md — Beer CSS, icons, theming, touch targets
+- @.context/conventions.md — pnpm, TypeScript, git
+
+## Operational defaults
+
+1. Use `pnpm` only (`pnpm install`, `pnpm add`, `pnpm dev`, `pnpm build`).
+2. Style with Beer CSS semantic HTML and utility classes. Do not add another UI library unless asked.
+3. Icons are Material Symbols via `<i>icon_name</i>`.
+4. Keep tap targets at least 48px and respect mobile safe areas.
+5. Do not create git commits unless the user explicitly asks.

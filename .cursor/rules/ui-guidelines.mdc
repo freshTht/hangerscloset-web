@@ -1,0 +1,16 @@
+---
+description: Beer CSS Material Design 3 patterns, icons, and mobile usability
+globs: src/**/*.tsx,src/**/*.css,index.html
+alwaysApply: false
+---
+
+# UI guidelines
+
+Before changing markup, classes, or theme behavior, read @.context/ui-guidelines.md.
+
+- Prefer Beer CSS semantic elements and utilities over custom CSS or extra component libraries.
+- Cards: `<article className="border round">` or surface-container card wrappers.
+- Layout: `grid` with `s12 m6` columns; page content in `<main className="responsive">`.
+- Icons: `<i>home</i>`, `<i>inventory_2</i>`, `<i>settings</i>`, `<i>checkroom</i>`.
+- Theme: `ui('mode', 'dark' | 'light')` from `beercss`.
+- Interactive controls need ≥48px tap targets.

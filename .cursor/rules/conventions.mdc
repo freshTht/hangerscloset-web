@@ -1,0 +1,15 @@
+---
+description: pnpm, TypeScript, scripts, and git conventions for this repo
+globs: package.json,pnpm-lock.yaml,pnpm-workspace.yaml,tsconfig*.json,vite.config.ts,src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Conventions
+
+Follow @.context/conventions.md.
+
+- Package manager is `pnpm` only. Do not use npm or yarn.
+- Scripts: `pnpm dev`, `pnpm build` (`tsc -b` then Vite), `pnpm preview`.
+- TypeScript is strict; keep components small and typed.
+- Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, `style:`) when the user asks to commit.
+- Never auto-commit.

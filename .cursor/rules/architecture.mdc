@@ -1,0 +1,14 @@
+---
+description: App shell, routing, and navigation layout for hangerscloset-web
+globs: src/App.tsx,src/main.tsx,src/components/**/*.tsx,src/pages/**/*.tsx
+alwaysApply: false
+---
+
+# Architecture
+
+Before changing routes, the header, or the layout shell, read @.context/architecture.md.
+
+- `Layout` wraps all view routes; unknown paths redirect to `/`.
+- Routes: `/` Home, `/inventory` Inventory, `/settings` Settings.
+- Small screens (≤600px): sticky top bar + tabs. Medium+: left navigation rail, header hidden.
+- Theme toggle lives on Settings, not in the header.
