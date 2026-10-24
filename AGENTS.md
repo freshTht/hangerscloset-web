@@ -10,6 +10,7 @@ Welcome to `hangerscloset-web`. Detailed project context and operational guides 
 ## Quick Summary
 - **Stack**: Vite + React 19 + TypeScript + pnpm + Beer CSS + React Router v7
 - **Pages**: Home (`/`), Inventory (`/inventory`), Settings (`/settings`)
+- **Inventory**: 30 mock rental clothing items (`InventoryItem`), rendered as `InventoryCard` in a responsive `s12 m6 l4` grid. Statuses: `available` | `reserved` | `laundry`.
 - **Theme**: Light / Dark mode via Beer CSS `ui('mode')`
 - **Mobile First**: Prioritize touch targets ($\ge 48\text{px}$) and responsive tab layouts
 - **No Auto-Committing**: Do NOT create git commits automatically unless explicitly requested by the user.

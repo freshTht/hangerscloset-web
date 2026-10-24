@@ -22,10 +22,15 @@ hangerscloset-web/
     ├── index.css               # Global responsive tweaks & animations
     ├── components/
     │   ├── Header.tsx          # Top bar with simple text brand & Navigation tabbed
+    │   ├── InventoryCard.tsx   # Card component displaying a single inventory item
     │   └── Layout.tsx          # App shell layout (Header + responsive main content)
+    ├── data/
+    │   └── mockInventory.ts    # 30 mock InventoryItem records (dresses, gowns, suits, etc.)
+    ├── types/
+    │   └── inventory.ts        # TypeScript types: InventoryItem, InventoryStatus, RentalPrices
     └── pages/
         ├── HomePage.tsx        # Home tab placeholder ('/')
-        ├── InventoryPage.tsx   # Inventory tab placeholder ('/inventory')
+        ├── InventoryPage.tsx   # Inventory grid — renders InventoryCard for each item ('/inventory')
         └── SettingsPage.tsx    # Settings tab with dark mode switch ('/settings')
 ```
 
@@ -35,7 +40,7 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
 - Root layout route: `Layout` component wraps all view routes.
 - Child routes:
   - `/` &rarr; `HomePage`: Default landing page and activity overview.
-  - `/inventory` &rarr; `InventoryPage`: Wardrobe items, categories, and inventory controls.
+  - `/inventory` &rarr; `InventoryPage`: Responsive grid of rental clothing items, each rendered as an `InventoryCard`.
   - `/settings` &rarr; `SettingsPage`: App preferences, account, and configuration.
   - `*` &rarr; Fallback redirect to `/` via `<Navigate to="/" replace />`.
 
@@ -49,3 +54,47 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
   - Navigation switches to a compact Left Navigation Rail (`<nav className="left m">`).
   - Hanger icon (`checkroom`) is top-aligned, while tab navigation links are middle-aligned in the center of the rail.
 - **Theme Switching**: Dark mode toggle is located in the Settings page (`SettingsPage.tsx`) using Beer CSS's `<label className="switch icon">`.
+
+## Inventory Feature
+
+### Data Model (`src/types/inventory.ts`)
+```ts
+type InventoryStatus = 'available' | 'reserved' | 'laundry';
+
+interface RentalPrices {
+  oneDay: number;
+  threeDays: number;
+  fiveDays: number;
+}
+
+interface InventoryItem {
+  id: string;
+  name: string;
+  code: string;       // e.g. "HC-001"
+  brand: string;
+  color: string;
+  size: string;       // e.g. "XS", "S", "M", "L"
+  imageUrl: string;
+  rentalPrices: RentalPrices;
+  status: InventoryStatus;
+}
+```
+
+### Mock Data (`src/data/mockInventory.ts`)
+- 30 pre-populated `InventoryItem` records representing rental clothing (dresses, gowns, suits, jumpsuits, etc.).
+- Brands include: Asava, Disaya, Sretsis, Kloset, Self-Portrait, Zimmermann, Reformation, Theory, etc.
+- Prices are in Thai Baht (฿), ranging from ฿700 to ฿7,600 depending on duration.
+- Statuses are mixed: `available`, `reserved`, `laundry`.
+
+### InventoryCard Component (`src/components/InventoryCard.tsx`)
+Displays a single item card with:
+- **Photo**: Lazy-loaded image (`loading="lazy"`) from Unsplash.
+- **Name & Code**: Item name as `h5`, item code as secondary text.
+- **Attributes**: Brand, Color, Size in a label/value row layout.
+- **Rental Prices**: Formatted in Thai Baht (฿) for 1-day, 3-day, and 5-day durations.
+- **Status Chip**: Beer CSS color chip (`green`, `orange`, `blue`) for `available`, `reserved`, `laundry` respectively.
+
+### InventoryPage (`src/pages/InventoryPage.tsx`)
+- Renders a Beer CSS responsive grid (`<div className="grid">`).
+- Column sizing: `s12 m6 l4` — full width on mobile, 2-col on medium, 3-col on large.
+- Displays item count from `mockInventory.length` in the page header.

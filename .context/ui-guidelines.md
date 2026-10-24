@@ -6,13 +6,20 @@ The project uses [Beer CSS](https://www.beercss.com/) which implements Material 
 ### Common Semantic Elements & Classes
 - **Surfaces & Cards**:
   - `<article className="border round">` &mdash; Outlined content card container.
-  - `<div className="card fill surface-container-low round padding">` &mdash; Elevated card.
+  - `<article className="inventory-card no-padding round border">` &mdash; Inventory item card (image flush to top, metadata padded inside).
+  - `<div className="card fill surface-container-low round padding">` &mdash; Elevated settings/info card.
 - **Grids & Layouts**:
-  - `<div className="grid">` with responsive columns like `<div className="s12 m6">` (full width on small screens, half width on medium+ screens).
+  - `<div className="grid">` with responsive columns like `<div className="s12 m6 l4">` (full width on small, 2-col on medium, 3-col on large).
   - `<main className="responsive">` &mdash; Constrains max width on large viewports and applies standard responsive margins.
+- **Rows**:
+  - `<div className="row no-margin">` &mdash; Horizontal label/value pair row. Used for Brand, Color, Size, and rental price rows on InventoryCard.
 - **Buttons**:
   - `<button className="circle transparent">` &mdash; Circular icon button.
   - `<button className="primary">` &mdash; Filled primary action button.
+- **Chips**:
+  - `<span className="chip fill green">` &mdash; Status chip: Available.
+  - `<span className="chip fill orange">` &mdash; Status chip: Reserved.
+  - `<span className="chip fill blue">` &mdash; Status chip: Laundry.
 - **Spacing**:
   - `<div className="space"></div>` &mdash; Standard vertical spacing.
   - Helper classes: `padding`, `no-margin`, `gap`.

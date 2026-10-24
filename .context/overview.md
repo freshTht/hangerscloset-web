@@ -1,7 +1,7 @@
 # Project Overview: Hanger's Closet Web
 
 ## Summary
-`hangerscloset-web` is a responsive web application designed for closet organization and apparel inventory management. It is built as a single-page application (SPA) prioritizing mobile usability while delivering a clean desktop experience.
+`hangerscloset-web` is a responsive web application for a clothing rental business — **Hanger's Closet**. It allows customers to browse a curated inventory of rental apparel (dresses, gowns, suits, etc.), view item details and pricing, and check availability status. It is built as a single-page application (SPA) prioritizing mobile usability while delivering a clean desktop experience.
 
 ## Technology Stack
 - **Framework**: [React 19](https://react.dev/) (with JSX/TSX)
