@@ -20,12 +20,12 @@ hangerscloset-web/
     ├── App.tsx                 # Router definition & route mapping
     ├── index.css               # Global responsive tweaks & animations
     ├── components/
-    │   ├── Header.tsx          # Top bar with branding, theme toggle & 3-tab navigation
+    │   ├── Header.tsx          # Top bar with simple text brand & Navigation tabbed
     │   └── Layout.tsx          # App shell layout (Header + responsive main content)
     └── pages/
         ├── HomePage.tsx        # Home tab placeholder ('/')
         ├── InventoryPage.tsx   # Inventory tab placeholder ('/inventory')
-        └── SettingsPage.tsx    # Settings tab placeholder ('/settings')
+        └── SettingsPage.tsx    # Settings tab with dark mode switch ('/settings')
 ```
 
 ## Routing Setup
@@ -39,7 +39,8 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
   - `*` &rarr; Fallback redirect to `/` via `<Navigate to="/" replace />`.
 
 ## Navigation Model
-- The navigation bar is placed inside `<header className="fixed surface top shadow">`.
-- It consists of two rows:
-  1. **Top Brand Bar**: Displays the brand logo/icon (`checkroom`), app title ("Hanger's Closet"), and the theme toggle button.
-  2. **Tab Bar**: Uses Beer CSS's `.tabs` with React Router's `<NavLink>`. Active route styling is handled automatically via `.active` class assignment.
+- The navigation bar is placed inside `<header className="fixed surface top">`.
+- It consists of:
+  1. **Brand Title**: Simple text ("Hanger's Closet") without icon (ready for future logo image).
+  2. **Navigation Tabbed**: Follows Beer CSS's `<nav className="tabbed">` pattern with React Router's `<NavLink>`. Active route styling is handled automatically via `.active` class assignment.
+- **Theme Switching**: Dark mode toggle is located in the Settings page (`SettingsPage.tsx`) using Beer CSS's `<label className="switch icon">`.
