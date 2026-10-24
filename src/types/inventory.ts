@@ -13,6 +13,10 @@ export interface InventoryItem {
   brand: string;
   color: string;
   size: string;
+  type?: string;
+  accessories?: string | null;
+  owner?: string | null;
+  imageFile?: string;
   imageUrl: string;
   rentalPrices: RentalPrices;
   status: InventoryStatus;

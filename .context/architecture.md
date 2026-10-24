@@ -70,10 +70,14 @@ interface RentalPrices {
 interface InventoryItem {
   id: string;
   name: string;
-  code: string;       // e.g. "HC-001"
+  code: string;       // e.g. "AVL01"
   brand: string;
   color: string;
   size: string;       // e.g. "XS", "S", "M", "L"
+  type?: string;      // e.g. "Dress", "Beach set2"
+  accessories?: string | null;
+  owner?: string | null;
+  imageFile?: string; // original source filename
   imageUrl: string;
   rentalPrices: RentalPrices;
   status: InventoryStatus;
@@ -81,10 +85,10 @@ interface InventoryItem {
 ```
 
 ### Mock Data (`src/data/mockInventory.ts`)
-- 30 pre-populated `InventoryItem` records representing rental clothing (dresses, gowns, suits, jumpsuits, etc.).
-- Brands include: Asava, Disaya, Sretsis, Kloset, Self-Portrait, Zimmermann, Reformation, Theory, etc.
-- Prices are in Thai Baht (฿), ranging from ฿700 to ฿7,600 depending on duration.
-- Statuses are mixed: `available`, `reserved`, `laundry`.
+- 43 pre-populated `InventoryItem` records extracted from stock data.
+- Brands include: Avaalene, Bikini Girl, Chau Hy, Dieu Ann, Duex, Feelfree, Serlyn, Glitmon, Mellow, MHA, NaryStudio, Rudy.co, TBB, etc.
+- Extracted local asset files in `src/assets/images/` imported statically (Vite asset pipeline with hashed filenames for caching).
+- Statuses: `available` (ว่าง) and `reserved` (รอของ).
 
 ### InventoryCard Component (`src/components/InventoryCard.tsx`)
 Displays a single item card with React-bound responsive layout adaptation (`useIsMobile` hook) and 100% native Beer CSS typography/styling (no custom CSS):
