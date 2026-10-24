@@ -9,7 +9,7 @@ The project uses [Beer CSS](https://www.beercss.com/) which implements Material 
 ### Common Semantic Elements & Classes
 - **Surfaces & Cards**:
   - `<article className="border round">` &mdash; Outlined content card container.
-  - `<article className="inventory-card no-padding round border">` &mdash; Inventory item card (image flush to top, metadata padded inside).
+  - `<article className="no-padding round">` &mdash; Standard Beer CSS card with top-flush media (`<img className="responsive small top-round">`) and inner `<div className="padding">`.
   - `<div className="card fill surface-container-low round padding">` &mdash; Elevated settings/info card.
 - **Grids & Layouts**:
   - `<div className="grid">` with responsive columns like `<div className="s12 m6 l4">` (full width on small, 2-col on medium, 3-col on large).
