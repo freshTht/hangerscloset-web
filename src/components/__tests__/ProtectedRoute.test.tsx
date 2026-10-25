@@ -67,7 +67,10 @@ describe('ProtectedRoute', () => {
       </AuthProvider>
     );
 
-    expect(screen.getByText('กำลังตรวจสอบสิทธิ์...')).toBeInTheDocument();
+    const statusElement = screen.getByRole('status', { name: /กำลังตรวจสอบสิทธิ์/i });
+    expect(statusElement).toBeInTheDocument();
+    expect(statusElement).toHaveClass('shape', 'loading-indicator', 'extra');
+    expect(screen.queryByText('กำลังตรวจสอบสิทธิ์...')).not.toBeInTheDocument();
     expect(screen.queryByText('Secret Content')).not.toBeInTheDocument();
   });
 

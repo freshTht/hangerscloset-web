@@ -18,45 +18,14 @@ export const UnauthorizedPage: React.FC = () => {
     <div
       className="center-align middle-align padding"
       style={{
-        minHeight: '80vh',
+        minHeight: '100dvh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
-        overflow: 'hidden',
       }}
     >
-      {/* Background Google Pixel / Material You decorative ambient shapes (uncovered) */}
-      <div
-        className="shape flower slow-rotate primary-container"
-        style={{
-          position: 'absolute',
-          top: '8%',
-          left: '5%',
-          width: '16rem',
-          height: '16rem',
-          opacity: 0.12,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-        aria-hidden="true"
-      />
-      <div
-        className="shape wavy-circle rotate tertiary-container"
-        style={{
-          position: 'absolute',
-          bottom: '8%',
-          right: '5%',
-          width: '18rem',
-          height: '18rem',
-          opacity: 0.12,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Main Content Layout (without outer covering card) */}
+      {/* Main Content Layout */}
       <div
         style={{
           maxWidth: '380px',
@@ -65,7 +34,6 @@ export const UnauthorizedPage: React.FC = () => {
           zIndex: 1,
         }}
       >
-        {/* Header Title */}
         <div className="center-align">
           <h5 className="bold no-margin">คุณไม่มีสิทธิ์เข้าถึง</h5>
           <div className="tiny-space"></div>

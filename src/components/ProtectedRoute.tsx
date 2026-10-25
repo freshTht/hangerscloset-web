@@ -13,12 +13,21 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (loading || checkingAccess) {
     return (
-      <div className="center-align middle-align padding" style={{ minHeight: '60vh' }}>
-        <div className="center-align">
-          <progress className="circle large"></progress>
-          <div className="space"></div>
-          <p className="secondary-text">กำลังตรวจสอบสิทธิ์...</p>
-        </div>
+      <div
+        className="center-align middle-align padding"
+        style={{
+          minHeight: '100dvh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
+      >
+        <div
+          className="shape loading-indicator extra"
+          role="status"
+          aria-label="กำลังตรวจสอบสิทธิ์"
+        />
       </div>
     );
   }

@@ -1,15 +1,25 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { InventoryPage } from './pages/InventoryPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { MaterialShapesBackground } from './components/MaterialShapesBackground';
+
+const PersistentBackground: React.FC = () => {
+  const { user, isAuthorized, loading, checkingAccess } = useAuth();
+  // Persistent uninterrupted background during login, checking, and unauthorized states
+  const showBg = !user || loading || checkingAccess || !isAuthorized;
+
+  return <MaterialShapesBackground active={showBg} />;
+};
 
 export const App: React.FC = () => {
   return (
     <AuthProvider>
+      <PersistentBackground />
       <BrowserRouter>
         <Routes>
           {/* Public login route */}
