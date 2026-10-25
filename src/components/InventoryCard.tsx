@@ -2,6 +2,7 @@ import React from 'react';
 import ui from 'beercss';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { LazyImage } from './LazyImage';
 
 interface InventoryCardProps {
   item: InventoryItem;
@@ -103,18 +104,15 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
           alignItems: 'stretch',
         }}
       >
-        <img
+        <LazyImage
           className="left-round"
           src={item.imageUrl}
           alt={item.name}
-          loading="lazy"
-          decoding="async"
-          style={{
+          containerStyle={{
             width: 120,
             minWidth: 120,
             maxWidth: 120,
             alignSelf: 'stretch',
-            objectFit: 'cover',
             flexShrink: 0,
           }}
         />
@@ -174,17 +172,13 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
       className="no-padding round vertical"
       style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
     >
-      <img
+      <LazyImage
         className="top-round"
         src={item.imageUrl}
         alt={item.name}
-        loading="lazy"
-        decoding="async"
-        style={{
+        containerStyle={{
           width: '100%',
           aspectRatio: '1 / 1',
-          objectFit: 'cover',
-          display: 'block',
         }}
       />
       <div

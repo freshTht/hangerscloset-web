@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { LazyImage } from '../components/LazyImage';
 
 export const UnauthorizedPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -45,11 +46,12 @@ export const UnauthorizedPage: React.FC = () => {
         {/* User account info card */}
         <div className="card surface-container-high round padding center-align">
           {user?.photoURL ? (
-            <img
+            <LazyImage
               src={user.photoURL}
               alt={user.displayName || 'ผู้ใช้งาน'}
-              className="circle medium margin-bottom"
-              style={{ width: '56px', height: '56px', objectFit: 'cover' }}
+              className="circle medium"
+              fallbackIcon="account_circle"
+              containerStyle={{ width: '56px', height: '56px', margin: '0 auto 12px auto' }}
             />
           ) : (
             <i className="large circle secondary-text">account_circle</i>
@@ -69,7 +71,7 @@ export const UnauthorizedPage: React.FC = () => {
             disabled={signingOut}
           >
             {signingOut ? (
-              <progress className="circle small"></progress>
+              <div className="shape loading-indicator small" role="status" />
             ) : (
               <>
                 <i>logout</i>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ui from 'beercss';
 import { useAuth } from '../contexts/AuthContext';
 import { ModeBadge } from '../components/ModeBadge';
+import { LazyImage } from '../components/LazyImage';
 
 export const SettingsPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -40,11 +41,12 @@ export const SettingsPage: React.FC = () => {
         <article className="border round medium-padding margin-bottom surface-container-low">
           <div className="row items-center">
             {user.photoURL ? (
-              <img
+              <LazyImage
                 src={user.photoURL}
                 alt={user.displayName || 'ผู้ใช้งาน'}
                 className="circle large"
-                style={{ width: '56px', height: '56px', objectFit: 'cover' }}
+                fallbackIcon="person"
+                containerStyle={{ width: '56px', height: '56px', flexShrink: 0 }}
               />
             ) : (
               <i className="extra circle surface-container-high primary-text">person</i>
@@ -75,7 +77,7 @@ export const SettingsPage: React.FC = () => {
               disabled={signingOut}
             >
               {signingOut ? (
-                <progress className="circle small"></progress>
+                <div className="shape loading-indicator small" role="status" />
               ) : (
                 <>
                   <i>logout</i>
@@ -94,7 +96,7 @@ export const SettingsPage: React.FC = () => {
               disabled={signingOut}
             >
               {signingOut ? (
-                <progress className="circle small"></progress>
+                <div className="shape loading-indicator small" role="status" />
               ) : (
                 <>
                   <i>logout</i>
