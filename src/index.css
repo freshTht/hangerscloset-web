@@ -260,4 +260,40 @@ body.dark .material-shapes-bg-hanger {
   opacity: 0.22;
 }
 
+/* Skeleton Loading Shimmer & Glowing Blinking Pulse */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.35;
+    filter: brightness(1.25);
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-container-high) 25%,
+    var(--surface-variant) 37%,
+    var(--surface-container-high) 63%
+  );
+  background-size: 400% 100%;
+  animation:
+    skeleton-shimmer 2s ease-in-out infinite,
+    skeleton-pulse 1.6s ease-in-out infinite;
+  display: block;
+}
+
+
 

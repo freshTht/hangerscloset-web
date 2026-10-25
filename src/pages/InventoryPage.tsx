@@ -1,6 +1,7 @@
 import React from 'react';
 import ui from 'beercss';
 import { InventoryCard } from '../components/InventoryCard';
+import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
 import { useInventory } from '../hooks/useInventory';
 
 export const InventoryPage: React.FC = () => {
@@ -87,12 +88,12 @@ export const InventoryPage: React.FC = () => {
   return (
     <>
       {loading ? (
-        <div className="center-align middle-align padding" style={{ minHeight: '50vh' }}>
-          <div>
-            <progress className="circle large"></progress>
-            <div className="space"></div>
-            <p className="secondary-text">กำลังโหลดรายการสินค้า...</p>
-          </div>
+        <div className="grid" aria-busy="true" aria-label="กำลังโหลดรายการสินค้า">
+          {Array.from({ length: 6 }).map((_, idx) => (
+            <div key={idx} className="s12 m6 l4">
+              <InventoryCardSkeleton />
+            </div>
+          ))}
         </div>
       ) : error ? (
         <article className="border error-container round margin">

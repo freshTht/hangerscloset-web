@@ -61,6 +61,11 @@ Beer CSS automatically manages the `body.light` / `body.dark` classes and dynami
 ## Action Buttons & Danger States
 - **Neutral Outlined Variant**: Destructive or session-ending buttons such as logout should prefer the clean outlined style (`button.border.round`) rather than high-contrast solid red fills (`.error`), keeping surface aesthetics calm and glare-free.
 
+## Loading State Standards
+- **Never Use Radial Spinners**: Do NOT use radial circular spinners (`progress.circle` / `<progress className="circle">`) for page or content loading states.
+- **Content Views (Catalogs / Grids / Lists)**: Always build and display responsive **Skeleton Loaders** (e.g. [`<InventoryCardSkeleton />`](../src/components/InventoryCardSkeleton.tsx)) that mirror the exact layout, geometry, and responsive behavior of the content cards across all screen sizes (`s`, `m`, `l`) to prevent layout shift.
+- **Generic / Full-Screen Transitions**: Use Beer CSS's Material You animated shape loading indicator (`<div className="shape loading-indicator extra" role="status" />`) centered in the viewport without extra distracting text.
+
 ## Mobile Usability Rules
 1. **Tap Targets**: Every interactive element (tabs, buttons, links) must have at least $48\text{px} \times 48\text{px}$ touch target area.
 2. **Tab Bar**:

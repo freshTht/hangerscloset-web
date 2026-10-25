@@ -21,3 +21,4 @@ Detailed, agent-agnostic project documentation is maintained in the [`.context/`
 6. **Git Commits**: Do NOT auto-commit changes at the end of turns. Only create git commits when the user explicitly requests one.
 7. **Mode Badge**: Only show for mock data mode (`<ModeBadge />`). In Firebase/production mode, it remains hidden to keep the UI clean.
 8. **Logout Button**: Use the clean neutral outlined variant (`button.border.round`) without red fill.
+9. **Loading States**: Never use radial spinners (`progress.circle`). Either build a responsive Skeleton Loader matching the content cards geometry across all screen sizes or use Beer CSS `.shape.loading-indicator` for generic/transition loading.

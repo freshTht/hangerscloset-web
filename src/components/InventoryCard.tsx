@@ -108,6 +108,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
           src={item.imageUrl}
           alt={item.name}
           loading="lazy"
+          decoding="async"
           style={{
             width: 120,
             minWidth: 120,
@@ -178,6 +179,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
         src={item.imageUrl}
         alt={item.name}
         loading="lazy"
+        decoding="async"
         style={{
           width: '100%',
           aspectRatio: '1 / 1',

@@ -16,4 +16,5 @@ Welcome to `hangerscloset-web`. Detailed project context and operational guides 
 - **Mobile First**: Prioritize touch targets ($\ge 48\text{px}$) and responsive tab layouts
 - **Mode Badge**: Only show for mock data mode (`<ModeBadge />`). In Firebase mode, it remains hidden.
 - **Logout Button**: Use the clean outlined variant (`button.border.round`) without red fill.
+- **Loading States**: Never use radial spinners (`progress.circle`). Build responsive Skeleton Loaders for content or use Beer CSS `.shape.loading-indicator` for generic transitions.
 - **No Auto-Committing**: Do NOT create git commits automatically unless explicitly requested by the user.
