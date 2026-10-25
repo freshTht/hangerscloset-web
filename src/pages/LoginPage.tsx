@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleSignInButton } from '../components/GoogleSignInButton';
+import { ModeBadge } from '../components/ModeBadge';
 
 export const LoginPage: React.FC = () => {
-  const { user, loading, provider, signInWithGoogle } = useAuth();
+  const { user, loading, signInWithGoogle } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const location = useLocation();
@@ -64,21 +65,7 @@ export const LoginPage: React.FC = () => {
           {/* App Name & Simple Mode Badge */}
           <div className="row center-align items-center" style={{ gap: '10px' }}>
             <h3 className="bold no-margin">Hanger's Closet</h3>
-            {provider === 'mock' && (
-              <span
-                className="chip fill error small bold"
-                style={{
-                  padding: '2px 8px',
-                  height: 'auto',
-                  fontSize: '0.75rem',
-                  borderRadius: '6px',
-                  letterSpacing: '0.05em',
-                  fontWeight: 700,
-                }}
-              >
-                MOCK
-              </span>
-            )}
+            <ModeBadge />
           </div>
 
           <div className="large-space"></div>

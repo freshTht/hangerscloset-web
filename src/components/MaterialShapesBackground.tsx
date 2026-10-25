@@ -42,27 +42,25 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
     >
       {/* Top-left corner decorative shape */}
       <div
-        className="shape flower slow-rotate primary-container"
+        className="shape flower slow-rotate primary-container material-shapes-bg-flower"
         style={{
           position: 'absolute',
           top: '-4rem',
           left: '-4rem',
           width: '18rem',
           height: '18rem',
-          opacity: 0.08,
         }}
       />
 
       {/* Bottom-right corner decorative shape */}
       <div
-        className="shape wavy-circle slow-rotate tertiary-container"
+        className="shape wavy-circle slow-rotate tertiary-container material-shapes-bg-wavy"
         style={{
           position: 'absolute',
           bottom: '-5rem',
           right: '-5rem',
           width: '20rem',
           height: '20rem',
-          opacity: 0.08,
         }}
       />
 
@@ -78,12 +76,12 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
         }}
       >
         <div
+          className="material-shapes-bg-hanger"
           style={{
             width: '100%',
             height: '100%',
             transformOrigin: '50% 8%',
             animation: 'hanger-sway 6s ease-in-out infinite',
-            opacity: 0.12,
           }}
         >
           <HangerIcon size={170} className="primary-text" />

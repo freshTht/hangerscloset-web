@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import ui from 'beercss';
 import { useAuth } from '../contexts/AuthContext';
+import { ModeBadge } from '../components/ModeBadge';
 
 export const SettingsPage: React.FC = () => {
-  const { user, provider, signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState<boolean>(false);
   const [isDark, setIsDark] = useState<boolean>(() => {
     return document.body.classList.contains('dark');
@@ -48,25 +49,47 @@ export const SettingsPage: React.FC = () => {
             ) : (
               <i className="extra circle surface-container-high primary-text">person</i>
             )}
-            <div className="max">
-              <h6 className="bold no-margin">{user.displayName || 'ผู้ใช้งาน'}</h6>
-              <p className="no-margin secondary-text small-text">{user.email || 'ไม่มีอีเมล'}</p>
-              <div className="tiny-space"></div>
-              {provider === 'mock' ? (
-                <span className="chip fill secondary-container small">
-                  <i>science</i>
-                  <span>โหมดจำลอง (Mock)</span>
-                </span>
-              ) : (
-                <span className="chip fill primary-container small">
-                  <i>cloud</i>
-                  <span>โหมดออนไลน์ (Firebase)</span>
-                </span>
-              )}
+            <div className="max" style={{ minWidth: 0 }}>
+              <div className="row items-center no-margin" style={{ gap: '8px' }}>
+                <h6
+                  className="bold no-margin"
+                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                >
+                  {user.displayName || 'ผู้ใช้งาน'}
+                </h6>
+                <ModeBadge />
+              </div>
+              <p
+                className="no-margin secondary-text small-text"
+                style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {user.email || 'ไม่มีอีเมล'}
+              </p>
             </div>
+
+            {/* Logout Button on medium/large screens (Neutral outlined, no red) */}
             <button
               type="button"
-              className="error border round"
+              className="border round m l"
+              onClick={handleSignOut}
+              disabled={signingOut}
+            >
+              {signingOut ? (
+                <progress className="circle small"></progress>
+              ) : (
+                <>
+                  <i>logout</i>
+                  <span>ออกจากระบบ</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Full-width Logout Button on small mobile screens (Neutral outlined, no red) */}
+          <div className="s margin-top">
+            <button
+              type="button"
+              className="border round responsive"
               onClick={handleSignOut}
               disabled={signingOut}
             >

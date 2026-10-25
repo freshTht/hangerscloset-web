@@ -229,3 +229,35 @@ body.dark .status-badge-laundry {
   }
 }
 
+/* Ambient Material Shapes Background (Pixel style) */
+.material-shapes-bg-flower,
+.material-shapes-bg-wavy,
+.material-shapes-bg-hanger {
+  transition: opacity 0.3s ease;
+}
+
+.material-shapes-bg-flower {
+  opacity: 0.75;
+}
+
+.material-shapes-bg-wavy {
+  opacity: 0.75;
+}
+
+.material-shapes-bg-hanger {
+  opacity: 0.28;
+}
+
+body.dark .material-shapes-bg-flower {
+  opacity: 0.30;
+}
+
+body.dark .material-shapes-bg-wavy {
+  opacity: 0.30;
+}
+
+body.dark .material-shapes-bg-hanger {
+  opacity: 0.22;
+}
+
+

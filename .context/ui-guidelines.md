@@ -54,6 +54,13 @@ ui('mode', 'light');
 ```
 Beer CSS automatically manages the `body.light` / `body.dark` classes and dynamically recalculates CSS custom properties for surfaces, on-surfaces, primary, and secondary color variables.
 
+## Mode Badge & Environment Indicators
+- **Preferable Behavior**: Mode indicators (e.g., `<ModeBadge />`) must only display when running in **`mock`** data mode (rendering a subtle red `MOCK` chip). In production / **`firebase`** mode, the badge is **hidden** entirely to keep the interface clean, professional, and free of redundant clutter.
+- **Shared Component**: Always reuse the shared [`<ModeBadge />`](../src/components/ModeBadge.tsx) component across all views (e.g. `LoginPage`, `SettingsPage`) rather than writing ad-hoc chip badges.
+
+## Action Buttons & Danger States
+- **Neutral Outlined Variant**: Destructive or session-ending buttons such as logout should prefer the clean outlined style (`button.border.round`) rather than high-contrast solid red fills (`.error`), keeping surface aesthetics calm and glare-free.
+
 ## Mobile Usability Rules
 1. **Tap Targets**: Every interactive element (tabs, buttons, links) must have at least $48\text{px} \times 48\text{px}$ touch target area.
 2. **Tab Bar**:

@@ -14,4 +14,6 @@ Welcome to `hangerscloset-web`. Detailed project context and operational guides 
 - **Theme**: Light / Dark mode via Beer CSS `ui('mode')`
 - **Beer CSS First**: Always explore and use Beer CSS built-in semantic elements and utility classes before writing custom CSS.
 - **Mobile First**: Prioritize touch targets ($\ge 48\text{px}$) and responsive tab layouts
+- **Mode Badge**: Only show for mock data mode (`<ModeBadge />`). In Firebase mode, it remains hidden.
+- **Logout Button**: Use the clean outlined variant (`button.border.round`) without red fill.
 - **No Auto-Committing**: Do NOT create git commits automatically unless explicitly requested by the user.

@@ -19,3 +19,5 @@ Detailed, agent-agnostic project documentation is maintained in the [`.context/`
 4. **Mobile First**: Prioritize responsive touch targets ($\ge 48\text{px}$), adaptive tab layouts, and safe areas on mobile screens.
 5. **Validation**: After modifying code, always verify by running `pnpm build` (`tsc -b && vite build`) to ensure type safety and bundling pass without errors.
 6. **Git Commits**: Do NOT auto-commit changes at the end of turns. Only create git commits when the user explicitly requests one.
+7. **Mode Badge**: Only show for mock data mode (`<ModeBadge />`). In Firebase/production mode, it remains hidden to keep the UI clean.
+8. **Logout Button**: Use the clean neutral outlined variant (`button.border.round`) without red fill.
