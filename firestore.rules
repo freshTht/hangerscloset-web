@@ -7,6 +7,13 @@ service cloud.firestore {
     // Assumed Data Model
     // ===============================================================
     //
+    // Collection: allowed_users
+    // Document ID: email (lowercase, e.g. "fresh.thit@gmail.com")
+    // Fields:
+    //   - email: string (required) - User email address
+    //   - enabled: bool (optional, defaults to true) - Active status
+    //   - role: string (optional) - e.g. "admin", "staff"
+    //
     // Collection: inventory
     // Document ID: itemId (or clothing code, e.g. "AVL01")
     // Fields:
@@ -41,6 +48,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Check if the authenticated user's email exists in the allowed_users collection
+    function isAllowedUser() {
+      return isAuthenticated() && (
+        exists(/databases/$(database)/documents/allowed_users/$(request.auth.token.email))
+      );
+    }
+
     function isValidStatus(status) {
       return status in ['available', 'reserved', 'laundry'];
     }
@@ -54,7 +68,6 @@ service cloud.firestore {
         prices.fiveDays is number && prices.fiveDays >= 0 && prices.fiveDays <= 100000;
     }
 
-    // Domain Validator: Enforces strict types, bounds, and schema
     function isValidInventoryItem(data) {
       let requiredFields = ['name', 'code', 'brand', 'color', 'size', 'imageUrl', 'rentalPrices', 'status'];
       let allowedFields = ['name', 'code', 'brand', 'color', 'size', 'type', 'accessories', 'owner', 'imageFile', 'imageUrl', 'rentalPrices', 'status'];
@@ -76,22 +89,29 @@ service cloud.firestore {
     }
 
     // ===============================================================
+    // Collection: allowed_users
+    // ===============================================================
+    match /allowed_users/{email} {
+      // Authenticated users can check their own email entry to determine authorization
+      allow get: if isAuthenticated() && request.auth.token.email == email;
+      // Modifications to allowed_users are restricted to administrative tools
+      allow write: if false;
+    }
+
+    // ===============================================================
     // Collection: inventory
     // ===============================================================
     match /inventory/{itemId} {
-      // Only authenticated users can read inventory items
-      allow read: if isAuthenticated();
+      // Only users in the allowed_users collection can read or modify inventory
+      allow read: if isAllowedUser();
 
-      // Creating a new item requires valid schema
-      allow create: if isAuthenticated() && isValidInventoryItem(request.resource.data);
+      allow create: if isAllowedUser() && isValidInventoryItem(request.resource.data);
 
-      // Updating item requires valid schema and immutable stock code
-      allow update: if isAuthenticated() &&
+      allow update: if isAllowedUser() &&
         isValidInventoryItem(request.resource.data) &&
         request.resource.data.code == resource.data.code;
 
-      // Deletion is permitted for authenticated users
-      allow delete: if isAuthenticated();
+      allow delete: if isAllowedUser();
     }
   }
 }

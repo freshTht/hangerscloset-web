@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ProtectedRoute } from '../ProtectedRoute';
 import { AuthProvider } from '../../contexts/AuthContext';
 import type { IAuthService, AuthUser } from '../../services/auth';
+import type { IAccessControlService } from '../../services/accessControl';
 
 class TestAuthService implements IAuthService {
   readonly providerName = 'mock' as const;
@@ -35,12 +36,22 @@ class TestAuthService implements IAuthService {
   }
 }
 
+class TestAccessControl implements IAccessControlService {
+  private allowed: boolean;
+  constructor(allowed = true) {
+    this.allowed = allowed;
+  }
+  async checkIsAuthorized(): Promise<boolean> {
+    return this.allowed;
+  }
+}
+
 describe('ProtectedRoute', () => {
   it('renders loading indicator while authentication status is resolving', () => {
     const testService = new TestAuthService(null, true);
 
     render(
-      <AuthProvider service={testService}>
+      <AuthProvider service={testService} accessControl={new TestAccessControl(true)}>
         <MemoryRouter initialEntries={['/protected']}>
           <Routes>
             <Route
@@ -64,7 +75,7 @@ describe('ProtectedRoute', () => {
     const testService = new TestAuthService(null, false);
 
     render(
-      <AuthProvider service={testService}>
+      <AuthProvider service={testService} accessControl={new TestAccessControl(true)}>
         <MemoryRouter initialEntries={['/protected']}>
           <Routes>
             <Route
@@ -85,17 +96,18 @@ describe('ProtectedRoute', () => {
     expect(screen.queryByText('Secret Content')).not.toBeInTheDocument();
   });
 
-  it('renders protected child component when user is authenticated', () => {
+  it('renders UnauthorizedPage when user is authenticated but not in allowlist', async () => {
     const testUser: AuthUser = {
-      uid: 'user-1',
-      displayName: 'Test User',
-      email: 'test@example.com',
+      uid: 'user-unauth',
+      displayName: 'Unapproved User',
+      email: 'intruder@example.com',
       photoURL: null,
     };
     const testService = new TestAuthService(testUser, false);
+    const testAccess = new TestAccessControl(false);
 
     render(
-      <AuthProvider service={testService}>
+      <AuthProvider service={testService} accessControl={testAccess}>
         <MemoryRouter initialEntries={['/protected']}>
           <Routes>
             <Route
@@ -111,7 +123,42 @@ describe('ProtectedRoute', () => {
       </AuthProvider>
     );
 
-    expect(screen.getByText('Secret Content')).toBeInTheDocument();
-    expect(screen.queryByText('กำลังตรวจสอบสิทธิ์...')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('คุณไม่มีสิทธิ์เข้าถึง')).toBeInTheDocument();
+    });
+    expect(screen.getByText('หากมีข้อสงสัยเพิ่มเติม โปรดติดต่อ admin')).toBeInTheDocument();
+    expect(screen.queryByText('Secret Content')).not.toBeInTheDocument();
+  });
+
+  it('renders protected child component when user is authenticated and authorized', async () => {
+    const testUser: AuthUser = {
+      uid: 'user-1',
+      displayName: 'Allowed User',
+      email: 'allowed@example.com',
+      photoURL: null,
+    };
+    const testService = new TestAuthService(testUser, false);
+    const testAccess = new TestAccessControl(true);
+
+    render(
+      <AuthProvider service={testService} accessControl={testAccess}>
+        <MemoryRouter initialEntries={['/protected']}>
+          <Routes>
+            <Route
+              path="/protected"
+              element={
+                <ProtectedRoute>
+                  <div>Secret Content</div>
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </MemoryRouter>
+      </AuthProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('Secret Content')).toBeInTheDocument();
+    });
   });
 });
