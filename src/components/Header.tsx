@@ -12,14 +12,6 @@ export const Header: React.FC = () => {
       {/* Default Tabs on small screens */}
       <div className="tabs s">
         <NavLink
-          to="/"
-          end
-          className={({ isActive }) => (isActive ? 'active' : '')}
-        >
-          <i>home</i>
-          <span>หน้าหลัก</span>
-        </NavLink>
-        <NavLink
           to="/inventory"
           className={({ isActive }) => (isActive ? 'active' : '')}
         >

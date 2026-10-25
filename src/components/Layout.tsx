@@ -9,7 +9,6 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: '/', label: 'หน้าหลัก', icon: 'home' },
   { to: '/inventory', label: 'คลังสินค้า', icon: 'inventory_2' },
   { to: '/settings', label: 'การตั้งค่า', icon: 'settings' },
 ];
@@ -21,7 +20,6 @@ export const Layout: React.FC = () => {
         <NavLink
           key={item.to}
           to={item.to}
-          end={item.to === '/'}
           className={({ isActive }) => (isActive ? 'active' : '')}
           title={item.label}
         >

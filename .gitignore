@@ -10,6 +10,12 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Environment files
+.env.local
+.env.*.local
+.env.firebase.local
+.env.production.local
+
 *.local
 *.tsbuildinfo
 

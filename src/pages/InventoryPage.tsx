@@ -1,10 +1,11 @@
 import React from 'react';
 import ui from 'beercss';
 import { InventoryCard } from '../components/InventoryCard';
-import { mockInventory } from '../data/mockInventory';
+import { useInventory } from '../hooks/useInventory';
 
 export const InventoryPage: React.FC = () => {
-  const itemCount = mockInventory.length;
+  const { items, loading, error, provider } = useInventory();
+  const itemCount = items.length;
 
   const openDialog = (id: string) => {
     void ui(`#${id}`);
@@ -85,13 +86,43 @@ export const InventoryPage: React.FC = () => {
 
   return (
     <>
-      <div className="grid">
-        {mockInventory.map((item) => (
-          <div key={item.id} className="s12 m6 l4">
-            <InventoryCard item={item} />
+      {loading ? (
+        <div className="center-align middle-align padding" style={{ minHeight: '50vh' }}>
+          <div>
+            <progress className="circle large"></progress>
+            <div className="space"></div>
+            <p className="secondary-text">กำลังโหลดรายการสินค้า...</p>
           </div>
-        ))}
-      </div>
+        </div>
+      ) : error ? (
+        <article className="border error-container round margin">
+          <div className="row items-center">
+            <i className="error-text">error</i>
+            <div className="max">
+              <h6 className="bold no-margin error-text">เกิดข้อผิดพลาดในการโหลดข้อมูล</h6>
+              <p className="no-margin secondary-text">{error.message}</p>
+            </div>
+          </div>
+        </article>
+      ) : items.length === 0 ? (
+        <div className="center-align middle-align padding" style={{ minHeight: '50vh' }}>
+          <i className="extra secondary-text">inventory_2</i>
+          <h5 className="secondary-text">ไม่พบรายการเสื้อผ้าในคลัง</h5>
+          <p className="secondary-text">
+            {provider === 'firebase'
+              ? 'คุณสามารถใช้คำสั่ง pnpm seed:firestore เพื่อนำเข้าข้อมูลจำลองเริ่มต้น'
+              : 'ยังไม่มีข้อมูลในคลังสินค้า'}
+          </p>
+        </div>
+      ) : (
+        <div className="grid">
+          {items.map((item) => (
+            <div key={item.id} className="s12 m6 l4">
+              <InventoryCard item={item} />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Spacing using Beer CSS built-in helpers */}
       <div className="extra-space"></div>
