@@ -60,6 +60,45 @@ export class MockInventoryRepository implements IInventoryRepository {
     this.notifyListeners();
     return newId;
   }
+
+  async updateItem(
+    id: string,
+    itemData: Partial<Omit<InventoryItem, 'id'>>
+  ): Promise<void> {
+    const index = this.items.findIndex((item) => item.id === id);
+    if (index === -1) {
+      throw new Error(`Item with id "${id}" not found.`);
+    }
+
+    const updated: InventoryItem = {
+      ...this.items[index],
+      ...itemData,
+      id, // ensure ID is never overridden
+      rentalPrices: itemData.rentalPrices
+        ? { ...this.items[index].rentalPrices, ...itemData.rentalPrices }
+        : this.items[index].rentalPrices,
+    };
+
+    this.items = [
+      ...this.items.slice(0, index),
+      updated,
+      ...this.items.slice(index + 1),
+    ];
+    this.notifyListeners();
+  }
+
+  async deleteItem(id: string): Promise<void> {
+    const index = this.items.findIndex((item) => item.id === id);
+    if (index === -1) {
+      throw new Error(`Item with id "${id}" not found.`);
+    }
+
+    this.items = [
+      ...this.items.slice(0, index),
+      ...this.items.slice(index + 1),
+    ];
+    this.notifyListeners();
+  }
 }
 
 export const mockInventoryRepository = new MockInventoryRepository();

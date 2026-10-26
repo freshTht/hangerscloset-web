@@ -1,14 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ui from 'beercss';
 import { InventoryCard } from '../components/InventoryCard';
 import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
+import { InventorySheet } from '../components/InventorySheet';
 import { useInventory } from '../hooks/useInventory';
+import type { InventoryItem } from '../types/inventory';
+
+interface SheetState {
+  isOpen: boolean;
+  mode: 'add' | 'edit';
+  item?: InventoryItem | null;
+}
 
 export const InventoryPage: React.FC = () => {
-  const { items, loading, error, provider } = useInventory();
+  const { items, loading, error, provider, addItem, updateItem, deleteItem } = useInventory();
   const itemCount = items.length;
 
-  const openDialog = (id: string) => {
+  const [sheetState, setSheetState] = useState<SheetState>({
+    isOpen: false,
+    mode: 'add',
+    item: null,
+  });
+
+  const handleOpenAdd = () => {
+    setSheetState({
+      isOpen: true,
+      mode: 'add',
+      item: null,
+    });
+  };
+
+  const handleOpenEdit = (item: InventoryItem) => {
+    setSheetState({
+      isOpen: true,
+      mode: 'edit',
+      item,
+    });
+  };
+
+  const handleCloseSheet = () => {
+    setSheetState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleSubmitSheet = async (data: Omit<InventoryItem, 'id'>) => {
+    if (sheetState.mode === 'edit' && sheetState.item) {
+      await updateItem(sheetState.item.id, data);
+    } else {
+      await addItem(data);
+    }
+  };
+
+  const handleDeleteSheet = async (id: string) => {
+    await deleteItem(id);
+  };
+
+  const openSortDialog = (id: string) => {
     void ui(`#${id}`);
   };
 
@@ -34,23 +80,29 @@ export const InventoryPage: React.FC = () => {
     });
   };
 
-  const renderFloatingBar = (dialogId: string) => (
+  const renderFloatingBar = (sortDialogId: string) => (
     <nav className="center-align tiny-space">
       <nav className="toolbar secondary-container medium-elevate">
         <span className="bold">{itemCount} ชุด</span>
         <button
           className="circle transparent no-margin"
           type="button"
-          onClick={() => openDialog(dialogId)}
+          onClick={() => {
+            if (items.length > 0) {
+              handleOpenEdit(items[0]);
+            } else {
+              handleOpenAdd();
+            }
+          }}
           aria-label="แก้ไข"
-          title="แก้ไข"
+          title="แก้ไขชุด"
         >
           <i>edit</i>
         </button>
         <button
           className="circle transparent no-margin"
           type="button"
-          onClick={() => openDialog(dialogId)}
+          onClick={() => openSortDialog(sortDialogId)}
           aria-label="จัดเรียง"
           title="จัดเรียง"
         >
@@ -60,7 +112,7 @@ export const InventoryPage: React.FC = () => {
       <button
         className="extra circle primary medium-elevate no-margin"
         type="button"
-        onClick={() => openDialog(dialogId)}
+        onClick={handleOpenAdd}
         aria-label="เพิ่มชุด"
         title="เพิ่มชุด"
       >
@@ -72,7 +124,7 @@ export const InventoryPage: React.FC = () => {
   const renderDialogContent = (dialogId: string) => (
     <>
       <h5>Coming soon</h5>
-      <p>Thanks for your interest :)</p>
+      <p>ระบบจัดเรียงสินค้ากำลังอยู่ระหว่างพัฒนา :)</p>
       <nav className="right-align">
         <button
           className="border"
@@ -111,15 +163,24 @@ export const InventoryPage: React.FC = () => {
           <h5 className="secondary-text">ไม่พบรายการเสื้อผ้าในคลัง</h5>
           <p className="secondary-text">
             {provider === 'firebase'
-              ? 'คุณสามารถใช้คำสั่ง pnpm seed:firestore เพื่อนำเข้าข้อมูลจำลองเริ่มต้น'
-              : 'ยังไม่มีข้อมูลในคลังสินค้า'}
+              ? 'คุณสามารถใช้คำสั่ง pnpm seed:firestore เพื่อนำเข้าข้อมูลจำลองเริ่มต้น หรือกดปุ่ม + ด้านล่างเพื่อเพิ่มชุด'
+              : 'ยังไม่มีข้อมูลในคลังสินค้า กดปุ่ม + ด้านล่างเพื่อเพิ่มชุดใหม่'}
           </p>
+          <div className="space" />
+          <button
+            type="button"
+            className="primary round"
+            onClick={handleOpenAdd}
+          >
+            <i>add</i>
+            <span>เพิ่มชุดแรก</span>
+          </button>
         </div>
       ) : (
         <div className="grid">
           {items.map((item) => (
             <div key={item.id} className="s12 m6 l4">
-              <InventoryCard item={item} />
+              <InventoryCard item={item} onEdit={handleOpenEdit} />
             </div>
           ))}
         </div>
@@ -139,12 +200,22 @@ export const InventoryPage: React.FC = () => {
         {renderFloatingBar('dialog-coming-soon-m')}
       </div>
 
-      {/* Small screens: Bottom Dialog */}
+      {/* Add / Edit Sheet Component (Responsive bottom sheet on s, right sheet on m/l) */}
+      <InventorySheet
+        isOpen={sheetState.isOpen}
+        mode={sheetState.mode}
+        item={sheetState.item}
+        onClose={handleCloseSheet}
+        onSubmit={handleSubmitSheet}
+        onDelete={handleDeleteSheet}
+      />
+
+      {/* Small screens: Bottom Dialog (Coming soon for Sort) */}
       <dialog id="dialog-coming-soon-s" className="bottom medium-padding s">
         {renderDialogContent('dialog-coming-soon-s')}
       </dialog>
 
-      {/* Medium & Large screens: Default Centered Dialog */}
+      {/* Medium & Large screens: Default Centered Dialog (Coming soon for Sort) */}
       <dialog id="dialog-coming-soon-m" className="medium-padding m l">
         {renderDialogContent('dialog-coming-soon-m')}
       </dialog>

@@ -8,4 +8,6 @@ export interface IInventoryRepository {
   getAll(): Promise<InventoryItem[]>;
   updateStatus(id: string, status: InventoryStatus): Promise<void>;
   addItem(item: Omit<InventoryItem, 'id'>): Promise<string>;
+  updateItem(id: string, item: Partial<Omit<InventoryItem, 'id'>>): Promise<void>;
+  deleteItem(id: string): Promise<void>;
 }

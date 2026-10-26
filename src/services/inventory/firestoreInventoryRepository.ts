@@ -4,6 +4,7 @@ import {
   getDocs,
   onSnapshot,
   updateDoc,
+  deleteDoc,
   addDoc,
   query,
   orderBy,
@@ -97,6 +98,27 @@ export class FirestoreInventoryRepository implements IInventoryRepository {
     const colRef = collection(db, COLLECTION_NAME);
     const docRef = await addDoc(colRef, itemData);
     return docRef.id;
+  }
+
+  async updateItem(
+    id: string,
+    itemData: Partial<Omit<InventoryItem, 'id'>>
+  ): Promise<void> {
+    if (!isFirebaseConfigured || !db) {
+      throw new Error('Firestore is not configured.');
+    }
+
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await updateDoc(docRef, itemData);
+  }
+
+  async deleteItem(id: string): Promise<void> {
+    if (!isFirebaseConfigured || !db) {
+      throw new Error('Firestore is not configured.');
+    }
+
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await deleteDoc(docRef);
   }
 }
 

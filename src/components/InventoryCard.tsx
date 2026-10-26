@@ -6,6 +6,7 @@ import { LazyImage } from './LazyImage';
 
 interface InventoryCardProps {
   item: InventoryItem;
+  onEdit?: (item: InventoryItem) => void;
 }
 
 const STATUS_META: Record<InventoryStatus, { label: string }> = {
@@ -17,7 +18,7 @@ const STATUS_META: Record<InventoryStatus, { label: string }> = {
 const formatPrice = (amount: number): string =>
   `฿${amount.toLocaleString('en-US')}`;
 
-export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
+export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) => {
   const isMobile = useIsMobile();
   const status = STATUS_META[item.status];
 
@@ -125,8 +126,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
         >
           {/* Top: Code & Status, and Title */}
           <div className="vertical" style={{ gap: 4 }}>
-            {/* Top Row: Code & Refined Status Badge */}
-            <div className="row no-margin align-center no-space">
+            {/* Top Row: Code & Refined Status Badge & Edit Action */}
+            <div className="row no-margin align-center no-space" style={{ gap: 6 }}>
               <span className="micro-text secondary-text medium">
                 {item.code}
               </span>
@@ -134,6 +135,21 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
               <span className={`status-badge small status-badge-${item.status}`}>
                 {status.label}
               </span>
+              {onEdit && (
+                <button
+                  type="button"
+                  className="circle transparent no-margin"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onEdit(item);
+                  }}
+                  aria-label={`แก้ไข ${item.code}`}
+                  title="แก้ไขรายการ"
+                  style={{ width: 28, height: 28, minWidth: 28, minHeight: 28, padding: 0 }}
+                >
+                  <i className="tiny">edit</i>
+                </button>
+              )}
             </div>
 
             {/* Title: 2 lines max with Beer typography h6.small.bold */}
@@ -187,12 +203,27 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item }) => {
       >
         {/* Top: Code & Status, and Title */}
         <div className="vertical" style={{ gap: 6 }}>
-          <div className="row no-margin align-center">
+          <div className="row no-margin align-center" style={{ gap: 6 }}>
             <span className="small-text secondary-text">{item.code}</span>
             <div className="max"></div>
             <span className={`status-badge status-badge-${item.status}`}>
               {status.label}
             </span>
+            {onEdit && (
+              <button
+                type="button"
+                className="circle transparent no-margin"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item);
+                }}
+                aria-label={`แก้ไข ${item.code}`}
+                title="แก้ไขรายการ"
+                style={{ width: 32, height: 32, minWidth: 32, minHeight: 32, padding: 0 }}
+              >
+                <i className="small">edit</i>
+              </button>
+            )}
           </div>
 
           {/* Title: Beer typography h6 */}

@@ -13,6 +13,8 @@ interface UseInventoryResult {
   provider: InventoryProviderType;
   updateStatus: (id: string, status: InventoryStatus) => Promise<void>;
   addItem: (item: Omit<InventoryItem, 'id'>) => Promise<string>;
+  updateItem: (id: string, item: Partial<Omit<InventoryItem, 'id'>>) => Promise<void>;
+  deleteItem: (id: string) => Promise<void>;
 }
 
 export function useInventory(
@@ -65,6 +67,34 @@ export function useInventory(
     [repository]
   );
 
+  const updateItem = useCallback(
+    async (id: string, itemData: Partial<Omit<InventoryItem, 'id'>>) => {
+      try {
+        await repository.updateItem(id, itemData);
+      } catch (err: unknown) {
+        const errorObj =
+          err instanceof Error ? err : new Error('Failed to update item');
+        setError(errorObj);
+        throw errorObj;
+      }
+    },
+    [repository]
+  );
+
+  const deleteItem = useCallback(
+    async (id: string) => {
+      try {
+        await repository.deleteItem(id);
+      } catch (err: unknown) {
+        const errorObj =
+          err instanceof Error ? err : new Error('Failed to delete item');
+        setError(errorObj);
+        throw errorObj;
+      }
+    },
+    [repository]
+  );
+
   return {
     items,
     loading,
@@ -72,5 +102,7 @@ export function useInventory(
     provider: repository.providerName,
     updateStatus,
     addItem,
+    updateItem,
+    deleteItem,
   };
 }

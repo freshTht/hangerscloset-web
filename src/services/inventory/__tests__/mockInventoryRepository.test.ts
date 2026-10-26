@@ -85,4 +85,50 @@ describe('MockInventoryRepository', () => {
       expect.arrayContaining([expect.objectContaining({ code: 'GWN03' })])
     );
   });
+
+  it('updateItem updates existing item and notifies subscribers', async () => {
+    const listener = vi.fn();
+    repo.subscribe(listener);
+
+    await repo.updateItem('1', {
+      name: 'Updated Dress A',
+      rentalPrices: { oneDay: 150, threeDays: 250, fiveDays: 350 },
+      color: 'Emerald',
+    });
+
+    const items = await repo.getAll();
+    const updated = items.find((i) => i.id === '1');
+    expect(updated?.name).toBe('Updated Dress A');
+    expect(updated?.color).toBe('Emerald');
+    expect(updated?.rentalPrices.oneDay).toBe(150);
+    expect(listener).toHaveBeenLastCalledWith(
+      expect.arrayContaining([expect.objectContaining({ id: '1', name: 'Updated Dress A' })])
+    );
+  });
+
+  it('updateItem throws error if item not found', async () => {
+    await expect(repo.updateItem('unknown-id', { name: 'X' })).rejects.toThrow(
+      'Item with id "unknown-id" not found.'
+    );
+  });
+
+  it('deleteItem removes item and notifies subscribers', async () => {
+    const listener = vi.fn();
+    repo.subscribe(listener);
+
+    await repo.deleteItem('1');
+
+    const items = await repo.getAll();
+    expect(items).toHaveLength(1);
+    expect(items.find((i) => i.id === '1')).toBeUndefined();
+    expect(listener).toHaveBeenLastCalledWith(
+      expect.not.arrayContaining([expect.objectContaining({ id: '1' })])
+    );
+  });
+
+  it('deleteItem throws error if item not found', async () => {
+    await expect(repo.deleteItem('unknown-id')).rejects.toThrow(
+      'Item with id "unknown-id" not found.'
+    );
+  });
 });
