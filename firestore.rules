@@ -18,7 +18,7 @@ service cloud.firestore {
     // Document ID: itemId (or clothing code, e.g. "AVL01")
     // Fields:
     //   - name: string (required, 1..200 chars) - Display name of apparel item
-    //   - code: string (required, 1..30 chars, immutable on update) - Stock item code
+    //   - code: string (required, 1..30 chars) - Stock item code
     //   - brand: string (required, 0..100 chars) - Brand name
     //   - color: string (required, 0..100 chars) - Color description
     //   - size: string (required, 0..20 chars) - Clothing size (e.g. S, M, L)
@@ -26,7 +26,8 @@ service cloud.firestore {
     //   - accessories: string | null (optional, 0..200 chars) - Included accessories
     //   - owner: string | null (optional, 0..100 chars) - Consignor / owner indicator
     //   - imageFile: string (optional, 0..200 chars) - Source file name
-    //   - imageUrl: string (required, 1..1000 chars) - Asset URL or Storage download URL
+    //   - imageUrl: string (required, 0..700000 chars) - Empty (no image), asset/Storage URL,
+    //       or a downscaled JPEG data URL (kept well under the 1 MiB document limit)
     //   - rentalPrices: map (required)
     //       - oneDay: number (>= 0, <= 100000) - 1 day rental price
     //       - threeDays: number (>= 0, <= 100000) - 3 days rental price
@@ -48,11 +49,13 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Check if the authenticated user's email exists in the allowed_users collection
+    // Authenticated, verified user whose (lowercased) email has an allowed_users entry
+    // that is not explicitly disabled (mirrors the client-side access check).
     function isAllowedUser() {
-      return isAuthenticated() && (
-        exists(/databases/$(database)/documents/allowed_users/$(request.auth.token.email))
-      );
+      return isAuthenticated() &&
+        request.auth.token.email_verified == true &&
+        exists(/databases/$(database)/documents/allowed_users/$(request.auth.token.email.lower())) &&
+        get(/databases/$(database)/documents/allowed_users/$(request.auth.token.email.lower())).data.get('enabled', true) != false;
     }
 
     function isValidStatus(status) {
@@ -83,7 +86,7 @@ service cloud.firestore {
         (!('accessories' in data) || data.accessories == null || (data.accessories is string && data.accessories.size() <= 200)) &&
         (!('owner' in data) || data.owner == null || (data.owner is string && data.owner.size() <= 100)) &&
         (!('imageFile' in data) || (data.imageFile is string && data.imageFile.size() <= 200)) &&
-        data.imageUrl is string && data.imageUrl.size() > 0 && data.imageUrl.size() <= 1000 &&
+        data.imageUrl is string && data.imageUrl.size() <= 700000 &&
         isValidPrices(data.rentalPrices) &&
         isValidStatus(data.status);
     }
@@ -107,9 +110,9 @@ service cloud.firestore {
 
       allow create: if isAllowedUser() && isValidInventoryItem(request.resource.data);
 
+      // The SKU code is editable (documents are keyed by auto-ID, not by code)
       allow update: if isAllowedUser() &&
-        isValidInventoryItem(request.resource.data) &&
-        request.resource.data.code == resource.data.code;
+        isValidInventoryItem(request.resource.data);
 
       allow delete: if isAllowedUser();
     }

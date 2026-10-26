@@ -20,8 +20,8 @@ const mockItem: InventoryItem = {
 };
 
 describe('InventorySheet Component', () => {
-  it('does not render when isOpen is false', () => {
-    const { container } = render(
+  it('is closed when isOpen is false', () => {
+    render(
       <InventorySheet
         isOpen={false}
         mode="add"
@@ -29,10 +29,12 @@ describe('InventorySheet Component', () => {
         onSubmit={vi.fn()}
       />
     );
-    expect(container.firstChild).toBeNull();
+    const dialog = document.getElementById('inventory-sheet');
+    expect(dialog).not.toHaveClass('active');
+    expect(dialog).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it('renders in Add mode with blank form and title', () => {
+  it('renders in Add mode with blank form and submit button', () => {
     render(
       <InventorySheet
         isOpen={true}
@@ -42,13 +44,69 @@ describe('InventorySheet Component', () => {
       />
     );
 
-    expect(screen.getByText('เพิ่มชุดใหม่')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /เพิ่มชุด/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/รหัสสินค้า/i)).toHaveValue('');
     expect(screen.getByLabelText(/ชื่อสินค้า/i)).toHaveValue('');
+    expect(screen.getByText('เพิ่มชุดใหม่')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/URL รูปภาพ/i)).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'เปลี่ยน' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'ลบรูปภาพ' })).not.toBeInTheDocument();
   });
 
-  it('renders in Edit mode pre-filled with item data', () => {
+  it('does not show the add title in Edit mode', () => {
+    render(
+      <InventorySheet
+        isOpen={true}
+        mode="edit"
+        item={mockItem}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+    expect(screen.queryByText('เพิ่มชุดใหม่')).not.toBeInTheDocument();
+  });
+
+  it('removes the image via the overlay remove button', () => {
+    render(
+      <InventorySheet
+        isOpen={true}
+        mode="edit"
+        item={mockItem}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'ลบรูปภาพ' }));
+    expect(screen.queryByRole('button', { name: 'ลบรูปภาพ' })).not.toBeInTheDocument();
+  });
+
+  it('clears and hides the form after the sheet is closed', async () => {
+    const { rerender } = render(
+      <InventorySheet
+        isOpen={true}
+        mode="edit"
+        item={mockItem}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+    expect(screen.getByLabelText(/รหัสสินค้า/i)).toHaveValue('AVL01');
+
+    rerender(
+      <InventorySheet
+        isOpen={false}
+        mode="edit"
+        item={mockItem}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+    await waitFor(() => {
+      expect(screen.queryByLabelText(/รหัสสินค้า/i)).not.toBeInTheDocument();
+    });
+  });
+
+  it('renders in Edit mode pre-filled with item data and image at top', () => {
     render(
       <InventorySheet
         isOpen={true}
@@ -59,12 +117,15 @@ describe('InventorySheet Component', () => {
       />
     );
 
-    expect(screen.getByText(/แก้ไขชุด: AVL01/i)).toBeInTheDocument();
+    // Shows SKU badge
+    expect(screen.getByText('AVL01')).toBeInTheDocument();
     expect(screen.getByLabelText(/รหัสสินค้า/i)).toHaveValue('AVL01');
     expect(screen.getByLabelText(/ชื่อสินค้า/i)).toHaveValue('Avaalene Dress');
     expect(screen.getByLabelText(/แบรนด์/i)).toHaveValue('Avaalene');
     expect(screen.getByLabelText(/สี/i)).toHaveValue('Blue');
     expect(screen.getByLabelText(/ไซส์/i)).toHaveValue('M');
+    expect(screen.getByAltText('Avaalene Dress')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /บันทึก/i })).toBeInTheDocument();
   });
 
   it('validates required fields on submit and displays error', async () => {

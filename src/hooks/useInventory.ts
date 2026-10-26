@@ -38,15 +38,18 @@ export function useInventory(
     };
   }, [repository]);
 
+  // Mutation errors are intentionally NOT stored in the hook's `error` state.
+  // That state belongs to the list subscription only; each mutation caller
+  // (e.g. the add/edit sheet) handles its own error from the rejected promise.
+  const toError = (err: unknown, fallback: string): Error =>
+    err instanceof Error ? err : new Error(fallback);
+
   const updateStatus = useCallback(
     async (id: string, status: InventoryStatus) => {
       try {
         await repository.updateStatus(id, status);
       } catch (err: unknown) {
-        const errorObj =
-          err instanceof Error ? err : new Error('Failed to update status');
-        setError(errorObj);
-        throw errorObj;
+        throw toError(err, 'Failed to update status');
       }
     },
     [repository]
@@ -55,13 +58,9 @@ export function useInventory(
   const addItem = useCallback(
     async (itemData: Omit<InventoryItem, 'id'>) => {
       try {
-        const newId = await repository.addItem(itemData);
-        return newId;
+        return await repository.addItem(itemData);
       } catch (err: unknown) {
-        const errorObj =
-          err instanceof Error ? err : new Error('Failed to add item');
-        setError(errorObj);
-        throw errorObj;
+        throw toError(err, 'Failed to add item');
       }
     },
     [repository]
@@ -72,10 +71,7 @@ export function useInventory(
       try {
         await repository.updateItem(id, itemData);
       } catch (err: unknown) {
-        const errorObj =
-          err instanceof Error ? err : new Error('Failed to update item');
-        setError(errorObj);
-        throw errorObj;
+        throw toError(err, 'Failed to update item');
       }
     },
     [repository]
@@ -86,10 +82,7 @@ export function useInventory(
       try {
         await repository.deleteItem(id);
       } catch (err: unknown) {
-        const errorObj =
-          err instanceof Error ? err : new Error('Failed to delete item');
-        setError(errorObj);
-        throw errorObj;
+        throw toError(err, 'Failed to delete item');
       }
     },
     [repository]

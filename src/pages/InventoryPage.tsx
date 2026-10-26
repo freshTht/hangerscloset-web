@@ -87,15 +87,9 @@ export const InventoryPage: React.FC = () => {
         <button
           className="circle transparent no-margin"
           type="button"
-          onClick={() => {
-            if (items.length > 0) {
-              handleOpenEdit(items[0]);
-            } else {
-              handleOpenAdd();
-            }
-          }}
+          onClick={() => openSortDialog(sortDialogId)}
           aria-label="แก้ไข"
-          title="แก้ไขชุด"
+          title="แก้ไข"
         >
           <i>edit</i>
         </button>
@@ -124,7 +118,7 @@ export const InventoryPage: React.FC = () => {
   const renderDialogContent = (dialogId: string) => (
     <>
       <h5>Coming soon</h5>
-      <p>ระบบจัดเรียงสินค้ากำลังอยู่ระหว่างพัฒนา :)</p>
+      <p>Thanks for your interest :)</p>
       <nav className="right-align">
         <button
           className="border"

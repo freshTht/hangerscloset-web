@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { resizeImageFile } from '../lib/resizeImage';
 import { LazyImage } from './LazyImage';
 
 export interface InventorySheetProps {
   isOpen: boolean;
   mode: 'add' | 'edit';
   item?: InventoryItem | null;
+  loading?: boolean;
   onClose: () => void;
   onSubmit: (data: Omit<InventoryItem, 'id'>) => Promise<void>;
   onDelete?: (id: string) => Promise<void>;
@@ -44,44 +46,62 @@ const DEFAULT_FORM: FormState = {
   fiveDays: '',
 };
 
+// Must be >= the Beer CSS dialog slide transition so content isn't cleared mid-animation
+const CLOSE_CLEANUP_DELAY_MS = 350;
+
+const itemToForm = (item: InventoryItem): FormState => ({
+  code: item.code || '',
+  name: item.name || '',
+  brand: item.brand || '',
+  color: item.color || '',
+  size: item.size || 'S',
+  status: item.status || 'available',
+  type: item.type || '',
+  accessories: item.accessories || '',
+  owner: item.owner || '',
+  imageUrl: item.imageUrl || '',
+  oneDay: item.rentalPrices?.oneDay?.toString() ?? '',
+  threeDays: item.rentalPrices?.threeDays?.toString() ?? '',
+  fiveDays: item.rentalPrices?.fiveDays?.toString() ?? '',
+});
+
 export const InventorySheet: React.FC<InventorySheetProps> = ({
   isOpen,
   mode,
   item,
+  loading = false,
   onClose,
   onSubmit,
   onDelete,
 }) => {
   const isMobile = useIsMobile();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM);
+  const [contentReady, setContentReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  // Sync form data when item or mode changes
+  // The dialog shell is always mounted (instant open/close). The form content is
+  // initialized after open (post-paint) and cleared/unmounted once closed.
   useEffect(() => {
-    if (mode === 'edit' && item) {
-      setFormData({
-        code: item.code || '',
-        name: item.name || '',
-        brand: item.brand || '',
-        color: item.color || '',
-        size: item.size || 'S',
-        status: item.status || 'available',
-        type: item.type || '',
-        accessories: item.accessories || '',
-        owner: item.owner || '',
-        imageUrl: item.imageUrl || '',
-        oneDay: item.rentalPrices?.oneDay?.toString() ?? '',
-        threeDays: item.rentalPrices?.threeDays?.toString() ?? '',
-        fiveDays: item.rentalPrices?.fiveDays?.toString() ?? '',
-      });
-    } else {
-      setFormData(DEFAULT_FORM);
+    if (isOpen) {
+      setFormData(mode === 'edit' && item ? itemToForm(item) : DEFAULT_FORM);
+      setErrorMessage(null);
+      setConfirmDelete(false);
+      setContentReady(true);
+      return;
     }
-    setErrorMessage(null);
-    setConfirmDelete(false);
-  }, [mode, item, isOpen]);
+
+    const timer = window.setTimeout(() => {
+      setContentReady(false);
+      setFormData(DEFAULT_FORM);
+      setErrorMessage(null);
+      setConfirmDelete(false);
+      setSubmitting(false);
+    }, CLOSE_CLEANUP_DELAY_MS);
+    return () => window.clearTimeout(timer);
+  }, [isOpen, mode, item]);
 
   // Handle ESC key to close
   useEffect(() => {
@@ -101,11 +121,22 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageFile(file);
+      setFormData((prev) => ({ ...prev, imageUrl: dataUrl }));
+    } catch (err: unknown) {
+      setErrorMessage(err instanceof Error ? err.message : 'ไม่สามารถโหลดรูปภาพได้');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
-    // Validation
     const code = formData.code.trim();
     const name = formData.name.trim();
     const brand = formData.brand.trim();
@@ -135,20 +166,15 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         color,
         size,
         status: formData.status,
-        type: formData.type.trim() || undefined,
+        type: formData.type.trim(),
         accessories: formData.accessories.trim() || null,
         owner: formData.owner.trim() || null,
         imageUrl: formData.imageUrl.trim(),
-        rentalPrices: {
-          oneDay,
-          threeDays,
-          fiveDays,
-        },
+        rentalPrices: { oneDay, threeDays, fiveDays },
       });
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
-      setErrorMessage(msg);
+      setErrorMessage(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
     } finally {
       setSubmitting(false);
     }
@@ -161,438 +187,496 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       await onDelete(item.id);
       onClose();
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการลบข้อมูล';
-      setErrorMessage(msg);
+      setErrorMessage(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการลบข้อมูล');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (!isOpen) return null;
-
-  // Responsive classes:
-  // s: bottom sheet
-  // m, l: right-side sheet
   const sheetClass = isMobile
-    ? 'bottom active medium-padding s'
-    : 'right medium active medium-padding m l';
+    ? `bottom s ${isOpen ? 'active' : ''}`
+    : `right medium m l ${isOpen ? 'active' : ''}`;
+
+  const imageSize = isMobile ? 'min(100%, 240px)' : 'min(100%, 280px)';
+
+  const renderImage = () => (
+    <div
+      className="round surface-container-high"
+      style={{
+        position: 'relative',
+        width: imageSize,
+        aspectRatio: '1 / 1',
+        margin: '0 auto',
+        overflow: 'hidden',
+        flexShrink: 0,
+      }}
+    >
+      {formData.imageUrl ? (
+        <LazyImage
+          src={formData.imageUrl}
+          alt={formData.name || 'รูปภาพชุด'}
+          containerStyle={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'transparent',
+          }}
+          style={{ objectFit: 'cover' }}
+        />
+      ) : (
+        <div
+          className="center-align middle-align secondary-text"
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+          }}
+        >
+          <i className="extra">add_photo_alternate</i>
+          <span className="small-text">ยังไม่มีรูปภาพ</span>
+        </div>
+      )}
+
+      {/* Overlay actions */}
+      <button
+        type="button"
+        className="small round fill no-margin"
+        onClick={() => fileInputRef.current?.click()}
+        style={{ position: 'absolute', left: 8, bottom: 8 }}
+      >
+        เปลี่ยน
+      </button>
+      {formData.imageUrl && (
+        <button
+          type="button"
+          className="small circle fill no-margin"
+          onClick={() => setFormData((prev) => ({ ...prev, imageUrl: '' }))}
+          aria-label="ลบรูปภาพ"
+          title="ลบรูปภาพ"
+          style={{ position: 'absolute', right: 8, bottom: 8 }}
+        >
+          <i>delete</i>
+        </button>
+      )}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleImageFile}
+        hidden
+        data-testid="image-file-input"
+      />
+    </div>
+  );
 
   return (
     <>
-      {/* Backdrop overlay */}
       <div
-        className="overlay active"
+        className={`overlay ${isOpen ? 'active' : ''}`}
         onClick={onClose}
-        aria-hidden="true"
-        style={{ zIndex: 1000 }}
+        aria-hidden={!isOpen}
+        style={{ zIndex: 1000, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       <dialog
         id="inventory-sheet"
-        className={sheetClass}
-        open
+        className={sheetClass.trim()}
+        open={isOpen}
+        aria-hidden={!isOpen}
         style={{
           zIndex: 1001,
-          display: 'flex',
+          display: isOpen ? 'flex' : undefined,
           flexDirection: 'column',
           boxSizing: 'border-box',
+          overflowX: 'hidden',
           ...(isMobile
             ? {
-                maxHeight: '88dvh',
+                maxHeight: '90dvh',
                 width: '100%',
+                maxWidth: '100vw',
                 borderRadius: '1.25rem 1.25rem 0 0',
+                padding: '0.75rem 1rem 1rem 1rem',
+                margin: 0,
               }
             : {
                 width: '32rem',
                 maxWidth: '90vw',
                 height: '100dvh',
+                padding: '1.25rem',
               }),
         }}
       >
-        {/* Sheet Header */}
+        {/* Top bar: title only for Add; SKU chip for Edit; close button */}
         <div
           className="row items-center no-margin"
-          style={{
-            paddingBottom: '0.75rem',
-            borderBottom: '1px solid var(--surface-variant)',
-            flexShrink: 0,
-          }}
+          style={{ paddingBottom: '0.35rem', flexShrink: 0 }}
         >
-          <div className="max">
-            <h6 className="bold no-margin">
-              {mode === 'edit'
-                ? `แก้ไขชุด: ${formData.code || item?.code || ''}`
-                : 'เพิ่มชุดใหม่'}
-            </h6>
-            <p className="no-margin secondary-text small-text">
-              {mode === 'edit'
-                ? 'แก้ไขรายละเอียดและข้อมูลราคาเช่า'
-                : 'กรอกข้อมูลชุดเพื่อบันทึกลงคลัง'}
-            </p>
-          </div>
+          {mode === 'add' ? (
+            <h6 className="bold no-margin">เพิ่มชุดใหม่</h6>
+          ) : (
+            contentReady &&
+            formData.code && (
+              <span className="chip small surface-container-high bold no-margin">
+                {formData.code}
+              </span>
+            )
+          )}
+          <div className="max" />
           <button
             type="button"
-            className="circle transparent"
+            className="circle transparent no-margin"
             onClick={onClose}
             aria-label="ปิดหน้าต่าง"
+            style={{ width: 36, height: 36, minWidth: 36, minHeight: 36, padding: 0 }}
           >
             <i>close</i>
           </button>
         </div>
 
-        {/* Error Alert if any */}
-        {errorMessage && (
-          <article className="border error-container round margin-top margin-bottom">
-            <div className="row items-center no-margin">
-              <i className="error-text">error</i>
-              <div className="max">
-                <p className="no-margin error-text small-text">{errorMessage}</p>
-              </div>
-            </div>
-          </article>
-        )}
-
-        {/* Scrollable Form Body */}
-        <form
-          id="inventory-form"
-          onSubmit={handleSubmit}
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            paddingTop: '1rem',
-            paddingBottom: '1rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-          }}
-        >
-          {/* Row 1: Code and Status */}
-          <div className="row no-margin" style={{ gap: '12px' }}>
-            <div className="field label border round max no-margin">
-              <input
-                id="field-code"
-                type="text"
-                name="code"
-                value={formData.code}
-                onChange={handleChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="field-code">รหัสสินค้า (SKU) *</label>
-              <i>qr_code</i>
-            </div>
-
-            <div className="field label border round max no-margin">
-              <select
-                id="field-status"
-                name="status"
-                value={formData.status}
-                onChange={handleChange}
+        {contentReady && (
+          <>
+            {errorMessage && (
+              <article
+                className="border error-container round margin-bottom"
+                style={{ flexShrink: 0 }}
               >
-                <option value="available">พร้อมเช่า (Available)</option>
-                <option value="reserved">จองแล้ว (Reserved)</option>
-                <option value="laundry">ส่งซัก (Laundry)</option>
-              </select>
-              <label htmlFor="field-status">สถานะ</label>
-              <i>info</i>
-            </div>
-          </div>
+                <div className="row items-center no-margin">
+                  <i className="error-text">error</i>
+                  <div className="max">
+                    <p className="no-margin error-text small-text">{errorMessage}</p>
+                  </div>
+                </div>
+              </article>
+            )}
 
-          {/* Row 2: Name */}
-          <div className="field label border round no-margin">
-            <input
-              id="field-name"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder=" "
-              required
-            />
-            <label htmlFor="field-name">ชื่อสินค้า *</label>
-            <i>checkroom</i>
-          </div>
-
-          {/* Row 3: Brand, Color, Size */}
-          <div className="row no-margin" style={{ gap: '8px' }}>
-            <div className="field label border round max no-margin">
-              <input
-                id="field-brand"
-                type="text"
-                name="brand"
-                value={formData.brand}
-                onChange={handleChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="field-brand">แบรนด์ *</label>
-              <i>sell</i>
-            </div>
-
-            <div className="field label border round max no-margin">
-              <input
-                id="field-color"
-                type="text"
-                name="color"
-                value={formData.color}
-                onChange={handleChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="field-color">สี *</label>
-              <i>palette</i>
-            </div>
-
-            <div className="field label border round max no-margin">
-              <input
-                id="field-size"
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                placeholder=" "
-                required
-              />
-              <label htmlFor="field-size">ไซส์ *</label>
-              <i>height</i>
-            </div>
-          </div>
-
-          {/* Row 4: Rental Prices */}
-          <div>
-            <label className="bold small-text secondary-text">
-              ราคาเช่า (บาท) *
-            </label>
-            <div
-              className="row no-margin"
-              style={{ gap: '8px', marginTop: '6px' }}
-            >
-              <div className="field label border round max no-margin">
-                <input
-                  id="field-price-1"
-                  type="number"
-                  name="oneDay"
-                  min="0"
-                  value={formData.oneDay}
-                  onChange={handleChange}
-                  placeholder=" "
-                  required
-                />
-                <label htmlFor="field-price-1">1 วัน</label>
-                <i>payments</i>
-              </div>
-
-              <div className="field label border round max no-margin">
-                <input
-                  id="field-price-3"
-                  type="number"
-                  name="threeDays"
-                  min="0"
-                  value={formData.threeDays}
-                  onChange={handleChange}
-                  placeholder=" "
-                  required
-                />
-                <label htmlFor="field-price-3">3 วัน</label>
-                <i>payments</i>
-              </div>
-
-              <div className="field label border round max no-margin">
-                <input
-                  id="field-price-5"
-                  type="number"
-                  name="fiveDays"
-                  min="0"
-                  value={formData.fiveDays}
-                  onChange={handleChange}
-                  placeholder=" "
-                  required
-                />
-                <label htmlFor="field-price-5">5 วัน</label>
-                <i>payments</i>
-              </div>
-            </div>
-          </div>
-
-          {/* Row 5: Image URL & Preview */}
-          <div className="field label border round no-margin">
-            <input
-              id="field-image-url"
-              type="text"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              placeholder=" "
-            />
-            <label htmlFor="field-image-url">URL รูปภาพ (Image URL)</label>
-            <i>image</i>
-          </div>
-
-          {formData.imageUrl && (
-            <div
-              className="row items-center round padding surface-container-low"
-              style={{ gap: '12px' }}
-            >
+            {loading ? (
               <div
+                className="vertical"
+                style={{ flex: 1, gap: 12, padding: '1rem 0' }}
+                aria-busy="true"
+                aria-label="กำลังโหลดข้อมูลชุด"
+              >
+                <div
+                  className="skeleton round"
+                  style={{ width: imageSize, aspectRatio: '1 / 1', margin: '0 auto' }}
+                />
+                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
+                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
+                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
+              </div>
+            ) : (
+              <form
+                id="inventory-form"
+                onSubmit={handleSubmit}
                 style={{
-                  width: 52,
-                  height: 52,
-                  flexShrink: 0,
-                  borderRadius: 6,
-                  overflow: 'hidden',
+                  flex: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  WebkitOverflowScrolling: 'touch',
+                  overscrollBehavior: 'contain',
+                  paddingTop: '0.25rem',
+                  paddingBottom: '1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                  minHeight: 0,
                 }}
               >
-                <LazyImage
-                  src={formData.imageUrl}
-                  alt={formData.name || 'ตัวอย่างรูปภาพ'}
-                  containerStyle={{ width: '100%', height: '100%' }}
-                />
-              </div>
-              <div className="max" style={{ minWidth: 0 }}>
-                <span className="bold small-text">แสดงตัวอย่างรูปภาพ</span>
-                <p
-                  className="no-margin secondary-text micro-text"
+                {renderImage()}
+
+                <div className="grid no-margin" style={{ gap: '10px' }}>
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-code"
+                        type="text"
+                        name="code"
+                        value={formData.code}
+                        onChange={handleChange}
+                        placeholder=" "
+                        required
+                      />
+                      <label htmlFor="field-code">รหัสสินค้า (SKU) *</label>
+                      <i>qr_code</i>
+                    </div>
+                  </div>
+
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <select
+                        id="field-status"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                      >
+                        <option value="available">พร้อมเช่า (Available)</option>
+                        <option value="reserved">จองแล้ว (Reserved)</option>
+                        <option value="laundry">ส่งซัก (Laundry)</option>
+                      </select>
+                      <label htmlFor="field-status">สถานะ *</label>
+                      <i>info</i>
+                    </div>
+                  </div>
+
+                  <div className="s12">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-name"
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder=" "
+                        required
+                      />
+                      <label htmlFor="field-name">ชื่อสินค้า *</label>
+                      <i>checkroom</i>
+                    </div>
+                  </div>
+
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-brand"
+                        type="text"
+                        name="brand"
+                        value={formData.brand}
+                        onChange={handleChange}
+                        placeholder=" "
+                        required
+                      />
+                      <label htmlFor="field-brand">แบรนด์ *</label>
+                      <i>sell</i>
+                    </div>
+                  </div>
+
+                  <div className="s6 m3">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-color"
+                        type="text"
+                        name="color"
+                        value={formData.color}
+                        onChange={handleChange}
+                        placeholder=" "
+                        required
+                      />
+                      <label htmlFor="field-color">สี *</label>
+                      <i>palette</i>
+                    </div>
+                  </div>
+
+                  <div className="s6 m3">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-size"
+                        type="text"
+                        name="size"
+                        value={formData.size}
+                        onChange={handleChange}
+                        placeholder=" "
+                        required
+                      />
+                      <label htmlFor="field-size">ไซส์ *</label>
+                      <i>height</i>
+                    </div>
+                  </div>
+
+                  <div className="s12">
+                    <label
+                      className="bold small-text secondary-text"
+                      style={{ display: 'block', marginBottom: 4 }}
+                    >
+                      ราคาเช่า (บาท) *
+                    </label>
+                    <div className="grid no-margin" style={{ gap: '8px' }}>
+                      <div className="s4">
+                        <div className="field label border round no-margin">
+                          <input
+                            id="field-price-1"
+                            type="number"
+                            name="oneDay"
+                            min="0"
+                            value={formData.oneDay}
+                            onChange={handleChange}
+                            placeholder=" "
+                            required
+                          />
+                          <label htmlFor="field-price-1">1 วัน</label>
+                        </div>
+                      </div>
+                      <div className="s4">
+                        <div className="field label border round no-margin">
+                          <input
+                            id="field-price-3"
+                            type="number"
+                            name="threeDays"
+                            min="0"
+                            value={formData.threeDays}
+                            onChange={handleChange}
+                            placeholder=" "
+                            required
+                          />
+                          <label htmlFor="field-price-3">3 วัน</label>
+                        </div>
+                      </div>
+                      <div className="s4">
+                        <div className="field label border round no-margin">
+                          <input
+                            id="field-price-5"
+                            type="number"
+                            name="fiveDays"
+                            min="0"
+                            value={formData.fiveDays}
+                            onChange={handleChange}
+                            placeholder=" "
+                            required
+                          />
+                          <label htmlFor="field-price-5">5 วัน</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-type"
+                        type="text"
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        placeholder=" "
+                      />
+                      <label htmlFor="field-type">หมวดหมู่ / Type</label>
+                      <i>category</i>
+                    </div>
+                  </div>
+
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-accessories"
+                        type="text"
+                        name="accessories"
+                        value={formData.accessories}
+                        onChange={handleChange}
+                        placeholder=" "
+                      />
+                      <label htmlFor="field-accessories">อุปกรณ์เสริม / Accessories</label>
+                      <i>auto_awesome</i>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            )}
+
+            {confirmDelete && (
+              <article
+                className="border error-container round margin-top margin-bottom"
+                style={{ flexShrink: 0 }}
+              >
+                <div className="vertical" style={{ gap: '8px' }}>
+                  <div className="row items-center no-margin">
+                    <i className="error-text">warning</i>
+                    <div className="max">
+                      <h6 className="bold no-margin error-text small">ยืนยันการลบรายการนี้?</h6>
+                      <p className="no-margin small-text secondary-text">
+                        ข้อมูลชุด "{item?.code} - {item?.name}" จะถูกลบออกจากคลังสินค้า
+                      </p>
+                    </div>
+                  </div>
+                  <div className="row no-margin right-align" style={{ gap: '8px' }}>
+                    <button
+                      type="button"
+                      className="border small round no-margin"
+                      onClick={() => setConfirmDelete(false)}
+                      disabled={submitting}
+                    >
+                      ยกเลิก
+                    </button>
+                    <button
+                      type="button"
+                      className="error small round no-margin"
+                      onClick={handleDelete}
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <div className="shape loading-indicator small" role="status" />
+                      ) : (
+                        <span>ยืนยันลบ</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            )}
+
+            <div
+              className="row items-center no-margin"
+              style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid var(--surface-variant)',
+                flexShrink: 0,
+                gap: '8px',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            >
+              {mode === 'edit' && onDelete && !confirmDelete && (
+                <button
+                  type="button"
+                  className="border round error-text no-margin"
+                  onClick={() => setConfirmDelete(true)}
+                  disabled={submitting}
+                  title="ลบรายการนี้"
                   style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
+                    minWidth: isMobile ? 44 : 'auto',
+                    padding: isMobile ? '0 12px' : undefined,
                   }}
                 >
-                  {formData.imageUrl}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Row 6: Additional Optional Fields */}
-          <div className="row no-margin" style={{ gap: '8px' }}>
-            <div className="field label border round max no-margin">
-              <input
-                id="field-type"
-                type="text"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                placeholder=" "
-              />
-              <label htmlFor="field-type">หมวดหมู่ / Type</label>
-              <i>category</i>
-            </div>
-
-            <div className="field label border round max no-margin">
-              <input
-                id="field-accessories"
-                type="text"
-                name="accessories"
-                value={formData.accessories}
-                onChange={handleChange}
-                placeholder=" "
-              />
-              <label htmlFor="field-accessories">อุปกรณ์เสริม / Accessories</label>
-              <i>auto_awesome</i>
-            </div>
-          </div>
-        </form>
-
-        {/* Delete Confirmation Warning (Edit Mode) */}
-        {confirmDelete && (
-          <article className="border error-container round margin-top margin-bottom">
-            <div className="vertical" style={{ gap: '8px' }}>
-              <div className="row items-center no-margin">
-                <i className="error-text">warning</i>
-                <div className="max">
-                  <h6 className="bold no-margin error-text small">
-                    ยืนยันการลบรายการนี้?
-                  </h6>
-                  <p className="no-margin small-text secondary-text">
-                    ข้อมูลชุด "{item?.code} - {item?.name}" จะถูกลบออกจากคลังสินค้า
-                  </p>
-                </div>
-              </div>
-              <div className="row no-margin right-align" style={{ gap: '8px' }}>
-                <button
-                  type="button"
-                  className="border small round"
-                  onClick={() => setConfirmDelete(false)}
-                  disabled={submitting}
-                >
-                  ยกเลิก
+                  <i>delete</i>
+                  {!isMobile && <span>ลบชุด</span>}
                 </button>
-                <button
-                  type="button"
-                  className="error small round"
-                  onClick={handleDelete}
-                  disabled={submitting}
-                >
-                  {submitting ? (
-                    <div className="shape loading-indicator small" role="status" />
-                  ) : (
-                    <span>ยืนยันลบ</span>
-                  )}
-                </button>
-              </div>
+              )}
+
+              <div className="max" />
+
+              <button
+                type="button"
+                className="border round no-margin"
+                onClick={onClose}
+                disabled={submitting}
+              >
+                ยกเลิก
+              </button>
+
+              <button
+                type="submit"
+                form="inventory-form"
+                className="primary round no-margin"
+                disabled={submitting}
+                style={{ minWidth: isMobile ? 90 : 110 }}
+              >
+                {submitting ? (
+                  <div className="shape loading-indicator small" role="status" />
+                ) : mode === 'edit' ? (
+                  <>
+                    <i>save</i>
+                    <span>บันทึก</span>
+                  </>
+                ) : (
+                  <>
+                    <i>add</i>
+                    <span>เพิ่มชุด</span>
+                  </>
+                )}
+              </button>
             </div>
-          </article>
+          </>
         )}
-
-        {/* Sheet Footer Action Bar */}
-        <div
-          className="row items-center no-margin"
-          style={{
-            paddingTop: '0.75rem',
-            borderTop: '1px solid var(--surface-variant)',
-            flexShrink: 0,
-            gap: '8px',
-          }}
-        >
-          {/* Delete action in Edit mode */}
-          {mode === 'edit' && onDelete && !confirmDelete && (
-            <button
-              type="button"
-              className="border round error-text"
-              onClick={() => setConfirmDelete(true)}
-              disabled={submitting}
-              title="ลบรายการนี้"
-            >
-              <i>delete</i>
-              <span>ลบชุด</span>
-            </button>
-          )}
-
-          <div className="max" />
-
-          {/* Cancel button */}
-          <button
-            type="button"
-            className="border round"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            ยกเลิก
-          </button>
-
-          {/* Submit button */}
-          <button
-            type="submit"
-            form="inventory-form"
-            className="primary round"
-            disabled={submitting}
-          >
-            {submitting ? (
-              <div className="shape loading-indicator small" role="status" />
-            ) : mode === 'edit' ? (
-              <>
-                <i>save</i>
-                <span>บันทึก</span>
-              </>
-            ) : (
-              <>
-                <i>add</i>
-                <span>เพิ่มชุด</span>
-              </>
-            )}
-          </button>
-        </div>
       </dialog>
     </>
   );

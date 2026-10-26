@@ -17,6 +17,13 @@ import type { IInventoryRepository } from './types';
 
 const COLLECTION_NAME = 'inventory';
 
+// Firestore rejects `undefined` field values; drop them before writing.
+function stripUndefined<T extends object>(data: T): T {
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined)
+  ) as T;
+}
+
 function docToInventoryItem(id: string, data: DocumentData): InventoryItem {
   return {
     id,
@@ -96,7 +103,7 @@ export class FirestoreInventoryRepository implements IInventoryRepository {
     }
 
     const colRef = collection(db, COLLECTION_NAME);
-    const docRef = await addDoc(colRef, itemData);
+    const docRef = await addDoc(colRef, stripUndefined(itemData));
     return docRef.id;
   }
 
@@ -109,7 +116,7 @@ export class FirestoreInventoryRepository implements IInventoryRepository {
     }
 
     const docRef = doc(db, COLLECTION_NAME, id);
-    await updateDoc(docRef, itemData);
+    await updateDoc(docRef, stripUndefined(itemData));
   }
 
   async deleteItem(id: string): Promise<void> {
