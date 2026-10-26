@@ -8,8 +8,16 @@ export class MockInventoryRepository implements IInventoryRepository {
   private listeners: Set<(items: InventoryItem[]) => void> = new Set();
 
   constructor(initialItems: InventoryItem[] = mockInventory) {
-    // Clone array to avoid mutating source
-    this.items = [...initialItems];
+    // Clone array and normalize tags/note
+    this.items = initialItems.map((item) => ({
+      ...item,
+      tags: Array.isArray(item.tags)
+        ? item.tags
+        : typeof item.type === 'string' && item.type.trim()
+        ? [item.type.trim()]
+        : [],
+      note: item.note ?? null,
+    }));
   }
 
   private notifyListeners(): void {

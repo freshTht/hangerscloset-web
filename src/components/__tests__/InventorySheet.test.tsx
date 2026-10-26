@@ -11,6 +11,8 @@ const mockItem: InventoryItem = {
   color: 'Blue',
   size: 'M',
   status: 'available',
+  tags: ['เดรส', 'ไปทะเล'],
+  note: 'มีรอยเล็กน้อยที่ชายกระโปรง',
   rentalPrices: {
     oneDay: 300,
     threeDays: 500,
@@ -124,8 +126,32 @@ describe('InventorySheet Component', () => {
     expect(screen.getByLabelText(/แบรนด์/i)).toHaveValue('Avaalene');
     expect(screen.getByLabelText(/สี/i)).toHaveValue('Blue');
     expect(screen.getByLabelText(/ไซส์/i)).toHaveValue('M');
+    expect(screen.getByText('เดรส')).toBeInTheDocument();
+    expect(screen.getByText('ไปทะเล')).toBeInTheDocument();
+    expect(screen.getByLabelText(/หมายเหตุ/i)).toHaveValue('มีรอยเล็กน้อยที่ชายกระโปรง');
     expect(screen.getByAltText('Avaalene Dress')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /บันทึก/i })).toBeInTheDocument();
+  });
+
+  it('configures price fields as numeric inputs with numpad keyboard', () => {
+    render(
+      <InventorySheet
+        isOpen={true}
+        mode="add"
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    const price1Day = screen.getByLabelText('1 วัน');
+    const price3Days = screen.getByLabelText('3 วัน');
+    const price5Days = screen.getByLabelText('5 วัน');
+
+    [price1Day, price3Days, price5Days].forEach((input) => {
+      expect(input).toHaveAttribute('type', 'number');
+      expect(input).toHaveAttribute('inputmode', 'numeric');
+      expect(input).toHaveAttribute('pattern', '[0-9]*');
+    });
   });
 
   it('validates required fields on submit and displays error', async () => {
@@ -166,6 +192,15 @@ describe('InventorySheet Component', () => {
     fireEvent.change(screen.getByLabelText(/แบรนด์/i), { target: { value: 'TestBrand' } });
     fireEvent.change(screen.getByLabelText(/สี/i), { target: { value: 'Pink' } });
     fireEvent.change(screen.getByLabelText(/ไซส์/i), { target: { value: 'S' } });
+
+    // Add a tag via TagPicker
+    const tagInput = screen.getByLabelText(/พิมพ์ชื่อแท็ก/i);
+    fireEvent.change(tagInput, { target: { value: 'ปาร์ตี้' } });
+    fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
+
+    // Add note
+    fireEvent.change(screen.getByLabelText(/หมายเหตุ/i), { target: { value: 'ซักแห้งเท่านั้น' } });
+
     fireEvent.change(screen.getByLabelText('1 วัน'), { target: { value: '250' } });
     fireEvent.change(screen.getByLabelText('3 วัน'), { target: { value: '450' } });
     fireEvent.change(screen.getByLabelText('5 วัน'), { target: { value: '650' } });
@@ -184,6 +219,9 @@ describe('InventorySheet Component', () => {
         brand: 'TestBrand',
         color: 'Pink',
         size: 'S',
+        tags: ['ปาร์ตี้'],
+        type: 'ปาร์ตี้',
+        note: 'ซักแห้งเท่านั้น',
         rentalPrices: {
           oneDay: 250,
           threeDays: 450,

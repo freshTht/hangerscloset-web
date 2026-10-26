@@ -14,6 +14,8 @@ export interface InventoryItem {
   color: string;
   size: string;
   type?: string;
+  tags?: string[];
+  note?: string | null;
   accessories?: string | null;
   owner?: string | null;
   imageFile?: string;

@@ -119,9 +119,17 @@ function toFirestoreValue(val) {
   return { stringValue: String(val) };
 }
 
-// 4. Build batch commit request
+// 4. Build batch commit request for inventory and metadata schemas
 const writes = items.map((item) => {
   const { id: _ignored, ...itemData } = item;
+  // Normalize tags and note
+  if (!itemData.tags && itemData.type) {
+    itemData.tags = [itemData.type];
+  }
+  if (itemData.note === undefined) {
+    itemData.note = null;
+  }
+
   const fields = {};
   for (const [key, val] of Object.entries(itemData)) {
     if (val !== undefined) {
@@ -138,7 +146,44 @@ const writes = items.map((item) => {
   };
 });
 
-console.log(`🚀 Committing batch write of ${writes.length} documents via Firestore REST API...`);
+// Extract distinct metadata options and build writes
+const brandSet = new Set();
+const colorSet = new Set();
+const sizeSet = new Set(['XS', 'S', 'M', 'L', 'XL', 'Free size']);
+const tagSet = new Set();
+
+items.forEach((item) => {
+  if (item.brand && item.brand.trim() && item.brand.trim() !== '-') brandSet.add(item.brand.trim());
+  if (item.color && item.color.trim()) colorSet.add(item.color.trim());
+  if (item.size && item.size.trim()) sizeSet.add(item.size.trim());
+  if (Array.isArray(item.tags)) {
+    item.tags.forEach((t) => t && t.trim() && tagSet.add(t.trim()));
+  } else if (item.type && item.type.trim()) {
+    tagSet.add(item.type.trim());
+  }
+});
+
+const metadataWrites = [];
+const addMetaDoc = (col, name) => {
+  const docId = encodeURIComponent(name.toLowerCase().replace(/[\/\s]+/g, '_'));
+  metadataWrites.push({
+    update: {
+      name: `projects/${projectId}/databases/${databaseId}/documents/${col}/${docId}`,
+      fields: { name: toFirestoreValue(name) },
+    },
+  });
+};
+
+brandSet.forEach((b) => addMetaDoc('brands', b));
+colorSet.forEach((c) => addMetaDoc('colors', c));
+sizeSet.forEach((s) => addMetaDoc('sizes', s));
+tagSet.forEach((t) => addMetaDoc('tags', t));
+
+const allWrites = [...writes, ...metadataWrites];
+
+console.log(
+  `🚀 Committing batch write of ${allWrites.length} documents (${writes.length} items, ${metadataWrites.length} metadata options) via Firestore REST API...`
+);
 
 const commitUrl = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/${databaseId}/documents:commit`;
 const response = await fetch(commitUrl, {
@@ -147,7 +192,7 @@ const response = await fetch(commitUrl, {
     Authorization: `Bearer ${accessToken}`,
     'Content-Type': 'application/json',
   },
-  body: JSON.stringify({ writes }),
+  body: JSON.stringify({ writes: allWrites }),
 });
 
 if (!response.ok) {

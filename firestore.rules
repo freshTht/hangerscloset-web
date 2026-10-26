@@ -22,7 +22,9 @@ service cloud.firestore {
     //   - brand: string (required, 0..100 chars) - Brand name
     //   - color: string (required, 0..100 chars) - Color description
     //   - size: string (required, 0..20 chars) - Clothing size (e.g. S, M, L)
-    //   - type: string (optional, 0..100 chars) - Category / dress type
+    //   - type: string (optional, 0..100 chars) - Category / dress type (legacy / primary tag)
+    //   - tags: list (optional, 0..30 items) - Multiple category tags
+    //   - note: string | null (optional, 0..2000 chars) - Free-text notes
     //   - accessories: string | null (optional, 0..200 chars) - Included accessories
     //   - owner: string | null (optional, 0..100 chars) - Consignor / owner indicator
     //   - imageFile: string (optional, 0..200 chars) - Source file name
@@ -33,6 +35,11 @@ service cloud.firestore {
     //       - threeDays: number (>= 0, <= 100000) - 3 days rental price
     //       - fiveDays: number (>= 0, <= 100000) - 5 days rental price
     //   - status: string (required, enum ['available', 'reserved', 'laundry'])
+    //
+    // Collections: brands, colors, sizes, tags
+    // Document ID: encoded option key (e.g. "feelfree", "free_size")
+    // Fields:
+    //   - name: string (required, 1..100 chars) - Display name of the option
     //
     // ===============================================================
 
@@ -73,7 +80,10 @@ service cloud.firestore {
 
     function isValidInventoryItem(data) {
       let requiredFields = ['name', 'code', 'brand', 'color', 'size', 'imageUrl', 'rentalPrices', 'status'];
-      let allowedFields = ['name', 'code', 'brand', 'color', 'size', 'type', 'accessories', 'owner', 'imageFile', 'imageUrl', 'rentalPrices', 'status'];
+      let allowedFields = [
+        'name', 'code', 'brand', 'color', 'size', 'type', 'tags', 'note',
+        'accessories', 'owner', 'imageFile', 'imageUrl', 'rentalPrices', 'status'
+      ];
 
       return data.keys().hasAll(requiredFields) &&
         data.keys().hasOnly(allowedFields) &&
@@ -83,12 +93,23 @@ service cloud.firestore {
         data.color is string && data.color.size() <= 100 &&
         data.size is string && data.size.size() <= 20 &&
         (!('type' in data) || (data.type is string && data.type.size() <= 100)) &&
+        (!('tags' in data) || (data.tags is list && data.tags.size() <= 30)) &&
+        (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 2000)) &&
         (!('accessories' in data) || data.accessories == null || (data.accessories is string && data.accessories.size() <= 200)) &&
         (!('owner' in data) || data.owner == null || (data.owner is string && data.owner.size() <= 100)) &&
         (!('imageFile' in data) || (data.imageFile is string && data.imageFile.size() <= 200)) &&
         data.imageUrl is string && data.imageUrl.size() <= 700000 &&
         isValidPrices(data.rentalPrices) &&
         isValidStatus(data.status);
+    }
+
+    function isValidMetadataItem(data) {
+      let requiredFields = ['name'];
+      let allowedFields = ['name'];
+
+      return data.keys().hasAll(requiredFields) &&
+        data.keys().hasOnly(allowedFields) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 100;
     }
 
     // ===============================================================
@@ -114,6 +135,33 @@ service cloud.firestore {
       allow update: if isAllowedUser() &&
         isValidInventoryItem(request.resource.data);
 
+      allow delete: if isAllowedUser();
+    }
+
+    // ===============================================================
+    // Collections: brands, colors, sizes, tags (Metadata)
+    // ===============================================================
+    match /brands/{id} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidMetadataItem(request.resource.data);
+      allow delete: if isAllowedUser();
+    }
+
+    match /colors/{id} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidMetadataItem(request.resource.data);
+      allow delete: if isAllowedUser();
+    }
+
+    match /sizes/{id} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidMetadataItem(request.resource.data);
+      allow delete: if isAllowedUser();
+    }
+
+    match /tags/{id} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidMetadataItem(request.resource.data);
       allow delete: if isAllowedUser();
     }
   }

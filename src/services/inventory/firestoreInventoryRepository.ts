@@ -25,6 +25,12 @@ function stripUndefined<T extends object>(data: T): T {
 }
 
 function docToInventoryItem(id: string, data: DocumentData): InventoryItem {
+  const tags: string[] = Array.isArray(data.tags)
+    ? data.tags
+    : typeof data.type === 'string' && data.type.trim()
+    ? [data.type.trim()]
+    : [];
+
   return {
     id,
     name: data.name ?? '',
@@ -32,7 +38,9 @@ function docToInventoryItem(id: string, data: DocumentData): InventoryItem {
     brand: data.brand ?? '',
     color: data.color ?? '',
     size: data.size ?? '',
-    type: data.type ?? undefined,
+    type: data.type ?? (tags[0] ?? undefined),
+    tags,
+    note: data.note ?? null,
     accessories: data.accessories ?? null,
     owner: data.owner ?? null,
     imageFile: data.imageFile ?? undefined,

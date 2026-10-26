@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { resizeImageFile } from '../lib/resizeImage';
 import { LazyImage } from './LazyImage';
+import { OptionPicker } from './OptionPicker';
+import { TagPicker } from './TagPicker';
 
 export interface InventorySheetProps {
   isOpen: boolean;
@@ -21,7 +24,8 @@ interface FormState {
   color: string;
   size: string;
   status: InventoryStatus;
-  type: string;
+  tags: string[];
+  note: string;
   accessories: string;
   owner: string;
   imageUrl: string;
@@ -37,7 +41,8 @@ const DEFAULT_FORM: FormState = {
   color: '',
   size: 'S',
   status: 'available',
-  type: '',
+  tags: [],
+  note: '',
   accessories: '',
   owner: '',
   imageUrl: '',
@@ -49,21 +54,30 @@ const DEFAULT_FORM: FormState = {
 // Must be >= the Beer CSS dialog slide transition so content isn't cleared mid-animation
 const CLOSE_CLEANUP_DELAY_MS = 350;
 
-const itemToForm = (item: InventoryItem): FormState => ({
-  code: item.code || '',
-  name: item.name || '',
-  brand: item.brand || '',
-  color: item.color || '',
-  size: item.size || 'S',
-  status: item.status || 'available',
-  type: item.type || '',
-  accessories: item.accessories || '',
-  owner: item.owner || '',
-  imageUrl: item.imageUrl || '',
-  oneDay: item.rentalPrices?.oneDay?.toString() ?? '',
-  threeDays: item.rentalPrices?.threeDays?.toString() ?? '',
-  fiveDays: item.rentalPrices?.fiveDays?.toString() ?? '',
-});
+const itemToForm = (item: InventoryItem): FormState => {
+  const tags: string[] = Array.isArray(item.tags)
+    ? item.tags
+    : typeof item.type === 'string' && item.type.trim()
+    ? [item.type.trim()]
+    : [];
+
+  return {
+    code: item.code || '',
+    name: item.name || '',
+    brand: item.brand || '',
+    color: item.color || '',
+    size: item.size || 'S',
+    status: item.status || 'available',
+    tags,
+    note: item.note || '',
+    accessories: item.accessories || '',
+    owner: item.owner || '',
+    imageUrl: item.imageUrl || '',
+    oneDay: item.rentalPrices?.oneDay?.toString() ?? '',
+    threeDays: item.rentalPrices?.threeDays?.toString() ?? '',
+    fiveDays: item.rentalPrices?.fiveDays?.toString() ?? '',
+  };
+};
 
 export const InventorySheet: React.FC<InventorySheetProps> = ({
   isOpen,
@@ -76,6 +90,8 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { brands, colors, sizes, tags, addOption } = useMetadataOptions();
+
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM);
   const [contentReady, setContentReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -165,8 +181,11 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         brand,
         color,
         size,
-        status: formData.status,
-        type: formData.type.trim(),
+        // Status is removed from form UI for now; default to available on new, or preserve on edit
+        status: mode === 'edit' && item ? item.status : 'available',
+        tags: formData.tags,
+        type: formData.tags[0] || undefined,
+        note: formData.note.trim() || null,
         accessories: formData.accessories.trim() || null,
         owner: formData.owner.trim() || null,
         imageUrl: formData.imageUrl.trim(),
@@ -377,17 +396,20 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                   WebkitOverflowScrolling: 'touch',
                   overscrollBehavior: 'contain',
                   paddingTop: '0.25rem',
-                  paddingBottom: '1rem',
+                  paddingBottom: '3rem',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
                   minHeight: 0,
                 }}
               >
+                {/* 1. Image Section at the VERY TOP */}
                 {renderImage()}
 
+                {/* 2. Responsive Grid for Form Fields */}
                 <div className="grid no-margin" style={{ gap: '10px' }}>
-                  <div className="s12 m6">
+                  {/* SKU Code (s12) */}
+                  <div className="s12">
                     <div className="field label border round no-margin">
                       <input
                         id="field-code"
@@ -403,23 +425,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     </div>
                   </div>
 
-                  <div className="s12 m6">
-                    <div className="field label border round no-margin">
-                      <select
-                        id="field-status"
-                        name="status"
-                        value={formData.status}
-                        onChange={handleChange}
-                      >
-                        <option value="available">พร้อมเช่า (Available)</option>
-                        <option value="reserved">จองแล้ว (Reserved)</option>
-                        <option value="laundry">ส่งซัก (Laundry)</option>
-                      </select>
-                      <label htmlFor="field-status">สถานะ *</label>
-                      <i>info</i>
-                    </div>
-                  </div>
-
+                  {/* Name (s12) */}
                   <div className="s12">
                     <div className="field label border round no-margin">
                       <input
@@ -436,54 +442,52 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     </div>
                   </div>
 
-                  <div className="s12 m6">
-                    <div className="field label border round no-margin">
-                      <input
-                        id="field-brand"
-                        type="text"
-                        name="brand"
-                        value={formData.brand}
-                        onChange={handleChange}
-                        placeholder=" "
-                        required
-                      />
-                      <label htmlFor="field-brand">แบรนด์ *</label>
-                      <i>sell</i>
-                    </div>
+                  {/* Brand Picker (s12 m4) with add new option */}
+                  <div className="s12 m4">
+                    <OptionPicker
+                      id="field-brand"
+                      name="brand"
+                      label="แบรนด์ *"
+                      icon="sell"
+                      value={formData.brand}
+                      options={brands}
+                      onChange={(val) => setFormData((prev) => ({ ...prev, brand: val }))}
+                      onAddOption={(newBrand) => addOption('brands', newBrand)}
+                      required
+                    />
                   </div>
 
-                  <div className="s6 m3">
-                    <div className="field label border round no-margin">
-                      <input
-                        id="field-color"
-                        type="text"
-                        name="color"
-                        value={formData.color}
-                        onChange={handleChange}
-                        placeholder=" "
-                        required
-                      />
-                      <label htmlFor="field-color">สี *</label>
-                      <i>palette</i>
-                    </div>
+                  {/* Color Picker (s6 m4) with add new option */}
+                  <div className="s6 m4">
+                    <OptionPicker
+                      id="field-color"
+                      name="color"
+                      label="สี *"
+                      icon="palette"
+                      value={formData.color}
+                      options={colors}
+                      onChange={(val) => setFormData((prev) => ({ ...prev, color: val }))}
+                      onAddOption={(newColor) => addOption('colors', newColor)}
+                      required
+                    />
                   </div>
 
-                  <div className="s6 m3">
-                    <div className="field label border round no-margin">
-                      <input
-                        id="field-size"
-                        type="text"
-                        name="size"
-                        value={formData.size}
-                        onChange={handleChange}
-                        placeholder=" "
-                        required
-                      />
-                      <label htmlFor="field-size">ไซส์ *</label>
-                      <i>height</i>
-                    </div>
+                  {/* Size Picker (s6 m4) with add new option */}
+                  <div className="s6 m4">
+                    <OptionPicker
+                      id="field-size"
+                      name="size"
+                      label="ไซส์ *"
+                      icon="height"
+                      value={formData.size}
+                      options={sizes}
+                      onChange={(val) => setFormData((prev) => ({ ...prev, size: val }))}
+                      onAddOption={(newSize) => addOption('sizes', newSize)}
+                      required
+                    />
                   </div>
 
+                  {/* Rental Prices (3 Columns with Numpad Keyboard) */}
                   <div className="s12">
                     <label
                       className="bold small-text secondary-text"
@@ -491,47 +495,58 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     >
                       ราคาเช่า (บาท) *
                     </label>
-                    <div className="grid no-margin" style={{ gap: '8px' }}>
+                    <div className="grid no-space no-margin">
                       <div className="s4">
-                        <div className="field label border round no-margin">
+                        <div className="field label border left-round no-margin">
                           <input
                             id="field-price-1"
                             type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             name="oneDay"
                             min="0"
+                            step="1"
                             value={formData.oneDay}
                             onChange={handleChange}
-                            placeholder=" "
+                            placeholder="0"
                             required
                           />
                           <label htmlFor="field-price-1">1 วัน</label>
                         </div>
                       </div>
+
                       <div className="s4">
-                        <div className="field label border round no-margin">
+                        <div className="field label border no-round no-margin">
                           <input
                             id="field-price-3"
                             type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             name="threeDays"
                             min="0"
+                            step="1"
                             value={formData.threeDays}
                             onChange={handleChange}
-                            placeholder=" "
+                            placeholder="0"
                             required
                           />
                           <label htmlFor="field-price-3">3 วัน</label>
                         </div>
                       </div>
+
                       <div className="s4">
-                        <div className="field label border round no-margin">
+                        <div className="field label border right-round no-margin">
                           <input
                             id="field-price-5"
                             type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             name="fiveDays"
                             min="0"
+                            step="1"
                             value={formData.fiveDays}
                             onChange={handleChange}
-                            placeholder=" "
+                            placeholder="0"
                             required
                           />
                           <label htmlFor="field-price-5">5 วัน</label>
@@ -540,21 +555,24 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     </div>
                   </div>
 
-                  <div className="s12 m6">
-                    <div className="field label border round no-margin">
-                      <input
-                        id="field-type"
-                        type="text"
-                        name="type"
-                        value={formData.type}
+                  {/* Note Field - Multilined & optimized for typing longer text (s12) */}
+                  <div className="s12">
+                    <div className="field textarea label border round no-margin">
+                      <textarea
+                        id="field-note"
+                        name="note"
+                        rows={3}
+                        value={formData.note}
                         onChange={handleChange}
                         placeholder=" "
+                        style={{ minHeight: '85px', resize: 'vertical' }}
                       />
-                      <label htmlFor="field-type">หมวดหมู่ / Type</label>
-                      <i>category</i>
+                      <label htmlFor="field-note">หมายเหตุ / Note (บันทึกข้อความเพิ่มเติม, ตำหนิ, รายละเอียด)</label>
+                      <i>edit_note</i>
                     </div>
                   </div>
 
+                  {/* Accessories (s12 m6) */}
                   <div className="s12 m6">
                     <div className="field label border round no-margin">
                       <input
@@ -568,6 +586,33 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                       <label htmlFor="field-accessories">อุปกรณ์เสริม / Accessories</label>
                       <i>auto_awesome</i>
                     </div>
+                  </div>
+
+                  {/* Owner (s12 m6) */}
+                  <div className="s12 m6">
+                    <div className="field label border round no-margin">
+                      <input
+                        id="field-owner"
+                        type="text"
+                        name="owner"
+                        value={formData.owner}
+                        onChange={handleChange}
+                        placeholder=" "
+                      />
+                      <label htmlFor="field-owner">เจ้าของ / ฝากเช่า (Owner)</label>
+                      <i>person</i>
+                    </div>
+                  </div>
+
+                  {/* Tags Multi-Picker - Bottom Most (s12) */}
+                  <div className="s12">
+                    <TagPicker
+                      id="field-tags"
+                      selectedTags={formData.tags}
+                      availableTags={tags}
+                      onChange={(newTags) => setFormData((prev) => ({ ...prev, tags: newTags }))}
+                      onAddTag={(newTag) => addOption('tags', newTag)}
+                    />
                   </div>
                 </div>
               </form>
