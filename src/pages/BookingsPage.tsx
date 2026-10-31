@@ -13,6 +13,7 @@ import { useInventory } from '../hooks/useInventory';
 import { BookingCard } from '../components/BookingCard';
 import { BookingCalendar } from '../components/BookingCalendar';
 import { BookingSheet } from '../components/BookingSheet';
+import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 
 export type BookingFilterTab = 'active' | BookingItemStatus;
@@ -338,25 +339,45 @@ export const BookingsPage: React.FC = () => {
           onToggleDepositRefunded={handleToggleDepositRefunded}
         />
       ) : filteredBookings.length === 0 ? (
-        <div
-          className="center-align middle-align padding"
-          style={{ minHeight: '45dvh' }}
-        >
-          <i className="extra secondary-text">event_note</i>
-          <h5 className="secondary-text">ไม่พบรายการจองในหมวดหมู่นี้</h5>
-          <p className="secondary-text">
-            กดปุ่ม + ด้านล่างเพื่อสร้างรายการจองชุดใหม่
-          </p>
-          <div className="space" />
-          <button
-            type="button"
-            className="primary round"
-            onClick={handleOpenAdd}
-          >
-            <i>add</i>
-            <span>สร้างการจองใหม่</span>
-          </button>
-        </div>
+        <EmptyState
+          icon={searchQuery ? 'search_off' : 'event_note'}
+          title={
+            searchQuery
+              ? 'ไม่พบรายการจองที่ตรงกับคำค้นหา'
+              : statusFilter === 'active'
+              ? 'ไม่มีรายการจองที่กำลังดำเนินการ'
+              : 'ไม่พบรายการจองในหมวดหมู่นี้'
+          }
+          description={
+            searchQuery
+              ? 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น'
+              : 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่'
+          }
+          actionIcon={searchQuery ? 'close' : 'add'}
+          actionText={searchQuery ? 'ล้างการค้นหา' : 'สร้างการจองใหม่'}
+          onAction={searchQuery ? () => setSearchQuery('') : handleOpenAdd}
+          secondaryActionIcon={
+            searchQuery
+              ? 'add'
+              : statusFilter !== 'active'
+              ? 'restart_alt'
+              : undefined
+          }
+          secondaryActionText={
+            searchQuery
+              ? 'สร้างการจองใหม่'
+              : statusFilter !== 'active'
+              ? 'ดูการจองที่กำลังดำเนินการ'
+              : undefined
+          }
+          onSecondaryAction={
+            searchQuery
+              ? handleOpenAdd
+              : statusFilter !== 'active'
+              ? () => setStatusFilter('active')
+              : undefined
+          }
+        />
       ) : (
         <div className="grid">
           {filteredBookings.map((booking) => (

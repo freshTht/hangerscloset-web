@@ -4,6 +4,7 @@ import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
 import { InventorySheet } from '../components/InventorySheet';
 import { InventoryFilterSheet } from '../components/InventoryFilterSheet';
 import { InventorySortDialog } from '../components/InventorySortDialog';
+import { EmptyState } from '../components/EmptyState';
 import { useInventory } from '../hooks/useInventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import {
@@ -309,54 +310,32 @@ export const InventoryPage: React.FC = () => {
           </div>
         </article>
       ) : items.length === 0 ? (
-        <div
-          className="center-align middle-align padding"
-          style={{ minHeight: '50vh' }}
-        >
-          <i className="extra secondary-text">inventory_2</i>
-          <h5 className="secondary-text">ไม่พบรายการเสื้อผ้าในคลัง</h5>
-          <p className="secondary-text">
-            {provider === 'firebase'
+        <EmptyState
+          icon="inventory_2"
+          title="ไม่พบรายการเสื้อผ้าในคลัง"
+          description={
+            provider === 'firebase'
               ? 'คุณสามารถใช้คำสั่ง pnpm seed:firestore เพื่อนำเข้าข้อมูลจำลองเริ่มต้น หรือกดปุ่ม + ด้านล่างเพื่อเพิ่มชุด'
-              : 'ยังไม่มีข้อมูลในคลังสินค้า กดปุ่ม + ด้านล่างเพื่อเพิ่มชุดใหม่'}
-          </p>
-          <div className="space" />
-          <button
-            type="button"
-            className="primary round"
-            onClick={handleOpenAdd}
-          >
-            <i>add</i>
-            <span>เพิ่มชุดแรก</span>
-          </button>
-        </div>
+              : 'ยังไม่มีข้อมูลในคลังสินค้า กดปุ่ม + ด้านล่างเพื่อเพิ่มชุดใหม่'
+          }
+          actionIcon="add"
+          actionText="เพิ่มชุดแรก"
+          onAction={handleOpenAdd}
+        />
       ) : (
         <>
           {renderActiveFilterBar()}
 
           {filteredItems.length === 0 ? (
-            <div
-              className="center-align middle-align padding"
-              data-testid="empty-filter-results"
-              style={{ minHeight: '45vh' }}
-            >
-              <i className="extra secondary-text">search_off</i>
-              <h5 className="secondary-text">
-                ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา
-              </h5>
-              <p className="secondary-text">
-                ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด
-              </p>
-              <div className="space" />
-              <button
-                type="button"
-                className="primary round"
-                onClick={handleResetAllFilters}
-              >
-                <i>restart_alt</i>
-                <span>ล้างตัวกรองทั้งหมด</span>
-              </button>
-            </div>
+            <EmptyState
+              testId="empty-filter-results"
+              icon="search_off"
+              title="ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา"
+              description="ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด"
+              actionIcon="restart_alt"
+              actionText="ล้างตัวกรองทั้งหมด"
+              onAction={handleResetAllFilters}
+            />
           ) : (
             <div className="grid">
               {filteredItems.map((item) => (
