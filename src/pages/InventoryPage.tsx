@@ -36,6 +36,7 @@ export const InventoryPage: React.FC = () => {
   const [sort, setSort] = useState<InventorySortOption>('code_asc');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [quickAddMode, setQuickAddMode] = useState(false);
   const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,8 +50,6 @@ export const InventoryPage: React.FC = () => {
   const activeFilterCount = countActiveFilters(filter);
   const hasSearchQuery = filter.searchQuery.trim().length > 0;
   const hasNonDefaultSort = sort !== 'code_asc';
-  const hasAnyActiveFilterOrSort =
-    activeFilterCount > 0 || hasSearchQuery || hasNonDefaultSort;
 
   useEffect(() => {
     if (searchExpanded && searchInputRef.current) {
@@ -99,18 +98,38 @@ export const InventoryPage: React.FC = () => {
     setSearchExpanded((prev) => !prev);
   };
 
+  const handleOpenFilter = () => {
+    setQuickAddMode(false);
+    setFilterSheetOpen(true);
+  };
+
+  const handleOpenQuickFilter = () => {
+    setQuickAddMode(true);
+    setFilterSheetOpen(true);
+  };
+
   const currentSortLabel =
     INVENTORY_SORT_OPTIONS.find((opt) => opt.value === sort)?.label ?? '';
 
   const renderActiveFilterBar = () => {
-    if (!hasAnyActiveFilterOrSort) return null;
-
     return (
       <div
         className="row wrap items-center bottom-margin"
         data-testid="active-filters-bar"
         style={{ gap: '8px' }}
       >
+        <button
+          type="button"
+          data-testid="btn-add-filter"
+          className="chip small fill primary-container bold no-margin"
+          onClick={handleOpenQuickFilter}
+          aria-label="เพิ่มฟิลเตอร์"
+          title="เพิ่ม 1 ฟิลเตอร์ด่วน"
+        >
+          <i>add</i>
+          <span>ฟิลเตอร์</span>
+        </button>
+
         {hasSearchQuery && (
           <button
             type="button"
@@ -448,14 +467,26 @@ export const InventoryPage: React.FC = () => {
               <i>search</i>
             </button>
             <button
+              className="chip transparent small no-margin"
+              type="button"
+              onClick={handleOpenQuickFilter}
+              aria-label="เพิ่มฟิลเตอร์"
+              title="เพิ่ม 1 ฟิลเตอร์ด่วน"
+              data-testid="btn-toolbar-add-filter"
+            >
+              <i>add</i>
+              <span>ฟิลเตอร์</span>
+            </button>
+            <button
               className={`circle no-margin ${
                 activeFilterCount > 0 ? 'fill primary' : 'transparent'
               }`}
               type="button"
-              onClick={() => setFilterSheetOpen(true)}
+              onClick={handleOpenFilter}
               aria-label="ตัวกรอง"
               title="ตัวกรอง"
               style={{ position: 'relative' }}
+              data-testid="filter-button"
             >
               <i>tune</i>
               {activeFilterCount > 0 && (
@@ -507,6 +538,7 @@ export const InventoryPage: React.FC = () => {
         items={items}
         filter={filter}
         filteredCount={filteredItems.length}
+        quickAddMode={quickAddMode}
         onChangeFilter={setFilter}
         onResetFilter={() => setFilter(INITIAL_INVENTORY_FILTER)}
         onClose={() => setFilterSheetOpen(false)}

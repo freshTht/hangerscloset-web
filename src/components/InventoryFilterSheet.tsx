@@ -11,6 +11,7 @@ export interface InventoryFilterSheetProps {
   items: InventoryItem[];
   filter: InventoryFilterState;
   filteredCount: number;
+  quickAddMode?: boolean;
   onChangeFilter: (nextFilter: InventoryFilterState) => void;
   onResetFilter: () => void;
   onClose: () => void;
@@ -48,6 +49,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
   items,
   filter,
   filteredCount,
+  quickAddMode = false,
   onChangeFilter,
   onResetFilter,
   onClose,
@@ -124,10 +126,119 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
     return Array.from(daySet).sort((a, b) => a - b);
   }, [items]);
 
-  const activeCount = countActiveFilters(filter);
-
   const isSelected = (list: string[], option: string): boolean =>
     list.some((item) => item.trim().toLowerCase() === option.trim().toLowerCase());
+
+  // In quickAddMode, exclude filters that are already applied (except tags!)
+  const displayedSizes = useMemo(() => {
+    return quickAddMode
+      ? availableSizes.filter((s) => !isSelected(filter.selectedSizes, s))
+      : availableSizes;
+  }, [availableSizes, filter.selectedSizes, quickAddMode]);
+
+  const displayedBrands = useMemo(() => {
+    return quickAddMode
+      ? availableBrands.filter((b) => !isSelected(filter.selectedBrands, b))
+      : availableBrands;
+  }, [availableBrands, filter.selectedBrands, quickAddMode]);
+
+  const displayedColors = useMemo(() => {
+    return quickAddMode
+      ? availableColors.filter((c) => !isSelected(filter.selectedColors, c))
+      : availableColors;
+  }, [availableColors, filter.selectedColors, quickAddMode]);
+
+  const displayedOwners = useMemo(() => {
+    return quickAddMode
+      ? availableOwners.filter((o) => !isSelected(filter.selectedOwners, o))
+      : availableOwners;
+  }, [availableOwners, filter.selectedOwners, quickAddMode]);
+
+  const displayedDurations = useMemo(() => {
+    return quickAddMode
+      ? availableDurations.filter((d) => filter.durationDaysFilter !== d)
+      : availableDurations;
+  }, [availableDurations, filter.durationDaysFilter, quickAddMode]);
+
+  // Tags are multi-selectable, so show all tags
+  const displayedTags = availableTags;
+
+  const handleSelectSize = (size: string) => {
+    if (quickAddMode) {
+      onChangeFilter({
+        ...filter,
+        selectedSizes: [...filter.selectedSizes, size],
+      });
+      onClose();
+    } else {
+      onChangeFilter({
+        ...filter,
+        selectedSizes: toggleArrayItem(filter.selectedSizes, size),
+      });
+    }
+  };
+
+  const handleSelectBrand = (brand: string) => {
+    if (quickAddMode) {
+      onChangeFilter({
+        ...filter,
+        selectedBrands: [...filter.selectedBrands, brand],
+      });
+      onClose();
+    } else {
+      onChangeFilter({
+        ...filter,
+        selectedBrands: toggleArrayItem(filter.selectedBrands, brand),
+      });
+    }
+  };
+
+  const handleSelectColor = (color: string) => {
+    if (quickAddMode) {
+      onChangeFilter({
+        ...filter,
+        selectedColors: [...filter.selectedColors, color],
+      });
+      onClose();
+    } else {
+      onChangeFilter({
+        ...filter,
+        selectedColors: toggleArrayItem(filter.selectedColors, color),
+      });
+    }
+  };
+
+  const handleSelectOwner = (owner: string) => {
+    if (quickAddMode) {
+      onChangeFilter({
+        ...filter,
+        selectedOwners: [...filter.selectedOwners, owner],
+      });
+      onClose();
+    } else {
+      onChangeFilter({
+        ...filter,
+        selectedOwners: toggleArrayItem(filter.selectedOwners, owner),
+      });
+    }
+  };
+
+  const handleSelectDuration = (days: number | null) => {
+    if (quickAddMode && days !== null) {
+      onChangeFilter({
+        ...filter,
+        durationDaysFilter: days,
+      });
+      onClose();
+    } else {
+      onChangeFilter({
+        ...filter,
+        durationDaysFilter: filter.durationDaysFilter === days ? null : days,
+      });
+    }
+  };
+
+  const activeCount = countActiveFilters(filter);
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.trim();
@@ -201,7 +312,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
         className={sheetClass.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
-        aria-label="ตัวกรองสินค้า"
+        aria-label={quickAddMode ? 'เลือกตัวกรองเพิ่ม' : 'ตัวกรองสินค้า'}
         style={{
           zIndex: 1001,
           display: isOpen ? 'flex' : undefined,
@@ -230,9 +341,18 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
           className="row items-center no-margin"
           style={{ paddingBottom: '8px', flexShrink: 0, gap: '8px' }}
         >
-          <i>tune</i>
-          <h6 className="bold no-margin">ตัวกรองสินค้า</h6>
-          {activeCount > 0 && (
+          <i>{quickAddMode ? 'add' : 'tune'}</i>
+          <Stack orientation="column" gap="none">
+            <h6 className="bold no-margin">
+              {quickAddMode ? 'เพิ่ม 1 ฟิลเตอร์' : 'ตัวกรองสินค้า'}
+            </h6>
+            {quickAddMode && (
+              <span className="micro-text secondary-text">
+                เลือก 1 ตัวกรองเพื่อเพิ่มและใช้งานทันที
+              </span>
+            )}
+          </Stack>
+          {activeCount > 0 && !quickAddMode && (
             <span className="chip small primary no-margin">{activeCount}</span>
           )}
           <div className="max" />
@@ -282,26 +402,28 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
             </Stack>
 
             <div className="row wrap no-margin" style={{ gap: '8px' }}>
-              <button
-                type="button"
-                data-testid="filter-duration-all"
-                aria-pressed={
-                  filter.durationDaysFilter === null ||
-                  filter.durationDaysFilter === undefined
-                }
-                className={
-                  filter.durationDaysFilter === null ||
-                  filter.durationDaysFilter === undefined
-                    ? 'chip fill primary no-margin'
-                    : 'chip border surface no-margin'
-                }
-                onClick={() =>
-                  onChangeFilter({ ...filter, durationDaysFilter: null })
-                }
-              >
-                <span>ทั้งหมด</span>
-              </button>
-              {availableDurations.map((days) => {
+              {!quickAddMode && (
+                <button
+                  type="button"
+                  data-testid="filter-duration-all"
+                  aria-pressed={
+                    filter.durationDaysFilter === null ||
+                    filter.durationDaysFilter === undefined
+                  }
+                  className={
+                    filter.durationDaysFilter === null ||
+                    filter.durationDaysFilter === undefined
+                      ? 'chip fill primary no-margin'
+                      : 'chip border surface no-margin'
+                  }
+                  onClick={() =>
+                    onChangeFilter({ ...filter, durationDaysFilter: null })
+                  }
+                >
+                  <span>ทั้งหมด</span>
+                </button>
+              )}
+              {displayedDurations.map((days) => {
                 const selected = filter.durationDaysFilter === days;
                 return (
                   <button
@@ -314,12 +436,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
                         ? 'chip fill primary no-margin'
                         : 'chip border surface no-margin'
                     }
-                    onClick={() =>
-                      onChangeFilter({
-                        ...filter,
-                        durationDaysFilter: selected ? null : days,
-                      })
-                    }
+                    onClick={() => handleSelectDuration(days)}
                   >
                     {selected && <i>check</i>}
                     <span>{days} วัน</span>
@@ -368,77 +485,90 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
                 </div>
               </div>
             </div>
+
+            {quickAddMode && (filter.minPrice !== null || filter.maxPrice !== null) && (
+              <div className="row no-margin right-align">
+                <button
+                  type="button"
+                  className="chip fill primary small no-margin"
+                  onClick={onClose}
+                >
+                  <i>check</i>
+                  <span>ใช้ช่วงราคานี้</span>
+                </button>
+              </div>
+            )}
           </Stack>
 
           {/* Sizes Facet */}
-          {availableSizes.length > 0 && (
+          {displayedSizes.length > 0 && (
             <Stack orientation="column" gap="small">
               <Stack orientation="row" align="center" gap="small">
                 <i className="small">height</i>
                 <span className="bold small-text">ไซส์ (Size)</span>
               </Stack>
               {renderChipGroup(
-                availableSizes,
+                displayedSizes,
                 filter.selectedSizes,
-                (size) =>
-                  onChangeFilter({
-                    ...filter,
-                    selectedSizes: toggleArrayItem(filter.selectedSizes, size),
-                  }),
+                handleSelectSize,
                 'filter-size'
               )}
             </Stack>
           )}
 
           {/* Brands Facet */}
-          {availableBrands.length > 0 && (
+          {displayedBrands.length > 0 && (
             <Stack orientation="column" gap="small">
               <Stack orientation="row" align="center" gap="small">
                 <i className="small">sell</i>
                 <span className="bold small-text">แบรนด์ (Brand)</span>
               </Stack>
               {renderChipGroup(
-                availableBrands,
+                displayedBrands,
                 filter.selectedBrands,
-                (brand) =>
-                  onChangeFilter({
-                    ...filter,
-                    selectedBrands: toggleArrayItem(filter.selectedBrands, brand),
-                  }),
+                handleSelectBrand,
                 'filter-brand'
               )}
             </Stack>
           )}
 
           {/* Colors Facet */}
-          {availableColors.length > 0 && (
+          {displayedColors.length > 0 && (
             <Stack orientation="column" gap="small">
               <Stack orientation="row" align="center" gap="small">
                 <i className="small">palette</i>
                 <span className="bold small-text">สี (Color)</span>
               </Stack>
               {renderChipGroup(
-                availableColors,
+                displayedColors,
                 filter.selectedColors,
-                (color) =>
-                  onChangeFilter({
-                    ...filter,
-                    selectedColors: toggleArrayItem(filter.selectedColors, color),
-                  }),
+                handleSelectColor,
                 'filter-color'
               )}
             </Stack>
           )}
 
-          {/* Tags Facet */}
-          {availableTags.length > 0 && (
+          {/* Tags Facet (Multi-select) */}
+          {displayedTags.length > 0 && (
             <Stack orientation="column" gap="small">
-              <Stack orientation="row" align="center" gap="small">
-                <i className="small">tag</i>
-                <span className="bold small-text">แท็ก / หมวดหมู่ (Tags)</span>
+              <Stack orientation="row" align="center" justify="space-between">
+                <Stack orientation="row" align="center" gap="small">
+                  <i className="small">tag</i>
+                  <span className="bold small-text">แท็ก / หมวดหมู่ (Tags)</span>
+                </Stack>
+                {quickAddMode && (
+                  <button
+                    type="button"
+                    className="chip fill primary small no-margin"
+                    onClick={onClose}
+                  >
+                    <i>check</i>
+                    <span>ใช้แท็กที่เลือก ({filter.selectedTags.length})</span>
+                  </button>
+                )}
               </Stack>
               {renderChipGroup(
-                availableTags,
+                displayedTags,
                 filter.selectedTags,
                 (tag) =>
                   onChangeFilter({
@@ -451,20 +581,16 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
           )}
 
           {/* Owners Facet */}
-          {availableOwners.length > 0 && (
+          {displayedOwners.length > 0 && (
             <Stack orientation="column" gap="small">
               <Stack orientation="row" align="center" gap="small">
                 <i className="small">person</i>
                 <span className="bold small-text">เจ้าของ / ฝากเช่า (Owner)</span>
               </Stack>
               {renderChipGroup(
-                availableOwners,
+                displayedOwners,
                 filter.selectedOwners,
-                (owner) =>
-                  onChangeFilter({
-                    ...filter,
-                    selectedOwners: toggleArrayItem(filter.selectedOwners, owner),
-                  }),
+                handleSelectOwner,
                 'filter-owner'
               )}
             </Stack>

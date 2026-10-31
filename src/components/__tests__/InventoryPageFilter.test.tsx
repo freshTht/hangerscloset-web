@@ -213,4 +213,40 @@ describe('InventoryPage Search, Filter & Sort', () => {
     expect(screen.queryByTestId('empty-filter-results')).not.toBeInTheDocument();
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
+
+  it('supports quick-add filter (+ ฟิลเตอร์): auto-submits on single selection and excludes already-applied facets', () => {
+    render(<InventoryPage />);
+
+    // Open filter sheet via "+ ฟิลเตอร์" button
+    const quickAddBtn = screen.getByTestId('btn-add-filter');
+    fireEvent.click(quickAddBtn);
+
+    // Quick-add title is displayed
+    expect(
+      screen.getByRole('dialog', { name: 'เลือกตัวกรองเพิ่ม' })
+    ).toBeInTheDocument();
+
+    // Clicking a single facet (e.g., size 'S') automatically applies and closes the sheet
+    fireEvent.click(screen.getByTestId('filter-size-S'));
+
+    // Dialog should now be closed
+    expect(
+      screen.queryByRole('dialog', { name: 'เลือกตัวกรองเพิ่ม' })
+    ).not.toBeInTheDocument();
+
+    // Size S filter chip should be active and count updated
+    expect(screen.getByRole('button', { name: 'ลบตัวกรองไซส์ S' })).toBeInTheDocument();
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
+
+    // Click "+ ฟิลเตอร์" again
+    const addAnotherFilterBtn = screen.getByTestId('btn-add-filter');
+    fireEvent.click(addAnotherFilterBtn);
+
+    // Size S should be excluded because it is already applied
+    expect(screen.queryByTestId('filter-size-S')).not.toBeInTheDocument();
+    expect(screen.getByTestId('filter-size-M')).toBeInTheDocument();
+
+    // But tags section is still available for multi-selection
+    expect(screen.getByText(/แท็ก \/ หมวดหมู่ \(Tags\)/)).toBeInTheDocument();
+  });
 });

@@ -113,13 +113,13 @@ export function filterAndSortInventory(
       if (!matchesSize) return false;
     }
 
-    // 5. Tags facet (OR within facet)
+    // 5. Tags facet (all inclusive - must contain ALL selected tags)
     if (filter.selectedTags.length > 0) {
       const lowerItemTags = itemTags.map((t) => t.trim().toLowerCase());
-      const matchesTag = filter.selectedTags.some((selectedTag) =>
+      const matchesAllTags = filter.selectedTags.every((selectedTag) =>
         lowerItemTags.includes(selectedTag.trim().toLowerCase())
       );
-      if (!matchesTag) return false;
+      if (!matchesAllTags) return false;
     }
 
     // 6. Owner facet (OR within facet)
