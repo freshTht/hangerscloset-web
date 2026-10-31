@@ -32,8 +32,14 @@
 - **Rule for New Env Vars**: Any agent proposing to add a new environment variable MUST research sensitivity, formulate client vs. server exposure recommendations, and confirm with the human author before adding it.
 - **`VITE_*` Variables**: Shipped to client bundle. Only public configuration (e.g. Firebase client keys, provider flags) are permitted. Never use `VITE_` for secret keys.
 
-## Git Conventions
+## Git Conventions & Branching Strategy
 - **No Auto-Committing**: Do NOT automatically commit changes at the end of each turn. Only make git commits when explicitly requested by the user.
+- **Production Branch (`production/netlify`)**:
+  - `production/netlify` is the dedicated production deployment branch connected to Netlify hosting (builds via `pnpm run build:firebase`).
+  - **Never commit directly** to `production/netlify`, as any push to this branch triggers an automated live deployment.
+  - **Never merge feature branches directly** into `production/netlify`.
+  - **Always merge feature branches into `main` first**, verify tests and builds on `main`, and only then merge `main` into `production/netlify`.
+  - **Keep `main` and `production/netlify` in sync**: `production/netlify` should mirror `main` once features on `main` are approved for production.
 - Maintain a clean working directory.
 - Avoid committing build artifacts (`dist/`, `*.tsbuildinfo`, `node_modules`).
 - Commit messages should follow conventional commit formatting:

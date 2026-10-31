@@ -12,4 +12,5 @@ Follow @.agents/rules/development.md.
 - Validation: always run `pnpm test` and `pnpm build` after modifying code.
 - Environment & Secrets: follow @.agents/rules/environment-and-security.md. Any new env variable requires security research and explicit confirmation from human author.
 - Git: do not auto-commit changes. Only commit when explicitly requested.
+- Production Deployment: `production/netlify` triggers live Netlify deployment. Never commit or merge feature branches directly to it; always merge into `main` first, then merge `main` into `production/netlify` to keep them in sync.
 - TypeScript: strict mode enabled.

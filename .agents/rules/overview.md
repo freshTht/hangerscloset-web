@@ -12,6 +12,7 @@
 - **Dynamic Theming**: [Material Dynamic Colors](https://github.com/leonardorafael/material-dynamic-colors)
 - **Routing**: [React Router v7](https://reactrouter.com/) (`react-router-dom`)
 - **Backend / Services**: [Firebase](https://firebase.google.com/) (Authentication, Cloud Firestore, Cloud Storage)
+- **Hosting / Deployment**: [Netlify](https://www.netlify.com/) (triggered via branch `production/netlify`, builds with `pnpm run build:firebase`)
 - **Iconography**: Google Material Symbols (Outlined, Rounded, Sharp bundled locally via Beer CSS)
 
 ## Environment Modes
