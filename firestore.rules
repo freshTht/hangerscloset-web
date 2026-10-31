@@ -105,6 +105,50 @@ service cloud.firestore {
         data.name is string && data.name.size() > 0 && data.name.size() <= 100;
     }
 
+    function isValidCustomer(data) {
+      let requiredFields = ['name', 'phone', 'createdAt'];
+      let allowedFields = ['name', 'phone', 'lineId', 'note', 'createdAt'];
+
+      return data.keys().hasAll(requiredFields) &&
+        data.keys().hasOnly(allowedFields) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 200 &&
+        data.phone is string && data.phone.size() > 0 && data.phone.size() <= 40 &&
+        (!('lineId' in data) || data.lineId == null || (data.lineId is string && data.lineId.size() <= 100)) &&
+        (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 2000)) &&
+        data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 60;
+    }
+
+    function isValidBooking(data) {
+      let requiredFields = [
+        'customerId', 'customerName', 'customerPhone', 'items',
+        'startDate', 'endDate', 'cleaningEndDate', 'durationDays',
+        'rentalPrice', 'deposit', 'depositRefunded', 'createdAt', 'updatedAt'
+      ];
+      let allowedFields = [
+        'customerId', 'customerName', 'customerPhone', 'customerLineId',
+        'items', 'startDate', 'endDate', 'cleaningEndDate', 'durationDays',
+        'rentalPrice', 'deposit', 'depositRefunded', 'note', 'createdAt', 'updatedAt'
+      ];
+
+      return data.keys().hasAll(requiredFields) &&
+        data.keys().hasOnly(allowedFields) &&
+        data.customerId is string && data.customerId.size() > 0 && data.customerId.size() <= 100 &&
+        data.customerName is string && data.customerName.size() > 0 && data.customerName.size() <= 200 &&
+        data.customerPhone is string && data.customerPhone.size() > 0 && data.customerPhone.size() <= 40 &&
+        (!('customerLineId' in data) || data.customerLineId == null || (data.customerLineId is string && data.customerLineId.size() <= 100)) &&
+        data.items is list && data.items.size() > 0 && data.items.size() <= 50 &&
+        data.startDate is string && data.startDate.size() == 10 &&
+        data.endDate is string && data.endDate.size() == 10 &&
+        data.cleaningEndDate is string && data.cleaningEndDate.size() == 10 &&
+        data.durationDays is number && data.durationDays >= 1 &&
+        data.rentalPrice is number && data.rentalPrice >= 0 &&
+        data.deposit is number && data.deposit >= 0 &&
+        data.depositRefunded is bool &&
+        (!('note' in data) || data.note == null || (data.note is string && data.note.size() <= 2000)) &&
+        data.createdAt is string && data.createdAt.size() > 0 && data.createdAt.size() <= 60 &&
+        data.updatedAt is string && data.updatedAt.size() > 0 && data.updatedAt.size() <= 60;
+    }
+
     // ===============================================================
     // Collection: allowed_users
     // ===============================================================
@@ -155,6 +199,24 @@ service cloud.firestore {
     match /tags/{id} {
       allow read: if isAllowedUser();
       allow create, update: if isAllowedUser() && isValidMetadataItem(request.resource.data);
+      allow delete: if isAllowedUser();
+    }
+
+    // ===============================================================
+    // Collection: customers
+    // ===============================================================
+    match /customers/{customerId} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidCustomer(request.resource.data);
+      allow delete: if isAllowedUser();
+    }
+
+    // ===============================================================
+    // Collection: bookings
+    // ===============================================================
+    match /bookings/{bookingId} {
+      allow read: if isAllowedUser();
+      allow create, update: if isAllowedUser() && isValidBooking(request.resource.data);
       allow delete: if isAllowedUser();
     }
   }

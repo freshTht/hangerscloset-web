@@ -9,6 +9,9 @@ import { MaterialShapesBackground } from './components/MaterialShapesBackground'
 const LoginPage = React.lazy(() =>
   import('./pages/LoginPage').then((m) => ({ default: m.LoginPage }))
 );
+const BookingsPage = React.lazy(() =>
+  import('./pages/BookingsPage').then((m) => ({ default: m.BookingsPage }))
+);
 const InventoryPage = React.lazy(() =>
   import('./pages/InventoryPage').then((m) => ({ default: m.InventoryPage }))
 );
@@ -60,13 +63,14 @@ export const App: React.FC = () => {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Navigate to="/inventory" replace />} />
+              <Route index element={<Navigate to="/bookings" replace />} />
+              <Route path="bookings" element={<BookingsPage />} />
               <Route path="inventory" element={<InventoryPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
 
             {/* Catch-all redirect */}
-            <Route path="*" element={<Navigate to="/inventory" replace />} />
+            <Route path="*" element={<Navigate to="/bookings" replace />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
