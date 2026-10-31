@@ -1,15 +1,14 @@
 ---
-description: pnpm, TypeScript, scripts, and git conventions for this repo
-globs: package.json,pnpm-lock.yaml,pnpm-workspace.yaml,tsconfig*.json,vite.config.ts,src/**/*.{ts,tsx}
+description: pnpm, TypeScript, scripts, test verification, and git conventions
+globs: package.json,pnpm-lock.yaml,tsconfig*.json,vite.config.ts,src/**/*.{ts,tsx}
 alwaysApply: false
 ---
 
-# Conventions
+# Development Conventions
 
-Follow @.context/conventions.md.
+Follow @.agents/rules/development.md.
 
-- Package manager is `pnpm` only. Do not use npm or yarn.
-- Scripts: `pnpm dev`, `pnpm build` (`tsc -b` then Vite), `pnpm preview`.
-- TypeScript is strict; keep components small and typed.
-- Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`, `style:`) when the user asks to commit.
-- Never auto-commit.
+- Package manager: strictly `pnpm` (never npm or yarn).
+- Validation: always run `pnpm test` and `pnpm build` after modifying code.
+- Git: do not auto-commit changes. Only commit when explicitly requested.
+- TypeScript: strict mode enabled.

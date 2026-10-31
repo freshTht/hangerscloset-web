@@ -1,21 +1,13 @@
 ---
-description: Load agent-agnostic project context from .context/ before changing this repo
+description: Canonical project context and operating rules for hangerscloset-web
 alwaysApply: true
 ---
 
-# Project context
+# Project Context
 
-Canonical project docs live in `.context/`. Read the relevant module before making changes; do not copy those docs into other rule files.
+Canonical project rules live in `.agents/rules/`. Read the relevant module before making changes.
 
-- @.context/overview.md — stack, goals, mobile-first philosophy
-- @.context/architecture.md — layout, routing, navigation shell
-- @.context/ui-guidelines.md — Beer CSS, icons, theming, touch targets
-- @.context/conventions.md — pnpm, TypeScript, git
-
-## Operational defaults
-
-1. Use `pnpm` only (`pnpm install`, `pnpm add`, `pnpm dev`, `pnpm build`).
-2. Style with Beer CSS semantic HTML and utility classes. Do not add another UI library unless asked.
-3. Icons are Material Symbols via `<i>icon_name</i>`.
-4. Keep tap targets at least 48px and respect mobile safe areas.
-5. Do not create git commits unless the user explicitly asks.
+- @.agents/rules/overview.md — Stack, goals, environment modes & mobile-first philosophy
+- @.agents/rules/ui.md — Beer CSS native-first, custom units (pt/px), iconography, loading states
+- @.agents/rules/development.md — Strict pnpm, test/build validation, git rules (no auto-commit)
+- @.agents/rules/architecture.md — App layout shell, routing, responsive navigation (≤600px vs >600px)

@@ -1,14 +1,15 @@
 ---
-description: App shell, routing, and navigation layout for hangerscloset-web
-globs: src/App.tsx,src/main.tsx,src/components/**/*.tsx,src/pages/**/*.tsx
+description: App shell, routing, navigation layout, and service layer architecture
+globs: src/App.tsx,src/main.tsx,src/components/**/*.tsx,src/pages/**/*.tsx,src/services/**/*.ts
 alwaysApply: false
 ---
 
-# Architecture
+# Architecture & Routing
 
-Before changing routes, the header, or the layout shell, read @.context/architecture.md.
+Follow @.agents/rules/architecture.md.
 
-- `Layout` wraps all view routes; unknown paths redirect to `/`.
-- Routes: `/` Home, `/inventory` Inventory, `/settings` Settings.
-- Small screens (≤600px): sticky top bar + tabs. Medium+: left navigation rail, header hidden.
-- Theme toggle lives on Settings, not in the header.
+- App shell: `Layout` wraps view routes; fallback redirect to `/`.
+- Responsive navigation:
+  - Mobile (≤600px): sticky top header + tabs below.
+  - Medium & Large (>600px): left navigation rail, top header hidden.
+- Service layer: environment factory pattern for mock and Firebase services.
