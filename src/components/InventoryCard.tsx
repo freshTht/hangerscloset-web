@@ -1,6 +1,5 @@
 import React from 'react';
-import ui from 'beercss';
-import type { InventoryItem, InventoryStatus } from '../types/inventory';
+import type { InventoryItem } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { LazyImage } from './LazyImage';
 
@@ -9,36 +8,24 @@ interface InventoryCardProps {
   onEdit?: (item: InventoryItem) => void;
 }
 
-const STATUS_META: Record<InventoryStatus, { label: string }> = {
-  available: { label: 'พร้อมเช่า' },
-  reserved: { label: 'จองแล้ว' },
-  laundry: { label: 'ส่งซัก' },
-};
-
 const formatPrice = (amount: number): string =>
   `฿${amount.toLocaleString('en-US')}`;
 
 export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) => {
   const isMobile = useIsMobile();
-  const status = STATUS_META[item.status];
-
-  const handlePriceAction = (e: React.MouseEvent, days: number, price: number) => {
-    e.stopPropagation();
-    const dialogId = isMobile ? 'dialog-coming-soon-s' : 'dialog-coming-soon-m';
-    const dialog = document.getElementById(dialogId);
-    if (dialog) {
-      void ui(`#${dialogId}`);
-    } else {
-      alert(`เลือกเช่า ${days} วัน ราคา ${formatPrice(price)} (Coming soon)`);
-    }
-  };
 
   const renderPrices = () => {
-    const sortedTiers = [...(item.rentalPrices || [])].sort((a, b) => a.durationDays - b.durationDays);
+    const sortedTiers = [...(item.rentalPrices || [])].sort(
+      (a, b) => a.durationDays - b.durationDays
+    );
     if (sortedTiers.length === 0) return null;
 
     return (
-      <nav className="group connected max no-margin">
+      <div
+        className="row no-space max no-margin"
+        data-testid="price-tiers-group"
+        style={{ width: '100%' }}
+      >
         {sortedTiers.map((tier, idx) => {
           const isFirst = idx === 0;
           const isLast = idx === sortedTiers.length - 1;
@@ -52,29 +39,33 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
               : 'no-round';
 
           return (
-            <button
+            <div
               key={tier.durationDays}
-              className={`${roundClass} max vertical small fill no-margin`}
-              type="button"
-              onClick={(e) => handlePriceAction(e, tier.durationDays, tier.price)}
+              data-testid={`price-tier-${tier.durationDays}`}
+              className={`${roundClass} max vertical center-align middle-align surface-container-high small-text no-margin`}
+              style={{
+                padding: '6px 4px',
+                gap: '2px',
+                borderRight: !isLast ? '1px solid var(--surface-variant)' : undefined,
+              }}
             >
-              <span>{tier.durationDays} วัน</span>
-              <span className="bold">{formatPrice(tier.price)}</span>
-            </button>
+              <span className="secondary-text micro-text">{tier.durationDays} วัน</span>
+              <span className="bold on-surface-text">{formatPrice(tier.price)}</span>
+            </div>
           );
         })}
-      </nav>
+      </div>
     );
   };
 
   const renderAttributes = () => (
     <div
       className="row no-margin tiny-space small-text secondary-text wrap"
-      style={{ alignItems: 'center', gap: 8 }}
+      style={{ alignItems: 'center', gap: '8px' }}
     >
       <span
         className="middle-align"
-        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
         title={`แบรนด์: ${item.brand}`}
       >
         <i className="tiny">sell</i>
@@ -83,7 +74,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
       <span className="medium-opacity">•</span>
       <span
         className="middle-align"
-        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
         title={`สี: ${item.color}`}
       >
         <i className="tiny">palette</i>
@@ -92,7 +83,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
       <span className="medium-opacity">•</span>
       <span
         className="middle-align"
-        style={{ gap: 4, alignItems: 'center', whiteSpace: 'nowrap' }}
+        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
         title={`ไซส์: ${item.size}`}
       >
         <i className="tiny">height</i>
@@ -106,7 +97,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
       <article
         className="no-padding round row no-space no-scroll"
         style={{
-          minHeight: 160,
+          minHeight: '160px',
           alignItems: 'stretch',
         }}
       >
@@ -129,17 +120,13 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
             padding: '10px 14px 10px 12px',
           }}
         >
-          {/* Top: Code & Status, and Title */}
-          <div className="vertical" style={{ gap: 4 }}>
-            {/* Top Row: Code & Refined Status Badge & Edit Action */}
-            <div className="row no-margin align-center no-space" style={{ gap: 6 }}>
+          {/* Top: Code, Edit Action, and Title */}
+          <div className="vertical" style={{ gap: '4px' }}>
+            <div className="row no-margin align-center no-space" style={{ gap: '6px' }}>
               <span className="micro-text secondary-text medium">
                 {item.code}
               </span>
               <div className="max"></div>
-              <span className={`status-badge small status-badge-${item.status}`}>
-                {status.label}
-              </span>
               {onEdit && (
                 <button
                   type="button"
@@ -150,7 +137,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
                   }}
                   aria-label={`แก้ไข ${item.code}`}
                   title="แก้ไขรายการ"
-                  style={{ width: 28, height: 28, minWidth: 28, minHeight: 28, padding: 0 }}
+                  style={{ width: '28px', height: '28px', minWidth: '28px', minHeight: '28px', padding: 0 }}
                 >
                   <i className="tiny">edit</i>
                 </button>
@@ -175,11 +162,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
 
           {/* Anything below card title is bottom aligned with margin-top: auto */}
           <div className="vertical" style={{ marginTop: 'auto' }}>
-            {/* Attributes with Sell, Palette, Height icons */}
             {renderAttributes()}
-
-            {/* Price section with some margin top */}
-            <div style={{ marginTop: 8 }}>
+            <div style={{ marginTop: '8px' }}>
               {renderPrices()}
             </div>
           </div>
@@ -206,14 +190,11 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
         className="padding vertical"
         style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
       >
-        {/* Top: Code & Status, and Title */}
-        <div className="vertical" style={{ gap: 6 }}>
-          <div className="row no-margin align-center" style={{ gap: 6 }}>
+        {/* Top: Code, Edit Action, and Title */}
+        <div className="vertical" style={{ gap: '6px' }}>
+          <div className="row no-margin align-center" style={{ gap: '6px' }}>
             <span className="small-text secondary-text">{item.code}</span>
             <div className="max"></div>
-            <span className={`status-badge status-badge-${item.status}`}>
-              {status.label}
-            </span>
             {onEdit && (
               <button
                 type="button"
@@ -224,7 +205,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
                 }}
                 aria-label={`แก้ไข ${item.code}`}
                 title="แก้ไขรายการ"
-                style={{ width: 32, height: 32, minWidth: 32, minHeight: 32, padding: 0 }}
+                style={{ width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', padding: 0 }}
               >
                 <i className="small">edit</i>
               </button>
@@ -239,11 +220,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
 
         {/* Anything below card title is bottom aligned with margin-top: auto */}
         <div className="vertical" style={{ marginTop: 'auto' }}>
-          {/* Attributes with Sell, Palette, Height icons */}
           {renderAttributes()}
-
-          {/* Price section with some margin top */}
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: '12px' }}>
             {renderPrices()}
           </div>
         </div>
