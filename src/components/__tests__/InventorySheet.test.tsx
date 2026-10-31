@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { InventorySheet } from '../InventorySheet';
 import type { InventoryItem } from '../../types/inventory';
+import type { IStorageService } from '../../services/storage';
+import * as resizeImageModule from '../../lib/resizeImage';
 
 const mockItem: InventoryItem = {
   id: '123',
@@ -336,5 +338,53 @@ describe('InventorySheet Component', () => {
     fireEvent.submit(form);
 
     expect(await screen.findByText(/ระยะเวลาเช่า 1 วัน ซ้ำกัน/i)).toBeInTheDocument();
+  });
+
+  it('compresses and uploads selected image via storageService and cleans up old image on edit submit', async () => {
+    vi.spyOn(resizeImageModule, 'compressImageToBlob').mockResolvedValueOnce(
+      new Blob(['compressed-webp'], { type: 'image/webp' })
+    );
+
+    const fakeStorageService: IStorageService = {
+      providerName: 'mock',
+      uploadItemImage: vi.fn().mockImplementation(async (_blob, _code, onProgress) => {
+        onProgress?.(50);
+        return 'https://firebasestorage.googleapis.com/v0/b/test/o/new.webp';
+      }),
+      deleteImage: vi.fn().mockResolvedValue(undefined),
+    };
+
+    const onSubmitSpy = vi.fn().mockResolvedValue(undefined);
+    const { container } = render(
+      <InventorySheet
+        isOpen={true}
+        mode="edit"
+        item={mockItem}
+        storageService={fakeStorageService}
+        onClose={vi.fn()}
+        onSubmit={onSubmitSpy}
+      />
+    );
+
+    const fileInput = screen.getByTestId('image-file-input');
+    const file = new File(['raw-photo'], 'dress.jpg', { type: 'image/jpeg' });
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(fakeStorageService.uploadItemImage).toHaveBeenCalledTimes(1);
+    });
+
+    const form = container.querySelector('#inventory-form')!;
+    fireEvent.submit(form);
+
+    await waitFor(() => {
+      expect(onSubmitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          imageUrl: 'https://firebasestorage.googleapis.com/v0/b/test/o/new.webp',
+        })
+      );
+    });
+
+    expect(fakeStorageService.deleteImage).toHaveBeenCalledWith(mockItem.imageUrl);
   });
 });

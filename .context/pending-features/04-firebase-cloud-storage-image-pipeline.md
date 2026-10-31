@@ -2,7 +2,7 @@
 
 - **Priority**: Rank #4 (Infrastructure & Reliability)
 - **RICE Score**: **5.8** (Reach: 8, Impact: 2, Confidence: 90%, Effort: 2.5)
-- **Status**: Ready for `/plan`
+- **Status**: Implemented
 
 ---
 
@@ -81,11 +81,11 @@ service firebase.storage {
 ---
 
 ## 6. Acceptance Criteria
-- [ ] Large camera photos are compressed client-side before upload to $<400\text{ KB}$.
-- [ ] Uploading photos to Firebase Storage generates a secure `https://firebasestorage.googleapis.com/...` URL.
-- [ ] Upload progress is clearly displayed to staff without blocking navigation.
-- [ ] Mock mode allows testing photo additions without Firebase Storage credentials.
-- [ ] Replaced photos or deleted items clean up orphaned storage blobs.
+- [x] Large camera photos are compressed client-side before upload to $<400\text{ KB}$.
+- [x] Uploading photos to Firebase Storage generates a secure `https://firebasestorage.googleapis.com/...` URL.
+- [x] Upload progress is clearly displayed to staff without blocking navigation.
+- [x] Mock mode allows testing photo additions without Firebase Storage credentials.
+- [x] Replaced photos or deleted items clean up orphaned storage blobs.
 
 ---
 

@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default deny for all unspecified storage paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    function isVerifiedStaff() {
+      return request.auth != null &&
+        request.auth.token.email_verified == true;
+    }
+
+    // Inventory apparel images (/inventory/{itemCode}/{timestamp}.webp)
+    match /inventory/{allPaths=**} {
+      // Anyone can view inventory photos (global CDN caching)
+      allow read: if true;
+
+      // Only authenticated, verified staff can upload or replace photos (max 10 MB, image/* only)
+      allow create, update: if isVerifiedStaff() &&
+        request.resource != null &&
+        request.resource.size < 10 * 1024 * 1024 &&
+        request.resource.contentType.matches('image/.*');
+
+      // Only authenticated, verified staff can delete orphaned or removed photos
+      allow delete: if isVerifiedStaff();
+    }
+  }
+}

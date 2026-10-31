@@ -9,6 +9,11 @@ import {
   mockInventoryRepository,
   resolveInventoryProvider,
 } from '../inventory';
+import {
+  createStorageService,
+  mockStorageService,
+  resolveStorageProvider,
+} from '../storage';
 
 describe('Environment Factories', () => {
   it('createAuthService returns mockAuthService for mock provider', () => {
@@ -23,8 +28,15 @@ describe('Environment Factories', () => {
     expect(repo.providerName).toBe('mock');
   });
 
+  it('createStorageService returns mockStorageService for mock provider', () => {
+    const storage = createStorageService('mock');
+    expect(storage).toBe(mockStorageService);
+    expect(storage.providerName).toBe('mock');
+  });
+
   it('resolves to mock provider by default when Firebase keys are absent', () => {
     expect(resolveAuthProvider()).toBe('mock');
     expect(resolveInventoryProvider()).toBe('mock');
+    expect(resolveStorageProvider()).toBe('mock');
   });
 });

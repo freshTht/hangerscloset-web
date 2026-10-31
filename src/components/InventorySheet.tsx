@@ -2,7 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
-import { resizeImageFile } from '../lib/resizeImage';
+import { compressImageToBlob } from '../lib/resizeImage';
+import {
+  storageService as defaultStorageService,
+  type IStorageService,
+} from '../services/storage';
 import { LazyImage } from './LazyImage';
 import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
@@ -13,6 +17,7 @@ export interface InventorySheetProps {
   mode: 'add' | 'edit';
   item?: InventoryItem | null;
   loading?: boolean;
+  storageService?: IStorageService;
   onClose: () => void;
   onSubmit: (data: Omit<InventoryItem, 'id'>) => Promise<void>;
   onDelete?: (id: string) => Promise<void>;
@@ -100,17 +105,21 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
   mode,
   item,
   loading = false,
+  storageService = defaultStorageService,
   onClose,
   onSubmit,
   onDelete,
 }) => {
   const isMobile = useIsMobile();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const sessionUploadedUrlsRef = useRef<string[]>([]);
   const { brands, colors, sizes, tags, addOption } = useMetadataOptions();
 
   const [formData, setFormData] = useState<FormState>(DEFAULT_FORM);
   const [contentReady, setContentReady] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -121,8 +130,20 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       setFormData(mode === 'edit' && item ? itemToForm(item) : DEFAULT_FORM);
       setErrorMessage(null);
       setConfirmDelete(false);
+      setUploadingImage(false);
+      setUploadProgress(null);
+      sessionUploadedUrlsRef.current = [];
       setContentReady(true);
       return;
+    }
+
+    // If the sheet is closed without saving, clean up any unreferenced uploads from this session
+    if (sessionUploadedUrlsRef.current.length > 0) {
+      const orphanedUrls = [...sessionUploadedUrlsRef.current];
+      sessionUploadedUrlsRef.current = [];
+      for (const url of orphanedUrls) {
+        void storageService.deleteImage(url);
+      }
     }
 
     const timer = window.setTimeout(() => {
@@ -131,9 +152,11 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       setErrorMessage(null);
       setConfirmDelete(false);
       setSubmitting(false);
+      setUploadingImage(false);
+      setUploadProgress(null);
     }, CLOSE_CLEANUP_DELAY_MS);
     return () => window.clearTimeout(timer);
-  }, [isOpen, mode, item]);
+  }, [isOpen, mode, item, storageService]);
 
   // Handle ESC key to close
   useEffect(() => {
@@ -198,17 +221,62 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
+
+    setErrorMessage(null);
+    setUploadingImage(true);
+    setUploadProgress(0);
+
     try {
-      const dataUrl = await resizeImageFile(file);
-      setFormData((prev) => ({ ...prev, imageUrl: dataUrl }));
+      const compressedBlob = await compressImageToBlob(file);
+      const itemCode = formData.code.trim() || item?.code || 'draft';
+      const downloadUrl = await storageService.uploadItemImage(
+        compressedBlob,
+        itemCode,
+        (percent) => setUploadProgress(percent)
+      );
+
+      // Clean up any previous upload from this same session that was just replaced
+      const previousUrl = formData.imageUrl;
+      if (
+        previousUrl &&
+        sessionUploadedUrlsRef.current.includes(previousUrl) &&
+        previousUrl !== downloadUrl
+      ) {
+        sessionUploadedUrlsRef.current = sessionUploadedUrlsRef.current.filter(
+          (u) => u !== previousUrl
+        );
+        void storageService.deleteImage(previousUrl);
+      }
+
+      sessionUploadedUrlsRef.current.push(downloadUrl);
+      setFormData((prev) => ({ ...prev, imageUrl: downloadUrl }));
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'ไม่สามารถโหลดรูปภาพได้');
+    } finally {
+      setUploadingImage(false);
+      setUploadProgress(null);
     }
+  };
+
+  const handleRemoveImage = () => {
+    const currentUrl = formData.imageUrl;
+    if (currentUrl && sessionUploadedUrlsRef.current.includes(currentUrl)) {
+      sessionUploadedUrlsRef.current = sessionUploadedUrlsRef.current.filter(
+        (u) => u !== currentUrl
+      );
+      void storageService.deleteImage(currentUrl);
+    }
+    setFormData((prev) => ({ ...prev, imageUrl: '' }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
+
+    if (uploadingImage) {
+      setErrorMessage('กรุณารอให้อัปโหลดรูปภาพเสร็จสิ้นก่อนบันทึก');
+      return;
+    }
 
     const code = formData.code.trim();
     const name = formData.name.trim();
@@ -252,6 +320,9 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
 
     parsedTiers.sort((a, b) => a.durationDays - b.durationDays);
 
+    const finalImageUrl = formData.imageUrl.trim();
+    const previousItemImageUrl = mode === 'edit' && item ? item.imageUrl : '';
+
     try {
       setSubmitting(true);
       await onSubmit({
@@ -267,9 +338,24 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         note: formData.note.trim() || null,
         accessories: formData.accessories.trim() || null,
         owner: formData.owner.trim() || null,
-        imageUrl: formData.imageUrl.trim(),
+        imageUrl: finalImageUrl,
         rentalPrices: parsedTiers,
       });
+
+      // Clean up any intermediate session uploads that weren't used as the final image
+      const unusedSessionUrls = sessionUploadedUrlsRef.current.filter(
+        (u) => u !== finalImageUrl
+      );
+      sessionUploadedUrlsRef.current = [];
+      for (const unusedUrl of unusedSessionUrls) {
+        void storageService.deleteImage(unusedUrl);
+      }
+
+      // If an existing item's image was replaced or cleared, delete the old blob
+      if (previousItemImageUrl && previousItemImageUrl !== finalImageUrl) {
+        void storageService.deleteImage(previousItemImageUrl);
+      }
+
       onClose();
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการบันทึกข้อมูล');
@@ -283,6 +369,16 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     try {
       setSubmitting(true);
       await onDelete(item.id);
+
+      const sessionUrls = [...sessionUploadedUrlsRef.current];
+      sessionUploadedUrlsRef.current = [];
+      for (const url of sessionUrls) {
+        void storageService.deleteImage(url);
+      }
+      if (item.imageUrl) {
+        void storageService.deleteImage(item.imageUrl);
+      }
+
       onClose();
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการลบข้อมูล');
@@ -337,20 +433,55 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         </div>
       )}
 
+      {uploadingImage && (
+        <div
+          className="center-align middle-align padding"
+          data-testid="image-upload-progress"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: '#ffffff',
+          }}
+        >
+          <div
+            className="shape loading-indicator extra"
+            role="status"
+            aria-label="กำลังอัปโหลดรูปภาพ"
+          />
+          <progress
+            className="max"
+            value={uploadProgress ?? 0}
+            max={100}
+            style={{ width: '75%' }}
+          />
+          <span className="small-text bold">
+            กำลังอัปโหลด {uploadProgress ?? 0}%
+          </span>
+        </div>
+      )}
+
       {/* Overlay actions */}
       <button
         type="button"
         className="small round fill no-margin"
         onClick={() => fileInputRef.current?.click()}
+        disabled={uploadingImage || submitting}
         style={{ position: 'absolute', left: 8, bottom: 8 }}
       >
         เปลี่ยน
       </button>
-      {formData.imageUrl && (
+      {formData.imageUrl && !uploadingImage && (
         <button
           type="button"
           className="small circle fill no-margin"
-          onClick={() => setFormData((prev) => ({ ...prev, imageUrl: '' }))}
+          onClick={handleRemoveImage}
+          disabled={submitting}
           aria-label="ลบรูปภาพ"
           title="ลบรูปภาพ"
           style={{ position: 'absolute', right: 8, bottom: 8 }}
@@ -815,7 +946,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 type="submit"
                 form="inventory-form"
                 className="primary round no-margin"
-                disabled={submitting}
+                disabled={submitting || uploadingImage}
                 style={{ minWidth: isMobile ? 90 : 110 }}
               >
                 {submitting ? (
