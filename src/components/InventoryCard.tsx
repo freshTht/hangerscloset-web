@@ -33,34 +33,39 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
     }
   };
 
-  const renderPrices = () => (
-    <nav className="group connected max no-margin">
-      <button
-        className="left-round max vertical small fill no-margin"
-        type="button"
-        onClick={(e) => handlePriceAction(e, 1, item.rentalPrices.oneDay)}
-      >
-        <span>1 วัน</span>
-        <span className="bold">{formatPrice(item.rentalPrices.oneDay)}</span>
-      </button>
-      <button
-        className="no-round max vertical small fill no-margin"
-        type="button"
-        onClick={(e) => handlePriceAction(e, 3, item.rentalPrices.threeDays)}
-      >
-        <span>3 วัน</span>
-        <span className="bold">{formatPrice(item.rentalPrices.threeDays)}</span>
-      </button>
-      <button
-        className="right-round max vertical small fill no-margin"
-        type="button"
-        onClick={(e) => handlePriceAction(e, 5, item.rentalPrices.fiveDays)}
-      >
-        <span>5 วัน</span>
-        <span className="bold">{formatPrice(item.rentalPrices.fiveDays)}</span>
-      </button>
-    </nav>
-  );
+  const renderPrices = () => {
+    const sortedTiers = [...(item.rentalPrices || [])].sort((a, b) => a.durationDays - b.durationDays);
+    if (sortedTiers.length === 0) return null;
+
+    return (
+      <nav className="group connected max no-margin">
+        {sortedTiers.map((tier, idx) => {
+          const isFirst = idx === 0;
+          const isLast = idx === sortedTiers.length - 1;
+          const roundClass =
+            sortedTiers.length === 1
+              ? 'round'
+              : isFirst
+              ? 'left-round'
+              : isLast
+              ? 'right-round'
+              : 'no-round';
+
+          return (
+            <button
+              key={tier.durationDays}
+              className={`${roundClass} max vertical small fill no-margin`}
+              type="button"
+              onClick={(e) => handlePriceAction(e, tier.durationDays, tier.price)}
+            >
+              <span>{tier.durationDays} วัน</span>
+              <span className="bold">{formatPrice(tier.price)}</span>
+            </button>
+          );
+        })}
+      </nav>
+    );
+  };
 
   const renderAttributes = () => (
     <div

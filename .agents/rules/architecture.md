@@ -8,6 +8,7 @@ hangerscloset-web/
 │   │   ├── overview.md         # Project summary, tech stack & environment modes
 │   │   ├── ui.md               # Beer CSS native-first, custom units & styling standards
 │   │   ├── development.md      # pnpm, validation tests, TypeScript & git rules
+│   │   ├── environment-and-security.md # Env var rules, public VITE_ keys & secret prevention
 │   │   └── architecture.md     # Layout shell, routing & data architecture
 │   └── skills/                 # Workspace Firebase & development skills
 ├── .cursor/rules/              # Thin Cursor IDE adapters delegating to .agents/rules/
@@ -28,6 +29,7 @@ hangerscloset-web/
     │   ├── InventorySheet.tsx  # Add/Edit clothing item responsive side/bottom sheet
     │   ├── OptionPicker.tsx    # Docked single-select picker with dynamic adding
     │   ├── TagPicker.tsx       # Docked multi-tag picker with chip tags
+    │   ├── Stack.tsx           # Flexbox stack component (orientation, gap, Beer CSS margin/padding)
     │   └── Layout.tsx          # App shell layout (Header + responsive main content)
     ├── data/
     │   └── mockInventory.ts    # Pre-populated mock clothing item records
@@ -65,8 +67,17 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
   - Hanger icon (`checkroom`) is top-aligned, while tab navigation links are centered in the rail.
 - **Theme Switching**: Dark mode toggle is located in Settings (`SettingsPage.tsx`) using Beer CSS's `<label className="switch icon">`.
 
-## Data Layer & Status Model
-- **Repository Pattern**: Components consume inventory and auth through environment-switched service factories (`src/services/environmentFactory.ts`) rather than direct SDK calls, enabling seamless swapping between mock memory storage and live Firebase.
+- **Data Layer & Status Model**:
+  Components consume inventory and auth through environment-switched service factories (`src/services/environmentFactory.ts`) rather than direct SDK calls, enabling seamless swapping between mock memory storage and live Firebase.
+- **Rental Price Model**:
+  ```ts
+  interface RentalPriceTier {
+    durationDays: number; // e.g. 1, 3, 5, 7
+    price: number;        // in Thai Baht (฿)
+  }
+  type RentalPrices = RentalPriceTier[];
+  ```
+  Apparel items support arbitrary rental durations sorted by days ascending. The Add/Edit sheet provides dynamic tier controls (add, edit, remove) with preset defaults (`1`, `3`, `5` days).
 - **Status Model**:
   ```ts
   type InventoryStatus = 'available' | 'reserved' | 'laundry';

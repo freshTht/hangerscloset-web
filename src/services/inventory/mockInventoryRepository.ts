@@ -83,7 +83,7 @@ export class MockInventoryRepository implements IInventoryRepository {
       ...itemData,
       id, // ensure ID is never overridden
       rentalPrices: itemData.rentalPrices
-        ? { ...this.items[index].rentalPrices, ...itemData.rentalPrices }
+        ? [...itemData.rentalPrices]
         : this.items[index].rentalPrices,
     };
 

@@ -30,10 +30,8 @@ service cloud.firestore {
     //   - imageFile: string (optional, 0..200 chars) - Source file name
     //   - imageUrl: string (required, 0..700000 chars) - Empty (no image), asset/Storage URL,
     //       or a downscaled JPEG data URL (kept well under the 1 MiB document limit)
-    //   - rentalPrices: map (required)
-    //       - oneDay: number (>= 0, <= 100000) - 1 day rental price
-    //       - threeDays: number (>= 0, <= 100000) - 3 days rental price
-    //       - fiveDays: number (>= 0, <= 100000) - 5 days rental price
+    //   - rentalPrices: list (required, 1..20 items)
+    //       - list of tiers: [{ durationDays: number, price: number }]
     //   - status: string (required, enum ['available', 'reserved', 'laundry'])
     //
     // Collections: brands, colors, sizes, tags
@@ -70,12 +68,7 @@ service cloud.firestore {
     }
 
     function isValidPrices(prices) {
-      return prices is map &&
-        prices.keys().hasAll(['oneDay', 'threeDays', 'fiveDays']) &&
-        prices.keys().hasOnly(['oneDay', 'threeDays', 'fiveDays']) &&
-        prices.oneDay is number && prices.oneDay >= 0 && prices.oneDay <= 100000 &&
-        prices.threeDays is number && prices.threeDays >= 0 && prices.threeDays <= 100000 &&
-        prices.fiveDays is number && prices.fiveDays >= 0 && prices.fiveDays <= 100000;
+      return prices is list && prices.size() > 0 && prices.size() <= 20;
     }
 
     function isValidInventoryItem(data) {

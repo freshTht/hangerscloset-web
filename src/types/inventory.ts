@@ -1,10 +1,11 @@
 export type InventoryStatus = 'available' | 'reserved' | 'laundry';
 
-export interface RentalPrices {
-  oneDay: number;
-  threeDays: number;
-  fiveDays: number;
+export interface RentalPriceTier {
+  durationDays: number;
+  price: number;
 }
+
+export type RentalPrices = RentalPriceTier[];
 
 export interface InventoryItem {
   id: string;

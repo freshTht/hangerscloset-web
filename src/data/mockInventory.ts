@@ -57,11 +57,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image5.jpg",
     imageUrl: img_avl01,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -76,11 +76,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image6.jpg",
     imageUrl: img_avl02,
-    rentalPrices: {
-      oneDay: 60,
-      threeDays: 90,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 60 },
+      { durationDays: 3, price: 90 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "available",
   },
   {
@@ -95,11 +95,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image7.png",
     imageUrl: img_bkn01,
-    rentalPrices: {
-      oneDay: 60,
-      threeDays: 80,
-      fiveDays: 100,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 60 },
+      { durationDays: 3, price: 80 },
+      { durationDays: 5, price: 100 },
+    ],
     status: "reserved",
   },
   {
@@ -114,11 +114,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image8.png",
     imageUrl: img_cha01,
-    rentalPrices: {
-      oneDay: 190,
-      threeDays: 300,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 190 },
+      { durationDays: 3, price: 300 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -133,11 +133,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image9.png",
     imageUrl: img_dia01,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 300,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 300 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -152,11 +152,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image10.png",
     imageUrl: img_dia02,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 350,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 350 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -171,11 +171,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image11.png",
     imageUrl: img_due01,
-    rentalPrices: {
-      oneDay: 60,
-      threeDays: 80,
-      fiveDays: 100,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 60 },
+      { durationDays: 3, price: 80 },
+      { durationDays: 5, price: 100 },
+    ],
     status: "available",
   },
   {
@@ -190,11 +190,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image12.jpg",
     imageUrl: img_ffr01,
-    rentalPrices: {
-      oneDay: 60,
-      threeDays: 80,
-      fiveDays: 100,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 60 },
+      { durationDays: 3, price: 80 },
+      { durationDays: 5, price: 100 },
+    ],
     status: "available",
   },
   {
@@ -209,11 +209,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image13.jpg",
     imageUrl: img_ffr02,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 170,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 170 },
+    ],
     status: "available",
   },
   {
@@ -228,11 +228,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image14.jpg",
     imageUrl: img_ffr03,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 170,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 170 },
+    ],
     status: "available",
   },
   {
@@ -247,11 +247,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image15.png",
     imageUrl: img_ffr04,
-    rentalPrices: {
-      oneDay: 100,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "reserved",
   },
   {
@@ -266,11 +266,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image16.png",
     imageUrl: img_ffr05,
-    rentalPrices: {
-      oneDay: 100,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "reserved",
   },
   {
@@ -285,11 +285,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image17.png",
     imageUrl: img_glm01,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -304,11 +304,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image18.jpg",
     imageUrl: img_mel01,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 180,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 180 },
+    ],
     status: "available",
   },
   {
@@ -323,11 +323,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image19.png",
     imageUrl: img_mha01,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 390,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 390 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -342,11 +342,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image20.png",
     imageUrl: img_mha02,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 390,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 390 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -361,11 +361,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image21.jpg",
     imageUrl: img_nar01,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 180,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 180 },
+    ],
     status: "available",
   },
   {
@@ -380,11 +380,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image22.png",
     imageUrl: img_nar02,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 180,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 180 },
+    ],
     status: "available",
   },
   {
@@ -399,11 +399,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image23.png",
     imageUrl: img_nar03,
-    rentalPrices: {
-      oneDay: 120,
-      threeDays: 150,
-      fiveDays: 180,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 120 },
+      { durationDays: 3, price: 150 },
+      { durationDays: 5, price: 180 },
+    ],
     status: "available",
   },
   {
@@ -418,11 +418,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image24.png",
     imageUrl: img_pri01,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -437,11 +437,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image25.jpg",
     imageUrl: img_rdy01,
-    rentalPrices: {
-      oneDay: 100,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -456,11 +456,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image26.jpg",
     imageUrl: img_rdy02,
-    rentalPrices: {
-      oneDay: 100,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -475,11 +475,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image27.jpg",
     imageUrl: img_rdy03,
-    rentalPrices: {
-      oneDay: 100,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -494,11 +494,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image28.png",
     imageUrl: img_sel01,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -513,11 +513,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image29.png",
     imageUrl: img_sel02,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -532,11 +532,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image30.png",
     imageUrl: img_sel03,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -551,11 +551,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image31.png",
     imageUrl: img_sel04,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -570,11 +570,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image32.png",
     imageUrl: img_sel05,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -589,11 +589,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image33.jpg",
     imageUrl: img_sel06,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 100,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 100 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "reserved",
   },
   {
@@ -608,11 +608,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image34.jpg",
     imageUrl: img_sh01,
-    rentalPrices: {
-      oneDay: 50,
-      threeDays: 80,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 50 },
+      { durationDays: 3, price: 80 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "available",
   },
   {
@@ -627,11 +627,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image35.jpg",
     imageUrl: img_sh02,
-    rentalPrices: {
-      oneDay: 50,
-      threeDays: 80,
-      fiveDays: 120,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 50 },
+      { durationDays: 3, price: 80 },
+      { durationDays: 5, price: 120 },
+    ],
     status: "available",
   },
   {
@@ -646,11 +646,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image36.png",
     imageUrl: img_slt01,
-    rentalPrices: {
-      oneDay: 80,
-      threeDays: 120,
-      fiveDays: 150,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 80 },
+      { durationDays: 3, price: 120 },
+      { durationDays: 5, price: 150 },
+    ],
     status: "available",
   },
   {
@@ -665,11 +665,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image37.jpg",
     imageUrl: img_tbb01,
-    rentalPrices: {
-      oneDay: 190,
-      threeDays: 300,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 190 },
+      { durationDays: 3, price: 300 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -684,11 +684,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image38.png",
     imageUrl: img_tbb02,
-    rentalPrices: {
-      oneDay: 190,
-      threeDays: 300,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 190 },
+      { durationDays: 3, price: 300 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -703,11 +703,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image39.png",
     imageUrl: img_tbb03,
-    rentalPrices: {
-      oneDay: 190,
-      threeDays: 300,
-      fiveDays: 420,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 190 },
+      { durationDays: 3, price: 300 },
+      { durationDays: 5, price: 420 },
+    ],
     status: "available",
   },
   {
@@ -722,11 +722,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image40.png",
     imageUrl: img_tbb04,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 390,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 390 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -741,11 +741,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image41.png",
     imageUrl: img_tbb05,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 390,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 390 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -760,11 +760,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image42.png",
     imageUrl: img_tbb06,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 390,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 390 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -779,11 +779,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image43.png",
     imageUrl: img_tbb07,
-    rentalPrices: {
-      oneDay: 300,
-      threeDays: 450,
-      fiveDays: 500,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 300 },
+      { durationDays: 3, price: 450 },
+      { durationDays: 5, price: 500 },
+    ],
     status: "available",
   },
   {
@@ -798,11 +798,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image44.png",
     imageUrl: img_tbb08,
-    rentalPrices: {
-      oneDay: 300,
-      threeDays: 450,
-      fiveDays: 500,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 300 },
+      { durationDays: 3, price: 450 },
+      { durationDays: 5, price: 500 },
+    ],
     status: "available",
   },
   {
@@ -817,11 +817,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image45.png",
     imageUrl: img_tbb09,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 380,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 380 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -836,11 +836,11 @@ export const mockInventory: InventoryItem[] = [
     owner: null,
     imageFile: "Image46.jpg",
     imageUrl: img_tbb10,
-    rentalPrices: {
-      oneDay: 280,
-      threeDays: 380,
-      fiveDays: 450,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 280 },
+      { durationDays: 3, price: 380 },
+      { durationDays: 5, price: 450 },
+    ],
     status: "available",
   },
   {
@@ -855,11 +855,11 @@ export const mockInventory: InventoryItem[] = [
     owner: "P",
     imageFile: "Image47.jpg",
     imageUrl: img_twt01,
-    rentalPrices: {
-      oneDay: 150,
-      threeDays: 180,
-      fiveDays: 200,
-    },
+    rentalPrices: [
+      { durationDays: 1, price: 150 },
+      { durationDays: 3, price: 180 },
+      { durationDays: 5, price: 200 },
+    ],
     status: "available",
   },
 ];

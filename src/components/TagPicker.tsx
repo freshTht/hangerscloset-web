@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Stack } from './Stack';
 
 export interface TagPickerProps {
   id: string;
@@ -150,15 +151,13 @@ export const TagPicker: React.FC<TagPickerProps> = ({
   };
 
   return (
-    <div className="round secondary-container medium-padding">
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          marginBottom: selectedTags.length > 0 ? '16px' : '20px',
-        }}
-      >
+    <Stack
+      orientation="column"
+      padding="medium"
+      gap="medium"
+      className="round secondary-container"
+    >
+      <Stack orientation="row" align="center" gap="small">
         <i>tag</i>
         <label
           className="bold small-text"
@@ -166,11 +165,11 @@ export const TagPicker: React.FC<TagPickerProps> = ({
         >
           แท็ก / หมวดหมู่ (Tags)
         </label>
-      </div>
+      </Stack>
 
       {/* Selected tags chip list */}
       {selectedTags.length > 0 && (
-        <div className="row wrap no-margin" style={{ gap: '8px', marginBottom: '20px' }}>
+        <Stack orientation="row" wrap gap="small">
           {selectedTags.map((tag) => (
             <span
               key={tag}
@@ -189,7 +188,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
               </button>
             </span>
           ))}
-        </div>
+        </Stack>
       )}
 
       {/* Docked Search Field Container */}
@@ -352,6 +351,6 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           </div>
         )}
       </div>
-    </div>
+    </Stack>
   );
 };

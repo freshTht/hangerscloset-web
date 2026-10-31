@@ -13,11 +13,11 @@ const mockItem: InventoryItem = {
   status: 'available',
   tags: ['เดรส', 'ไปทะเล'],
   note: 'มีรอยเล็กน้อยที่ชายกระโปรง',
-  rentalPrices: {
-    oneDay: 300,
-    threeDays: 500,
-    fiveDays: 700,
-  },
+  rentalPrices: [
+    { durationDays: 1, price: 300 },
+    { durationDays: 3, price: 500 },
+    { durationDays: 5, price: 700 },
+  ],
   imageUrl: 'https://example.com/dress.jpg',
 };
 
@@ -143,9 +143,9 @@ describe('InventorySheet Component', () => {
       />
     );
 
-    const price1Day = screen.getByLabelText('1 วัน');
-    const price3Days = screen.getByLabelText('3 วัน');
-    const price5Days = screen.getByLabelText('5 วัน');
+    const price1Day = screen.getByLabelText(/ราคา 1 วัน/i);
+    const price3Days = screen.getByLabelText(/ราคา 3 วัน/i);
+    const price5Days = screen.getByLabelText(/ราคา 5 วัน/i);
 
     [price1Day, price3Days, price5Days].forEach((input) => {
       expect(input).toHaveAttribute('type', 'number');
@@ -201,9 +201,9 @@ describe('InventorySheet Component', () => {
     // Add note
     fireEvent.change(screen.getByLabelText(/โน๊ต/i), { target: { value: 'ซักแห้งเท่านั้น' } });
 
-    fireEvent.change(screen.getByLabelText('1 วัน'), { target: { value: '250' } });
-    fireEvent.change(screen.getByLabelText('3 วัน'), { target: { value: '450' } });
-    fireEvent.change(screen.getByLabelText('5 วัน'), { target: { value: '650' } });
+    fireEvent.change(screen.getByLabelText(/ราคา 1 วัน/i), { target: { value: '250' } });
+    fireEvent.change(screen.getByLabelText(/ราคา 3 วัน/i), { target: { value: '450' } });
+    fireEvent.change(screen.getByLabelText(/ราคา 5 วัน/i), { target: { value: '650' } });
 
     const form = container.querySelector('#inventory-form')!;
     fireEvent.submit(form);
@@ -222,11 +222,11 @@ describe('InventorySheet Component', () => {
         tags: ['ปาร์ตี้'],
         type: 'ปาร์ตี้',
         note: 'ซักแห้งเท่านั้น',
-        rentalPrices: {
-          oneDay: 250,
-          threeDays: 450,
-          fiveDays: 650,
-        },
+        rentalPrices: [
+          { durationDays: 1, price: 250 },
+          { durationDays: 3, price: 450 },
+          { durationDays: 5, price: 650 },
+        ],
       })
     );
     expect(onCloseSpy).toHaveBeenCalledTimes(1);
@@ -281,5 +281,60 @@ describe('InventorySheet Component', () => {
     const closeHeaderBtn = screen.getByLabelText('ปิดหน้าต่าง');
     fireEvent.click(closeHeaderBtn);
     expect(onCloseSpy).toHaveBeenCalledTimes(2);
+  });
+
+  it('allows adding and removing dynamic rental price tiers', () => {
+    render(
+      <InventorySheet
+        isOpen={true}
+        mode="add"
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Initial 3 tiers (1, 3, 5 days)
+    const addTierBtn = screen.getByRole('button', { name: /เพิ่มระยะเวลา/i });
+    expect(addTierBtn).toBeInTheDocument();
+
+    // Add a 4th tier (defaults to 7 days)
+    fireEvent.click(addTierBtn);
+    expect(screen.getByLabelText(/ราคา 7 วัน/i)).toBeInTheDocument();
+
+    // Remove the 7 days tier
+    const deleteBtn = screen.getByRole('button', { name: /ลบราคาเช่า 7 วัน/i });
+    fireEvent.click(deleteBtn);
+    expect(screen.queryByLabelText(/ราคา 7 วัน/i)).not.toBeInTheDocument();
+  });
+
+  it('shows error when duplicate duration days are entered', async () => {
+    const { container } = render(
+      <InventorySheet
+        isOpen={true}
+        mode="add"
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText(/รหัสสินค้า/i), { target: { value: 'TEST01' } });
+    fireEvent.change(screen.getByLabelText(/ชื่อสินค้า/i), { target: { value: 'Test Dress' } });
+    fireEvent.change(screen.getByLabelText(/แบรนด์/i), { target: { value: 'TestBrand' } });
+    fireEvent.change(screen.getByLabelText(/สี/i), { target: { value: 'Pink' } });
+    fireEvent.change(screen.getByLabelText(/ไซส์/i), { target: { value: 'S' } });
+
+    // Fill prices so they are valid numbers
+    fireEvent.change(screen.getByLabelText(/ราคา 1 วัน/i), { target: { value: '100' } });
+    fireEvent.change(screen.getByLabelText(/ราคา 3 วัน/i), { target: { value: '200' } });
+    fireEvent.change(screen.getByLabelText(/ราคา 5 วัน/i), { target: { value: '300' } });
+
+    // Set duration of 2nd tier to 1 (same as 1st tier)
+    const durationInputs = screen.getAllByLabelText('จำนวนวัน');
+    fireEvent.change(durationInputs[1], { target: { value: '1' } });
+
+    const form = container.querySelector('#inventory-form')!;
+    fireEvent.submit(form);
+
+    expect(await screen.findByText(/ระยะเวลาเช่า 1 วัน ซ้ำกัน/i)).toBeInTheDocument();
   });
 });

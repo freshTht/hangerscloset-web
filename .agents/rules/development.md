@@ -27,6 +27,11 @@
   - Keep components modular and single-responsibility.
   - Maintain path aliases and standard module imports.
 
+## Environment Variables & Security
+- **Follow `environment-and-security.md`**: Refer to [`.agents/rules/environment-and-security.md`](environment-and-security.md) for full policy.
+- **Rule for New Env Vars**: Any agent proposing to add a new environment variable MUST research sensitivity, formulate client vs. server exposure recommendations, and confirm with the human author before adding it.
+- **`VITE_*` Variables**: Shipped to client bundle. Only public configuration (e.g. Firebase client keys, provider flags) are permitted. Never use `VITE_` for secret keys.
+
 ## Git Conventions
 - **No Auto-Committing**: Do NOT automatically commit changes at the end of each turn. Only make git commits when explicitly requested by the user.
 - Maintain a clean working directory.

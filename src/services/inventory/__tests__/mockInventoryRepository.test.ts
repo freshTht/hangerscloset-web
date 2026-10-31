@@ -11,7 +11,11 @@ const sampleItems: InventoryItem[] = [
     color: 'Red',
     size: 'S',
     imageUrl: '/test-img.jpg',
-    rentalPrices: { oneDay: 100, threeDays: 200, fiveDays: 300 },
+    rentalPrices: [
+      { durationDays: 1, price: 100 },
+      { durationDays: 3, price: 200 },
+      { durationDays: 5, price: 300 },
+    ],
     status: 'available',
   },
   {
@@ -22,7 +26,11 @@ const sampleItems: InventoryItem[] = [
     color: 'Black',
     size: 'M',
     imageUrl: '/test-img2.jpg',
-    rentalPrices: { oneDay: 200, threeDays: 350, fiveDays: 500 },
+    rentalPrices: [
+      { durationDays: 1, price: 200 },
+      { durationDays: 3, price: 350 },
+      { durationDays: 5, price: 500 },
+    ],
     status: 'reserved',
   },
 ];
@@ -73,7 +81,11 @@ describe('MockInventoryRepository', () => {
       color: 'Blue',
       size: 'L',
       imageUrl: '/gown.jpg',
-      rentalPrices: { oneDay: 300, threeDays: 500, fiveDays: 700 },
+      rentalPrices: [
+        { durationDays: 1, price: 300 },
+        { durationDays: 3, price: 500 },
+        { durationDays: 5, price: 700 },
+      ],
       status: 'available',
     });
 
@@ -92,7 +104,11 @@ describe('MockInventoryRepository', () => {
 
     await repo.updateItem('1', {
       name: 'Updated Dress A',
-      rentalPrices: { oneDay: 150, threeDays: 250, fiveDays: 350 },
+      rentalPrices: [
+        { durationDays: 1, price: 150 },
+        { durationDays: 3, price: 250 },
+        { durationDays: 5, price: 350 },
+      ],
       color: 'Emerald',
     });
 
@@ -100,7 +116,7 @@ describe('MockInventoryRepository', () => {
     const updated = items.find((i) => i.id === '1');
     expect(updated?.name).toBe('Updated Dress A');
     expect(updated?.color).toBe('Emerald');
-    expect(updated?.rentalPrices.oneDay).toBe(150);
+    expect(updated?.rentalPrices[0].price).toBe(150);
     expect(listener).toHaveBeenLastCalledWith(
       expect.arrayContaining([expect.objectContaining({ id: '1', name: 'Updated Dress A' })])
     );

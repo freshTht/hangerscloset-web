@@ -6,6 +6,7 @@ import { resizeImageFile } from '../lib/resizeImage';
 import { LazyImage } from './LazyImage';
 import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
+import { Stack } from './Stack';
 
 export interface InventorySheetProps {
   isOpen: boolean;
@@ -29,10 +30,19 @@ interface FormState {
   accessories: string;
   owner: string;
   imageUrl: string;
-  oneDay: string;
-  threeDays: string;
-  fiveDays: string;
+  rentalPrices: FormRentalPriceTier[];
 }
+
+export interface FormRentalPriceTier {
+  durationDays: string;
+  price: string;
+}
+
+const DEFAULT_RENTAL_PRICES: FormRentalPriceTier[] = [
+  { durationDays: '1', price: '' },
+  { durationDays: '3', price: '' },
+  { durationDays: '5', price: '' },
+];
 
 const DEFAULT_FORM: FormState = {
   code: '',
@@ -46,9 +56,7 @@ const DEFAULT_FORM: FormState = {
   accessories: '',
   owner: '',
   imageUrl: '',
-  oneDay: '',
-  threeDays: '',
-  fiveDays: '',
+  rentalPrices: DEFAULT_RENTAL_PRICES,
 };
 
 // Must be >= the Beer CSS dialog slide transition so content isn't cleared mid-animation
@@ -60,6 +68,16 @@ const itemToForm = (item: InventoryItem): FormState => {
     : typeof item.type === 'string' && item.type.trim()
     ? [item.type.trim()]
     : [];
+
+  const rentalPrices: FormRentalPriceTier[] =
+    Array.isArray(item.rentalPrices) && item.rentalPrices.length > 0
+      ? [...item.rentalPrices]
+          .sort((a, b) => a.durationDays - b.durationDays)
+          .map((tier) => ({
+            durationDays: tier.durationDays.toString(),
+            price: tier.price.toString(),
+          }))
+      : DEFAULT_RENTAL_PRICES;
 
   return {
     code: item.code || '',
@@ -73,9 +91,7 @@ const itemToForm = (item: InventoryItem): FormState => {
     accessories: item.accessories || '',
     owner: item.owner || '',
     imageUrl: item.imageUrl || '',
-    oneDay: item.rentalPrices?.oneDay?.toString() ?? '',
-    threeDays: item.rentalPrices?.threeDays?.toString() ?? '',
-    fiveDays: item.rentalPrices?.fiveDays?.toString() ?? '',
+    rentalPrices,
   };
 };
 
@@ -137,6 +153,47 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleTierChange = (
+    index: number,
+    field: keyof FormRentalPriceTier,
+    value: string
+  ) => {
+    setFormData((prev) => {
+      const nextPrices = [...prev.rentalPrices];
+      nextPrices[index] = { ...nextPrices[index], [field]: value };
+      return { ...prev, rentalPrices: nextPrices };
+    });
+  };
+
+  const handleAddTier = () => {
+    setFormData((prev) => {
+      const existingDays = prev.rentalPrices
+        .map((t) => parseInt(t.durationDays, 10))
+        .filter((d) => !isNaN(d) && d > 0);
+      const maxDays = existingDays.length > 0 ? Math.max(...existingDays) : 0;
+      const nextDays =
+        maxDays === 0 ? 1 : maxDays === 1 ? 3 : maxDays === 3 ? 5 : maxDays + 2;
+
+      return {
+        ...prev,
+        rentalPrices: [
+          ...prev.rentalPrices,
+          { durationDays: nextDays.toString(), price: '' },
+        ],
+      };
+    });
+  };
+
+  const handleRemoveTier = (index: number) => {
+    setFormData((prev) => {
+      if (prev.rentalPrices.length <= 1) return prev;
+      return {
+        ...prev,
+        rentalPrices: prev.rentalPrices.filter((_, idx) => idx !== index),
+      };
+    });
+  };
+
   const handleImageFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = '';
@@ -164,14 +221,36 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       return;
     }
 
-    const oneDay = Number(formData.oneDay) || 0;
-    const threeDays = Number(formData.threeDays) || 0;
-    const fiveDays = Number(formData.fiveDays) || 0;
-
-    if (oneDay < 0 || threeDays < 0 || fiveDays < 0) {
-      setErrorMessage('ราคาเช่าต้องเป็นตัวเลขที่ถูกต้อง');
+    if (formData.rentalPrices.length === 0) {
+      setErrorMessage('กรุณาระบุราคาเช่าอย่างน้อย 1 ระยะเวลา');
       return;
     }
+
+    const seenDays = new Set<number>();
+    const parsedTiers: { durationDays: number; price: number }[] = [];
+
+    for (const tier of formData.rentalPrices) {
+      const days = parseInt(tier.durationDays, 10);
+      const price = parseFloat(tier.price);
+
+      if (isNaN(days) || days <= 0) {
+        setErrorMessage('ระยะเวลาเช่า (จำนวนวัน) ต้องเป็นตัวเลขมากกว่า 0');
+        return;
+      }
+      if (seenDays.has(days)) {
+        setErrorMessage(`ระยะเวลาเช่า ${days} วัน ซ้ำกัน กรุณาแก้ไข`);
+        return;
+      }
+      seenDays.add(days);
+
+      if (isNaN(price) || price < 0) {
+        setErrorMessage('ราคาเช่าต้องเป็นตัวเลขที่ถูกต้อง');
+        return;
+      }
+      parsedTiers.push({ durationDays: days, price });
+    }
+
+    parsedTiers.sort((a, b) => a.durationDays - b.durationDays);
 
     try {
       setSubmitting(true);
@@ -189,7 +268,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         accessories: formData.accessories.trim() || null,
         owner: formData.owner.trim() || null,
         imageUrl: formData.imageUrl.trim(),
-        rentalPrices: { oneDay, threeDays, fiveDays },
+        rentalPrices: parsedTiers,
       });
       onClose();
     } catch (err: unknown) {
@@ -444,76 +523,104 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
 
                   {/* Rental Prices - Highlighted with Tertiary Colored Rounded Box */}
                   <div className="s12">
-                    <div className="round tertiary-container medium-padding">
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          marginBottom: '20px',
-                        }}
+                    <Stack
+                      orientation="column"
+                      padding="medium"
+                      gap="medium"
+                      className="round tertiary-container"
+                    >
+                      <Stack
+                        orientation="row"
+                        align="center"
+                        justify="space-between"
                       >
-                        <i>payments</i>
-                        <label
-                          className="bold small-text"
+                        <Stack orientation="row" align="center" gap="small">
+                          <i>payments</i>
+                          <label
+                            className="bold small-text"
+                            style={{ color: 'inherit' }}
+                          >
+                            ราคาเช่า (บาท) *
+                          </label>
+                        </Stack>
+                        <button
+                          type="button"
+                          className="chip transparent small border no-margin"
+                          onClick={handleAddTier}
+                          title="เพิ่มระยะเวลาเช่า"
+                          aria-label="เพิ่มระยะเวลาเช่า"
                           style={{ color: 'inherit' }}
                         >
-                          ราคาเช่า (บาท) *
-                        </label>
-                      </div>
-                      <div className="joined-fields-group">
-                        <div className="field label border surface no-margin">
-                          <input
-                            id="field-price-1"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="oneDay"
-                            min="0"
-                            step="1"
-                            value={formData.oneDay}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-1">1 วัน</label>
-                        </div>
+                          <i>add</i>
+                          <span>เพิ่มระยะเวลา</span>
+                        </button>
+                      </Stack>
 
-                        <div className="field label border surface no-margin">
-                          <input
-                            id="field-price-3"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="threeDays"
-                            min="0"
-                            step="1"
-                            value={formData.threeDays}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-3">3 วัน</label>
-                        </div>
+                      <Stack orientation="column" gap="small">
+                        {formData.rentalPrices.map((tier, index) => (
+                          <Stack
+                            key={index}
+                            orientation="row"
+                            align="center"
+                            gap="small"
+                          >
+                            <div
+                              className="field label border surface round no-margin"
+                              style={{ width: '110px', flexShrink: 0 }}
+                            >
+                              <input
+                                id={`field-duration-${index}`}
+                                type="number"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                min="1"
+                                step="1"
+                                value={tier.durationDays}
+                                onChange={(e) =>
+                                  handleTierChange(index, 'durationDays', e.target.value)
+                                }
+                                placeholder=" "
+                                required
+                              />
+                              <label htmlFor={`field-duration-${index}`}>จำนวนวัน</label>
+                            </div>
 
-                        <div className="field label border surface no-margin">
-                          <input
-                            id="field-price-5"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="fiveDays"
-                            min="0"
-                            step="1"
-                            value={formData.fiveDays}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-5">5 วัน</label>
-                        </div>
-                      </div>
-                    </div>
+                            <div className="max field label border surface round no-margin">
+                              <input
+                                id={`field-price-${index}`}
+                                type="number"
+                                inputMode="numeric"
+                                pattern="[0-9]*"
+                                min="0"
+                                step="1"
+                                value={tier.price}
+                                onChange={(e) =>
+                                  handleTierChange(index, 'price', e.target.value)
+                                }
+                                placeholder=" "
+                                required
+                              />
+                              <label htmlFor={`field-price-${index}`}>
+                                {tier.durationDays ? `ราคา ${tier.durationDays} วัน (฿)` : 'ราคาเช่า (฿)'}
+                              </label>
+                            </div>
+
+                            {formData.rentalPrices.length > 1 && (
+                              <button
+                                type="button"
+                                className="circle transparent small no-margin"
+                                onClick={() => handleRemoveTier(index)}
+                                title={`ลบราคาเช่า ${tier.durationDays || index + 1} วัน`}
+                                aria-label={`ลบราคาเช่า ${tier.durationDays || index + 1} วัน`}
+                                style={{ flexShrink: 0 }}
+                              >
+                                <i>delete</i>
+                              </button>
+                            )}
+                          </Stack>
+                        ))}
+                      </Stack>
+                    </Stack>
                   </div>
 
                   {/* Brand Picker (s12 m4) with add new option */}

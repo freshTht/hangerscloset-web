@@ -45,11 +45,12 @@ function docToInventoryItem(id: string, data: DocumentData): InventoryItem {
     owner: data.owner ?? null,
     imageFile: data.imageFile ?? undefined,
     imageUrl: data.imageUrl ?? '',
-    rentalPrices: {
-      oneDay: data.rentalPrices?.oneDay ?? 0,
-      threeDays: data.rentalPrices?.threeDays ?? 0,
-      fiveDays: data.rentalPrices?.fiveDays ?? 0,
-    },
+    rentalPrices: Array.isArray(data.rentalPrices)
+      ? data.rentalPrices.map((tier: Record<string, unknown>) => ({
+          durationDays: Number(tier?.durationDays ?? 0),
+          price: Number(tier?.price ?? 0),
+        }))
+      : [],
     status: (data.status as InventoryStatus) ?? 'available',
   };
 }

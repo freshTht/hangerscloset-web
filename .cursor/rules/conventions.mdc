@@ -10,5 +10,6 @@ Follow @.agents/rules/development.md.
 
 - Package manager: strictly `pnpm` (never npm or yarn).
 - Validation: always run `pnpm test` and `pnpm build` after modifying code.
+- Environment & Secrets: follow @.agents/rules/environment-and-security.md. Any new env variable requires security research and explicit confirmation from human author.
 - Git: do not auto-commit changes. Only commit when explicitly requested.
 - TypeScript: strict mode enabled.
