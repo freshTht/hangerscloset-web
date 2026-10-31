@@ -295,5 +295,53 @@ body.dark .material-shapes-bg-hanger {
   display: block;
 }
 
+/* Joined Segmented Inputs Group */
+.joined-fields-group {
+  display: flex;
+  width: 100%;
+}
+
+.joined-fields-group > .field {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.joined-fields-group > .field:focus-within {
+  z-index: 3;
+}
+
+.joined-fields-group > .field:not(:first-child) {
+  margin-left: -1px;
+}
+
+.joined-fields-group > .field:first-child,
+.joined-fields-group > .field:first-child > input {
+  border-top-left-radius: 1.5rem !important;
+  border-bottom-left-radius: 1.5rem !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.joined-fields-group > .field:not(:first-child):not(:last-child),
+.joined-fields-group > .field:not(:first-child):not(:last-child) > input {
+  border-radius: 0 !important;
+}
+
+.joined-fields-group > .field:last-child,
+.joined-fields-group > .field:last-child > input {
+  border-top-right-radius: 1.5rem !important;
+  border-bottom-right-radius: 1.5rem !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Beer CSS padding enhancement */
+.medium-padding {
+  --_padding: 20px !important;
+}
+
+
 
 

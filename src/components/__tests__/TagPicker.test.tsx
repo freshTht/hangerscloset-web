@@ -27,8 +27,18 @@ describe('TagPicker Component', () => {
     expect(screen.getByLabelText('ลบแท็ก Dress')).toBeInTheDocument();
     expect(screen.getByLabelText('ลบแท็ก Party')).toBeInTheDocument();
 
+    // Verify chips use medium size, primary color, and small-elevate without fill variant
+    const dressChip = screen.getByText('Dress').closest('.chip');
+    expect(dressChip).toHaveClass('small-elevate');
+    expect(dressChip).toHaveClass('primary');
+    expect(dressChip).toHaveClass('medium');
+    expect(dressChip).not.toHaveClass('fill');
+
     // Check hashtag icon button is rendered
     expect(screen.getByLabelText('แสดงรายการแท็ก')).toBeInTheDocument();
+
+    // Verify input box uses small field variant
+    expect(screen.getByRole('searchbox').closest('.field')).toHaveClass('small');
   });
 
   it('hides already added tags from the docked search menu', () => {

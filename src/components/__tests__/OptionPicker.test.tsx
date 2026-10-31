@@ -285,4 +285,76 @@ describe('OptionPicker Component (Docked for all screen sizes)', () => {
     fireEvent.mouseDown(screen.getByTestId('outside'));
     expect(screen.queryByText('Avaalene')).not.toBeInTheDocument();
   });
+
+  it('aligns dropdown left when inside a side sheet on landscape/desktop (1024x768) so it does not overflow left', () => {
+    // Simulate 1024x768 landscape viewport
+    window.innerWidth = 1024;
+    window.innerHeight = 768;
+
+    const { container } = render(
+      <dialog
+        open
+        style={{
+          position: 'fixed',
+          right: 0,
+          top: 0,
+          width: '512px',
+          height: '768px',
+        }}
+      >
+        {/* Brand picker situated in column 1 (left side of sheet) */}
+        <div style={{ width: '150px' }}>
+          <OptionPicker
+            id="field-brand"
+            name="brand"
+            label="แบรนด์ *"
+            icon="sell"
+            value="Duex"
+            options={mockOptions}
+            onChange={onChangeSpy}
+          />
+        </div>
+      </dialog>
+    );
+
+    const dialog = container.querySelector('dialog')!;
+    const fieldContainer = container.querySelector('.field') as HTMLElement;
+
+    // Mock bounding client rects for dialog and field container
+    // Dialog sits at x: 512 to 1024
+    vi.spyOn(dialog, 'getBoundingClientRect').mockReturnValue({
+      left: 512,
+      right: 1024,
+      top: 0,
+      bottom: 768,
+      width: 512,
+      height: 768,
+      x: 512,
+      y: 0,
+      toJSON: () => {},
+    });
+
+    // Field sits at x: 532 (near left edge of dialog)
+    vi.spyOn(fieldContainer, 'getBoundingClientRect').mockReturnValue({
+      left: 532,
+      right: 682,
+      top: 200,
+      bottom: 248,
+      width: 150,
+      height: 48,
+      x: 532,
+      y: 200,
+      toJSON: () => {},
+    });
+
+    const input = screen.getByLabelText(/แบรนด์/i);
+    fireEvent.focus(input);
+
+    // Dropdown should be open
+    expect(screen.getByText('Avaalene')).toBeInTheDocument();
+
+    // The dropdown card should be aligned to left (left: 0), NOT right: 0
+    const dropdownCard = container.querySelector('.card.surface-container-high') as HTMLElement;
+    expect(dropdownCard).toHaveStyle({ left: '0px' });
+  });
 });

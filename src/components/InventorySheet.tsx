@@ -407,7 +407,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 {renderImage()}
 
                 {/* 2. Responsive Grid for Form Fields */}
-                <div className="grid no-margin" style={{ gap: '10px' }}>
+                <div className="grid no-margin" style={{ gap: '20px' }}>
                   {/* SKU Code (s12) */}
                   <div className="s12">
                     <div className="field label border round no-margin">
@@ -439,6 +439,80 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                       />
                       <label htmlFor="field-name">ชื่อสินค้า *</label>
                       <i>checkroom</i>
+                    </div>
+                  </div>
+
+                  {/* Rental Prices - Highlighted with Tertiary Colored Rounded Box */}
+                  <div className="s12">
+                    <div className="round tertiary-container medium-padding">
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <i>payments</i>
+                        <label
+                          className="bold small-text"
+                          style={{ color: 'inherit' }}
+                        >
+                          ราคาเช่า (บาท) *
+                        </label>
+                      </div>
+                      <div className="joined-fields-group">
+                        <div className="field label border surface no-margin">
+                          <input
+                            id="field-price-1"
+                            type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            name="oneDay"
+                            min="0"
+                            step="1"
+                            value={formData.oneDay}
+                            onChange={handleChange}
+                            placeholder="0"
+                            required
+                          />
+                          <label htmlFor="field-price-1">1 วัน</label>
+                        </div>
+
+                        <div className="field label border surface no-margin">
+                          <input
+                            id="field-price-3"
+                            type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            name="threeDays"
+                            min="0"
+                            step="1"
+                            value={formData.threeDays}
+                            onChange={handleChange}
+                            placeholder="0"
+                            required
+                          />
+                          <label htmlFor="field-price-3">3 วัน</label>
+                        </div>
+
+                        <div className="field label border surface no-margin">
+                          <input
+                            id="field-price-5"
+                            type="number"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            name="fiveDays"
+                            min="0"
+                            step="1"
+                            value={formData.fiveDays}
+                            onChange={handleChange}
+                            placeholder="0"
+                            required
+                          />
+                          <label htmlFor="field-price-5">5 วัน</label>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -487,91 +561,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     />
                   </div>
 
-                  {/* Rental Prices (3 Columns with Numpad Keyboard) */}
-                  <div className="s12">
-                    <label
-                      className="bold small-text secondary-text"
-                      style={{ display: 'block', marginBottom: 4 }}
-                    >
-                      ราคาเช่า (บาท) *
-                    </label>
-                    <div className="grid no-space no-margin">
-                      <div className="s4">
-                        <div className="field label border left-round no-margin">
-                          <input
-                            id="field-price-1"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="oneDay"
-                            min="0"
-                            step="1"
-                            value={formData.oneDay}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-1">1 วัน</label>
-                        </div>
-                      </div>
-
-                      <div className="s4">
-                        <div className="field label border no-round no-margin">
-                          <input
-                            id="field-price-3"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="threeDays"
-                            min="0"
-                            step="1"
-                            value={formData.threeDays}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-3">3 วัน</label>
-                        </div>
-                      </div>
-
-                      <div className="s4">
-                        <div className="field label border right-round no-margin">
-                          <input
-                            id="field-price-5"
-                            type="number"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            name="fiveDays"
-                            min="0"
-                            step="1"
-                            value={formData.fiveDays}
-                            onChange={handleChange}
-                            placeholder="0"
-                            required
-                          />
-                          <label htmlFor="field-price-5">5 วัน</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Note Field - Multilined & optimized for typing longer text (s12) */}
-                  <div className="s12">
-                    <div className="field textarea label border round no-margin">
-                      <textarea
-                        id="field-note"
-                        name="note"
-                        rows={3}
-                        value={formData.note}
-                        onChange={handleChange}
-                        placeholder=" "
-                        style={{ minHeight: '85px', resize: 'vertical' }}
-                      />
-                      <label htmlFor="field-note">หมายเหตุ / Note (บันทึกข้อความเพิ่มเติม, ตำหนิ, รายละเอียด)</label>
-                      <i>edit_note</i>
-                    </div>
-                  </div>
-
                   {/* Accessories (s12 m6) */}
                   <div className="s12 m6">
                     <div className="field label border round no-margin">
@@ -583,7 +572,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                         onChange={handleChange}
                         placeholder=" "
                       />
-                      <label htmlFor="field-accessories">อุปกรณ์เสริม / Accessories</label>
+                      <label htmlFor="field-accessories">เครื่องประดับ</label>
                       <i>auto_awesome</i>
                     </div>
                   </div>
@@ -604,7 +593,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                     </div>
                   </div>
 
-                  {/* Tags Multi-Picker - Bottom Most (s12) */}
+                  {/* Tags Multi-Picker (s12) */}
                   <div className="s12">
                     <TagPicker
                       id="field-tags"
@@ -613,6 +602,23 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                       onChange={(newTags) => setFormData((prev) => ({ ...prev, tags: newTags }))}
                       onAddTag={(newTag) => addOption('tags', newTag)}
                     />
+                  </div>
+
+                  {/* Note Field - Multilined & optimized for typing longer text (s12, Below Tags) */}
+                  <div className="s12">
+                    <div className="field textarea label border round no-margin">
+                      <textarea
+                        id="field-note"
+                        name="note"
+                        rows={3}
+                        value={formData.note}
+                        onChange={handleChange}
+                        placeholder=" "
+                        style={{ minHeight: '85px', resize: 'vertical' }}
+                      />
+                      <label htmlFor="field-note">โน๊ต</label>
+                      <i>edit_note</i>
+                    </div>
                   </div>
                 </div>
               </form>

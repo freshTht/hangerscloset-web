@@ -32,6 +32,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [adding, setAdding] = useState(false);
   const [dropdownAlign, setDropdownAlign] = useState<'left' | 'right'>('left');
+  const [maxDropdownWidth, setMaxDropdownWidth] = useState<number | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const selectedButtonRef = useRef<HTMLButtonElement>(null);
@@ -44,15 +45,39 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
     : `ค้นหา${labelClean}...`;
   const activeSearchPlaceholder = searchPlaceholder || defaultSearchPlaceholder;
 
-  // Determine smart horizontal alignment (left or right) based on position in viewport
+  // Determine smart horizontal alignment (left or right) and max width based on boundary container
   useEffect(() => {
     if (isOpen && containerRef.current && typeof window !== 'undefined') {
-      const rect = containerRef.current.getBoundingClientRect();
-      if (rect.left + rect.width / 2 > window.innerWidth / 2) {
-        setDropdownAlign('right');
-      } else {
-        setDropdownAlign('left');
-      }
+      const updatePosition = () => {
+        if (!containerRef.current) return;
+        const inputRect = containerRef.current.getBoundingClientRect();
+
+        // Find nearest boundary/clipping container (dialog, form, or document)
+        const boundary =
+          containerRef.current.closest('dialog') ||
+          containerRef.current.closest('form') ||
+          document.documentElement;
+        const boundaryRect = boundary.getBoundingClientRect();
+
+        // Calculate available space to the right (from input's left edge to boundary's right edge)
+        const spaceOnRight = boundaryRect.right - inputRect.left;
+        // Calculate available space to the left (from boundary's left edge to input's right edge)
+        const spaceOnLeft = inputRect.right - boundaryRect.left;
+
+        // If there is enough room on the right (>= 280px) or more room on the right than left, align left
+        // Otherwise, align right so it opens towards the roomier left side
+        const alignLeft = spaceOnRight >= 280 || spaceOnRight >= spaceOnLeft;
+        setDropdownAlign(alignLeft ? 'left' : 'right');
+
+        // Constrain max width so it NEVER exceeds the boundary container
+        const availableSpace = alignLeft ? spaceOnRight : spaceOnLeft;
+        const safeMax = availableSpace > 50 ? Math.max(inputRect.width, availableSpace - 12) : undefined;
+        setMaxDropdownWidth(safeMax);
+      };
+
+      updatePosition();
+      window.addEventListener('resize', updatePosition);
+      return () => window.removeEventListener('resize', updatePosition);
     }
   }, [isOpen]);
 
@@ -260,7 +285,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
             ...(dropdownAlign === 'right' ? { right: 0 } : { left: 0 }),
             minWidth: '100%',
             width: 'max(100%, min(300px, 88vw))',
-            maxWidth: '92vw',
+            maxWidth: maxDropdownWidth ? `${maxDropdownWidth}px` : '92vw',
             boxSizing: 'border-box',
             zIndex: 100,
             maxHeight: '260px',

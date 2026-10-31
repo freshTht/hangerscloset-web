@@ -16,25 +16,44 @@ export const TagPicker: React.FC<TagPickerProps> = ({
   availableTags,
   onChange,
   onAddTag,
-  label = 'ค้นหา หรือพิมพ์ชื่อแท็ก...',
+  label = '+ เพิ่มแท็ก',
   placeholder = ' ',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [adding, setAdding] = useState(false);
   const [dropdownAlign, setDropdownAlign] = useState<'left' | 'right'>('left');
+  const [maxDropdownWidth, setMaxDropdownWidth] = useState<number | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Smart horizontal alignment based on viewport
+  // Smart horizontal alignment based on boundary container
   useEffect(() => {
     if (isOpen && containerRef.current && typeof window !== 'undefined') {
-      const rect = containerRef.current.getBoundingClientRect();
-      if (rect.left + rect.width / 2 > window.innerWidth / 2) {
-        setDropdownAlign('right');
-      } else {
-        setDropdownAlign('left');
-      }
+      const updatePosition = () => {
+        if (!containerRef.current) return;
+        const inputRect = containerRef.current.getBoundingClientRect();
+
+        const boundary =
+          containerRef.current.closest('dialog') ||
+          containerRef.current.closest('form') ||
+          document.documentElement;
+        const boundaryRect = boundary.getBoundingClientRect();
+
+        const spaceOnRight = boundaryRect.right - inputRect.left;
+        const spaceOnLeft = inputRect.right - boundaryRect.left;
+
+        const alignLeft = spaceOnRight >= 280 || spaceOnRight >= spaceOnLeft;
+        setDropdownAlign(alignLeft ? 'left' : 'right');
+
+        const availableSpace = alignLeft ? spaceOnRight : spaceOnLeft;
+        const safeMax = availableSpace > 50 ? Math.max(inputRect.width, availableSpace - 12) : undefined;
+        setMaxDropdownWidth(safeMax);
+      };
+
+      updatePosition();
+      window.addEventListener('resize', updatePosition);
+      return () => window.removeEventListener('resize', updatePosition);
     }
   }, [isOpen]);
 
@@ -131,19 +150,32 @@ export const TagPicker: React.FC<TagPickerProps> = ({
   };
 
   return (
-    <div className="vertical no-space" style={{ gap: '8px' }}>
-      <label className="bold small-text secondary-text">
-        แท็ก / หมวดหมู่ (Tags)
-      </label>
+    <div className="round secondary-container medium-padding">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          marginBottom: selectedTags.length > 0 ? '16px' : '20px',
+        }}
+      >
+        <i>tag</i>
+        <label
+          className="bold small-text"
+          style={{ color: 'inherit' }}
+        >
+          แท็ก / หมวดหมู่ (Tags)
+        </label>
+      </div>
 
       {/* Selected tags chip list */}
       {selectedTags.length > 0 && (
-        <div className="row wrap no-margin" style={{ gap: '6px' }}>
+        <div className="row wrap no-margin" style={{ gap: '8px', marginBottom: '20px' }}>
           {selectedTags.map((tag) => (
             <span
               key={tag}
-              className="chip fill primary no-margin"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
+              className="chip medium primary small-elevate no-margin"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
             >
               <span>{tag}</span>
               <button
@@ -151,9 +183,9 @@ export const TagPicker: React.FC<TagPickerProps> = ({
                 className="circle transparent no-margin"
                 onClick={() => handleRemoveTag(tag)}
                 aria-label={`ลบแท็ก ${tag}`}
-                style={{ width: 18, height: 18, minWidth: 18, minHeight: 18, padding: 0 }}
+                style={{ width: 22, height: 22, minWidth: 22, minHeight: 22, padding: 0, color: 'inherit' }}
               >
-                <i className="tiny">close</i>
+                <i className="tiny" style={{ color: 'inherit' }}>close</i>
               </button>
             </span>
           ))}
@@ -163,7 +195,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
       {/* Docked Search Field Container */}
       <div
         ref={containerRef}
-        className="field label border round no-margin"
+        className="field small label border round no-margin surface"
         style={{ position: 'relative' }}
       >
         <input
@@ -180,7 +212,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           placeholder={isOpen ? 'ค้นหา หรือพิมพ์เพิ่มแท็กใหม่...' : placeholder}
           autoComplete="off"
           style={{
-            paddingRight: searchTerm ? '4.5rem' : '2.75rem',
+            paddingRight: searchTerm ? '4.25rem' : '2.5rem',
           }}
         />
         <label htmlFor={id}>{label}</label>
@@ -197,18 +229,18 @@ export const TagPicker: React.FC<TagPickerProps> = ({
             aria-label="ล้างค่า"
             style={{
               position: 'absolute',
-              right: '2.5rem',
+              right: '2.25rem',
               top: '50%',
               transform: 'translateY(-50%)',
-              width: 32,
-              height: 32,
-              minWidth: 32,
-              minHeight: 32,
+              width: 28,
+              height: 28,
+              minWidth: 28,
+              minHeight: 28,
               padding: 0,
               zIndex: 2,
             }}
           >
-            <i>close</i>
+            <i className="small">close</i>
           </button>
         )}
 
@@ -228,18 +260,18 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           aria-label="แสดงรายการแท็ก"
           style={{
             position: 'absolute',
-            right: '0.5rem',
+            right: '0.35rem',
             top: '50%',
             transform: 'translateY(-50%)',
-            width: 36,
-            height: 36,
-            minWidth: 36,
-            minHeight: 36,
+            width: 28,
+            height: 28,
+            minWidth: 28,
+            minHeight: 28,
             padding: 0,
             zIndex: 2,
           }}
         >
-          <i>{isOpen ? 'arrow_drop_up' : 'tag'}</i>
+          <i className="small">{isOpen ? 'arrow_drop_up' : 'tag'}</i>
         </button>
 
         {/* Docked Dropdown Card */}
@@ -253,7 +285,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
               ...(dropdownAlign === 'right' ? { right: 0 } : { left: 0 }),
               minWidth: '100%',
               width: 'max(100%, min(300px, 88vw))',
-              maxWidth: '92vw',
+              maxWidth: maxDropdownWidth ? `${maxDropdownWidth}px` : '92vw',
               boxSizing: 'border-box',
               zIndex: 100,
               maxHeight: '260px',

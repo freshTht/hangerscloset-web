@@ -128,7 +128,7 @@ describe('InventorySheet Component', () => {
     expect(screen.getByLabelText(/ไซส์/i)).toHaveValue('M');
     expect(screen.getByText('เดรส')).toBeInTheDocument();
     expect(screen.getByText('ไปทะเล')).toBeInTheDocument();
-    expect(screen.getByLabelText(/หมายเหตุ/i)).toHaveValue('มีรอยเล็กน้อยที่ชายกระโปรง');
+    expect(screen.getByLabelText(/โน๊ต/i)).toHaveValue('มีรอยเล็กน้อยที่ชายกระโปรง');
     expect(screen.getByAltText('Avaalene Dress')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /บันทึก/i })).toBeInTheDocument();
   });
@@ -194,12 +194,12 @@ describe('InventorySheet Component', () => {
     fireEvent.change(screen.getByLabelText(/ไซส์/i), { target: { value: 'S' } });
 
     // Add a tag via TagPicker
-    const tagInput = screen.getByLabelText(/พิมพ์ชื่อแท็ก/i);
+    const tagInput = screen.getByLabelText(/เพิ่มแท็ก/i);
     fireEvent.change(tagInput, { target: { value: 'ปาร์ตี้' } });
     fireEvent.keyDown(tagInput, { key: 'Enter', code: 'Enter' });
 
     // Add note
-    fireEvent.change(screen.getByLabelText(/หมายเหตุ/i), { target: { value: 'ซักแห้งเท่านั้น' } });
+    fireEvent.change(screen.getByLabelText(/โน๊ต/i), { target: { value: 'ซักแห้งเท่านั้น' } });
 
     fireEvent.change(screen.getByLabelText('1 วัน'), { target: { value: '250' } });
     fireEvent.change(screen.getByLabelText('3 วัน'), { target: { value: '450' } });
