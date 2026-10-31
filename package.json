@@ -14,7 +14,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed:firestore": "node scripts/seedFirestore.mjs",
-    "deploy:rules": "npx --yes firebase-tools deploy --only firestore:rules"
+    "deploy:rules": "npx --yes firebase-tools deploy --only firestore:rules",
+    "postinstall": "node scripts/updateBeerCssDocs.mjs",
+    "update:beercss-docs": "node scripts/updateBeerCssDocs.mjs"
   },
   "dependencies": {
     "beercss": "^3.8.0",

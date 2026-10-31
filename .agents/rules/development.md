@@ -17,6 +17,7 @@
 - `pnpm test`: Runs Vitest test suites once (`vitest run`).
 - `pnpm test:watch`: Runs Vitest in interactive watch mode.
 - `pnpm preview`: Locally previews the production build.
+- `pnpm update:beercss-docs`: Synchronizes version-bound Beer CSS documentation into `.agents/rules/references/beercss.md`. Runs automatically on `postinstall`.
 
 ## Code Quality & Verification
 - **Validation**: After modifying code, always verify by running `pnpm test` and `pnpm build` (`tsc -b && vite build`) to ensure type safety and bundling pass without errors.
