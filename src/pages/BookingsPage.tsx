@@ -1,8 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   BOOKING_STATUS_META,
   BOOKING_STATUS_ORDER,
   isBookingFullyReturned,
+  getTodayISO,
+  addDaysISO,
+  formatDateThaiShort,
+  formatDateThaiFull,
   type Booking,
   type BookingItemStatus,
 } from '../types/booking';
@@ -71,6 +75,11 @@ export const BookingsPage: React.FC = () => {
   const { customers, addCustomer } = useCustomers();
   const { items: inventoryItems } = useInventory();
 
+  const today = useMemo(() => getTodayISO(), []);
+  const [selectedDate, setSelectedDate] = useState<string>(() => today);
+  const [isAllDates, setIsAllDates] = useState(false);
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
   const [statusFilter, setStatusFilter] = useState<BookingFilterTab>('active');
   const [viewMode, setViewMode] = useState<BookingViewMode>('list');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -84,6 +93,12 @@ export const BookingsPage: React.FC = () => {
     booking: null,
   });
 
+  const dateButtonLabel = useMemo(() => {
+    if (isAllDates) return 'แสดงทุกวัน (คลิกเพื่อเลือกวัน)';
+    if (selectedDate === today) return `${formatDateThaiShort(selectedDate)} (วันนี้)`;
+    return formatDateThaiFull(selectedDate);
+  }, [isAllDates, selectedDate, today]);
+
   const filteredBookings = useMemo(() => {
     const byStatus = bookings.filter((b) => {
       if (statusFilter === 'active') {
@@ -92,7 +107,13 @@ export const BookingsPage: React.FC = () => {
       return b.items.some((li) => li.status === statusFilter);
     });
 
-    const bySearch = byStatus.filter((b) =>
+    const byDate = isAllDates
+      ? byStatus
+      : byStatus.filter(
+          (b) => selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
+        );
+
+    const bySearch = byDate.filter((b) =>
       matchesBookingSearch(b, searchQuery)
     );
 
@@ -105,9 +126,15 @@ export const BookingsPage: React.FC = () => {
       }
       return b.createdAt.localeCompare(a.createdAt);
     });
-  }, [bookings, statusFilter, searchQuery, sortKey]);
+  }, [bookings, statusFilter, isAllDates, selectedDate, searchQuery, sortKey]);
 
   const tabCounts = useMemo(() => {
+    const baseBookings = isAllDates
+      ? bookings
+      : bookings.filter(
+          (b) => selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
+        );
+
     const counts: Record<BookingFilterTab, number> = {
       active: 0,
       reserved: 0,
@@ -118,7 +145,7 @@ export const BookingsPage: React.FC = () => {
       returned: 0,
     };
 
-    for (const b of bookings) {
+    for (const b of baseBookings) {
       if (!isBookingFullyReturned(b)) {
         counts.active += 1;
       }
@@ -129,13 +156,19 @@ export const BookingsPage: React.FC = () => {
       }
     }
     return counts;
-  }, [bookings]);
+  }, [bookings, isAllDates, selectedDate]);
 
   const handleOpenAdd = () => {
     setSheetState({
       isOpen: true,
       mode: 'add',
-      booking: null,
+      booking: selectedDate
+        ? ({
+            startDate: selectedDate,
+            endDate: addDaysISO(selectedDate, 2),
+            cleaningEndDate: addDaysISO(selectedDate, 4),
+          } as unknown as Booking)
+        : null,
     });
   };
 
@@ -291,6 +324,126 @@ export const BookingsPage: React.FC = () => {
         })}
       </div>
 
+      {/* Date Selection Bar */}
+      <div
+        className="surface-container-high round padding-vertical small-padding-horizontal row items-center center-align no-margin"
+        data-testid="bookings-date-bar"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          width: '100%',
+          maxWidth: '520px',
+          margin: '0 auto',
+          boxSizing: 'border-box',
+          gap: '8px',
+        }}
+      >
+        <button
+          type="button"
+          className="circle transparent no-margin"
+          onClick={() => {
+            setSelectedDate((prev) => addDaysISO(prev, -1));
+            setIsAllDates(false);
+          }}
+          aria-label="วันก่อนหน้า"
+          title="วันก่อนหน้า"
+          style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px', padding: 0 }}
+        >
+          <i>chevron_left</i>
+        </button>
+
+        <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+          <input
+            ref={dateInputRef}
+            type="date"
+            value={selectedDate}
+            onChange={(e) => {
+              if (e.target.value) {
+                setSelectedDate(e.target.value);
+                setIsAllDates(false);
+              }
+            }}
+            style={{
+              position: 'absolute',
+              opacity: 0,
+              pointerEvents: 'none',
+              width: 0,
+              height: 0,
+            }}
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+          <button
+            type="button"
+            className="chip transparent border bold no-margin"
+            onClick={() => {
+              if (dateInputRef.current) {
+                if ('showPicker' in HTMLInputElement.prototype) {
+                  try {
+                    dateInputRef.current.showPicker();
+                  } catch {
+                    dateInputRef.current.focus();
+                  }
+                } else {
+                  dateInputRef.current.focus();
+                }
+              }
+            }}
+            aria-label="เลือกวันที่"
+            title="คลิกเพื่อเลือกวันที่"
+            style={{
+              minHeight: '40px',
+              padding: '0 14px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <i className="small">calendar_month</i>
+            <span>{dateButtonLabel}</span>
+            <i className="tiny">arrow_drop_down</i>
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className="circle transparent no-margin"
+          onClick={() => {
+            setSelectedDate((prev) => addDaysISO(prev, 1));
+            setIsAllDates(false);
+          }}
+          aria-label="วันถัดไป"
+          title="วันถัดไป"
+          style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px', padding: 0 }}
+        >
+          <i>chevron_right</i>
+        </button>
+
+        {selectedDate !== today && !isAllDates && (
+          <button
+            type="button"
+            className="chip small transparent border no-margin"
+            onClick={() => {
+              setSelectedDate(today);
+              setIsAllDates(false);
+            }}
+            title="กลับไปวันนี้"
+          >
+            <span>วันนี้</span>
+          </button>
+        )}
+
+        <button
+          type="button"
+          className={`chip small no-margin ${isAllDates ? 'fill primary' : 'border'}`}
+          onClick={() => setIsAllDates((prev) => !prev)}
+          title={isAllDates ? 'กำลังแสดงทุกวัน' : 'คลิกเพื่อดูทุกวัน'}
+        >
+          <span>ทุกวัน</span>
+        </button>
+      </div>
+
       {/* Main Content Area */}
       {loading ? (
         <div
@@ -344,6 +497,8 @@ export const BookingsPage: React.FC = () => {
           title={
             searchQuery
               ? 'ไม่พบรายการจองที่ตรงกับคำค้นหา'
+              : !isAllDates
+              ? 'ไม่มีคิวจองในวันที่เลือก'
               : statusFilter === 'active'
               ? 'ไม่มีรายการจองที่กำลังดำเนินการ'
               : 'ไม่พบรายการจองในหมวดหมู่นี้'
@@ -351,28 +506,36 @@ export const BookingsPage: React.FC = () => {
           description={
             searchQuery
               ? 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น'
+              : !isAllDates
+              ? `ไม่มีรายการจองหรือส่งซักชุดในวันที่ ${formatDateThaiFull(selectedDate)}`
               : 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่'
           }
-          actionIcon={searchQuery ? 'close' : 'add'}
-          actionText={searchQuery ? 'ล้างการค้นหา' : 'สร้างการจองใหม่'}
-          onAction={searchQuery ? () => setSearchQuery('') : handleOpenAdd}
+          actionIcon="add"
+          actionText="สร้างการจองใหม่"
+          onAction={handleOpenAdd}
           secondaryActionIcon={
             searchQuery
-              ? 'add'
+              ? 'close'
+              : !isAllDates
+              ? 'calendar_month'
               : statusFilter !== 'active'
               ? 'restart_alt'
               : undefined
           }
           secondaryActionText={
             searchQuery
-              ? 'สร้างการจองใหม่'
+              ? 'ล้างการค้นหา'
+              : !isAllDates
+              ? 'ดูการจองทุกวัน'
               : statusFilter !== 'active'
               ? 'ดูการจองที่กำลังดำเนินการ'
               : undefined
           }
           onSecondaryAction={
             searchQuery
-              ? handleOpenAdd
+              ? () => setSearchQuery('')
+              : !isAllDates
+              ? () => setIsAllDates(true)
               : statusFilter !== 'active'
               ? () => setStatusFilter('active')
               : undefined

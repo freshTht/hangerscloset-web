@@ -139,3 +139,12 @@ export function formatDateThaiShort(isoDate: string): string {
   const monthLabel = THAI_MONTHS_SHORT[month - 1] ?? '';
   return `${day} ${monthLabel}`;
 }
+
+export function formatDateThaiFull(isoDate: string): string {
+  const parts = isoDate.split('-').map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return isoDate;
+  const [year, month, day] = parts;
+  const monthLabel = THAI_MONTHS_SHORT[month - 1] ?? '';
+  const thaiYear = year + 543;
+  return `${day} ${monthLabel} ${thaiYear}`;
+}

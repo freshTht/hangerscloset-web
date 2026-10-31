@@ -43,4 +43,5 @@ export {
   addDaysISO,
   diffDaysInclusiveISO,
   formatDateThaiShort,
+  formatDateThaiFull,
 } from '../lib/bookingAvailability';

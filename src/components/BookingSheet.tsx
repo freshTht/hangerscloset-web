@@ -140,9 +140,9 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         setDepositRefunded(booking.depositRefunded);
         setNote(booking.note ?? '');
       } else {
-        const defaultStart = getTodayISO();
-        const defaultEnd = addDaysISO(defaultStart, 2);
-        const defaultCleaning = addDaysISO(defaultEnd, 2);
+        const defaultStart = booking?.startDate || getTodayISO();
+        const defaultEnd = booking?.endDate || addDaysISO(defaultStart, 2);
+        const defaultCleaning = booking?.cleaningEndDate || addDaysISO(defaultEnd, 2);
         setStartDate(defaultStart);
         setDurationDays(3);
         setEndDate(defaultEnd);
