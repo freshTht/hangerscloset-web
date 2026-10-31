@@ -33,7 +33,7 @@ describe('BookingsPage Component', () => {
     fireEvent.click(laundryTab);
 
     expect(laundryTab).toHaveAttribute('aria-selected', 'true');
-    expect(screen.getByText('คุณเนย วริศรา')).toBeInTheDocument();
+    expect(screen.getAllByText('คุณเนย วริศรา').length).toBeGreaterThan(0);
   });
 
   it('advances an item status with 1-tap button on BookingCard', async () => {
@@ -65,5 +65,46 @@ describe('BookingsPage Component', () => {
     // Calendar view shows "วันนี้" button and weekday headers
     expect(screen.getByRole('button', { name: 'วันนี้' })).toBeInTheDocument();
     expect(screen.getByText('อา.')).toBeInTheDocument();
+  });
+
+  it('renders all inventory items with list view and supports reserving unbooked items', () => {
+    render(<BookingsPage />);
+
+    // In default list view, all inventory items are shown
+    // AVL01 is unbooked today
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    expect(screen.getByTestId('status-badge-AVL01')).toHaveTextContent('ว่าง (พร้อมเช่า)');
+
+    // Unbooked item has "จองชุดนี้" button
+    const reserveBtn = screen.getByRole('button', { name: /จองชุด AVL01/i });
+    expect(reserveBtn).toBeInTheDocument();
+
+    // Clicking reserve button opens BookingSheet
+    fireEvent.click(reserveBtn);
+    expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
+  });
+
+  it('toggles between Items list view and Orders list view', () => {
+    render(<BookingsPage />);
+
+    // Default is items list view
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+
+    // Toggle to orders list view
+    const toggleToOrdersBtns = screen.getAllByRole('button', {
+      name: /สลับเป็นมุมมองใบจอง/i,
+    });
+    fireEvent.click(toggleToOrdersBtns[0]);
+
+    // In orders list view, unbooked AVL01 is not rendered, but booked DIA01 order is rendered
+    expect(screen.queryByTestId('inventory-booking-card-AVL01')).not.toBeInTheDocument();
+    expect(screen.getAllByText('คุณพลอย รัตนากร').length).toBeGreaterThan(0);
+
+    // Toggle back to items view
+    const toggleToItemsBtns = screen.getAllByRole('button', {
+      name: /สลับเป็นมุมมองรายชุด/i,
+    });
+    fireEvent.click(toggleToItemsBtns[0]);
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
   });
 });

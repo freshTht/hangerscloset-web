@@ -148,8 +148,17 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         setEndDate(defaultEnd);
         setCleaningEndDate(defaultCleaning);
         setSelectedCustomer(null);
-        setSelectedItems([]);
-        setRentalPrice('0');
+        const initialItems = (booking?.items ?? []).map((item) => ({
+          ...item,
+          conditionNote: item.conditionNote ?? null,
+        }));
+        setSelectedItems(initialItems);
+        if (initialItems.length > 0) {
+          const suggested = computeSuggestedPrice(initialItems, inventoryMap, 3);
+          setRentalPrice(String(suggested));
+        } else {
+          setRentalPrice('0');
+        }
         setPriceManuallyEdited(false);
         setDeposit('1000');
         setDepositRefunded(false);
@@ -414,6 +423,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         className={sheetClass.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
+        aria-label={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
         style={{
           zIndex: 1001,
           display: isOpen ? 'flex' : undefined,
