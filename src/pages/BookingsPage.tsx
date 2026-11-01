@@ -86,11 +86,14 @@ function findItemBooking(
           li.itemId === item.id ||
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
-      const computed = isAllDates
-        ? getLatestBookingStatus(b)
-        : selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
-        ? getBookingStatusOnDate(b, selectedDate)
-        : getLatestBookingStatus(b);
+      let computed: BookingItemStatus;
+      if (isAllDates) {
+        computed = getLatestBookingStatus(b);
+      } else if (selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate) {
+        computed = getBookingStatusOnDate(b, selectedDate);
+      } else {
+        computed = getLatestBookingStatus(b);
+      }
       if (match && computed === 'returned') {
         return { booking: b, lineItem: match, status: 'returned' };
       }
@@ -161,6 +164,136 @@ function matchesBookingSearch(booking: Booking, rawQuery: string): boolean {
       li.itemCode.toLowerCase().includes(q) ||
       li.itemName.toLowerCase().includes(q)
   );
+}
+
+interface BookingsEmptyStateParams {
+  layout: 'items' | 'bookings';
+  searchQuery: string;
+  statusFilter: BookingFilterTab;
+  isAllDates: boolean;
+  selectedDate: string;
+  onOpenAdd: () => void;
+  onClearSearch: () => void;
+  onViewAllDates: () => void;
+  onResetFilter: () => void;
+}
+
+function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
+  const {
+    layout,
+    searchQuery,
+    statusFilter,
+    isAllDates,
+    selectedDate,
+    onOpenAdd,
+    onClearSearch,
+    onViewAllDates,
+    onResetFilter,
+  } = params;
+
+  if (searchQuery) {
+    return {
+      icon: 'search_off',
+      title:
+        layout === 'items'
+          ? 'ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา'
+          : 'ไม่พบรายการจองที่ตรงกับคำค้นหา',
+      description: 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น',
+      actionIcon: 'add',
+      actionText: 'สร้างการจองใหม่',
+      onAction: onOpenAdd,
+      secondaryActionIcon: 'close',
+      secondaryActionText: 'ล้างการค้นหา',
+      onSecondaryAction: onClearSearch,
+    };
+  }
+
+  if (!isAllDates) {
+    return {
+      icon: 'event_note',
+      title: 'ไม่มีคิวจองในวันที่เลือก',
+      description:
+        layout === 'items'
+          ? `ไม่มีชุดในสถานะนี้ในวันที่ ${formatDateThaiFull(selectedDate)}`
+          : `ไม่มีรายการจองหรือส่งซักชุดในวันที่ ${formatDateThaiFull(selectedDate)}`,
+      actionIcon: 'add',
+      actionText: 'สร้างการจองใหม่',
+      onAction: onOpenAdd,
+      secondaryActionIcon: 'calendar_month',
+      secondaryActionText: 'ดูการจองทุกวัน',
+      onSecondaryAction: onViewAllDates,
+    };
+  }
+
+  const isDefaultActive = statusFilter === 'active';
+  const secondaryAction = !isDefaultActive
+    ? {
+        secondaryActionIcon: 'restart_alt',
+        secondaryActionText:
+          layout === 'items' ? 'ดูชุดทั้งหมด' : 'ดูการจองที่กำลังดำเนินการ',
+        onSecondaryAction: onResetFilter,
+      }
+    : {};
+
+  if (layout === 'items') {
+    switch (statusFilter) {
+      case 'available':
+        return {
+          icon: 'event_note',
+          title: 'ไม่มีชุดว่างในหมวดหมู่นี้',
+          description:
+            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
+          actionIcon: 'add',
+          actionText: 'สร้างการจองใหม่',
+          onAction: onOpenAdd,
+          ...secondaryAction,
+        };
+      case 'active':
+        return {
+          icon: 'event_note',
+          title: 'ไม่มีรายการชุดที่กำลังดำเนินการ',
+          description:
+            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
+          actionIcon: 'add',
+          actionText: 'สร้างการจองใหม่',
+          onAction: onOpenAdd,
+        };
+      default:
+        return {
+          icon: 'event_note',
+          title: 'ไม่พบรายการชุดในหมวดหมู่นี้',
+          description:
+            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
+          actionIcon: 'add',
+          actionText: 'สร้างการจองใหม่',
+          onAction: onOpenAdd,
+          ...secondaryAction,
+        };
+    }
+  }
+
+  // layout === 'bookings'
+  switch (statusFilter) {
+    case 'active':
+      return {
+        icon: 'event_note',
+        title: 'ไม่มีรายการจองที่กำลังดำเนินการ',
+        description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
+        actionIcon: 'add',
+        actionText: 'สร้างการจองใหม่',
+        onAction: onOpenAdd,
+      };
+    default:
+      return {
+        icon: 'event_note',
+        title: 'ไม่พบรายการจองในหมวดหมู่นี้',
+        description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
+        actionIcon: 'add',
+        actionText: 'สร้างการจองใหม่',
+        onAction: onOpenAdd,
+        ...secondaryAction,
+      };
+  }
 }
 
 export const BookingsPage: React.FC = () => {
@@ -572,6 +705,131 @@ export const BookingsPage: React.FC = () => {
     />
   );
 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div
+          className="grid"
+          aria-busy="true"
+          aria-label="กำลังโหลดรายการจอง"
+        >
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="s12 m6">
+              <article className="border round surface hc-medium-padding no-margin">
+                <Stack orientation="column" gap="small">
+                  <Skeleton shape="round" className="hc-bookings-skeleton-title" />
+                  <Skeleton shape="round" className="hc-bookings-skeleton-body" />
+                  <Skeleton shape="round" className="hc-bookings-skeleton-footer" />
+                </Stack>
+              </article>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <article className="border error-container round margin">
+          <div className="row">
+            <i className="error-text">error</i>
+            <div className="max">
+              <h6 className="bold no-margin error-text">
+                เกิดข้อผิดพลาดในการโหลดข้อมูลการจอง
+              </h6>
+              <p className="no-margin secondary-text">{error.message}</p>
+            </div>
+          </div>
+        </article>
+      );
+    }
+
+    if (viewMode === 'calendar') {
+      return (
+        <BookingCalendar
+          bookings={filteredBookings}
+          onEditBooking={handleOpenEdit}
+          onAdvanceItemStatus={handleAdvanceItemStatus}
+          onToggleDepositRefunded={handleToggleDepositRefunded}
+        />
+      );
+    }
+
+    if (listLayout === 'items') {
+      if (filteredItemEntries.length === 0) {
+        return (
+          <EmptyState
+            {...getBookingsEmptyStateProps({
+              layout: 'items',
+              searchQuery,
+              statusFilter,
+              isAllDates,
+              selectedDate,
+              onOpenAdd: handleOpenAdd,
+              onClearSearch: () => setSearchQuery(''),
+              onViewAllDates: () => setIsAllDates(true),
+              onResetFilter: () => setStatusFilter('active'),
+            })}
+          />
+        );
+      }
+
+      return (
+        <div className="grid">
+          {filteredItemEntries.map((entry) => (
+            <div key={entry.item.id} className="s12 m12 l6">
+              <BookingInventoryCard
+                item={entry.item}
+                booking={entry.booking}
+                lineItem={entry.lineItem}
+                selectedDate={selectedDate}
+                isAllDates={isAllDates}
+                onReserve={handleReserveItem}
+                onEditBooking={handleOpenEdit}
+                onAdvanceItemStatus={handleAdvanceItemStatus}
+              />
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (filteredBookings.length === 0) {
+      return (
+        <EmptyState
+          {...getBookingsEmptyStateProps({
+            layout: 'bookings',
+            searchQuery,
+            statusFilter,
+            isAllDates,
+            selectedDate,
+            onOpenAdd: handleOpenAdd,
+            onClearSearch: () => setSearchQuery(''),
+            onViewAllDates: () => setIsAllDates(true),
+            onResetFilter: () => setStatusFilter('active'),
+          })}
+        />
+      );
+    }
+
+    return (
+      <div className="grid">
+        {filteredBookings.map((booking) => (
+          <div key={booking.id} className="s12 m6">
+            <BookingCard
+              booking={booking}
+              selectedDate={selectedDate}
+              isAllDates={isAllDates}
+              onEdit={handleOpenEdit}
+              onAdvanceItemStatus={handleAdvanceItemStatus}
+              onToggleDepositRefunded={handleToggleDepositRefunded}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="bookings-page">
       {/* Date Navigation & Filter Bar (BeerCSS Toolbar) */}
@@ -590,180 +848,7 @@ export const BookingsPage: React.FC = () => {
       />
 
       {/* Main Content Area */}
-      {loading ? (
-        <div
-          className="grid"
-          aria-busy="true"
-          aria-label="กำลังโหลดรายการจอง"
-        >
-          {Array.from({ length: 4 }).map((_, idx) => (
-            <div key={idx} className="s12 m6">
-              <article className="border round surface hc-medium-padding no-margin">
-                <Stack orientation="column" gap="small">
-                  <Skeleton shape="round" className="hc-bookings-skeleton-title" />
-                  <Skeleton shape="round" className="hc-bookings-skeleton-body" />
-                  <Skeleton shape="round" className="hc-bookings-skeleton-footer" />
-                </Stack>
-              </article>
-            </div>
-          ))}
-        </div>
-      ) : error ? (
-        <article className="border error-container round margin">
-          <div className="row">
-            <i className="error-text">error</i>
-            <div className="max">
-              <h6 className="bold no-margin error-text">
-                เกิดข้อผิดพลาดในการโหลดข้อมูลการจอง
-              </h6>
-              <p className="no-margin secondary-text">{error.message}</p>
-            </div>
-          </div>
-        </article>
-      ) : viewMode === 'calendar' ? (
-        <BookingCalendar
-          bookings={filteredBookings}
-          onEditBooking={handleOpenEdit}
-          onAdvanceItemStatus={handleAdvanceItemStatus}
-          onToggleDepositRefunded={handleToggleDepositRefunded}
-        />
-      ) : listLayout === 'items' ? (
-        filteredItemEntries.length === 0 ? (
-          <EmptyState
-            icon={searchQuery ? 'search_off' : 'event_note'}
-            title={
-              searchQuery
-                ? 'ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา'
-                : statusFilter === 'available'
-                ? 'ไม่มีชุดว่างในหมวดหมู่นี้'
-                : !isAllDates
-                ? 'ไม่มีคิวจองในวันที่เลือก'
-                : statusFilter === 'active'
-                ? 'ไม่มีรายการชุดที่กำลังดำเนินการ'
-                : 'ไม่พบรายการชุดในหมวดหมู่นี้'
-            }
-            description={
-              searchQuery
-                ? 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น'
-                : !isAllDates
-                ? `ไม่มีชุดในสถานะนี้ในวันที่ ${formatDateThaiFull(selectedDate)}`
-                : 'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่'
-            }
-            actionIcon="add"
-            actionText="สร้างการจองใหม่"
-            onAction={handleOpenAdd}
-            secondaryActionIcon={
-              searchQuery
-                ? 'close'
-                : !isAllDates
-                ? 'calendar_month'
-                : statusFilter !== 'active'
-                ? 'restart_alt'
-                : undefined
-            }
-            secondaryActionText={
-              searchQuery
-                ? 'ล้างการค้นหา'
-                : !isAllDates
-                ? 'ดูการจองทุกวัน'
-                : statusFilter !== 'active'
-                ? 'ดูชุดทั้งหมด'
-                : undefined
-            }
-            onSecondaryAction={
-              searchQuery
-                ? () => setSearchQuery('')
-                : !isAllDates
-                ? () => setIsAllDates(true)
-                : statusFilter !== 'active'
-                ? () => setStatusFilter('active')
-                : undefined
-            }
-          />
-        ) : (
-          <div className="grid">
-            {filteredItemEntries.map((entry) => (
-              <div key={entry.item.id} className="s12 m12 l6">
-                <BookingInventoryCard
-                  item={entry.item}
-                  booking={entry.booking}
-                  lineItem={entry.lineItem}
-                  selectedDate={selectedDate}
-                  isAllDates={isAllDates}
-                  onReserve={handleReserveItem}
-                  onEditBooking={handleOpenEdit}
-                  onAdvanceItemStatus={handleAdvanceItemStatus}
-                />
-              </div>
-            ))}
-          </div>
-        )
-      ) : filteredBookings.length === 0 ? (
-        <EmptyState
-          icon={searchQuery ? 'search_off' : 'event_note'}
-          title={
-            searchQuery
-              ? 'ไม่พบรายการจองที่ตรงกับคำค้นหา'
-              : !isAllDates
-              ? 'ไม่มีคิวจองในวันที่เลือก'
-              : statusFilter === 'active'
-              ? 'ไม่มีรายการจองที่กำลังดำเนินการ'
-              : 'ไม่พบรายการจองในหมวดหมู่นี้'
-          }
-          description={
-            searchQuery
-              ? 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น'
-              : !isAllDates
-              ? `ไม่มีรายการจองหรือส่งซักชุดในวันที่ ${formatDateThaiFull(selectedDate)}`
-              : 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่'
-          }
-          actionIcon="add"
-          actionText="สร้างการจองใหม่"
-          onAction={handleOpenAdd}
-          secondaryActionIcon={
-            searchQuery
-              ? 'close'
-              : !isAllDates
-              ? 'calendar_month'
-              : statusFilter !== 'active'
-              ? 'restart_alt'
-              : undefined
-          }
-          secondaryActionText={
-            searchQuery
-              ? 'ล้างการค้นหา'
-              : !isAllDates
-              ? 'ดูการจองทุกวัน'
-              : statusFilter !== 'active'
-              ? 'ดูการจองที่กำลังดำเนินการ'
-              : undefined
-          }
-          onSecondaryAction={
-            searchQuery
-              ? () => setSearchQuery('')
-              : !isAllDates
-              ? () => setIsAllDates(true)
-              : statusFilter !== 'active'
-              ? () => setStatusFilter('active')
-              : undefined
-          }
-        />
-      ) : (
-        <div className="grid">
-          {filteredBookings.map((booking) => (
-            <div key={booking.id} className="s12 m6">
-              <BookingCard
-                booking={booking}
-                selectedDate={selectedDate}
-                isAllDates={isAllDates}
-                onEdit={handleOpenEdit}
-                onAdvanceItemStatus={handleAdvanceItemStatus}
-                onToggleDepositRefunded={handleToggleDepositRefunded}
-              />
-            </div>
-          ))}
-        </div>
-      )}
+      {renderContent()}
 
       {/* Bottom Spacing for Floating Bar */}
       <div className="extra-space"></div>
