@@ -1,0 +1,69 @@
+/* OptionPicker Styles */
+
+.hc-option-picker-container {
+  position: relative;
+}
+
+.hc-option-picker-input {
+  padding-right: 44px;
+}
+
+.hc-option-picker-input.has-clear {
+  padding-right: 72px;
+}
+
+.hc-option-clear-btn {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  z-index: 2;
+}
+
+.hc-option-toggle-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0;
+  z-index: 2;
+}
+
+.hc-option-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  min-width: 100%;
+  width: max(100%, min(300px, 88vw));
+  max-width: 92vw;
+  box-sizing: border-box;
+  z-index: 100;
+  max-height: 260px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.hc-option-dropdown.align-right {
+  right: 0;
+}
+
+.hc-option-dropdown.align-left {
+  left: 0;
+}
+
+.hc-option-grid {
+  gap: 8px;
+  align-items: center;
+}
+
+.hc-option-btn {
+  cursor: pointer;
+}

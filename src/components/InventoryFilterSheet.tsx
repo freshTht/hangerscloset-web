@@ -9,6 +9,7 @@ import {
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { Stack } from './Stack';
+import './InventoryFilterSheet.css';
 
 export interface InventoryFilterSheetProps {
   isOpen: boolean;
@@ -265,7 +266,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
     onToggle: (opt: string) => void,
     testIdPrefix: string
   ) => (
-    <div className="row wrap no-margin" style={{ gap: '8px' }}>
+    <div className="row wrap no-margin hc-filter-chips-grid">
       {options.map((opt) => {
         const selected = isSelected(selectedList, opt);
         return (
@@ -290,46 +291,20 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
   return (
     <>
       <div
-        className={`overlay ${isOpen ? 'active' : ''}`}
+        className={`overlay ${isOpen ? 'active' : ''} hc-filter-sheet-overlay`}
         onClick={onClose}
         aria-hidden={!isOpen}
-        style={{ zIndex: 1000, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       <dialog
         id="inventory-filter-sheet"
-        className={sheetClass.trim()}
+        className={`${sheetClass} hc-filter-sheet-dialog ${isMobile ? 'mobile' : ''}`.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
         aria-label={quickAddMode ? 'เลือกตัวกรองเพิ่ม' : 'ตัวกรองสินค้า'}
-        style={{
-          zIndex: 1001,
-          display: isOpen ? 'flex' : undefined,
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          overflowX: 'hidden',
-          ...(isMobile
-            ? {
-                maxHeight: '90dvh',
-                width: '100%',
-                maxWidth: '100vw',
-                borderRadius: '20px 20px 0 0',
-                padding: '12px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
-                margin: 0,
-              }
-            : {
-                width: '480px',
-                maxWidth: '90vw',
-                height: '100dvh',
-                padding: '20px',
-              }),
-        }}
       >
         {/* Header */}
-        <div
-          className="row no-margin"
-          style={{ paddingBottom: '8px', flexShrink: 0, gap: '8px' }}
-        >
+        <div className="row no-margin hc-filter-sheet-header">
           <i>{quickAddMode ? 'add' : 'tune'}</i>
           <Stack orientation="column" gap="none">
             <h6 className="bold no-margin">
@@ -347,37 +322,16 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
           <div className="max" />
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-filter-sheet-close-btn"
             onClick={onClose}
             aria-label="ปิดตัวกรอง"
-            style={{
-              width: '36px',
-              height: '36px',
-              minWidth: '36px',
-              minHeight: '36px',
-              padding: 0,
-            }}
           >
             <i>close</i>
           </button>
         </div>
 
         {/* Scrollable Filter Sections */}
-        <div
-          style={{
-            flex: 1,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            WebkitOverflowScrolling: 'touch',
-            overscrollBehavior: 'contain',
-            paddingTop: '8px',
-            paddingBottom: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-            minHeight: 0,
-          }}
-        >
+        <div className="hc-filter-sheet-scroll">
           {/* Rental Duration & Price Range Section */}
           <Stack
             orientation="column"
@@ -390,7 +344,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
               <span className="bold small-text">ระยะเวลาเช่า & ช่วงราคา</span>
             </Stack>
 
-            <div className="row wrap no-margin" style={{ gap: '8px' }}>
+            <div className="row wrap no-margin hc-filter-chips-grid">
               {!quickAddMode && (
                 <button
                   type="button"
@@ -434,7 +388,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
               })}
             </div>
 
-            <div className="grid no-margin" style={{ gap: '12px' }}>
+            <div className="grid no-margin hc-filter-range-grid">
               <div className="s6">
                 <div className="field label border surface round no-margin">
                   <input
@@ -587,17 +541,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div
-          className="row no-margin"
-          style={{
-            paddingTop: '12px',
-            borderTop: '1px solid var(--surface-variant)',
-            flexShrink: 0,
-            gap: '8px',
-            width: '100%',
-            boxSizing: 'border-box',
-          }}
-        >
+        <div className="row no-margin hc-filter-sheet-footer">
           <button
             type="button"
             className="border round no-margin"

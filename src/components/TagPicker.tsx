@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Stack } from './Stack';
+import './TagPicker.css';
 
 export interface TagPickerProps {
   id: string;
@@ -89,63 +90,58 @@ export const TagPicker: React.FC<TagPickerProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
 
-  // Filter out any already added tags from the available tags list
-  const unselectedTags = availableTags.filter((t) => !selectedTags.includes(t));
-
-  // Filter unselected tags by search term
-  const filteredTags = searchTerm.trim()
-    ? unselectedTags.filter((t) =>
-        t.toLowerCase().includes(searchTerm.toLowerCase().trim())
-      )
-    : unselectedTags;
-
-  // Exact match check across all available tags
-  const exactMatchInAvailable = availableTags.some(
-    (t) => t.toLowerCase() === searchTerm.toLowerCase().trim()
-  );
-  const isAlreadySelected = selectedTags.some(
-    (t) => t.toLowerCase() === searchTerm.toLowerCase().trim()
-  );
-
   const handleOpen = () => {
     setIsOpen(true);
-  };
-
-  const handleAddTag = async (tagToAdd: string) => {
-    const trimmed = tagToAdd.trim();
-    if (!trimmed) return;
-    if (!selectedTags.includes(trimmed)) {
-      onChange([...selectedTags, trimmed]);
-    }
-    if (onAddTag && !availableTags.includes(trimmed)) {
-      try {
-        setAdding(true);
-        await onAddTag(trimmed);
-      } finally {
-        setAdding(false);
-      }
-    }
-    setSearchTerm('');
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
     onChange(selectedTags.filter((t) => t !== tagToRemove));
   };
 
+  const handleAddTag = async (tagToAdd: string) => {
+    const trimmed = tagToAdd.trim();
+    if (!trimmed) return;
+
+    if (!selectedTags.includes(trimmed)) {
+      onChange([...selectedTags, trimmed]);
+    }
+
+    if (onAddTag && !availableTags.includes(trimmed)) {
+      try {
+        setAdding(true);
+        await onAddTag(trimmed);
+      } catch (err) {
+        console.error('Failed to register new tag:', err);
+      } finally {
+        setAdding(false);
+      }
+    }
+
+    setSearchTerm('');
+  };
+
+  // Filter unselected available tags based on search term
+  const unselectedTags = availableTags.filter((t) => !selectedTags.includes(t));
+
+  const filteredTags = unselectedTags.filter((tag) =>
+    tag.toLowerCase().includes(searchTerm.toLowerCase().trim())
+  );
+
+  const exactMatchInAvailable = availableTags.some(
+    (t) => t.toLowerCase() === searchTerm.trim().toLowerCase()
+  );
+
+  const isAlreadySelected = selectedTags.some(
+    (t) => t.toLowerCase() === searchTerm.trim().toLowerCase()
+  );
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      const trimmed = searchTerm.trim();
-      if (!trimmed) return;
-
-      // If exact match in unselected tags, pick that
-      const matchedTag = unselectedTags.find(
-        (t) => t.toLowerCase() === trimmed.toLowerCase()
-      );
-      if (matchedTag) {
-        void handleAddTag(matchedTag);
-      } else if (!isAlreadySelected) {
-        void handleAddTag(trimmed);
+      if (filteredTags.length > 0) {
+        handleAddTag(filteredTags[0]);
+      } else if (searchTerm.trim() && onAddTag && !isAlreadySelected) {
+        handleAddTag(searchTerm.trim());
       }
     }
   };
@@ -159,10 +155,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
     >
       <Stack orientation="row" align="center" gap="small">
         <i>tag</i>
-        <label
-          className="bold small-text"
-          style={{ color: 'inherit' }}
-        >
+        <label className="bold small-text hc-tag-picker-label">
           แท็ก / หมวดหมู่ (Tags)
         </label>
       </Stack>
@@ -173,18 +166,16 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           {selectedTags.map((tag) => (
             <span
               key={tag}
-              className="chip medium primary small-elevate no-margin"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              className="chip medium primary small-elevate no-margin hc-tag-chip"
             >
               <span>{tag}</span>
               <button
                 type="button"
-                className="circle transparent no-margin"
+                className="circle transparent no-margin hc-tag-remove-btn"
                 onClick={() => handleRemoveTag(tag)}
                 aria-label={`ลบแท็ก ${tag}`}
-                style={{ width: 22, height: 22, minWidth: 22, minHeight: 22, padding: 0, color: 'inherit' }}
               >
-                <i className="tiny" style={{ color: 'inherit' }}>close</i>
+                <i className="tiny hc-tag-remove-icon">close</i>
               </button>
             </span>
           ))}
@@ -194,8 +185,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
       {/* Docked Search Field Container */}
       <div
         ref={containerRef}
-        className="field small label border round no-margin surface"
-        style={{ position: 'relative' }}
+        className="field small label border round no-margin surface hc-tag-input-container"
       >
         <input
           id={id}
@@ -210,9 +200,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           onKeyDown={handleKeyDown}
           placeholder={isOpen ? 'ค้นหา หรือพิมพ์เพิ่มแท็กใหม่...' : placeholder}
           autoComplete="off"
-          style={{
-            paddingRight: searchTerm ? '68px' : '40px',
-          }}
+          className={`hc-tag-search-input ${searchTerm ? 'has-clear' : ''}`.trim()}
         />
         <label htmlFor={id}>{label}</label>
 
@@ -220,24 +208,12 @@ export const TagPicker: React.FC<TagPickerProps> = ({
         {searchTerm && (
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-tag-clear-btn"
             onClick={(e) => {
               e.stopPropagation();
               setSearchTerm('');
             }}
             aria-label="ล้างค่า"
-            style={{
-              position: 'absolute',
-              right: '36px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              width: 28,
-              height: 28,
-              minWidth: 28,
-              minHeight: 28,
-              padding: 0,
-              zIndex: 2,
-            }}
           >
             <i className="small">close</i>
           </button>
@@ -246,7 +222,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
         {/* Trailing button with hashtag icon or drop arrow */}
         <button
           type="button"
-          className="circle transparent no-margin"
+          className="circle transparent no-margin hc-tag-toggle-btn"
           onClick={(e) => {
             e.stopPropagation();
             if (isOpen) {
@@ -257,18 +233,6 @@ export const TagPicker: React.FC<TagPickerProps> = ({
             }
           }}
           aria-label="แสดงรายการแท็ก"
-          style={{
-            position: 'absolute',
-            right: '6px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: 28,
-            height: 28,
-            minWidth: 28,
-            minHeight: 28,
-            padding: 0,
-            zIndex: 2,
-          }}
         >
           <i className="small">{isOpen ? 'arrow_drop_up' : 'tag'}</i>
         </button>
@@ -277,30 +241,20 @@ export const TagPicker: React.FC<TagPickerProps> = ({
         {isOpen && (
           <div
             ref={menuRef}
-            className="card surface-container-high round padding no-margin medium-elevate"
+            className="card surface-container-high round padding no-margin medium-elevate hc-tag-dropdown"
             style={{
-              position: 'absolute',
-              top: 'calc(100% + 4px)',
               ...(dropdownAlign === 'right' ? { right: 0 } : { left: 0 }),
-              minWidth: '100%',
-              width: 'max(100%, min(300px, 88vw))',
-              maxWidth: maxDropdownWidth ? `${maxDropdownWidth}px` : '92vw',
-              boxSizing: 'border-box',
-              zIndex: 100,
-              maxHeight: '260px',
-              overflowY: 'auto',
-              scrollBehavior: 'smooth',
+              ...(maxDropdownWidth ? { maxWidth: `${maxDropdownWidth}px` } : {}),
             }}
           >
-            <div className="row wrap" style={{ gap: '8px', alignItems: 'center' }}>
+            <div className="row wrap hc-tag-options-grid">
               {/* Add New Tag Option Button */}
               {searchTerm.trim() && !exactMatchInAvailable && !isAlreadySelected && onAddTag && (
                 <button
                   type="button"
-                  className="border no-margin"
+                  className="border no-margin hc-tag-option-btn"
                   onClick={() => handleAddTag(searchTerm.trim())}
                   disabled={adding}
-                  style={{ cursor: 'pointer' }}
                 >
                   <i className="primary-text">add</i>
                   <span className="bold">เพิ่ม "{searchTerm.trim()}"</span>
@@ -309,7 +263,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
 
               {/* Tag already selected indicator */}
               {searchTerm.trim() && isAlreadySelected && (
-                <p className="no-margin secondary-text small-text center-align padding" style={{ width: '100%' }}>
+                <p className="no-margin secondary-text small-text center-align padding max">
                   แท็ก "{searchTerm.trim()}" ถูกเลือกไว้แล้ว
                 </p>
               )}
@@ -320,9 +274,8 @@ export const TagPicker: React.FC<TagPickerProps> = ({
                   <button
                     key={tag}
                     type="button"
-                    className="border no-margin"
+                    className="border no-margin hc-tag-option-btn"
                     onClick={() => handleAddTag(tag)}
-                    style={{ cursor: 'pointer' }}
                   >
                     <i>add</i>
                     <span>{tag}</span>
@@ -330,7 +283,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
                 ))
               ) : (
                 !searchTerm.trim() && (
-                  <p className="no-margin secondary-text small-text center-align padding" style={{ width: '100%' }}>
+                  <p className="no-margin secondary-text small-text center-align padding max">
                     {unselectedTags.length === 0
                       ? 'เลือกแท็กครบทั้งหมดแล้ว (พิมพ์เพื่อเพิ่มแท็กใหม่)'
                       : 'ไม่มีแท็กที่เลือกได้'}
@@ -344,7 +297,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
               !exactMatchInAvailable &&
               !isAlreadySelected &&
               !onAddTag && (
-                <p className="no-margin secondary-text small-text center-align padding">
+                <p className="no-margin secondary-text small-text center-align padding max">
                   ไม่พบแท็ก
                 </p>
               )}

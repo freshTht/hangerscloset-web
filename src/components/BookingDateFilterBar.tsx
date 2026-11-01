@@ -1,77 +1,45 @@
-import React, { useRef, useState } from 'react';
-import {
-  formatDateThaiShortWithYear,
-} from '../lib/bookingAvailability';
+import React, { useState, useRef } from 'react';
+import { formatDateThaiShortWithYear } from '../types/booking';
+import './BookingDateFilterBar.css';
 
 export interface BookingDateFilterBarProps {
   startDate: string;
-  durationDays: number;
   endDate: string;
+  durationDays: number;
   cleaningEndDate: string;
   onStartDateChange: (newDate: string) => void;
-  onDurationChange: (newDuration: number) => void;
   onEndDateChange: (newDate: string) => void;
+  onDurationChange: (days: number) => void;
+  durationOptions?: number[];
+  className?: string;
 }
-
-const COMMON_DURATIONS = [1, 2, 3, 4, 5, 7, 10, 14];
 
 export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
   startDate,
-  durationDays,
   endDate,
+  durationDays,
   cleaningEndDate,
   onStartDateChange,
-  onDurationChange,
   onEndDateChange,
+  onDurationChange,
+  durationOptions = [1, 2, 3, 5, 7],
+  className = '',
 }) => {
+  const [showDurationPicker, setShowDurationPicker] = useState(false);
   const startDateInputRef = useRef<HTMLInputElement>(null);
   const endDateInputRef = useRef<HTMLInputElement>(null);
-  const [showDurationPicker, setShowDurationPicker] = useState(false);
-
-  // Available duration options including current duration
-  const durationOptions = Array.from(
-    new Set([...COMMON_DURATIONS, durationDays])
-  ).sort((a, b) => a - b);
 
   return (
     <div
-      className="surface-container-low border hc-medium-padding bottom-margin"
+      className={`round surface-container-low border small-padding ${className}`.trim()}
       data-testid="booking-date-filter-bar"
-      style={{
-        width: '100%',
-        boxSizing: 'border-box',
-        position: 'relative',
-        borderRadius: '16px',
-      }}
     >
-      {/* 3-Column Header matching uploaded layout reference (iPhone 13 & 14 - 1) */}
-      <div
-        className="row no-margin"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '8px',
-          flexWrap: 'nowrap',
-          width: '100%',
-        }}
-      >
+      {/* Horizontal Booking Range Selector matching rental application specifications */}
+      <div className="row no-margin align-center no-space">
         {/* Left: วันรับชุด (Pickup date) */}
         <div
-          className="surface-container-high border small-padding no-margin"
-          data-testid="filter-pickup-date-button"
-          style={{
-            flex: 1,
-            minWidth: 0,
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            height: 'auto',
-            padding: '8px 10px',
-            borderRadius: '10px',
-          }}
+          className="surface-container-high border small-padding no-margin hc-date-filter-card"
+          data-testid="filter-start-date-button"
         >
           {/* Transparent full-card native date input for 100% reliable tap/click across mobile and desktop */}
           <input
@@ -84,78 +52,32 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
                 onStartDateChange(e.target.value);
               }
             }}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0,
-              cursor: 'pointer',
-              zIndex: 2,
-            }}
+            className="hc-date-filter-native-input"
           />
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-              pointerEvents: 'none',
-            }}
-          >
+          <div className="hc-date-filter-header-row">
             <span className="small-text secondary-text bold">วันรับชุด</span>
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
-          <div
-            className="bold medium-text"
-            style={{
-              textAlign: 'center',
-              marginTop: '4px',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-            }}
-          >
+          <div className="bold medium-text hc-date-filter-value">
             {formatDateThaiShortWithYear(startDate)}
           </div>
         </div>
 
         {/* Center: ระยะเวลา (Duration) + Connector Arrow */}
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            minWidth: '76px',
-            flexShrink: 0,
-          }}
-        >
-          <span
-            className="secondary-text bold hc-micro-text"
-            style={{ marginBottom: '3px' }}
-          >
+        <div className="hc-date-filter-center">
+          <span className="secondary-text bold hc-micro-text hc-date-filter-duration-label">
             ระยะเวลา
           </span>
 
           <button
             type="button"
-            className={`surface-container-high border tiny-padding no-margin ${
+            className={`surface-container-high border tiny-padding no-margin hc-date-filter-duration-btn ${
               showDurationPicker ? 'primary' : ''
-            }`}
+            }`.trim()}
             data-testid="filter-duration-button"
             onClick={() => setShowDurationPicker((prev) => !prev)}
             aria-label={`ระยะเวลา: ${durationDays} วัน คลิกเพื่อเปลี่ยน`}
             aria-expanded={showDurationPicker}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '2px',
-              padding: '4px 8px',
-              cursor: 'pointer',
-              height: 'auto',
-              borderRadius: '8px',
-            }}
           >
             <span className="bold small-text">{durationDays} วัน</span>
             <i className="tiny">
@@ -164,24 +86,14 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
           </button>
 
           {/* Directional arrow pointing from pickup date to return date matching layout reference */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              marginTop: '6px',
-              color: 'var(--on-surface)',
-            }}
-            aria-hidden="true"
-          >
+          <div className="hc-date-filter-arrow-wrap" aria-hidden="true">
             <svg
               width="50"
               height="14"
               viewBox="0 0 50 14"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              style={{ display: 'block', maxWidth: '100%' }}
+              className="hc-date-filter-arrow-svg"
             >
               <path
                 d="M2 7H45M45 7L38 2.5M45 7L38 11.5"
@@ -196,20 +108,8 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
 
         {/* Right: วันส่งคืน (Return date) */}
         <div
-          className="surface-container-high border small-padding no-margin"
+          className="surface-container-high border small-padding no-margin hc-date-filter-card"
           data-testid="filter-return-date-button"
-          style={{
-            flex: 1,
-            minWidth: 0,
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            height: 'auto',
-            padding: '8px 10px',
-            borderRadius: '10px',
-          }}
         >
           {/* Transparent full-card native date input for 100% reliable tap/click across mobile and desktop */}
           <input
@@ -223,37 +123,13 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
                 onEndDateChange(e.target.value);
               }
             }}
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '100%',
-              height: '100%',
-              opacity: 0,
-              cursor: 'pointer',
-              zIndex: 2,
-            }}
+            className="hc-date-filter-native-input"
           />
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-              pointerEvents: 'none',
-            }}
-          >
+          <div className="hc-date-filter-header-row">
             <span className="small-text secondary-text bold">วันส่งคืน</span>
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
-          <div
-            className="bold medium-text"
-            style={{
-              textAlign: 'center',
-              marginTop: '4px',
-              whiteSpace: 'nowrap',
-              pointerEvents: 'none',
-            }}
-          >
+          <div className="bold medium-text hc-date-filter-value">
             {formatDateThaiShortWithYear(endDate)}
           </div>
         </div>
@@ -262,23 +138,10 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
       {/* Duration quick selector drawer */}
       {showDurationPicker && (
         <div
-          className="surface border small-padding"
+          className="surface border small-padding hc-date-filter-drawer"
           data-testid="duration-picker-drawer"
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            marginTop: '8px',
-            borderRadius: '12px',
-          }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
+          <div className="hc-date-filter-drawer-header">
             <span className="small-text bold">เลือกระยะเวลาการเช่า:</span>
             <button
               type="button"
@@ -289,14 +152,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
               <i>close</i>
             </button>
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '6px',
-            }}
-          >
+          <div className="hc-date-filter-drawer-chips">
             {durationOptions.map((days) => (
               <button
                 key={days}
@@ -317,14 +173,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
       )}
 
       {/* Turnaround schedule info below separator */}
-      <div
-        className="center-align secondary-text hc-micro-text"
-        style={{
-          borderTop: '1px solid var(--surface-variant)',
-          paddingTop: '6px',
-          marginTop: '8px',
-        }}
-      >
+      <div className="center-align secondary-text hc-micro-text hc-date-filter-turnaround">
         <span>พร้อมให้เช่าต่อ: </span>
         <strong className="primary-text">
           {formatDateThaiShortWithYear(cleaningEndDate)}
@@ -334,4 +183,3 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
     </div>
   );
 };
-
