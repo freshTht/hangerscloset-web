@@ -26,6 +26,7 @@ import { CustomerPicker } from './CustomerPicker';
 import { BookingDateFilterBar } from './BookingDateFilterBar';
 import { LazyImage } from './LazyImage';
 import { Stack } from './Stack';
+import './BookingSheet.css';
 
 export interface BookingSheetProps {
   isOpen: boolean;
@@ -627,63 +628,29 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   return (
     <>
       <div
-        className={`overlay ${isOpen ? 'active' : ''}`}
+        className={`overlay hc-booking-sheet-overlay ${isOpen ? 'active' : ''}`}
         onClick={handleCloseCleanly}
         aria-hidden={!isOpen}
-        style={{ zIndex: 1000, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       <dialog
         id="booking-sheet"
-        className={sheetClass.trim()}
+        className={`${sheetClass} hc-booking-sheet-dialog`.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
         aria-label={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
-        style={{
-          zIndex: 1001,
-          display: isOpen ? 'flex' : undefined,
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          overflowX: 'hidden',
-          ...(isMobile
-            ? {
-                height: '94dvh',
-                maxHeight: '94dvh',
-                width: '100%',
-                maxWidth: '100vw',
-                borderRadius: '20px 20px 0 0',
-                padding: '12px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
-                margin: 0,
-              }
-            : {
-                width: '560px',
-                maxWidth: '92vw',
-                height: '100dvh',
-                padding: '20px',
-              }),
-        }}
       >
         {/* Top bar */}
-        <div
-          className="row no-margin"
-          style={{ paddingBottom: '6px', flexShrink: 0 }}
-        >
+        <div className="row no-margin hc-booking-sheet-top-bar">
           <h6 className="bold no-margin">
             {mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
           </h6>
           <div className="max" />
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-booking-sheet-close-btn"
             onClick={handleCloseCleanly}
             aria-label="ปิดหน้าต่าง"
-            style={{
-              width: '36px',
-              height: '36px',
-              minWidth: '36px',
-              minHeight: '36px',
-              padding: 0,
-            }}
           >
             <i>close</i>
           </button>
@@ -692,10 +659,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         {contentReady && (
           <>
             {errorMessage && (
-              <article
-                className="border error-container round margin-bottom"
-                style={{ flexShrink: 0 }}
-              >
+              <article className="border error-container round margin-bottom hc-booking-sheet-error-banner">
                 <div className="row no-margin">
                   <i className="error-text">error</i>
                   <div className="max">
@@ -709,50 +673,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
             {/* ----------------- MODE === 'ADD': MULTI-STEP WIZARD ----------------- */}
             {mode === 'add' ? (
-              <div
-                style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  minHeight: 0,
-                  overflow: 'hidden',
-                }}
-              >
+              <div className="hc-booking-sheet-wizard-wrap">
                 {/* Stepper Progress Bar */}
                 <div
                   data-testid="wizard-stepper"
                   aria-label="ขั้นตอนการสร้างการจอง"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: isMobile ? '3px' : '8px',
-                    padding: '2px 0 8px 0',
-                    flexShrink: 0,
-                    width: '100%',
-                    boxSizing: 'border-box',
-                  }}
+                  className="hc-booking-sheet-stepper"
                 >
                   <button
                     type="button"
-                    className={`no-margin ${
+                    className={`no-margin hc-booking-sheet-step-btn ${
                       currentStep === 1
                         ? 'fill primary bold'
                         : currentStep > 1
-                        ? 'surface border primary-text'
+                        ? 'surface border primary-text clickable'
                         : 'border secondary-text'
                     } ${isMobile ? 'small-text' : 'medium-text'}`}
                     onClick={() => handleGoToStep(1)}
-                    style={{
-                      cursor: currentStep > 1 ? 'pointer' : 'default',
-                      height: '28px',
-                      padding: isMobile ? '0 6px' : '0 10px',
-                      borderRadius: '14px',
-                                    display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      whiteSpace: 'nowrap',
-                    }}
                   >
                     {currentStep > 1 ? (
                       <i className="small">check</i>
@@ -764,33 +701,20 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     <span>เลือกชุด</span>
                   </button>
 
-                  <i
-                    className="secondary-text small"
-                    style={{ flexShrink: 0 }}
-                  >
+                  <i className="secondary-text small hc-booking-sheet-step-arrow">
                     chevron_right
                   </i>
 
                   <button
                     type="button"
-                    className={`no-margin ${
+                    className={`no-margin hc-booking-sheet-step-btn ${
                       currentStep === 2
                         ? 'fill primary bold'
                         : currentStep > 2
-                        ? 'surface border primary-text'
+                        ? 'surface border primary-text clickable'
                         : 'border secondary-text'
                     } ${isMobile ? 'small-text' : 'medium-text'}`}
                     onClick={() => handleGoToStep(2)}
-                    style={{
-                      cursor: currentStep > 2 ? 'pointer' : 'default',
-                      height: '28px',
-                      padding: isMobile ? '0 6px' : '0 10px',
-                      borderRadius: '14px',
-                                    display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      whiteSpace: 'nowrap',
-                    }}
                   >
                     {currentStep > 2 ? (
                       <i className="small">check</i>
@@ -802,30 +726,17 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     <span>ลูกค้าและราคา</span>
                   </button>
 
-                  <i
-                    className="secondary-text small"
-                    style={{ flexShrink: 0 }}
-                  >
+                  <i className="secondary-text small hc-booking-sheet-step-arrow">
                     chevron_right
                   </i>
 
                   <button
                     type="button"
-                    className={`no-margin ${
+                    className={`no-margin hc-booking-sheet-step-btn ${
                       currentStep === 3
                         ? 'fill primary bold'
                         : 'border secondary-text'
                     } ${isMobile ? 'small-text' : 'medium-text'}`}
-                    style={{
-                      cursor: 'default',
-                      height: '28px',
-                      padding: isMobile ? '0 6px' : '0 10px',
-                      borderRadius: '14px',
-                                    display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      whiteSpace: 'nowrap',
-                    }}
                   >
                     <span className="bold small-text">
                       3
@@ -836,15 +747,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                 {/* ----------------- STEP 1: SELECT OUTFIT ----------------- */}
                 {currentStep === 1 && (
-                  <div
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      minHeight: 0,
-                      overflow: 'hidden',
-                    }}
-                  >
+                  <div className="hc-booking-sheet-step-content">
                     {/* Date and duration filter at the top (matching layout reference image) */}
                     <BookingDateFilterBar
                       startDate={startDate}
@@ -857,15 +760,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     />
 
                     {/* Outfit search filter */}
-                    <div
-                      className="field small prefix border no-margin"
-                      style={{
-                        width: '100%',
-                        borderRadius: '12px',
-                        marginBottom: '8px',
-                        position: 'relative',
-                      }}
-                    >
+                    <div className="field small prefix border no-margin hc-booking-sheet-search-wrap">
                       <i className="front">search</i>
                       <input
                         id="wizard-outfit-search"
@@ -877,34 +772,16 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       />
                       <label
                         htmlFor="wizard-outfit-search"
-                        style={{
-                          position: 'absolute',
-                          width: '1px',
-                          height: '1px',
-                          padding: 0,
-                          margin: '-1px',
-                          overflow: 'hidden',
-                          clip: 'rect(0, 0, 0, 0)',
-                          whiteSpace: 'nowrap',
-                          border: 0,
-                        }}
+                        className="hc-booking-sheet-sr-only"
                       >
                         ค้นหาชุดในคลัง (SKU, ชื่อชุด, แบรนด์)...
                       </label>
                       {itemSearch && (
                         <button
                           type="button"
-                          className="circle transparent trailing"
+                          className="circle transparent trailing hc-booking-sheet-search-clear"
                           onClick={() => setItemSearch('')}
                           aria-label="ล้างการค้นหา"
-                          style={{
-                            position: 'absolute',
-                            right: '4px',
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                            width: '32px',
-                            height: '32px',
-                          }}
                         >
                           <i>close</i>
                         </button>
@@ -914,16 +791,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     {/* Full height outfit list */}
                     <div
                       data-testid="wizard-outfit-list"
-                      style={{
-                        flex: 1,
-                        overflowY: 'auto',
-                        minHeight: 0,
-                        WebkitOverflowScrolling: 'touch',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '8px',
-                        paddingRight: '4px',
-                      }}
+                      className="hc-booking-sheet-outfit-list"
                     >
                       {filteredInventory.length === 0 ? (
                         <div className="center-align padding secondary-text">
@@ -955,28 +823,15 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           return (
                             <div
                               key={invItem.id}
-                              className={`border small-padding ${
+                              className={`border small-padding hc-booking-sheet-outfit-item ${
                                 isSelected
                                   ? isSelectedConflict
-                                    ? 'error-container'
-                                    : 'secondary-container'
+                                    ? 'error-container is-selected is-conflict'
+                                    : 'secondary-container is-selected'
+                                  : hasConflict
+                                  ? 'surface-container-low is-conflict'
                                   : 'surface-container-low'
                               }`}
-                              style={{
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                                transition: 'all 0.15s ease',
-                                opacity: hasConflict && !isSelected ? 0.6 : 1,
-                                borderWidth: isSelected ? '2px' : '1px',
-                                borderColor: isSelected
-                                  ? isSelectedConflict
-                                    ? 'var(--error)'
-                                    : 'var(--primary)'
-                                  : undefined,
-                                borderRadius: '12px',
-                              }}
                               onClick={() => {
                                 if (!hasConflict || isSelected) {
                                   handleToggleItem(invItem);
@@ -984,90 +839,33 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                               }}
                             >
                               {/* Thumbnail */}
-                              <div
-                                className="surface-container-high"
-                                style={{
-                                  width: '52px',
-                                  height: '52px',
-                                  overflow: 'hidden',
-                                  flexShrink: 0,
-                                  borderRadius: '8px',
-                                }}
-                              >
+                              <div className="surface-container-high hc-booking-sheet-outfit-thumb">
                                 {invItem.imageUrl ? (
                                   <LazyImage
                                     src={invItem.imageUrl}
                                     alt={invItem.name}
-                                    containerStyle={{
-                                      width: '52px',
-                                      height: '52px',
-                                    }}
-                                    style={{ objectFit: 'cover' }}
+                                    containerClassName="hc-booking-sheet-outfit-thumb-img"
+                                    className="hc-booking-sheet-outfit-thumb-image-el"
                                   />
                                 ) : (
-                                  <div
-                                    style={{
-                                      width: '52px',
-                                      height: '52px',
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                    }}
-                                  >
+                                  <div className="hc-booking-sheet-outfit-thumb-placeholder">
                                     <i className="secondary-text">checkroom</i>
                                   </div>
                                 )}
                               </div>
 
                               {/* Details */}
-                              <div
-                                style={{
-                                  flex: 1,
-                                  minWidth: 0,
-                                  display: 'flex',
-                                  flexDirection: 'column',
-                                  gap: '2px',
-                                }}
-                              >
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    flexWrap: 'wrap',
-                                  }}
-                                >
-                                  <span
-                                    className="chip tiny primary-container bold no-margin hc-micro-text"
-                                    style={{
-                                      borderRadius: '6px',
-                                      padding: '0 6px',
-                                      height: '20px',
-                                    }}
-                                  >
+                              <div className="hc-booking-sheet-outfit-details">
+                                <div className="hc-booking-sheet-outfit-title-row">
+                                  <span className="chip tiny primary-container bold no-margin hc-micro-text hc-booking-sheet-outfit-code-badge">
                                     {invItem.code}
                                   </span>
-                                  <span
-                                    className="bold small-text"
-                                    style={{
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
+                                  <span className="bold small-text truncate">
                                     {invItem.name}
                                   </span>
                                 </div>
 
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    flexWrap: 'wrap',
-                                    lineHeight: '1.2',
-                                  }}
-                                >
+                                <div className="hc-booking-sheet-outfit-meta-row">
                                   {invItem.brand && (
                                     <span className="hc-micro-text secondary-text">
                                       {invItem.brand}
@@ -1084,10 +882,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                 </div>
 
                                 {hasConflict && (
-                                  <span
-                                    className="hc-micro-text error-text bold"
-                                    style={{ lineHeight: '1.2' }}
-                                  >
+                                  <span className="hc-micro-text error-text bold hc-booking-sheet-outfit-conflict-text">
                                     ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
                                   </span>
                                 )}
@@ -1096,7 +891,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                               {/* Action Button */}
                               <button
                                 type="button"
-                                className={`small no-margin ${
+                                className={`small no-margin hc-booking-sheet-outfit-select-btn ${
                                   isSelected
                                     ? isSelectedConflict
                                       ? 'fill error'
@@ -1113,20 +908,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                     ? `ยกเลิกเลือก ${invItem.code}`
                                     : `เลือกชุด ${invItem.code}`
                                 }
-                                style={{
-                                  flexShrink: 0,
-                                  borderRadius: '8px',
-                                  padding: '0 10px',
-                                  height: '32px',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                  cursor:
-                                    hasConflict && !isSelected
-                                      ? 'not-allowed'
-                                      : 'pointer',
-                                  opacity: hasConflict && !isSelected ? 0.7 : 1,
-                                }}
                               >
                                 {isSelected ? (
                                   <>
@@ -1141,11 +922,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   </>
                                 ) : hasConflict ? (
                                   <>
-                                    <i className="tiny"
-                                      style={{
-                                        marginRight: '2px',
-                                      }}
-                                    >
+                                    <i className="tiny hc-booking-sheet-icon-gap-right">
                                       event_busy
                                     </i>
                                     <span>ติดจอง</span>
@@ -1164,28 +941,9 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </div>
 
                     {/* Step 1 Footer */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        paddingTop: '12px',
-                        borderTop: '1px solid var(--surface-variant)',
-                        flexShrink: 0,
-                        gap: '8px',
-                        width: '100%',
-                        boxSizing: 'border-box',
-                      }}
-                    >
+                    <div className="hc-booking-sheet-step-footer">
                       {selectedConflicts.length > 0 && (
-                        <div
-                          className="error-text small-text"
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            width: '100%',
-                          }}
-                        >
+                        <div className="error-text small-text hc-booking-sheet-conflict-warning">
                           <i className="tiny">error</i>
                           <span>
                             มีชุดที่ติดจองในช่วงเวลานี้ (
@@ -1195,41 +953,15 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         </div>
                       )}
 
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '8px',
-                          width: '100%',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            minWidth: 0,
-                            flex: 1,
-                          }}
-                        >
-                          <span
-                            className="bold small-text"
-                            style={{ whiteSpace: 'nowrap' }}
-                          >
+                      <div className="hc-booking-sheet-footer-row">
+                        <div className="hc-booking-sheet-footer-items-summary">
+                          <span className="bold small-text hc-bookings-toolbar-count">
                             {selectedItems.length > 0
                               ? `เลือกแล้ว ${selectedItems.length} ชุด`
                               : 'เลือกชุดอย่างน้อย 1 ชุด'}
                           </span>
                           {selectedItems.length > 0 && (
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                flexWrap: 'wrap',
-                                gap: '4px',
-                              }}
-                            >
+                            <div className="hc-booking-sheet-footer-item-chips">
                               {selectedItems.map((li) => {
                                 const isLiConflict = selectedConflicts.some(
                                   (c) => c.itemId === li.itemId
@@ -1238,7 +970,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   <button
                                     key={li.itemId}
                                     type="button"
-                                    className={`chip tiny bold no-margin ${
+                                    className={`chip tiny bold no-margin hc-booking-sheet-footer-item-chip ${
                                       isLiConflict
                                         ? 'fill error'
                                         : 'primary-container'
@@ -1255,15 +987,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                       }
                                     }}
                                     title="คลิกเพื่อยกเลิกการเลือกชุดนี้"
-                                    style={{
-                                      cursor: 'pointer',
-                                      display: 'inline-flex',
-                                      alignItems: 'center',
-                                      gap: '3px',
-                                      borderRadius: '6px',
-                                      padding: '0 6px',
-                                      height: '20px',
-                                    }}
                                   >
                                     <span>{li.itemCode}</span>
                                     <i className="micro">close</i>
@@ -1274,32 +997,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           )}
                         </div>
 
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            flexShrink: 0,
-                          }}
-                        >
+                        <div className="hc-booking-sheet-footer-actions">
                           <button
                             type="button"
-                            className="border no-margin"
+                            className="border no-margin hc-booking-sheet-btn-round-10"
                             onClick={handleCloseCleanly}
-                            style={{ borderRadius: '10px' }}
                           >
                             ยกเลิก
                           </button>
                           <button
                             type="button"
-                            className="primary no-margin"
+                            className="primary no-margin hc-booking-sheet-btn-round-10"
                             data-testid="wizard-next-step-1"
                             disabled={
                               selectedItems.length === 0 ||
                               selectedConflicts.length > 0
                             }
                             onClick={handleNextStep}
-                            style={{ borderRadius: '10px' }}
                           >
                             <span>ถัดไป</span>
                             <i>arrow_forward</i>
@@ -1312,28 +1026,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                 {/* ----------------- STEP 2: CUSTOMER + PRICE & NOTES ----------------- */}
                 {currentStep === 2 && (
-                  <div
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      minHeight: 0,
-                      overflow: 'hidden',
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: 1,
-                        overflowY: 'auto',
-                        minHeight: 0,
-                        WebkitOverflowScrolling: 'touch',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '16px',
-                        paddingRight: '4px',
-                        paddingBottom: '16px',
-                      }}
-                    >
+                  <div className="hc-booking-sheet-step-content">
+                    <div className="hc-booking-sheet-step2-scroll">
                       {/* Customer Picker Section */}
                       <Stack orientation="column" gap="small">
                         <span className="bold small-text">ข้อมูลลูกค้า *</span>
@@ -1350,8 +1044,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         orientation="column"
                         padding="medium"
                         gap="medium"
-                        className="tertiary-container"
-                        style={{ borderRadius: '16px' }}
+                        className="tertiary-container hc-booking-sheet-round-16"
                       >
                         <Stack
                           orientation="row"
@@ -1368,12 +1061,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           {priceManuallyEdited && (
                             <button
                               type="button"
-                              className="chip small border transparent no-margin"
+                              className="chip small border transparent no-margin hc-booking-sheet-round-8"
                               onClick={() => {
                                 setPriceManuallyEdited(false);
                                 setRentalPrice(String(suggestedPrice));
                               }}
-                              style={{ borderRadius: '8px' }}
                             >
                               ใช้ราคาแนะนำ (฿{suggestedPrice.toLocaleString()})
                             </button>
@@ -1381,20 +1073,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         </Stack>
 
                         {/* Selected outfits price recap */}
-                        <div
-                          className="surface border small-padding medium-text"
-                          style={{ borderRadius: '12px' }}
-                        >
-                          <div className="bold" style={{ marginBottom: '6px' }}>
+                        <div className="surface border small-padding medium-text hc-booking-sheet-round-12">
+                          <div className="bold hc-booking-sheet-recap-title">
                             สรุปราคาแนะนำ ({selectedItems.length} ชุด, {durationDays} วัน):
                           </div>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gap: '4px',
-                            }}
-                          >
+                          <div className="hc-booking-sheet-recap-list">
                             {selectedItems.map((li) => {
                               const inv = inventoryMap.get(li.itemId);
                               const p = inv
@@ -1403,41 +1086,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                               return (
                                 <div
                                   key={li.itemId}
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    gap: '8px',
-                                  }}
+                                  className="hc-booking-sheet-recap-row"
                                 >
-                                  <span
-                                    style={{
-                                      overflow: 'hidden',
-                                      textOverflow: 'ellipsis',
-                                      whiteSpace: 'nowrap',
-                                    }}
-                                  >
+                                  <span className="truncate">
                                     <strong>{li.itemCode}</strong> {li.itemName}
                                   </span>
-                                  <span
-                                    className="bold"
-                                    style={{ flexShrink: 0 }}
-                                  >
+                                  <span className="bold hc-booking-card-action-btn">
                                     ฿{p.toLocaleString()}
                                   </span>
                                 </div>
                               );
                             })}
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                borderTop: '1px solid var(--surface-variant)',
-                                paddingTop: '4px',
-                                marginTop: '4px',
-                              }}
-                            >
+                            <div className="hc-booking-sheet-recap-total">
                               <span className="bold">รวมราคาแนะนำ:</span>
                               <span className="bold primary-text">
                                 ฿{suggestedPrice.toLocaleString()}
@@ -1446,12 +1106,9 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           </div>
                         </div>
 
-                        <div className="grid no-margin" style={{ gap: '12px' }}>
+                        <div className="grid no-margin hc-booking-sheet-pricing-grid">
                           <div className="s12 m6">
-                            <div
-                              className="field label border surface no-margin"
-                              style={{ borderRadius: '12px' }}
-                            >
+                            <div className="field label border surface no-margin hc-booking-sheet-round-12">
                               <input
                                 id="booking-rental-price"
                                 type="number"
@@ -1472,10 +1129,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           </div>
 
                           <div className="s12 m6">
-                            <div
-                              className="field label border surface no-margin"
-                              style={{ borderRadius: '12px' }}
-                            >
+                            <div className="field label border surface no-margin hc-booking-sheet-round-12">
                               <input
                                 id="booking-deposit"
                                 type="number"
@@ -1509,8 +1163,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           orientation="column"
                           padding="medium"
                           gap="small"
-                          className="surface-container-low border"
-                          style={{ borderRadius: '16px' }}
+                          className="surface-container-low border hc-booking-sheet-round-16"
                         >
                           <span className="bold small-text">
                             หมายเหตุสภาพชุด / อุปกรณ์เสริม (ถ้ามี)
@@ -1518,8 +1171,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           {selectedItems.map((li) => (
                             <div
                               key={li.itemId}
-                              className="field small label border no-margin"
-                              style={{ borderRadius: '12px', width: '100%' }}
+                              className="field small label border no-margin hc-booking-sheet-condition-field"
                             >
                               <input
                                 id={`condition-note-${li.itemId}`}
@@ -1542,17 +1194,14 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       )}
 
                       {/* Booking Note Section */}
-                      <div
-                        className="field textarea label border no-margin"
-                        style={{ borderRadius: '12px' }}
-                      >
+                      <div className="field textarea label border no-margin hc-booking-sheet-round-12">
                         <textarea
                           id="booking-note"
                           rows={3}
                           value={note}
                           onChange={(e) => setNote(e.target.value)}
                           placeholder=" "
-                          style={{ minHeight: '80px', resize: 'vertical' }}
+                          className="hc-booking-sheet-note-input"
                         />
                         <label htmlFor="booking-note">
                           หมายเหตุการจัดส่ง / การจอง
@@ -1562,25 +1211,12 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </div>
 
                     {/* Step 2 Footer */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingTop: '12px',
-                        borderTop: '1px solid var(--surface-variant)',
-                        flexShrink: 0,
-                        gap: '8px',
-                        width: '100%',
-                        boxSizing: 'border-box',
-                      }}
-                    >
+                    <div className="hc-booking-sheet-footer-row hc-booking-sheet-step-footer">
                       <button
                         type="button"
-                        className="border no-margin"
+                        className="border no-margin hc-booking-sheet-btn-round-10"
                         data-testid="wizard-prev-step-2"
                         onClick={handlePrevStep}
-                        style={{ borderRadius: '10px' }}
                       >
                         <i>arrow_back</i>
                         <span>ย้อนกลับ</span>
@@ -1588,7 +1224,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                       <button
                         type="button"
-                        className="primary no-margin"
+                        className="primary no-margin hc-booking-sheet-btn-round-10"
                         data-testid="wizard-next-step-2"
                         disabled={
                           !selectedCustomer ||
@@ -1598,7 +1234,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           Number(deposit) < 0
                         }
                         onClick={handleNextStep}
-                        style={{ borderRadius: '10px' }}
                       >
                         <span>ถัดไป: ตรวจสอบ</span>
                         <i>arrow_forward</i>
@@ -1612,38 +1247,17 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   <form
                     id="booking-form"
                     onSubmit={handleSubmit}
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      minHeight: 0,
-                      overflow: 'hidden',
-                    }}
+                    className="hc-booking-sheet-step3-form"
                   >
-                    <div
-                      style={{
-                        flex: 1,
-                        overflowY: 'auto',
-                        minHeight: 0,
-                        WebkitOverflowScrolling: 'touch',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '14px',
-                        paddingRight: '4px',
-                        paddingBottom: '16px',
-                      }}
-                    >
+                    <div className="hc-booking-sheet-step3-scroll">
                       {/* Review Card 1: Rental Schedule */}
-                      <article
-                        className="border surface-container-low padding no-margin"
-                        style={{ borderRadius: '16px' }}
-                      >
+                      <article className="border surface-container-low padding no-margin hc-booking-sheet-round-16">
                         <Stack orientation="column" gap="small">
-                          <div className="row no-margin" style={{ gap: '6px' }}>
+                          <div className="row no-margin hc-booking-sheet-gap-6">
                             <i className="primary-text">event</i>
                             <span className="bold small-text">ช่วงเวลาเช่า</span>
                           </div>
-                          <div className="grid no-margin" style={{ gap: '8px' }}>
+                          <div className="grid no-margin hc-booking-sheet-gap-8">
                             <div className="s6">
                               <span className="hc-micro-text secondary-text">วันรับชุด</span>
                               <div className="bold">{formatDateThaiFull(startDate)}</div>
@@ -1667,46 +1281,22 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       </article>
 
                       {/* Review Card 2: Selected Outfits */}
-                      <article
-                        className="border surface-container-low padding no-margin"
-                        style={{ borderRadius: '16px' }}
-                      >
+                      <article className="border surface-container-low padding no-margin hc-booking-sheet-round-16">
                         <Stack orientation="column" gap="small">
-                          <div className="row no-margin" style={{ gap: '6px' }}>
+                          <div className="row no-margin hc-booking-sheet-gap-6">
                             <i className="primary-text">checkroom</i>
                             <span className="bold small-text">
                               ชุดที่เลือก ({selectedItems.length} ชุด)
                             </span>
                           </div>
-                          <div className="column" style={{ gap: '8px' }}>
+                          <div className="column hc-booking-sheet-gap-8">
                             {selectedItems.map((li) => (
                               <div
                                 key={li.itemId}
-                                className="surface border small-padding"
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'space-between',
-                                  gap: '8px',
-                                  borderRadius: '10px',
-                                }}
+                                className="surface border small-padding hc-booking-sheet-outfit-review-item"
                               >
-                                <div
-                                  style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    minWidth: 0,
-                                  }}
-                                >
-                                  <span
-                                    className="chip tiny primary-container bold no-margin"
-                                    style={{
-                                      borderRadius: '6px',
-                                      padding: '0 6px',
-                                      height: '20px',
-                                    }}
-                                  >
+                                <div className="hc-booking-sheet-outfit-review-left">
+                                  <span className="chip tiny primary-container bold no-margin hc-booking-sheet-outfit-code-badge">
                                     {li.itemCode}
                                   </span>
                                   <span className="small-text bold truncate">
@@ -1714,10 +1304,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   </span>
                                 </div>
                                 {li.conditionNote && (
-                                  <span
-                                    className="hc-micro-text secondary-text truncate"
-                                    style={{ maxWidth: '45%' }}
-                                  >
+                                  <span className="hc-micro-text secondary-text truncate hc-booking-sheet-outfit-review-condition">
                                     หมายเหตุ: {li.conditionNote}
                                   </span>
                                 )}
@@ -1728,16 +1315,13 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       </article>
 
                       {/* Review Card 3: Customer Information */}
-                      <article
-                        className="border surface-container-low padding no-margin"
-                        style={{ borderRadius: '16px' }}
-                      >
+                      <article className="border surface-container-low padding no-margin hc-booking-sheet-round-16">
                         <Stack orientation="column" gap="small">
-                          <div className="row no-margin" style={{ gap: '6px' }}>
+                          <div className="row no-margin hc-booking-sheet-gap-6">
                             <i className="primary-text">person</i>
                             <span className="bold small-text">ข้อมูลลูกค้า</span>
                           </div>
-                          <div className="grid no-margin" style={{ gap: '8px' }}>
+                          <div className="grid no-margin hc-booking-sheet-gap-8">
                             <div className="s12 m6">
                               <span className="hc-micro-text secondary-text">ชื่อลูกค้า</span>
                               <div className="bold">{selectedCustomer?.name}</div>
@@ -1757,51 +1341,27 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       </article>
 
                       {/* Review Card 4: Pricing & Deposit */}
-                      <article
-                        className="border tertiary-container padding no-margin"
-                        style={{ borderRadius: '16px' }}
-                      >
+                      <article className="border tertiary-container padding no-margin hc-booking-sheet-round-16">
                         <Stack orientation="column" gap="small">
-                          <div className="row no-margin" style={{ gap: '6px' }}>
+                          <div className="row no-margin hc-booking-sheet-gap-6">
                             <i>payments</i>
                             <span className="bold small-text">สรุปยอดชำระ</span>
                           </div>
-                          <div className="column" style={{ gap: '6px' }}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                              }}
-                            >
+                          <div className="column hc-booking-sheet-gap-6">
+                            <div className="hc-booking-sheet-summary-row">
                               <span>ราคาเช่ารวม:</span>
                               <span className="bold">
                                 ฿{Number(rentalPrice).toLocaleString()}
                               </span>
                             </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                              }}
-                            >
+                            <div className="hc-booking-sheet-summary-row">
                               <span>เงินมัดจำ:</span>
                               <span className="bold">
                                 ฿{Number(deposit).toLocaleString()}
                                 {depositRefunded ? ' (โอนคืนแล้ว)' : ' (รอโอนคืน)'}
                               </span>
                             </div>
-                            <div
-                              style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                borderTop: '1px solid var(--surface-variant)',
-                                paddingTop: '6px',
-                                marginTop: '4px',
-                              }}
-                            >
+                            <div className="hc-booking-sheet-summary-total-row">
                               <span className="bold">ยอดรวมสุทธิ:</span>
                               <span className="bold large-text primary-text">
                                 ฿{(Number(rentalPrice) + Number(deposit)).toLocaleString()}
@@ -1813,10 +1373,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                       {/* Review Card 5: Notes (if any) */}
                       {note.trim() && (
-                        <article
-                          className="border surface-container-low padding no-margin"
-                          style={{ borderRadius: '16px' }}
-                        >
+                        <article className="border surface-container-low padding no-margin hc-booking-sheet-round-16">
                           <Stack orientation="column" gap="tiny">
                             <span className="hc-micro-text secondary-text bold">
                               หมายเหตุการจัดส่ง / การจอง:
@@ -1828,26 +1385,13 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </div>
 
                     {/* Step 3 Footer */}
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingTop: '12px',
-                        borderTop: '1px solid var(--surface-variant)',
-                        flexShrink: 0,
-                        gap: '8px',
-                        width: '100%',
-                        boxSizing: 'border-box',
-                      }}
-                    >
+                    <div className="hc-booking-sheet-footer-row hc-booking-sheet-step-footer">
                       <button
                         type="button"
-                        className="border no-margin"
+                        className="border no-margin hc-booking-sheet-btn-round-10"
                         data-testid="wizard-prev-step-3"
                         disabled={submitting}
                         onClick={handlePrevStep}
-                        style={{ borderRadius: '10px' }}
                       >
                         <i>arrow_back</i>
                         <span>ย้อนกลับ</span>
@@ -1855,13 +1399,9 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                       <button
                         type="submit"
-                        className="primary no-margin"
+                        className="primary no-margin hc-booking-sheet-step3-submit"
                         data-testid="wizard-submit-booking"
                         disabled={submitting}
-                        style={{
-                          minWidth: isMobile ? '120px' : '150px',
-                          borderRadius: '10px',
-                        }}
                       >
                         {submitting ? (
                           <div
@@ -1885,19 +1425,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 <form
                   id="booking-form"
                   onSubmit={handleSubmit}
-                  style={{
-                    flex: 1,
-                    overflowY: 'auto',
-                    overflowX: 'hidden',
-                    WebkitOverflowScrolling: 'touch',
-                    overscrollBehavior: 'contain',
-                    paddingTop: '4px',
-                    paddingBottom: '48px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px',
-                    minHeight: 0,
-                  }}
+                  className="hc-booking-sheet-edit-form"
                 >
                   {/* 1. Dates & Duration Section */}
                   <Stack
@@ -1936,7 +1464,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       </Stack>
                     </Stack>
 
-                    <div className="grid no-margin" style={{ gap: '12px' }}>
+                    <div className="grid no-margin hc-booking-sheet-dates-grid">
                       <div className="s12 m4">
                         <div className="field label border round no-margin">
                           <input
@@ -2031,11 +1559,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                             e.target.value as BookingItemStatus
                           )
                         }
-                        style={{
-                          padding: '4px 8px',
-                          height: '32px',
-                          borderRadius: '8px',
-                        }}
+                        className="hc-booking-sheet-status-select"
                       >
                         {BOOKING_STATUS_ORDER.map((st) => (
                           <option key={st} value={st}>
@@ -2046,13 +1570,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </Stack>
 
                     {subsequentSheetBlock && (
-                      <div
-                        className="round small-padding border small-text"
-                        style={{
-                          backgroundColor: 'var(--error-container)',
-                          color: 'var(--on-error-container)',
-                        }}
-                      >
+                      <div className="round small-padding border small-text hc-booking-sheet-status-error-msg">
                         ไม่สามารถแก้ไขสถานะในวันที่{' '}
                         {formatDateThaiShort(effectiveSheetDate)} ได้ เนื่องจากวันที่{' '}
                         <strong>
@@ -2065,13 +1583,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     )}
 
                     {pendingStatusChange && (
-                      <div
-                        className="round small-padding border"
-                        style={{
-                          backgroundColor: 'var(--tertiary-container)',
-                          color: 'var(--on-tertiary-container)',
-                        }}
-                      >
+                      <div className="round small-padding border hc-booking-sheet-status-confirm-msg">
                         <Stack orientation="column" gap="small">
                           <span className="small-text bold">
                             ยืนยันการเปลี่ยนสถานะในวันที่{' '}
@@ -2106,8 +1618,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       ).map((st) => (
                         <span
                           key={st}
-                          className="chip tiny border no-margin hc-micro-text"
-                          style={{ height: '24px' }}
+                          className="chip tiny border no-margin hc-micro-text hc-booking-sheet-history-chip"
                         >
                           {BOOKING_STATUS_META[st].label}:{' '}
                           {formatDateThaiShort(transactionDates[st]!)}
@@ -2226,13 +1737,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       <i>search</i>
                     </div>
 
-                    <div
-                      className="round surface border small-padding"
-                      style={{
-                        maxHeight: '240px',
-                        overflowY: 'auto',
-                      }}
-                    >
+                    <div className="round surface border small-padding hc-booking-sheet-edit-outfit-picker">
                       <Stack orientation="column" gap="tiny">
                         {filteredInventory.map((invItem) => {
                           const isSelected = selectedItems.some(
@@ -2250,14 +1755,13 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           return (
                             <div
                               key={invItem.id}
-                              className={`round small-padding ${
+                              className={`round small-padding hc-booking-sheet-edit-outfit-item ${
                                 isSelected
-                                  ? 'secondary-container'
+                                  ? 'secondary-container is-selected'
+                                  : hasConflict
+                                  ? 'surface-container-low is-conflict'
                                   : 'surface-container-low'
                               }`}
-                              style={{
-                                opacity: hasConflict && !isSelected ? 0.65 : 1,
-                              }}
                             >
                               <Stack
                                 orientation="row"
@@ -2269,37 +1773,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   orientation="row"
                                   align="center"
                                   gap="small"
-                                  style={{ minWidth: 0, flex: 1 }}
+                                  className="hc-booking-card-item-content"
                                 >
-                                  <div
-                                    className="round surface-container-high"
-                                    style={{
-                                      width: '40px',
-                                      height: '40px',
-                                      overflow: 'hidden',
-                                      flexShrink: 0,
-                                    }}
-                                  >
+                                  <div className="round surface-container-high hc-booking-sheet-edit-outfit-thumb">
                                     {invItem.imageUrl ? (
                                       <LazyImage
                                         src={invItem.imageUrl}
                                         alt={invItem.name}
-                                        containerStyle={{
-                                          width: '40px',
-                                          height: '40px',
-                                        }}
-                                        style={{ objectFit: 'cover' }}
+                                        containerClassName="hc-booking-sheet-edit-outfit-thumb-img"
+                                        className="hc-booking-card-image"
                                       />
                                     ) : (
-                                      <div
-                                        style={{
-                                          width: '40px',
-                                          height: '40px',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                        }}
-                                      >
+                                      <div className="hc-booking-sheet-edit-outfit-thumb-placeholder">
                                         <i className="small secondary-text">
                                           checkroom
                                         </i>
@@ -2310,7 +1795,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   <Stack
                                     orientation="column"
                                     gap="none"
-                                    style={{ minWidth: 0, flex: 1 }}
+                                    className="hc-booking-card-item-content"
                                   >
                                     <Stack
                                       orientation="row"
@@ -2405,7 +1890,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       )}
                     </Stack>
 
-                    <div className="grid no-margin" style={{ gap: '12px' }}>
+                    <div className="grid no-margin hc-booking-sheet-dates-grid">
                       <div className="s12 m6">
                         <div className="field label border surface round no-margin">
                           <input
@@ -2462,7 +1947,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       placeholder=" "
-                      style={{ minHeight: '80px', resize: 'vertical' }}
+                      className="hc-booking-sheet-note-input"
                     />
                     <label htmlFor="booking-note">หมายเหตุการจัดส่ง / การจอง</label>
                     <i>edit_note</i>
@@ -2471,11 +1956,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                 {/* 6. Delete Confirmation */}
                 {confirmDelete && (
-                  <article
-                    className="border error-container round margin-top margin-bottom"
-                    style={{ flexShrink: 0 }}
-                  >
-                    <div className="vertical" style={{ gap: '8px' }}>
+                  <article className="border error-container round margin-top margin-bottom hc-booking-sheet-edit-delete-banner">
+                    <div className="vertical hc-booking-sheet-delete-confirm-content">
                       <div className="row no-margin">
                         <i className="error-text">warning</i>
                         <div className="max">
@@ -2487,10 +1969,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           </p>
                         </div>
                       </div>
-                      <div
-                        className="row no-margin right-align"
-                        style={{ gap: '8px' }}
-                      >
+                      <div className="row no-margin right-align hc-booking-sheet-delete-confirm-content">
                         <button
                           type="button"
                           className="border small round no-margin"
@@ -2520,17 +1999,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 )}
 
                 {/* Footer Action Buttons for Edit Mode */}
-                <div
-                  className="row no-margin"
-                  style={{
-                    paddingTop: '12px',
-                    borderTop: '1px solid var(--surface-variant)',
-                    flexShrink: 0,
-                    gap: '8px',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                  }}
-                >
+                <div className="row no-margin hc-booking-sheet-edit-footer">
                   {mode === 'edit' && onDelete && !confirmDelete && (
                     <button
                       type="button"
@@ -2558,9 +2027,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   <button
                     type="submit"
                     form="booking-form"
-                    className="primary round no-margin"
+                    className="primary round no-margin hc-booking-sheet-edit-submit-btn"
                     disabled={submitting}
-                    style={{ minWidth: isMobile ? '96px' : '120px' }}
                   >
                     {submitting ? (
                       <div
