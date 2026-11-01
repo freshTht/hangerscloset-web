@@ -46,6 +46,19 @@ const DEFAULT_RENTAL_PRICES: FormRentalPriceTier[] = [
   { durationDays: '5', price: '' },
 ];
 
+const getNextTierDurationDays = (currentMaxDays: number): number => {
+  switch (currentMaxDays) {
+    case 0:
+      return 1;
+    case 1:
+      return 3;
+    case 3:
+      return 5;
+    default:
+      return currentMaxDays + 2;
+  }
+};
+
 const DEFAULT_FORM: FormState = {
   code: '',
   name: '',
@@ -173,8 +186,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         .map((t) => parseInt(t.durationDays, 10))
         .filter((d) => !isNaN(d) && d > 0);
       const maxDays = existingDays.length > 0 ? Math.max(...existingDays) : 0;
-      const nextDays =
-        maxDays === 0 ? 1 : maxDays === 1 ? 3 : maxDays === 3 ? 5 : maxDays + 2;
+      const nextDays = getNextTierDurationDays(maxDays);
 
       return {
         ...prev,
@@ -342,6 +354,26 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       />
     </div>
   );
+
+  const renderSubmitButtonContent = () => {
+    if (submitting) {
+      return <div className="shape loading-indicator small" role="status" />;
+    }
+    if (mode === 'edit') {
+      return (
+        <>
+          <i>save</i>
+          <span>บันทึก</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <i>add</i>
+        <span>เพิ่มชุด</span>
+      </>
+    );
+  };
 
   return (
     <>
@@ -720,19 +752,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 className="primary round no-margin hc-inventory-sheet-submit-btn"
                 disabled={submitting}
               >
-                {submitting ? (
-                  <div className="shape loading-indicator small" role="status" />
-                ) : mode === 'edit' ? (
-                  <>
-                    <i>save</i>
-                    <span>บันทึก</span>
-                  </>
-                ) : (
-                  <>
-                    <i>add</i>
-                    <span>เพิ่มชุด</span>
-                  </>
-                )}
+                {renderSubmitButtonContent()}
               </button>
             </div>
           </>
