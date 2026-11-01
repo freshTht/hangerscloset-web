@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   BOOKING_STATUS_META,
   isBookingFullyReturned,
@@ -8,8 +8,6 @@ import {
   getSubsequentStatusBlock,
   getTodayISO,
   addDaysISO,
-  formatDateThaiShort,
-  formatDateThaiShortWithYear,
   formatDateThaiFull,
   type Booking,
   type BookingLineItem,
@@ -22,6 +20,7 @@ import { useCustomers } from '../hooks/useCustomers';
 import { useInventory } from '../hooks/useInventory';
 import { BookingCard } from '../components/BookingCard';
 import { BookingInventoryCard } from '../components/BookingInventoryCard';
+import { BookingDateBar } from '../components/BookingDateBar';
 import { BookingCalendar } from '../components/BookingCalendar';
 import { BookingSheet } from '../components/BookingSheet';
 import {
@@ -177,7 +176,6 @@ export const BookingsPage: React.FC = () => {
   const today = useMemo(() => getTodayISO(), []);
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const [statusFilter, setStatusFilter] = useState<BookingFilterTab>('active');
   const [viewMode, setViewMode] = useState<BookingViewMode>('list');
@@ -194,22 +192,6 @@ export const BookingsPage: React.FC = () => {
     mode: 'add',
     booking: null,
   });
-
-  const currentFilterTab = useMemo(
-    () => FILTER_TABS.find((t) => t.id === statusFilter),
-    [statusFilter]
-  );
-  const currentFilterLabel = useMemo(() => {
-    if (statusFilter === 'active') return 'ตัวกรอง';
-    if (statusFilter === 'available') return 'ว่าง';
-    return BOOKING_STATUS_META[statusFilter]?.label ?? 'ตัวกรอง';
-  }, [statusFilter]);
-
-  const dateButtonLabel = useMemo(() => {
-    if (isAllDates) return 'แสดงทุกวัน (คลิกเพื่อเลือกวัน)';
-    if (selectedDate === today) return `${formatDateThaiShort(selectedDate)} (วันนี้)`;
-    return formatDateThaiShortWithYear(selectedDate);
-  }, [isAllDates, selectedDate, today]);
 
   // Inventory-centric items list with booking status on selected date
   const itemBookingEntries = useMemo(() => {
@@ -597,237 +579,20 @@ export const BookingsPage: React.FC = () => {
 
   return (
     <div className="bookings-page">
-      {/* Date Navigation & Filter Bar */}
-      <div
-        data-testid="bookings-date-bar"
-        className="surface-container-low bottom-margin"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '6px',
-          padding: '6px 8px',
-          borderRadius: '16px',
-          border: '1px solid var(--outline-variant)',
-          width: '100%',
-          boxSizing: 'border-box',
-          overflow: 'hidden',
+      {/* Date Navigation & Filter Bar (BeerCSS Toolbar) */}
+      <BookingDateBar
+        selectedDate={selectedDate}
+        today={today}
+        isAllDates={isAllDates}
+        statusFilter={statusFilter}
+        tabCounts={tabCounts}
+        filterSheetOpen={filterSheetOpen}
+        onDateChange={(newDate) => {
+          setSelectedDate(newDate);
+          setIsAllDates(false);
         }}
-      >
-        {/* Date Navigation Group */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '3px',
-            minWidth: 0,
-            flexShrink: 1,
-          }}
-        >
-          <button
-            type="button"
-            className="circle transparent no-margin"
-            onClick={() => {
-              setSelectedDate((prev) => addDaysISO(prev, -1));
-              setIsAllDates(false);
-            }}
-            aria-label="วันก่อนหน้า"
-            title="วันก่อนหน้า"
-            style={{
-              width: '32px',
-              height: '32px',
-              minWidth: '32px',
-              minHeight: '32px',
-              padding: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <i style={{ fontSize: '18px' }}>chevron_left</i>
-          </button>
-
-          <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', minWidth: 0 }}>
-            <input
-              ref={dateInputRef}
-              type="date"
-              value={selectedDate}
-              onChange={(e) => {
-                if (e.target.value) {
-                  setSelectedDate(e.target.value);
-                  setIsAllDates(false);
-                }
-              }}
-              style={{
-                position: 'absolute',
-                opacity: 0,
-                pointerEvents: 'none',
-                width: 0,
-                height: 0,
-              }}
-              tabIndex={-1}
-              aria-hidden="true"
-            />
-            <button
-              type="button"
-              className="chip surface-container-high border bold no-margin"
-              onClick={() => {
-                if (dateInputRef.current) {
-                  if ('showPicker' in HTMLInputElement.prototype) {
-                    try {
-                      dateInputRef.current.showPicker();
-                    } catch {
-                      dateInputRef.current.focus();
-                    }
-                  } else {
-                    dateInputRef.current.focus();
-                  }
-                }
-              }}
-              aria-label="เลือกวันที่"
-              title="คลิกเพื่อเลือกวันที่"
-              style={{
-                minHeight: '32px',
-                height: '32px',
-                padding: '0 8px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                borderRadius: '8px',
-                minWidth: 0,
-                cursor: 'pointer',
-              }}
-            >
-              <i className="small" style={{ fontSize: '16px', flexShrink: 0 }}>
-                calendar_month
-              </i>
-              <span
-                style={{
-                  fontSize: '12px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {dateButtonLabel}
-              </span>
-              <i className="tiny" style={{ fontSize: '14px', flexShrink: 0 }}>
-                arrow_drop_down
-              </i>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            className="circle transparent no-margin"
-            onClick={() => {
-              setSelectedDate((prev) => addDaysISO(prev, 1));
-              setIsAllDates(false);
-            }}
-            aria-label="วันถัดไป"
-            title="วันถัดไป"
-            style={{
-              width: '32px',
-              height: '32px',
-              minWidth: '32px',
-              minHeight: '32px',
-              padding: 0,
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <i style={{ fontSize: '18px' }}>chevron_right</i>
-          </button>
-
-          {selectedDate !== today && !isAllDates && (
-            <button
-              type="button"
-              className="chip surface-container-high border primary-text bold no-margin"
-              onClick={() => {
-                setSelectedDate(today);
-                setIsAllDates(false);
-              }}
-              title="กลับไปวันนี้"
-              aria-label="กลับไปวันนี้"
-              style={{
-                height: '32px',
-                minHeight: '32px',
-                padding: '0 8px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                flexShrink: 0,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '3px',
-              }}
-            >
-              <span style={{ fontSize: '11.5px' }}>วันนี้</span>
-            </button>
-          )}
-        </div>
-
-        {/* Filter Dropdown Button */}
-        <button
-          type="button"
-          className={`chip surface-container-high ${
-            statusFilter !== 'active' ? 'primary' : 'border'
-          } bold no-margin`}
-          data-testid="booking-filter-dropdown"
-          aria-label={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
-          title={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
-          aria-haspopup="dialog"
-          aria-expanded={filterSheetOpen}
-          onClick={() => setFilterSheetOpen(true)}
-          style={{
-            minHeight: '32px',
-            height: '32px',
-            padding: '0 8px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '5px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            flexShrink: 0,
-            maxWidth: '145px',
-          }}
-        >
-          <i className="small" style={{ fontSize: '16px', flexShrink: 0 }}>
-            tune
-          </i>
-          <span
-            style={{
-              fontSize: '12px',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {currentFilterLabel}
-          </span>
-          <span
-            style={{
-              fontSize: '10.5px',
-              fontWeight: 700,
-              padding: '1px 5px',
-              borderRadius: '6px',
-              backgroundColor:
-                statusFilter !== 'active'
-                  ? 'var(--on-primary)'
-                  : 'var(--primary)',
-              color:
-                statusFilter !== 'active'
-                  ? 'var(--primary)'
-                  : 'var(--on-primary)',
-              lineHeight: '14px',
-              flexShrink: 0,
-            }}
-          >
-            {tabCounts[statusFilter]}
-          </span>
-          <i className="tiny" style={{ fontSize: '14px', flexShrink: 0 }}>
-            arrow_drop_down
-          </i>
-        </button>
-      </div>
+        onFilterClick={() => setFilterSheetOpen(true)}
+      />
 
       {/* Main Content Area */}
       {loading ? (
