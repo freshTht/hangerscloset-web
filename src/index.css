@@ -109,59 +109,10 @@ main.responsive {
   animation: hc-fade-in 0.2s ease-in-out;
 }
 
-/* Status badge styling with dark mode blending */
-.hc-status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  font-weight: 600;
-  white-space: nowrap;
-  height: 24px;
-  padding: 0 10px;
-  font-size: 9pt;
-}
-
-.hc-status-badge.small {
-  height: 20px;
-  padding: 0 8px;
-  font-size: 8pt;
-}
-
 /* Micro text utility for compact metadata (e.g. SKU codes) */
 .hc-micro-text {
   font-size: 8pt;
   line-height: normal;
-}
-
-.hc-status-badge-available {
-  background-color: #e8f5e9;
-  color: #1b5e20;
-}
-
-.hc-status-badge-reserved {
-  background-color: #fff3e0;
-  color: #b74700;
-}
-
-.hc-status-badge-laundry {
-  background-color: #e1f5fe;
-  color: #0277bd;
-}
-
-body.dark .hc-status-badge-available {
-  background-color: rgba(76, 175, 80, 0.22);
-  color: #81c784;
-}
-
-body.dark .hc-status-badge-reserved {
-  background-color: rgba(255, 152, 0, 0.22);
-  color: #ffb74d;
-}
-
-body.dark .hc-status-badge-laundry {
-  background-color: rgba(3, 169, 244, 0.22);
-  color: #81d4fa;
 }
 
 @keyframes hc-fade-in {

@@ -11,6 +11,7 @@ import {
   type BookingItemStatus,
 } from '../types/booking';
 import { LazyImage } from './LazyImage';
+import { StatusBadge } from './StatusBadge';
 
 export interface BookingInventoryCardProps {
   item: InventoryItem;
@@ -110,12 +111,13 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
             <span className="hc-micro-text secondary-text bold">{item.code}</span>
 
             {isBooked && meta ? (
-              <span
-                className={`hc-status-badge small ${meta.chipClass}`}
+              <StatusBadge
+                size="small"
+                className={meta.chipClass}
                 data-testid={`status-badge-${item.code}`}
               >
                 {meta.label}
-              </span>
+              </StatusBadge>
             ) : (
               <span
                 className="chip tiny fill primary-container bold no-margin"

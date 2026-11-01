@@ -8,6 +8,7 @@ import {
 import { useIsMobile } from '../hooks/useIsMobile';
 import { BookingCard } from './BookingCard';
 import { Stack } from './Stack';
+import './StatusBadge.css';
 
 export interface BookingCalendarProps {
   bookings: Booking[];

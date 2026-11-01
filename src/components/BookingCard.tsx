@@ -10,6 +10,7 @@ import {
 } from '../types/booking';
 import { LazyImage } from './LazyImage';
 import { Stack } from './Stack';
+import { StatusBadge } from './StatusBadge';
 
 export interface BookingCardProps {
   booking: Booking;
@@ -183,12 +184,13 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                         <span className="chip tiny surface-container-high bold no-margin">
                           {lineItem.itemCode}
                         </span>
-                        <span
-                          className={`hc-status-badge small ${meta.chipClass}`}
+                        <StatusBadge
+                          size="small"
+                          className={meta.chipClass}
                           data-testid={`status-badge-${lineItem.itemCode}`}
                         >
                           {meta.label}
-                        </span>
+                        </StatusBadge>
                       </Stack>
                       <span
                         className="small-text bold"
