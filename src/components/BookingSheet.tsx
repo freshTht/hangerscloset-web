@@ -955,7 +955,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           return (
                             <div
                               key={invItem.id}
-                              className={`border small-padding hc-cursor-pointer ${
+                              className={`border small-padding ${
                                 isSelected
                                   ? isSelectedConflict
                                     ? 'error-container'
@@ -963,6 +963,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   : 'surface-container-low'
                               }`}
                               style={{
+                                cursor: 'pointer',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '10px',

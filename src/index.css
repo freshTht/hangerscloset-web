@@ -81,7 +81,3 @@ main.responsive {
 .hc-medium-padding {
   --_padding: 20px !important;
 }
-
-.hc-cursor-pointer {
-  cursor: pointer !important;
-}
