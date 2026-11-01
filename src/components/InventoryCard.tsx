@@ -2,6 +2,7 @@ import React from 'react';
 import type { InventoryItem } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { LazyImage } from './LazyImage';
+import './InventoryCard.css';
 
 interface InventoryCardProps {
   item: InventoryItem;
@@ -22,9 +23,8 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
 
     return (
       <div
-        className="row no-space max no-margin"
+        className="row no-space max no-margin hc-inventory-card-prices"
         data-testid="price-tiers-group"
-        style={{ width: '100%' }}
       >
         {sortedTiers.map((tier, idx) => {
           const isFirst = idx === 0;
@@ -42,12 +42,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
             <div
               key={tier.durationDays}
               data-testid={`price-tier-${tier.durationDays}`}
-              className={`${roundClass} max vertical center-align middle-align surface-container-high small-text no-margin`}
-              style={{
-                padding: '6px 4px',
-                gap: '2px',
-                borderRight: !isLast ? '1px solid var(--surface-variant)' : undefined,
-              }}
+              className={`${roundClass} max vertical center-align middle-align surface-container-high small-text no-margin hc-inventory-card-tier`}
             >
               <span className="secondary-text hc-micro-text">{tier.durationDays} วัน</span>
               <span className="bold on-surface-text">{formatPrice(tier.price)}</span>
@@ -59,13 +54,9 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
   };
 
   const renderAttributes = () => (
-    <div
-      className="row no-margin tiny-space small-text secondary-text wrap"
-      style={{ alignItems: 'center', gap: '8px' }}
-    >
+    <div className="row no-margin tiny-space small-text secondary-text wrap hc-inventory-card-attrs">
       <span
-        className="middle-align"
-        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
+        className="middle-align hc-inventory-card-attr-item"
         title={`แบรนด์: ${item.brand}`}
       >
         <i className="tiny">sell</i>
@@ -73,8 +64,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
       </span>
       <span className="medium-opacity">•</span>
       <span
-        className="middle-align"
-        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
+        className="middle-align hc-inventory-card-attr-item"
         title={`สี: ${item.color}`}
       >
         <i className="tiny">palette</i>
@@ -82,8 +72,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
       </span>
       <span className="medium-opacity">•</span>
       <span
-        className="middle-align"
-        style={{ gap: '4px', alignItems: 'center', whiteSpace: 'nowrap' }}
+        className="middle-align hc-inventory-card-attr-item"
         title={`ไซส์: ${item.size}`}
       >
         <i className="tiny">height</i>
@@ -94,35 +83,17 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
 
   if (isMobile) {
     return (
-      <article
-        className="no-padding round row no-space no-scroll"
-        style={{
-          minHeight: '160px',
-          alignItems: 'stretch',
-        }}
-      >
+      <article className="no-padding round row no-space no-scroll hc-inventory-card-mobile">
         <LazyImage
           className="left-round"
           src={item.imageUrl}
           alt={item.name}
-          containerStyle={{
-            width: 120,
-            minWidth: 120,
-            maxWidth: 120,
-            alignSelf: 'stretch',
-            flexShrink: 0,
-          }}
+          containerClassName="hc-inventory-card-mobile-img"
         />
-        <div
-          className="max vertical"
-          style={{
-            minWidth: 0,
-            padding: '10px 14px 10px 12px',
-          }}
-        >
+        <div className="max vertical hc-inventory-card-mobile-body">
           {/* Top: Code, Edit Action, and Title */}
-          <div className="vertical" style={{ gap: '4px' }}>
-            <div className="row no-margin align-center no-space" style={{ gap: '6px' }}>
+          <div className="vertical hc-inventory-card-mobile-header">
+            <div className="row no-margin align-center no-space hc-inventory-card-mobile-header-row">
               <span className="hc-micro-text secondary-text medium">
                 {item.code}
               </span>
@@ -137,7 +108,6 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
                   }}
                   aria-label={`แก้ไข ${item.code}`}
                   title="แก้ไขรายการ"
-                  style={{ width: '28px', height: '28px', minWidth: '28px', minHeight: '28px', padding: 0 }}
                 >
                   <i className="tiny">edit</i>
                 </button>
@@ -145,25 +115,15 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
             </div>
 
             {/* Title: 2 lines max with Beer typography h6.small.bold */}
-            <h6
-              className="small bold no-margin"
-              style={{
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                lineHeight: 1.25,
-              }}
-            >
+            <h6 className="small bold no-margin hc-inventory-card-title-clamped">
               {item.name}
             </h6>
           </div>
 
           {/* Anything below card title is bottom aligned with margin-top: auto */}
-          <div className="vertical" style={{ marginTop: 'auto' }}>
+          <div className="vertical hc-inventory-card-bottom-section">
             {renderAttributes()}
-            <div style={{ marginTop: '8px' }}>
+            <div className="hc-inventory-card-bottom-spacer-mobile">
               {renderPrices()}
             </div>
           </div>
@@ -173,26 +133,17 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
   }
 
   return (
-    <article
-      className="no-padding round vertical"
-      style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-    >
+    <article className="no-padding round vertical hc-inventory-card-desktop">
       <LazyImage
         className="top-round"
         src={item.imageUrl}
         alt={item.name}
-        containerStyle={{
-          width: '100%',
-          aspectRatio: '1 / 1',
-        }}
+        containerClassName="hc-inventory-card-desktop-img"
       />
-      <div
-        className="padding vertical"
-        style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
-      >
+      <div className="padding vertical hc-inventory-card-desktop-body">
         {/* Top: Code, Edit Action, and Title */}
-        <div className="vertical" style={{ gap: '6px' }}>
-          <div className="row no-margin align-center" style={{ gap: '6px' }}>
+        <div className="vertical hc-inventory-card-desktop-header">
+          <div className="row no-margin align-center hc-inventory-card-desktop-header-row">
             <span className="small-text secondary-text">{item.code}</span>
             <div className="max"></div>
             {onEdit && (
@@ -201,11 +152,10 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
                 className="circle transparent no-margin"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEdit(item);
+                    onEdit(item);
                 }}
                 aria-label={`แก้ไข ${item.code}`}
                 title="แก้ไขรายการ"
-                style={{ width: '32px', height: '32px', minWidth: '32px', minHeight: '32px', padding: 0 }}
               >
                 <i className="small">edit</i>
               </button>
@@ -219,9 +169,9 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
         </div>
 
         {/* Anything below card title is bottom aligned with margin-top: auto */}
-        <div className="vertical" style={{ marginTop: 'auto' }}>
+        <div className="vertical hc-inventory-card-bottom-section">
           {renderAttributes()}
-          <div style={{ marginTop: '12px' }}>
+          <div className="hc-inventory-card-bottom-spacer-desktop">
             {renderPrices()}
           </div>
         </div>

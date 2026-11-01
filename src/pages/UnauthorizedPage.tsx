@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { LazyImage } from '../components/LazyImage';
+import './UnauthorizedPage.css';
 
 export const UnauthorizedPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -16,25 +17,9 @@ export const UnauthorizedPage: React.FC = () => {
   };
 
   return (
-    <div
-      className="center-align middle-align padding"
-      style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-      }}
-    >
+    <div className="center-align middle-align padding hc-unauthorized-page-container">
       {/* Main Content Layout */}
-      <div
-        style={{
-          maxWidth: '380px',
-          width: '100%',
-          position: 'relative',
-          zIndex: 1,
-        }}
-      >
+      <div className="hc-unauthorized-page-content">
         <div className="center-align">
           <h5 className="bold no-margin">คุณไม่มีสิทธิ์เข้าถึง</h5>
           <div className="tiny-space"></div>
@@ -51,7 +36,7 @@ export const UnauthorizedPage: React.FC = () => {
               alt={user.displayName || 'ผู้ใช้งาน'}
               className="circle medium"
               fallbackIcon="account_circle"
-              containerStyle={{ width: '56px', height: '56px', margin: '0 auto 12px auto' }}
+              containerClassName="hc-unauthorized-avatar"
             />
           ) : (
             <i className="large circle secondary-text">account_circle</i>

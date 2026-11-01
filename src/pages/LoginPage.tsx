@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { GoogleSignInButton } from '../components/GoogleSignInButton';
 import { ModeBadge } from '../components/ModeBadge';
+import './LoginPage.css';
 
 export const LoginPage: React.FC = () => {
   const { user, loading, signInWithGoogle } = useAuth();
@@ -35,16 +36,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div
-      className="center-align middle-align padding"
-      style={{
-        minHeight: '100dvh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'relative',
-      }}
-    >
+    <div className="center-align middle-align padding hc-login-page-container">
       {submitting ? (
         <div
           className="shape loading-indicator extra"
@@ -53,17 +45,9 @@ export const LoginPage: React.FC = () => {
         />
       ) : (
         /* Ultra-minimal foreground: App name, simple badge, and Google sign-in button */
-        <div
-          style={{
-            maxWidth: '380px',
-            width: '100%',
-            position: 'relative',
-            zIndex: 1,
-            textAlign: 'center',
-          }}
-        >
+        <div className="hc-login-page-content">
           {/* App Name & Simple Mode Badge */}
-          <div className="row center-align" style={{ gap: '10px' }}>
+          <div className="row center-align hc-login-page-title-row">
             <h3 className="bold no-margin">Hanger's Closet</h3>
             <ModeBadge />
           </div>

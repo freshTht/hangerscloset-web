@@ -43,6 +43,12 @@ Beer CSS is built around 3 core concepts:
 > [!IMPORTANT]
 > All custom CSS classes, custom CSS variables, and custom keyframe animations created for this project MUST strictly use the **`hc-`** prefix (e.g., `.hc-status-badge`, `.hc-micro-text`, `.hc-skeleton`, `.hc-medium-padding`, `@keyframes hc-fade-in`). This ensures that custom overrides are immediately tracked, auditable, and never confused with native Beer CSS classes or browser primitives. Do NOT introduce new custom styles without the `hc-` prefix.
 
+### E. Component-Specific Style Colocation Rule
+> [!IMPORTANT]
+> - Custom styles that are specific to a single component or page MUST live in a dedicated, colocated `.css` file in the same directory (e.g. `ComponentName.css` next to `ComponentName.tsx`).
+> - Avoid inline `style={{ ... }}` for static styling rules. Extract static styles into the component's colocated `.css` file using the `hc-` class namespace. Inline styles should only be reserved for dynamic values calculated at runtime (e.g., dynamic coordinates, dynamic progress percentages, or runtime colors).
+> - **Do NOT add new shared or common CSS classes to global stylesheets (`index.css`) without explicit confirmation from the human author.** New styles should default to component-specific `.css` files unless authorized to become global design tokens.
+
 ---
 
 ## 3. Component & Layout Patterns

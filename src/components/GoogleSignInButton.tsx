@@ -1,4 +1,5 @@
 import React from 'react';
+import './GoogleSignInButton.css';
 
 export function getAuthErrorInfo(rawError: string): { message: string; isCancellation: boolean } {
   if (rawError.includes('popup-closed-by-user')) {
@@ -43,21 +44,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
         type="button"
         onClick={onClick}
         disabled={disabled}
-        className="border round"
-        style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '12px',
-          height: '48px',
-          padding: '0 24px',
-          minWidth: '240px',
-          cursor: disabled ? 'default' : 'pointer',
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-          fontWeight: 500,
-          boxShadow: 'var(--elevate1)',
-        }}
+        className="border round hc-google-signin-btn"
       >
         {/* Official 4-Color Google "G" Logo */}
         <svg
@@ -65,7 +52,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
           height="20"
           viewBox="0 0 24 24"
           aria-hidden="true"
-          style={{ flexShrink: 0 }}
+          className="hc-google-signin-logo"
         >
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -91,14 +78,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
       {errorMessage && (() => {
         const errorInfo = getAuthErrorInfo(errorMessage);
         return (
-          <div
-            className="row center-align"
-            style={{
-              marginTop: '16px',
-              gap: '6px',
-              opacity: 0.85,
-            }}
-          >
+          <div className="row center-align hc-google-signin-error">
             <i
               className={`small ${errorInfo.isCancellation ? 'secondary-text' : 'error-text'}`}
             >

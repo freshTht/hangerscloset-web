@@ -3,6 +3,7 @@ import ui from 'beercss';
 import { useAuth } from '../contexts/AuthContext';
 import { ModeBadge } from '../components/ModeBadge';
 import { LazyImage } from '../components/LazyImage';
+import './SettingsPage.css';
 
 export const SettingsPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -46,25 +47,19 @@ export const SettingsPage: React.FC = () => {
                 alt={user.displayName || 'ผู้ใช้งาน'}
                 className="circle large"
                 fallbackIcon="person"
-                containerStyle={{ width: '56px', height: '56px', flexShrink: 0 }}
+                containerClassName="hc-settings-avatar"
               />
             ) : (
               <i className="extra circle surface-container-high primary-text">person</i>
             )}
-            <div className="max" style={{ minWidth: 0 }}>
-              <div className="row no-margin" style={{ gap: '8px' }}>
-                <h6
-                  className="bold no-margin"
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                >
+            <div className="max hc-settings-user-info">
+              <div className="row no-margin hc-settings-user-row">
+                <h6 className="bold no-margin truncate">
                   {user.displayName || 'ผู้ใช้งาน'}
                 </h6>
                 <ModeBadge />
               </div>
-              <p
-                className="no-margin secondary-text small-text"
-                style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              >
+              <p className="no-margin secondary-text small-text truncate">
                 {user.email || 'ไม่มีอีเมล'}
               </p>
             </div>

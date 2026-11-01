@@ -1,0 +1,19 @@
+.hc-login-page-container {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hc-login-page-content {
+  max-width: 380px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.hc-login-page-title-row {
+  gap: 10px;
+}

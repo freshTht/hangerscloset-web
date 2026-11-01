@@ -1,0 +1,50 @@
+.hc-empty-state-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hc-empty-state-content {
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  padding: 24px 16px;
+}
+
+.hc-empty-state-icon {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.hc-empty-state-desc {
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.hc-empty-state-actions {
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: center;
+  width: 100%;
+}
+
+.hc-empty-state-btn {
+  min-height: 44px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.hc-empty-state-btn.secondary {
+  padding: 0 16px;
+}

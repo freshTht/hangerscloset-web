@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stack } from './Stack';
+import './EmptyState.css';
 
 export interface EmptyStateProps {
   icon: string;
@@ -33,41 +34,17 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div
       data-testid={testId}
-      className="padding"
-      style={{
-        minHeight,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
+      className="padding hc-empty-state-wrapper"
+      style={{ minHeight }}
     >
       <Stack
         orientation="column"
         align="center"
         justify="center"
         gap="medium"
-        style={{
-          maxWidth: '440px',
-          width: '100%',
-          textAlign: 'center',
-          padding: '24px 16px',
-        }}
+        className="hc-empty-state-content"
       >
-        <div
-          className="surface-container-high circle center-align middle-align"
-          style={{
-            width: '72px',
-            height: '72px',
-            minWidth: '72px',
-            minHeight: '72px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto',
-          }}
-        >
+        <div className="surface-container-high circle center-align middle-align hc-empty-state-icon">
           <i className="extra secondary-text">{icon}</i>
         </div>
 
@@ -75,46 +52,24 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           orientation="column"
           align="center"
           gap="tiny"
-          style={{ width: '100%' }}
+          className="max"
         >
           <h5 className="bold no-margin on-surface-text">{title}</h5>
           {description && (
-            <p
-              className="secondary-text no-margin"
-              style={{
-                lineHeight: 1.5,
-                wordBreak: 'break-word',
-              }}
-            >
+            <p className="secondary-text no-margin hc-empty-state-desc">
               {description}
             </p>
           )}
         </Stack>
 
         {(onAction || onSecondaryAction) && (
-          <div
-            className="row center-align wrap"
-            style={{
-              gap: '12px',
-              marginTop: '8px',
-              justifyContent: 'center',
-              width: '100%',
-            }}
-          >
+          <div className="row center-align wrap hc-empty-state-actions">
             {onAction && actionText && (
               <button
                 type="button"
-                className="primary round"
+                className="primary round hc-empty-state-btn"
                 onClick={onAction}
                 title={actionTitle || actionText}
-                style={{
-                  minHeight: '44px',
-                  padding: '0 20px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  whiteSpace: 'nowrap',
-                }}
               >
                 {actionIcon && <i>{actionIcon}</i>}
                 <span>{actionText}</span>
@@ -123,18 +78,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             {onSecondaryAction && secondaryActionText && (
               <button
                 type="button"
-                className="border round"
+                className="border round hc-empty-state-btn secondary"
                 onClick={onSecondaryAction}
-                style={{
-                  minHeight: '44px',
-                  padding: '0 16px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  whiteSpace: 'nowrap',
-                }}
               >
-                {secondaryActionIcon && <i>{secondaryActionIcon}</i>}
+                {actionIcon && <i>{secondaryActionIcon}</i>}
                 <span>{secondaryActionText}</span>
               </button>
             )}

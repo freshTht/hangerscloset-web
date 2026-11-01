@@ -1,4 +1,21 @@
 /* Ambient Material Shapes Background (Pixel style) */
+
+.hc-material-shapes-bg-container {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.hc-material-shapes-bg-container.active {
+  opacity: 1;
+  visibility: visible;
+}
+
 .hc-material-shapes-bg-flower,
 .hc-material-shapes-bg-wavy,
 .hc-material-shapes-bg-hanger {
@@ -6,15 +23,43 @@
 }
 
 .hc-material-shapes-bg-flower {
+  position: absolute;
+  top: -64px;
+  left: -64px;
+  width: 288px;
+  height: 288px;
   opacity: 0.75;
 }
 
 .hc-material-shapes-bg-wavy {
+  position: absolute;
+  bottom: -80px;
+  right: -80px;
+  width: 320px;
+  height: 320px;
   opacity: 0.75;
 }
 
+.hc-material-shapes-bg-hanger-wrapper {
+  position: absolute;
+  top: 12%;
+  left: 50%;
+  margin-left: -85px;
+  width: 170px;
+  height: 170px;
+}
+
 .hc-material-shapes-bg-hanger {
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 8%;
+  animation: hc-hanger-sway 6s ease-in-out infinite;
   opacity: 0.28;
+}
+
+.hc-material-shapes-bg-hanger-icon {
+  overflow: visible;
+  display: block;
 }
 
 body.dark .hc-material-shapes-bg-flower {
