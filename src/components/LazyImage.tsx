@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Skeleton } from './Skeleton';
 import './LazyImage.css';
 
 export interface LazyImageProps {
@@ -103,10 +104,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     >
       {/* Shimmer hc-skeleton placeholder while loading */}
       {!isLoaded && !hasError && (
-        <div
-          className="hc-skeleton hc-lazy-image-skeleton"
-          aria-hidden="true"
-        />
+        <Skeleton className="hc-lazy-image-skeleton" aria-hidden={true} />
       )}
 
       {/* Fallback view when image fails to load */}

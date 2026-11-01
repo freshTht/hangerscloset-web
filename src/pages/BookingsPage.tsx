@@ -26,6 +26,7 @@ import { BookingCalendar } from '../components/BookingCalendar';
 import { BookingSheet } from '../components/BookingSheet';
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
+import { Skeleton } from '../components/Skeleton';
 import './BookingsPage.css';
 
 export type BookingFilterTab = 'active' | 'available' | BookingItemStatus;
@@ -741,9 +742,9 @@ export const BookingsPage: React.FC = () => {
             <div key={idx} className="s12 m6">
               <article className="border round surface hc-medium-padding no-margin">
                 <Stack orientation="column" gap="small">
-                  <div className="hc-skeleton round hc-bookings-skeleton-title" />
-                  <div className="hc-skeleton round hc-bookings-skeleton-body" />
-                  <div className="hc-skeleton round hc-bookings-skeleton-footer" />
+                  <Skeleton shape="round" className="hc-bookings-skeleton-title" />
+                  <Skeleton shape="round" className="hc-bookings-skeleton-body" />
+                  <Skeleton shape="round" className="hc-bookings-skeleton-footer" />
                 </Stack>
               </article>
             </div>

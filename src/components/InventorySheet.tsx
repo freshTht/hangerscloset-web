@@ -7,6 +7,7 @@ import { LazyImage } from './LazyImage';
 import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
 import { Stack } from './Stack';
+import { Skeleton } from './Skeleton';
 import './InventorySheet.css';
 
 export interface InventorySheetProps {
@@ -398,10 +399,10 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 aria-busy="true"
                 aria-label="กำลังโหลดข้อมูลชุด"
               >
-                <div className="hc-skeleton round hc-inventory-sheet-skeleton-image" />
-                <div className="hc-skeleton round hc-inventory-sheet-skeleton-field" />
-                <div className="hc-skeleton round hc-inventory-sheet-skeleton-field" />
-                <div className="hc-skeleton round hc-inventory-sheet-skeleton-field" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-image" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
               </div>
             ) : (
               <form
