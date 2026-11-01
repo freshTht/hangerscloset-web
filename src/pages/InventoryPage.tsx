@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { createPortal } from 'react-dom';
 import { InventoryCard } from '../components/InventoryCard';
 import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
 import { InventorySheet } from '../components/InventorySheet';
@@ -7,7 +6,6 @@ import { InventoryFilterSheet } from '../components/InventoryFilterSheet';
 import { InventorySortDialog } from '../components/InventorySortDialog';
 import { EmptyState } from '../components/EmptyState';
 import { useInventory } from '../hooks/useInventory';
-import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import {
   useFilteredInventory,
@@ -32,13 +30,7 @@ interface SheetState {
 export const InventoryPage: React.FC = () => {
   const { items, loading, error, provider, addItem, updateItem, deleteItem } =
     useInventory();
-  const isMobile = useIsMobile();
-  const {
-    sizes: metaSizes,
-    brands: metaBrands,
-    colors: metaColors,
-    tags: metaTags,
-  } = useMetadataOptions();
+  const { tags: metaTags } = useMetadataOptions();
 
   const [filter, setFilter] = useState<InventoryFilterState>(
     INITIAL_INVENTORY_FILTER
@@ -49,41 +41,6 @@ export const InventoryPage: React.FC = () => {
   const [quickAddMode, setQuickAddMode] = useState(false);
   const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    const slot = document.getElementById('page-header-slot');
-    if (slot) {
-      setHeaderSlot(slot);
-    }
-  }, []);
-
-  const availableSizes = useMemo(
-    () =>
-      mergeUniqueStrings(
-        metaSizes,
-        items.map((item) => item.size)
-      ),
-    [metaSizes, items]
-  );
-
-  const availableBrands = useMemo(
-    () =>
-      mergeUniqueStrings(
-        metaBrands,
-        items.map((item) => item.brand)
-      ),
-    [metaBrands, items]
-  );
-
-  const availableColors = useMemo(
-    () =>
-      mergeUniqueStrings(
-        metaColors,
-        items.map((item) => item.color)
-      ),
-    [metaColors, items]
-  );
 
   const availableTags = useMemo(
     () =>
@@ -153,35 +110,11 @@ export const InventoryPage: React.FC = () => {
     setSearchExpanded((prev) => !prev);
   };
 
-  const handleOpenQuickFilter = () => {
-    setQuickAddMode(true);
+  const handleOpenFilters = () => {
+    setQuickAddMode(false);
     setFilterSheetOpen(true);
   };
 
-  const selectedSize = filter.selectedSizes[0] ?? '';
-  const selectedBrand = filter.selectedBrands[0] ?? '';
-  const selectedColor = filter.selectedColors[0] ?? '';
-
-  const handleSelectSize = (size: string) => {
-    setFilter((prev) => ({
-      ...prev,
-      selectedSizes: size ? [size] : [],
-    }));
-  };
-
-  const handleSelectBrand = (brand: string) => {
-    setFilter((prev) => ({
-      ...prev,
-      selectedBrands: brand ? [brand] : [],
-    }));
-  };
-
-  const handleSelectColor = (color: string) => {
-    setFilter((prev) => ({
-      ...prev,
-      selectedColors: color ? [color] : [],
-    }));
-  };
 
   const handleAddSearchTag = (tag: string) => {
     if (!filter.selectedTags.includes(tag)) {
@@ -202,105 +135,73 @@ export const InventoryPage: React.FC = () => {
   const currentSortLabel =
     INVENTORY_SORT_OPTIONS.find((opt) => opt.value === sort)?.label ?? '';
 
+  const countText =
+    filteredItems.length === items.length
+      ? `${items.length} ชุด`
+      : `${filteredItems.length}/${items.length} ชุด`;
+
   const renderActiveFilterBar = () => {
     return (
       <div className="active-filters-sticky-wrapper">
-        <div
-          className="row no-wrap items-center no-margin"
+        <nav
+          className="toolbar scroll no-margin inventory-filter-toolbar secondary-container"
           data-testid="active-filters-bar"
+          style={{ width: '100%', boxSizing: 'border-box' }}
+        >
+          <button
+            type="button"
+            data-testid="btn-filters"
+            className={`small ${activeFilterCount > 0 ? 'fill primary' : 'secondary-container'}`}
+            onClick={handleOpenFilters}
+            aria-label="ตัวกรอง"
+            title="ตัวกรอง"
+          >
+            <i>tune</i>
+            <span>ตัวกรอง</span>
+            {activeFilterCount > 0 && (
+              <span
+                className="badge"
+                data-testid="filter-active-count"
+                style={{ position: 'static' }}
+              >
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+          <div className="max" />
+          <span className="bold" data-testid="inventory-count-badge">
+            {countText}
+          </span>
+          <button
+            type="button"
+            className={`circle small ${hasNonDefaultSort ? 'fill primary' : 'transparent'}`}
+            onClick={() => setSortDialogOpen(true)}
+            aria-label="จัดเรียง"
+            title="จัดเรียง"
+          >
+            <i>sort</i>
+          </button>
+          <button
+            type="button"
+            className={`circle small ${searchExpanded || hasSearchQuery || filter.selectedTags.length > 0 ? 'fill primary' : 'transparent'}`}
+            onClick={handleToggleSearch}
+            aria-label="ค้นหา"
+            title="ค้นหาและแท็ก"
+            data-testid="filter-bar-search-toggle"
+          >
+            <i>{searchExpanded ? 'close' : 'search'}</i>
+          </button>
+        </nav>
+
+        <div
+          className="row no-wrap items-center scroll no-margin"
           style={{
             gap: '8px',
-            paddingBottom: '2px',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
+            minWidth: 0,
           }}
         >
-          <div
-            className="row no-wrap items-center scroll no-margin"
-            style={{
-              gap: '8px',
-              overflowX: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
-            {/* 1. Static Dropdown: Size */}
-            <select
-              aria-label="ตัวกรองไซส์"
-              data-testid="filter-select-size"
-              value={selectedSize}
-              onChange={(e) => handleSelectSize(e.target.value)}
-              className={`chip small no-margin ${selectedSize ? 'fill primary' : 'border'}`}
-              style={{
-                height: '32px',
-                padding: '0 10px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '12px',
-                backgroundColor: selectedSize ? 'var(--primary)' : 'transparent',
-                color: selectedSize ? 'var(--on-primary)' : 'var(--on-surface)',
-              }}
-            >
-              <option value="">ไซส์: ทั้งหมด</option>
-              {availableSizes.map((s) => (
-                <option key={s} value={s}>
-                  ไซส์: {s}
-                </option>
-              ))}
-            </select>
-
-            {/* 2. Static Dropdown: Brand */}
-            <select
-              aria-label="ตัวกรองแบรนด์"
-              data-testid="filter-select-brand"
-              value={selectedBrand}
-              onChange={(e) => handleSelectBrand(e.target.value)}
-              className={`chip small no-margin ${selectedBrand ? 'fill primary' : 'border'}`}
-              style={{
-                height: '32px',
-                padding: '0 10px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '12px',
-                backgroundColor: selectedBrand ? 'var(--primary)' : 'transparent',
-                color: selectedBrand ? 'var(--on-primary)' : 'var(--on-surface)',
-              }}
-            >
-              <option value="">แบรนด์: ทั้งหมด</option>
-              {availableBrands.map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
-              ))}
-            </select>
-
-            {/* 3. Static Dropdown: Color */}
-            <select
-              aria-label="ตัวกรองสี"
-              data-testid="filter-select-color"
-              value={selectedColor}
-              onChange={(e) => handleSelectColor(e.target.value)}
-              className={`chip small no-margin ${selectedColor ? 'fill primary' : 'border'}`}
-              style={{
-                height: '32px',
-                padding: '0 10px',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 600,
-                fontSize: '12px',
-                backgroundColor: selectedColor ? 'var(--primary)' : 'transparent',
-                color: selectedColor ? 'var(--on-primary)' : 'var(--on-surface)',
-              }}
-            >
-              <option value="">สี: ทั้งหมด</option>
-              {availableColors.map((c) => (
-                <option key={c} value={c}>
-                  สี: {c}
-                </option>
-              ))}
-            </select>
-
             {/* Additional Facet Chips: Search query */}
             {hasSearchQuery && (
               <button
@@ -404,19 +305,6 @@ export const InventoryPage: React.FC = () => {
               </button>
             )}
 
-            {/* "+ ฟิลเตอร์" Quick add drawer */}
-            <button
-              type="button"
-              data-testid="btn-add-filter"
-              className="chip small fill primary-container bold no-margin"
-              onClick={handleOpenQuickFilter}
-              aria-label="เพิ่มฟิลเตอร์"
-              title="เพิ่ม 1 ฟิลเตอร์ด่วน"
-            >
-              <i>add</i>
-              <span>ฟิลเตอร์</span>
-            </button>
-
             {/* Clear All button */}
             {hasAppliedFilters && (
               <button
@@ -430,27 +318,6 @@ export const InventoryPage: React.FC = () => {
                 <span>เคลียร์</span>
               </button>
             )}
-          </div>
-
-          {/* Search Toggle Icon Button on the right of filter bar */}
-          <button
-            type="button"
-            className={`circle small no-margin ${searchExpanded || hasSearchQuery || filter.selectedTags.length > 0 ? 'fill primary' : 'transparent border'}`}
-            onClick={handleToggleSearch}
-            aria-label="ค้นหา"
-            title="ค้นหาและแท็ก"
-            data-testid="filter-bar-search-toggle"
-            style={{
-              width: '32px',
-              height: '32px',
-              minWidth: '32px',
-              minHeight: '32px',
-              padding: 0,
-              flexShrink: 0,
-            }}
-          >
-            <i>{searchExpanded ? 'close' : 'search'}</i>
-          </button>
         </div>
 
         {/* Expandable Search + Tag Filter Box */}
@@ -559,11 +426,6 @@ export const InventoryPage: React.FC = () => {
     );
   };
 
-  const countText =
-    filteredItems.length === items.length
-      ? `${items.length} ชุด`
-      : `${filteredItems.length}/${items.length} ชุด`;
-
   return (
     <>
       {loading ? (
@@ -605,9 +467,7 @@ export const InventoryPage: React.FC = () => {
         />
       ) : (
         <>
-          {headerSlot
-            ? createPortal(renderActiveFilterBar(), headerSlot)
-            : renderActiveFilterBar()}
+          {renderActiveFilterBar()}
 
           {filteredItems.length === 0 ? (
             <EmptyState
@@ -635,45 +495,16 @@ export const InventoryPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Responsive Floating Bottom Toolbar + Expandable Search Bar */}
-      <div
-        className={`fixed bottom ${isMobile ? 'center' : 'right'} margin front`}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: isMobile ? 'center' : 'flex-end',
-          gap: '8px',
-          maxWidth: 'calc(100vw - 24px)',
-        }}
+      {/* Standalone FAB (right aligned) */}
+      <button
+        className="extra circle primary medium-elevate fixed bottom right margin front"
+        type="button"
+        onClick={handleOpenAdd}
+        aria-label="เพิ่มชุด"
+        title="เพิ่มชุด"
       >
-        <nav className="center-align tiny-space no-margin">
-          <nav className="toolbar secondary-container medium-elevate">
-            <span className="bold" data-testid="inventory-count-badge">
-              {countText}
-            </span>
-            <button
-              className={`circle no-margin ${
-                hasNonDefaultSort ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={() => setSortDialogOpen(true)}
-              aria-label="จัดเรียง"
-              title="จัดเรียง"
-            >
-              <i>sort</i>
-            </button>
-          </nav>
-          <button
-            className="extra circle primary medium-elevate no-margin"
-            type="button"
-            onClick={handleOpenAdd}
-            aria-label="เพิ่มชุด"
-            title="เพิ่มชุด"
-          >
-            <i>add</i>
-          </button>
-        </nav>
-      </div>
+        <i>add</i>
+      </button>
 
       {/* Add / Edit Sheet Component */}
       <InventorySheet

@@ -133,38 +133,33 @@ describe('InventoryPage Search, Filter & Sort', () => {
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
 
-  it('opens filter sheet via top bar button, applies multi-facet filters, and supports chip dismissal', () => {
+  it('opens filter sheet via top bar button, applies multi-facet filters, and shows active count', () => {
     render(<InventoryPage />);
 
-    // Open filter sheet via "+ ฟิลเตอร์" in active filter bar
-    fireEvent.click(screen.getByTestId('btn-add-filter'));
+    fireEvent.click(screen.getByTestId('btn-filters'));
     expect(
-      screen.getByRole('dialog', { name: 'เลือกตัวกรองเพิ่ม' })
+      screen.getByRole('dialog', { name: 'ตัวกรองสินค้า' })
     ).toBeInTheDocument();
 
     // Select tag 'เดรส' (matches item-1 and item-3)
     fireEvent.click(screen.getByTestId('filter-tag-เดรส'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('2/3 ชุด');
 
-    // Add another filter: size 'S' (narrows down to item-1 only)
-    fireEvent.click(screen.getByTestId('btn-add-filter'));
+    // Add size 'S' (narrows down to item-1 only)
     fireEvent.click(screen.getByTestId('filter-size-S'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
-
     expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
     expect(screen.queryByText('Fabrique Gold Gown')).not.toBeInTheDocument();
 
-    // Verify static size dropdown now reflects size S
-    expect(screen.getByTestId('filter-select-size')).toHaveValue('S');
+    // Filter button shows the number of active filters
+    expect(screen.getByTestId('filter-active-count')).toHaveTextContent('2');
 
     // Dismiss the tag filter chip from the active bar
     fireEvent.click(screen.getByRole('button', { name: 'ลบตัวกรองแท็ก เดรส' }));
-    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
+    expect(screen.getByTestId('filter-active-count')).toHaveTextContent('1');
 
-    // Reset size dropdown to all
-    fireEvent.change(screen.getByTestId('filter-select-size'), {
-      target: { value: '' },
-    });
+    // Toggle size off again
+    fireEvent.click(screen.getByTestId('filter-size-S'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
     expect(screen.getByText('Fabrique Gold Gown')).toBeInTheDocument();
   });
@@ -219,42 +214,6 @@ describe('InventoryPage Search, Filter & Sort', () => {
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
 
-  it('supports quick-add filter (+ ฟิลเตอร์): auto-submits on single selection and excludes already-applied facets', () => {
-    render(<InventoryPage />);
-
-    // Open filter sheet via "+ ฟิลเตอร์" button
-    const quickAddBtn = screen.getByTestId('btn-add-filter');
-    fireEvent.click(quickAddBtn);
-
-    // Quick-add title is displayed
-    expect(
-      screen.getByRole('dialog', { name: 'เลือกตัวกรองเพิ่ม' })
-    ).toBeInTheDocument();
-
-    // Clicking a single facet (e.g., size 'S') automatically applies and closes the sheet
-    fireEvent.click(screen.getByTestId('filter-size-S'));
-
-    // Dialog should now be closed
-    expect(
-      screen.queryByRole('dialog', { name: 'เลือกตัวกรองเพิ่ม' })
-    ).not.toBeInTheDocument();
-
-    // Size S static dropdown should reflect 'S' and count updated
-    expect(screen.getByTestId('filter-select-size')).toHaveValue('S');
-    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
-
-    // Click "+ ฟิลเตอร์" again
-    const addAnotherFilterBtn = screen.getByTestId('btn-add-filter');
-    fireEvent.click(addAnotherFilterBtn);
-
-    // Size S should be excluded because it is already applied
-    expect(screen.queryByTestId('filter-size-S')).not.toBeInTheDocument();
-    expect(screen.getByTestId('filter-size-M')).toBeInTheDocument();
-
-    // But tags section is still available for multi-selection
-    expect(screen.getByText(/แท็ก \/ หมวดหมู่ \(Tags\)/)).toBeInTheDocument();
-  });
-
   it('shows clear button only when 1 or more filter is applied and resets on click', () => {
     render(<InventoryPage />);
 
@@ -279,27 +238,23 @@ describe('InventoryPage Search, Filter & Sort', () => {
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
 
-  it('filters by static dropdowns (size, brand, color) in the filter bar', () => {
+  it('filters by brand and color from the filter sheet', () => {
     render(<InventoryPage />);
 
-    // Filter by Brand: Avaalene
-    const brandSelect = screen.getByTestId('filter-select-brand');
-    fireEvent.change(brandSelect, { target: { value: 'Avaalene' } });
+    fireEvent.click(screen.getByTestId('btn-filters'));
+
+    fireEvent.click(screen.getByTestId('filter-brand-Avaalene'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
     expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
 
-    // Reset brand back to all
-    fireEvent.change(brandSelect, { target: { value: '' } });
+    fireEvent.click(screen.getByTestId('filter-brand-Avaalene'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
 
-    // Filter by Color: Blue
-    const colorSelect = screen.getByTestId('filter-select-color');
-    fireEvent.change(colorSelect, { target: { value: 'Blue' } });
+    fireEvent.click(screen.getByTestId('filter-color-Blue'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
     expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
 
-    // Reset color back to all
-    fireEvent.change(colorSelect, { target: { value: '' } });
+    fireEvent.click(screen.getByTestId('filter-color-Blue'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
 
