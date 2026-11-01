@@ -1,7 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MockBookingRepository } from '../mockBookingRepository';
 import {
+  getBookingStatusOnDate,
   getConflictingBookingsForItem,
+  getSubsequentStatusBlock,
   isBookingFullyReturned,
   type Booking,
 } from '../../../types/booking';
@@ -19,7 +21,6 @@ const sampleBookings: Booking[] = [
         itemCode: 'DIA01',
         itemName: 'Dieu Ann Dress',
         itemImageUrl: '/dia01.png',
-        status: 'reserved',
         conditionNote: null,
       },
       {
@@ -27,10 +28,13 @@ const sampleBookings: Booking[] = [
         itemCode: 'SH01',
         itemName: 'Boots',
         itemImageUrl: '/sh01.jpg',
-        status: 'delivered',
         conditionNote: null,
       },
     ],
+    transactionDates: {
+      reserved: '2026-03-01',
+      pending_delivery: '2026-03-10',
+    },
     startDate: '2026-03-10',
     endDate: '2026-03-12',
     cleaningEndDate: '2026-03-14',
@@ -55,24 +59,42 @@ describe('MockBookingRepository & Availability Helpers', () => {
     const all = await repo.getAll();
     expect(all).toHaveLength(1);
     expect(all[0].items).toHaveLength(2);
+    expect(all[0].transactionDates).toEqual({
+      reserved: '2026-03-01',
+      pending_delivery: '2026-03-10',
+    });
   });
 
-  it('updateItemStatus updates a single line item status and notifies subscribers', async () => {
+  it('computes different booking statuses on different dates from transactionDates', async () => {
+    await repo.updateItemStatus('b1', 'item-1', 'delivered', 'ส่งแล้ว', '2026-03-11');
+    await repo.updateItemStatus('b1', 'item-1', 'in_laundry', undefined, '2026-03-13');
+
+    const [booking] = await repo.getAll();
+    expect(getBookingStatusOnDate(booking, '2026-03-09')).toBe('reserved');
+    expect(getBookingStatusOnDate(booking, '2026-03-10')).toBe('pending_delivery');
+    expect(getBookingStatusOnDate(booking, '2026-03-11')).toBe('delivered');
+    expect(getBookingStatusOnDate(booking, '2026-03-12')).toBe('delivered');
+    expect(getBookingStatusOnDate(booking, '2026-03-13')).toBe('in_laundry');
+  });
+
+  it('disallows changing status on an earlier date when a subsequent date has progressed further', async () => {
     const listener = vi.fn();
     repo.subscribe(listener);
 
-    await repo.updateItemStatus('b1', 'item-1', 'pending_delivery', 'พร้อมส่ง');
+    // Move booking to delivered on 2026-03-12
+    await repo.updateItemStatus('b1', 'item-1', 'delivered', 'พร้อมส่ง', '2026-03-12');
 
-    const all = await repo.getAll();
-    const item1 = all[0].items.find((i) => i.itemId === 'item-1');
-    const item2 = all[0].items.find((i) => i.itemId === 'item-2');
-    expect(item1?.status).toBe('pending_delivery');
-    expect(item1?.conditionNote).toBe('พร้อมส่ง');
-    expect(item2?.status).toBe('delivered');
-    expect(listener).toHaveBeenCalledTimes(2);
+    const [booking] = await repo.getAll();
+    // On 2026-03-10, status is pending_delivery, but 2026-03-12 already moved to delivered
+    const block = getSubsequentStatusBlock(booking, '2026-03-10', 'delivered');
+    expect(block).toEqual({ status: 'delivered', date: '2026-03-12' });
+
+    await expect(
+      repo.updateItemStatus('b1', 'item-1', 'delivered', undefined, '2026-03-10')
+    ).rejects.toThrow(/Cannot change status on 2026-03-10/);
   });
 
-  it('detects date-range conflicts including cleaning window and ignores returned items', async () => {
+  it('detects date-range conflicts including cleaning window and ignores returned bookings', async () => {
     const bookings = await repo.getAll();
 
     // Overlapping during cleaning window (2026-03-13 to 2026-03-14)
@@ -103,8 +125,8 @@ describe('MockBookingRepository & Availability Helpers', () => {
     );
     expect(excludedSelf).toHaveLength(0);
 
-    // Once item is returned, it no longer blocks availability
-    await repo.updateItemStatus('b1', 'item-1', 'returned');
+    // Once booking is returned, it no longer blocks availability
+    await repo.updateItemStatus('b1', 'item-1', 'returned', undefined, '2026-03-14');
     const updatedBookings = await repo.getAll();
     const afterReturn = getConflictingBookingsForItem(
       'item-1',
@@ -115,15 +137,11 @@ describe('MockBookingRepository & Availability Helpers', () => {
     expect(afterReturn).toHaveLength(0);
   });
 
-  it('isBookingFullyReturned returns true only when all line items are returned', async () => {
+  it('isBookingFullyReturned returns true when booking has returned in transactionDates', async () => {
     let bookings = await repo.getAll();
     expect(isBookingFullyReturned(bookings[0])).toBe(false);
 
-    await repo.updateItemStatus('b1', 'item-1', 'returned');
-    bookings = await repo.getAll();
-    expect(isBookingFullyReturned(bookings[0])).toBe(false);
-
-    await repo.updateItemStatus('b1', 'item-2', 'returned');
+    await repo.updateItemStatus('b1', 'item-1', 'returned', undefined, '2026-03-14');
     bookings = await repo.getAll();
     expect(isBookingFullyReturned(bookings[0])).toBe(true);
   });
@@ -139,7 +157,6 @@ describe('MockBookingRepository & Availability Helpers', () => {
           itemCode: 'BKN01',
           itemName: 'Bikini Set',
           itemImageUrl: '',
-          status: 'reserved',
         },
       ],
       startDate: '2026-03-20',

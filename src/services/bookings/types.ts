@@ -1,11 +1,16 @@
-import type { Booking, BookingItemStatus } from '../../types/booking';
+import type {
+  Booking,
+  BookingItemStatus,
+  BookingTransactionDates,
+} from '../../types/booking';
 
 export type BookingProviderType = 'mock' | 'firebase';
 
 export type NewBookingInput = Omit<
   Booking,
-  'id' | 'createdAt' | 'updatedAt'
+  'id' | 'createdAt' | 'updatedAt' | 'transactionDates'
 > & {
+  transactionDates?: BookingTransactionDates;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -23,7 +28,8 @@ export interface IBookingRepository {
     bookingId: string,
     itemId: string,
     status: BookingItemStatus,
-    conditionNote?: string | null
+    conditionNote?: string | null,
+    effectiveDate?: string
   ): Promise<void>;
   deleteBooking(id: string): Promise<void>;
 }

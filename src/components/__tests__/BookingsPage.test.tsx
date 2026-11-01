@@ -107,4 +107,48 @@ describe('BookingsPage Component', () => {
     fireEvent.click(toggleToItemsBtns[0]);
     expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
   });
+
+  it('computes different booking statuses across days and blocks status change when a subsequent date progressed further', () => {
+    render(<BookingsPage />);
+
+    // Today: DIA01 (book-1) has status 'delivered' (ส่งมอบแล้ว)
+    expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('ส่งมอบแล้ว');
+
+    // Navigate to yesterday (-1 day): DIA01 was 'pending_delivery' (รอส่งมอบ),
+    // and because today already moved it to 'delivered', advancing on yesterday is blocked!
+    fireEvent.click(screen.getByRole('button', { name: /วันก่อนหน้า/i }));
+    expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('รอส่งมอบ');
+    expect(screen.getByTestId('subsequent-block-msg-DIA01')).toBeInTheDocument();
+
+    const blockedBtn = screen.getByRole('button', {
+      name: /ปรับสถานะ DIA01 เป็น ส่งมอบแล้ว/i,
+    });
+    expect(blockedBtn).toBeDisabled();
+  });
+
+  it('shows confirmation dialog when changing booking status on a future/past date', async () => {
+    render(<BookingsPage />);
+
+    // Navigate to tomorrow (+1 day): DIA01 (book-1) is 'delivered' (ส่งมอบแล้ว) and has no subsequent status
+    fireEvent.click(screen.getByRole('button', { name: /วันถัดไป/i }));
+    expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('ส่งมอบแล้ว');
+
+    const advanceBtn = screen.getByRole('button', {
+      name: /ปรับสถานะ DIA01 เป็น รอรับคืน/i,
+    });
+    expect(advanceBtn).not.toBeDisabled();
+    fireEvent.click(advanceBtn);
+
+    // Confirmation dialog appears because selectedDate !== today
+    const dialog = screen.getByTestId('confirm-status-date-dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveTextContent(/ยืนยันการเปลี่ยนสถานะล่วงหน้า/i);
+
+    // Confirm the status change
+    fireEvent.click(screen.getByTestId('confirm-status-date-submit'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('รอรับคืน');
+    });
+  });
 });

@@ -3,6 +3,9 @@ import type { InventoryItem } from '../types/inventory';
 import {
   BOOKING_STATUS_META,
   formatDateThaiShort,
+  getEffectiveBookingStatus,
+  getSubsequentStatusBlock,
+  getTodayISO,
   type Booking,
   type BookingLineItem,
   type BookingItemStatus,
@@ -20,7 +23,8 @@ export interface BookingInventoryCardProps {
   onAdvanceItemStatus: (
     bookingId: string,
     itemId: string,
-    nextStatus: BookingItemStatus
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
   ) => Promise<void> | void;
 }
 
@@ -28,11 +32,15 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   item,
   booking,
   lineItem,
+  selectedDate,
+  isAllDates,
   onReserve,
   onEditBooking,
   onAdvanceItemStatus,
 }) => {
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const effectiveActionDate = isAllDates ? getTodayISO() : selectedDate;
 
   const handleAdvanceStatus = async (
     bookingId: string,
@@ -41,14 +49,26 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   ) => {
     try {
       setIsUpdating(true);
-      await onAdvanceItemStatus(bookingId, itemId, nextStatus);
+      await onAdvanceItemStatus(
+        bookingId,
+        itemId,
+        nextStatus,
+        effectiveActionDate
+      );
     } finally {
       setIsUpdating(false);
     }
   };
 
   const isBooked = Boolean(booking && lineItem);
-  const meta = lineItem ? BOOKING_STATUS_META[lineItem.status] : null;
+  const computedStatus = booking
+    ? getEffectiveBookingStatus(booking, selectedDate, isAllDates)
+    : null;
+  const meta = computedStatus ? BOOKING_STATUS_META[computedStatus] : null;
+  const subsequentBlock =
+    booking && meta?.nextStatus
+      ? getSubsequentStatusBlock(booking, effectiveActionDate, meta.nextStatus)
+      : null;
 
   return (
     <article
@@ -217,40 +237,56 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
         {/* Action Area at bottom */}
         <div className="vertical" style={{ marginTop: 'auto', paddingTop: '8px' }}>
           {isBooked && booking && lineItem && meta ? (
-            <div className="row no-margin align-center" style={{ gap: '6px' }}>
-              {meta.nextStatus && meta.nextActionLabel && (
+            <div className="vertical" style={{ gap: '4px' }}>
+              <div className="row no-margin align-center" style={{ gap: '6px' }}>
+                {meta.nextStatus && meta.nextActionLabel && (
+                  <button
+                    type="button"
+                    className="small round border primary bold no-margin max"
+                    disabled={isUpdating || Boolean(subsequentBlock)}
+                    onClick={() =>
+                      handleAdvanceStatus(
+                        booking.id,
+                        lineItem.itemId,
+                        meta.nextStatus!
+                      )
+                    }
+                    aria-label={`ปรับสถานะ ${item.code} เป็น ${meta.nextActionLabel}`}
+                    title={
+                      subsequentBlock
+                        ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
+                        : undefined
+                    }
+                  >
+                    {isUpdating ? (
+                      <div className="shape loading-indicator tiny" role="status" />
+                    ) : (
+                      <>
+                        <i>{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
+                        <span>{meta.nextActionLabel}</span>
+                      </>
+                    )}
+                  </button>
+                )}
                 <button
                   type="button"
-                  className="small round border primary bold no-margin max"
-                  disabled={isUpdating}
-                  onClick={() =>
-                    handleAdvanceStatus(
-                      booking.id,
-                      lineItem.itemId,
-                      meta.nextStatus!
-                    )
-                  }
-                  aria-label={`ปรับสถานะ ${item.code} เป็น ${meta.nextActionLabel}`}
+                  className="small round transparent border no-margin"
+                  onClick={() => onEditBooking(booking)}
+                  title="แก้ไขการจอง"
                 >
-                  {isUpdating ? (
-                    <div className="shape loading-indicator tiny" role="status" />
-                  ) : (
-                    <>
-                      <i>arrow_forward</i>
-                      <span>{meta.nextActionLabel}</span>
-                    </>
-                  )}
+                  <i>edit</i>
+                  <span>แก้ไข</span>
                 </button>
+              </div>
+              {subsequentBlock && (
+                <span
+                  className="micro-text error-text"
+                  data-testid={`subsequent-block-msg-${item.code}`}
+                >
+                  อัปเดตเป็น "{BOOKING_STATUS_META[subsequentBlock.status].label}" เมื่อ{' '}
+                  {formatDateThaiShort(subsequentBlock.date)} แล้ว
+                </span>
               )}
-              <button
-                type="button"
-                className="small round transparent border no-margin"
-                onClick={() => onEditBooking(booking)}
-                title="แก้ไขการจอง"
-              >
-                <i>edit</i>
-                <span>แก้ไข</span>
-              </button>
             </div>
           ) : (
             <button

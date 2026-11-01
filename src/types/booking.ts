@@ -6,12 +6,13 @@ export type BookingItemStatus =
   | 'in_laundry'        // ส่งซัก
   | 'returned';         // รับคืนเสร็จสิ้น (พร้อมเช่าต่อ / ยกเลิก)
 
+export type BookingTransactionDates = Partial<Record<BookingItemStatus, string>>;
+
 export interface BookingLineItem {
   itemId: string;
   itemCode: string;
   itemName: string;
   itemImageUrl: string;
-  status: BookingItemStatus;
   conditionNote?: string | null;
 }
 
@@ -22,6 +23,7 @@ export interface Booking {
   customerPhone: string;
   customerLineId?: string | null;
   items: BookingLineItem[];
+  transactionDates: BookingTransactionDates;
   startDate: string;        // ISO "YYYY-MM-DD"
   endDate: string;          // ISO "YYYY-MM-DD"
   cleaningEndDate: string;  // ISO "YYYY-MM-DD"
@@ -37,11 +39,18 @@ export interface Booking {
 export {
   BOOKING_STATUS_ORDER,
   BOOKING_STATUS_META,
+  getBookingStatusOnDate,
+  getLatestBookingStatus,
+  getEffectiveBookingStatus,
+  getSubsequentStatusBlock,
+  normalizeTransactionDates,
   isBookingFullyReturned,
   getConflictingBookingsForItem,
   getTodayISO,
   addDaysISO,
   diffDaysInclusiveISO,
   formatDateThaiShort,
+  formatDateThaiShortWithYear,
   formatDateThaiFull,
 } from '../lib/bookingAvailability';
+

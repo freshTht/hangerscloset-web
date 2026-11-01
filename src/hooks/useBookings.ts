@@ -21,7 +21,8 @@ interface UseBookingsResult {
     bookingId: string,
     itemId: string,
     status: BookingItemStatus,
-    conditionNote?: string | null
+    conditionNote?: string | null,
+    effectiveDate?: string
   ) => Promise<void>;
   deleteBooking: (id: string) => Promise<void>;
 }
@@ -77,14 +78,16 @@ export function useBookings(
       bookingId: string,
       itemId: string,
       status: BookingItemStatus,
-      conditionNote?: string | null
+      conditionNote?: string | null,
+      effectiveDate?: string
     ) => {
       try {
         await repository.updateItemStatus(
           bookingId,
           itemId,
           status,
-          conditionNote
+          conditionNote,
+          effectiveDate
         );
       } catch (err: unknown) {
         throw toError(err, 'Failed to update item status');

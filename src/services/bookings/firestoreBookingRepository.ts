@@ -13,10 +13,13 @@ import {
   type QuerySnapshot,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../../lib/firebase';
-import type {
-  Booking,
-  BookingItemStatus,
-  BookingLineItem,
+import {
+  getSubsequentStatusBlock,
+  getTodayISO,
+  normalizeTransactionDates,
+  type Booking,
+  type BookingItemStatus,
+  type BookingLineItem,
 } from '../../types/booking';
 import type { IBookingRepository, NewBookingInput } from './types';
 
@@ -36,12 +39,18 @@ function docToBooking(id: string, data: DocumentData): Booking {
       itemCode: String(raw?.itemCode ?? ''),
       itemName: String(raw?.itemName ?? ''),
       itemImageUrl: String(raw?.itemImageUrl ?? ''),
-      status: (raw?.status as BookingItemStatus) ?? 'reserved',
       conditionNote:
         raw?.conditionNote !== undefined && raw?.conditionNote !== null
           ? String(raw.conditionNote)
           : null,
     })
+  );
+
+  const startDate = String(data.startDate ?? '');
+  const transactionDates = normalizeTransactionDates(
+    data.transactionDates,
+    startDate,
+    rawItems as Array<{ status?: BookingItemStatus }>
   );
 
   const nowIso = new Date().toISOString();
@@ -53,7 +62,8 @@ function docToBooking(id: string, data: DocumentData): Booking {
     customerPhone: String(data.customerPhone ?? ''),
     customerLineId: data.customerLineId ?? null,
     items,
-    startDate: String(data.startDate ?? ''),
+    transactionDates,
+    startDate,
     endDate: String(data.endDate ?? ''),
     cleaningEndDate: String(data.cleaningEndDate ?? ''),
     durationDays: Number(data.durationDays ?? 1),
@@ -113,16 +123,25 @@ export class FirestoreBookingRepository implements IBookingRepository {
     }
 
     const nowIso = new Date().toISOString();
+    const today = getTodayISO();
+    const defaultReservedDate =
+      bookingData.startDate && bookingData.startDate < today
+        ? bookingData.startDate
+        : today;
+
     const payload = stripUndefined({
       ...bookingData,
       customerLineId: bookingData.customerLineId ?? null,
       note: bookingData.note ?? null,
+      transactionDates: normalizeTransactionDates(
+        bookingData.transactionDates ?? { reserved: defaultReservedDate },
+        defaultReservedDate
+      ),
       items: bookingData.items.map((item) => ({
         itemId: item.itemId,
         itemCode: item.itemCode,
         itemName: item.itemName,
         itemImageUrl: item.itemImageUrl,
-        status: item.status,
         conditionNote: item.conditionNote ?? null,
       })),
       createdAt: bookingData.createdAt ?? nowIso,
@@ -154,7 +173,8 @@ export class FirestoreBookingRepository implements IBookingRepository {
     bookingId: string,
     itemId: string,
     status: BookingItemStatus,
-    conditionNote?: string | null
+    conditionNote?: string | null,
+    effectiveDate?: string
   ): Promise<void> {
     if (!isFirebaseConfigured || !db) {
       throw new Error('Firestore is not configured.');
@@ -167,17 +187,30 @@ export class FirestoreBookingRepository implements IBookingRepository {
     }
 
     const current = docToBooking(snap.id, snap.data());
+    const targetDate = effectiveDate ?? getTodayISO();
+    const block = getSubsequentStatusBlock(current, targetDate, status);
+    if (block) {
+      throw new Error(
+        `Cannot change status on ${targetDate} because a subsequent date (${block.date}) already moved the booking to "${block.status}".`
+      );
+    }
+
     const updatedItems = current.items.map((li) => {
       if (li.itemId !== itemId) return li;
       return {
         ...li,
-        status,
         conditionNote:
           conditionNote !== undefined ? conditionNote : li.conditionNote ?? null,
       };
     });
 
+    const updatedTransactionDates = {
+      ...current.transactionDates,
+      [status]: targetDate,
+    };
+
     await updateDoc(docRef, {
+      transactionDates: updatedTransactionDates,
       items: updatedItems,
       updatedAt: new Date().toISOString(),
     });

@@ -27,12 +27,13 @@ header.fixed {
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--surface-variant);
   background-color: var(--surface);
   padding: 0;
   padding-top: env(safe-area-inset-top, 0);
+  min-width: 0;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 header.fixed nav.top-app-bar {
@@ -44,14 +45,16 @@ header.fixed nav.top-app-bar {
 }
 
 /* Default Tabs on Mobile */
-header.fixed nav.tabs {
+header.fixed nav.tabs,
+header.fixed .tabs {
   margin: 0;
   width: 100%;
   border-top: 1px solid var(--surface-variant);
   border-bottom: none;
 }
 
-header.fixed nav.tabs > a {
+header.fixed nav.tabs > a,
+header.fixed .tabs > a {
   justify-content: center;
   align-items: center;
   text-decoration: none;
@@ -62,6 +65,44 @@ header.fixed nav.tabs > a {
   font-weight: 500;
   gap: 0.35rem;
   transition: color 0.15s ease;
+}
+
+/* Page Header Slot for page-specific headers / filter bars */
+.page-header-slot {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .page-header-slot:not(:empty) {
+    border-top: 1px solid var(--surface-variant);
+    padding: 0.4rem 0.75rem;
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 601px) {
+  /* On desktop: show header.app-header only when it has page-header content */
+  header.app-header {
+    display: none !important;
+  }
+
+  header.app-header:has(.page-header-slot:not(:empty)) {
+    display: block !important;
+    padding: 0.5rem 1.5rem !important;
+    border-bottom: 1px solid var(--surface-variant);
+    background-color: var(--surface);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    z-index: 20;
+  }
+
+  .page-header-slot {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
 }
 
 /* Left Navigation Rail (Medium and Large screens) */
@@ -130,22 +171,36 @@ nav.left.max > .rail-nav-group > a {
 }
 
 @media (min-width: 601px) {
-  /* Hide mobile header app bar when nav rail is active */
-  header.fixed {
-    display: none !important;
-  }
-
   main.responsive {
-    padding: 2rem 1.5rem !important;
+    padding: 1.5rem 1.5rem !important;
   }
 }
 
+main,
 main.responsive {
   width: 100%;
-  max-width: 1200px;
+  min-width: 0;
+  max-width: min(100vw, 1200px);
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow: visible !important;
+}
+
+/* Inventory filter bar container */
+.active-filters-sticky-wrapper {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Fallback for when rendered outside page-header-slot (e.g. standalone test) */
+main .active-filters-sticky-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background-color: var(--surface);
+  padding: 0.5rem 0;
+  margin-bottom: 0.75rem;
 }
 
 .page-content {
@@ -342,6 +397,27 @@ body.dark .material-shapes-bg-hanger {
   --_padding: 20px !important;
 }
 
+/* Flex and margin helper utilities missing in Beer CSS */
+.justify-between {
+  justify-content: space-between !important;
+}
 
+.items-center {
+  align-items: center !important;
+}
 
+.top-margin-tiny {
+  margin-top: 4px !important;
+}
 
+.bottom-margin-tiny {
+  margin-bottom: 4px !important;
+}
+
+.top-margin-small {
+  margin-top: 8px !important;
+}
+
+.bottom-margin-small {
+  margin-bottom: 8px !important;
+}

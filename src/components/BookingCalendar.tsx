@@ -15,7 +15,8 @@ export interface BookingCalendarProps {
   onAdvanceItemStatus: (
     bookingId: string,
     itemId: string,
-    nextStatus: BookingItemStatus
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
   ) => Promise<void> | void;
   onToggleDepositRefunded?: (booking: Booking) => Promise<void> | void;
 }
@@ -369,6 +370,8 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               <div key={booking.id} className="s12 m6">
                 <BookingCard
                   booking={booking}
+                  selectedDate={selectedDate}
+                  isAllDates={false}
                   onEdit={onEditBooking}
                   onAdvanceItemStatus={onAdvanceItemStatus}
                   onToggleDepositRefunded={onToggleDepositRefunded}

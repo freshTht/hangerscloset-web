@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { InventoryCard } from '../components/InventoryCard';
 import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
 import { InventorySheet } from '../components/InventorySheet';
@@ -7,10 +8,13 @@ import { InventorySortDialog } from '../components/InventorySortDialog';
 import { EmptyState } from '../components/EmptyState';
 import { useInventory } from '../hooks/useInventory';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import {
   useFilteredInventory,
   INITIAL_INVENTORY_FILTER,
   countActiveFilters,
+  mergeUniqueStrings,
+  getItemTags,
 } from '../hooks/useFilteredInventory';
 import {
   INVENTORY_SORT_OPTIONS,
@@ -29,6 +33,12 @@ export const InventoryPage: React.FC = () => {
   const { items, loading, error, provider, addItem, updateItem, deleteItem } =
     useInventory();
   const isMobile = useIsMobile();
+  const {
+    sizes: metaSizes,
+    brands: metaBrands,
+    colors: metaColors,
+    tags: metaTags,
+  } = useMetadataOptions();
 
   const [filter, setFilter] = useState<InventoryFilterState>(
     INITIAL_INVENTORY_FILTER
@@ -39,6 +49,50 @@ export const InventoryPage: React.FC = () => {
   const [quickAddMode, setQuickAddMode] = useState(false);
   const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const [headerSlot, setHeaderSlot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const slot = document.getElementById('page-header-slot');
+    if (slot) {
+      setHeaderSlot(slot);
+    }
+  }, []);
+
+  const availableSizes = useMemo(
+    () =>
+      mergeUniqueStrings(
+        metaSizes,
+        items.map((item) => item.size)
+      ),
+    [metaSizes, items]
+  );
+
+  const availableBrands = useMemo(
+    () =>
+      mergeUniqueStrings(
+        metaBrands,
+        items.map((item) => item.brand)
+      ),
+    [metaBrands, items]
+  );
+
+  const availableColors = useMemo(
+    () =>
+      mergeUniqueStrings(
+        metaColors,
+        items.map((item) => item.color)
+      ),
+    [metaColors, items]
+  );
+
+  const availableTags = useMemo(
+    () =>
+      mergeUniqueStrings(
+        metaTags,
+        items.flatMap((item) => getItemTags(item))
+      ),
+    [metaTags, items]
+  );
 
   const [sheetState, setSheetState] = useState<SheetState>({
     isOpen: false,
@@ -50,6 +104,7 @@ export const InventoryPage: React.FC = () => {
   const activeFilterCount = countActiveFilters(filter);
   const hasSearchQuery = filter.searchQuery.trim().length > 0;
   const hasNonDefaultSort = sort !== 'code_asc';
+  const hasAppliedFilters = activeFilterCount > 0 || hasSearchQuery || hasNonDefaultSort;
 
   useEffect(() => {
     if (searchExpanded && searchInputRef.current) {
@@ -98,14 +153,50 @@ export const InventoryPage: React.FC = () => {
     setSearchExpanded((prev) => !prev);
   };
 
-  const handleOpenFilter = () => {
-    setQuickAddMode(false);
-    setFilterSheetOpen(true);
-  };
-
   const handleOpenQuickFilter = () => {
     setQuickAddMode(true);
     setFilterSheetOpen(true);
+  };
+
+  const selectedSize = filter.selectedSizes[0] ?? '';
+  const selectedBrand = filter.selectedBrands[0] ?? '';
+  const selectedColor = filter.selectedColors[0] ?? '';
+
+  const handleSelectSize = (size: string) => {
+    setFilter((prev) => ({
+      ...prev,
+      selectedSizes: size ? [size] : [],
+    }));
+  };
+
+  const handleSelectBrand = (brand: string) => {
+    setFilter((prev) => ({
+      ...prev,
+      selectedBrands: brand ? [brand] : [],
+    }));
+  };
+
+  const handleSelectColor = (color: string) => {
+    setFilter((prev) => ({
+      ...prev,
+      selectedColors: color ? [color] : [],
+    }));
+  };
+
+  const handleAddSearchTag = (tag: string) => {
+    if (!filter.selectedTags.includes(tag)) {
+      setFilter((prev) => ({
+        ...prev,
+        selectedTags: [...prev.selectedTags, tag],
+      }));
+    }
+  };
+
+  const handleRemoveSearchTag = (tag: string) => {
+    setFilter((prev) => ({
+      ...prev,
+      selectedTags: prev.selectedTags.filter((t) => t !== tag),
+    }));
   };
 
   const currentSortLabel =
@@ -113,186 +204,357 @@ export const InventoryPage: React.FC = () => {
 
   const renderActiveFilterBar = () => {
     return (
-      <div
-        className="row wrap items-center bottom-margin"
-        data-testid="active-filters-bar"
-        style={{ gap: '8px' }}
-      >
-        <button
-          type="button"
-          data-testid="btn-add-filter"
-          className="chip small fill primary-container bold no-margin"
-          onClick={handleOpenQuickFilter}
-          aria-label="เพิ่มฟิลเตอร์"
-          title="เพิ่ม 1 ฟิลเตอร์ด่วน"
+      <div className="active-filters-sticky-wrapper">
+        <div
+          className="row no-wrap items-center no-margin"
+          data-testid="active-filters-bar"
+          style={{
+            gap: '8px',
+            paddingBottom: '2px',
+          }}
         >
-          <i>add</i>
-          <span>ฟิลเตอร์</span>
-        </button>
-
-        {hasSearchQuery && (
-          <button
-            type="button"
-            className="chip small fill primary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, searchQuery: '' }))}
-            aria-label={`ลบคำค้นหา ${filter.searchQuery.trim()}`}
+          <div
+            className="row no-wrap items-center scroll no-margin"
+            style={{
+              gap: '8px',
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              flex: 1,
+              minWidth: 0,
+            }}
           >
-            <i>search</i>
-            <span>ค้นหา: "{filter.searchQuery.trim()}"</span>
-            <i>close</i>
-          </button>
-        )}
+            {/* 1. Static Dropdown: Size */}
+            <select
+              aria-label="ตัวกรองไซส์"
+              data-testid="filter-select-size"
+              value={selectedSize}
+              onChange={(e) => handleSelectSize(e.target.value)}
+              className={`chip small no-margin ${selectedSize ? 'fill primary' : 'border'}`}
+              style={{
+                height: '32px',
+                padding: '0 10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '12px',
+                backgroundColor: selectedSize ? 'var(--primary)' : 'transparent',
+                color: selectedSize ? 'var(--on-primary)' : 'var(--on-surface)',
+              }}
+            >
+              <option value="">ไซส์: ทั้งหมด</option>
+              {availableSizes.map((s) => (
+                <option key={s} value={s}>
+                  ไซส์: {s}
+                </option>
+              ))}
+            </select>
 
-        {filter.durationDaysFilter !== null &&
-          filter.durationDaysFilter !== undefined && (
+            {/* 2. Static Dropdown: Brand */}
+            <select
+              aria-label="ตัวกรองแบรนด์"
+              data-testid="filter-select-brand"
+              value={selectedBrand}
+              onChange={(e) => handleSelectBrand(e.target.value)}
+              className={`chip small no-margin ${selectedBrand ? 'fill primary' : 'border'}`}
+              style={{
+                height: '32px',
+                padding: '0 10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '12px',
+                backgroundColor: selectedBrand ? 'var(--primary)' : 'transparent',
+                color: selectedBrand ? 'var(--on-primary)' : 'var(--on-surface)',
+              }}
+            >
+              <option value="">แบรนด์: ทั้งหมด</option>
+              {availableBrands.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
+
+            {/* 3. Static Dropdown: Color */}
+            <select
+              aria-label="ตัวกรองสี"
+              data-testid="filter-select-color"
+              value={selectedColor}
+              onChange={(e) => handleSelectColor(e.target.value)}
+              className={`chip small no-margin ${selectedColor ? 'fill primary' : 'border'}`}
+              style={{
+                height: '32px',
+                padding: '0 10px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontWeight: 600,
+                fontSize: '12px',
+                backgroundColor: selectedColor ? 'var(--primary)' : 'transparent',
+                color: selectedColor ? 'var(--on-primary)' : 'var(--on-surface)',
+              }}
+            >
+              <option value="">สี: ทั้งหมด</option>
+              {availableColors.map((c) => (
+                <option key={c} value={c}>
+                  สี: {c}
+                </option>
+              ))}
+            </select>
+
+            {/* Additional Facet Chips: Search query */}
+            {hasSearchQuery && (
+              <button
+                type="button"
+                className="chip small fill primary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, searchQuery: '' }))}
+                aria-label={`ลบคำค้นหา ${filter.searchQuery.trim()}`}
+              >
+                <i>search</i>
+                <span>ค้นหา: "{filter.searchQuery.trim()}"</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Selected Tags */}
+            {filter.selectedTags.map((tag) => (
+              <button
+                key={`tag-${tag}`}
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => handleRemoveSearchTag(tag)}
+                aria-label={`ลบตัวกรองแท็ก ${tag}`}
+              >
+                <span>#{tag}</span>
+                <i>close</i>
+              </button>
+            ))}
+
+            {/* Additional Facet Chips: Duration */}
+            {filter.durationDaysFilter !== null &&
+              filter.durationDaysFilter !== undefined && (
+                <button
+                  type="button"
+                  className="chip small fill secondary-container no-margin"
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, durationDaysFilter: null }))
+                  }
+                  aria-label={`ลบตัวกรองระยะเวลา ${filter.durationDaysFilter} วัน`}
+                >
+                  <span>เช่า {filter.durationDaysFilter} วัน</span>
+                  <i>close</i>
+                </button>
+              )}
+
+            {/* Additional Facet Chips: Min Price */}
+            {filter.minPrice !== null && filter.minPrice !== undefined && (
+              <button
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, minPrice: null }))}
+                aria-label={`ลบตัวกรองราคาต่ำสุด`}
+              >
+                <span>ราคา ≥ ฿{filter.minPrice.toLocaleString('en-US')}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Max Price */}
+            {filter.maxPrice !== null && filter.maxPrice !== undefined && (
+              <button
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, maxPrice: null }))}
+                aria-label={`ลบตัวกรองราคาสูงสุด`}
+              >
+                <span>ราคา ≤ ฿{filter.maxPrice.toLocaleString('en-US')}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Owner */}
+            {filter.selectedOwners.map((owner) => (
+              <button
+                key={`owner-${owner}`}
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    selectedOwners: prev.selectedOwners.filter((o) => o !== owner),
+                  }))
+                }
+                aria-label={`ลบตัวกรองเจ้าของ ${owner}`}
+              >
+                <span>เจ้าของ: {owner}</span>
+                <i>close</i>
+              </button>
+            ))}
+
+            {/* Additional Facet Chips: Sort */}
+            {hasNonDefaultSort && (
+              <button
+                type="button"
+                className="chip small fill tertiary-container no-margin"
+                onClick={() => setSort('code_asc')}
+                aria-label={`รีเซ็ตการจัดเรียง ${currentSortLabel}`}
+              >
+                <i>sort</i>
+                <span>เรียง: {currentSortLabel}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* "+ ฟิลเตอร์" Quick add drawer */}
             <button
               type="button"
-              className="chip small fill secondary-container no-margin"
-              onClick={() =>
-                setFilter((prev) => ({ ...prev, durationDaysFilter: null }))
-              }
-              aria-label={`ลบตัวกรองระยะเวลา ${filter.durationDaysFilter} วัน`}
+              data-testid="btn-add-filter"
+              className="chip small fill primary-container bold no-margin"
+              onClick={handleOpenQuickFilter}
+              aria-label="เพิ่มฟิลเตอร์"
+              title="เพิ่ม 1 ฟิลเตอร์ด่วน"
             >
-              <span>เช่า {filter.durationDaysFilter} วัน</span>
-              <i>close</i>
+              <i>add</i>
+              <span>ฟิลเตอร์</span>
             </button>
-          )}
 
-        {filter.minPrice !== null && filter.minPrice !== undefined && (
+            {/* Clear All button */}
+            {hasAppliedFilters && (
+              <button
+                type="button"
+                className="chip small border no-margin"
+                onClick={handleResetAllFilters}
+                aria-label="เคลียร์"
+                title="เคลียร์"
+              >
+                <i>clear_all</i>
+                <span>เคลียร์</span>
+              </button>
+            )}
+          </div>
+
+          {/* Search Toggle Icon Button on the right of filter bar */}
           <button
             type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, minPrice: null }))}
-            aria-label={`ลบตัวกรองราคาต่ำสุด`}
+            className={`circle small no-margin ${searchExpanded || hasSearchQuery || filter.selectedTags.length > 0 ? 'fill primary' : 'transparent border'}`}
+            onClick={handleToggleSearch}
+            aria-label="ค้นหา"
+            title="ค้นหาและแท็ก"
+            data-testid="filter-bar-search-toggle"
+            style={{
+              width: '32px',
+              height: '32px',
+              minWidth: '32px',
+              minHeight: '32px',
+              padding: 0,
+              flexShrink: 0,
+            }}
           >
-            <span>ราคา ≥ ฿{filter.minPrice.toLocaleString('en-US')}</span>
-            <i>close</i>
+            <i>{searchExpanded ? 'close' : 'search'}</i>
           </button>
+        </div>
+
+        {/* Expandable Search + Tag Filter Box */}
+        {searchExpanded && (
+          <div
+            className="round surface-container-low border small-padding margin-top"
+            data-testid="filter-search-box"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+            }}
+          >
+            <div
+              className="row items-center no-margin"
+              style={{
+                gap: '8px',
+                width: '100%',
+              }}
+            >
+              <i className="small secondary-text">search</i>
+              <input
+                ref={searchInputRef}
+                type="search"
+                aria-label="ค้นหาชุดในคลัง"
+                placeholder="ค้นหารหัส, ชื่อชุด, แบรนด์, สี, ไซส์..."
+                value={filter.searchQuery}
+                onChange={(e) =>
+                  setFilter((prev) => ({ ...prev, searchQuery: e.target.value }))
+                }
+                style={{
+                  flex: 1,
+                  border: 'none',
+                  outline: 'none',
+                  background: 'transparent',
+                  color: 'var(--on-surface)',
+                  height: '32px',
+                  minWidth: 0,
+                  fontSize: '13px',
+                }}
+              />
+              {filter.searchQuery && (
+                <button
+                  type="button"
+                  className="circle transparent small no-margin"
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, searchQuery: '' }))
+                  }
+                  aria-label="ล้างคำค้นหา"
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    minWidth: '24px',
+                    minHeight: '24px',
+                    padding: 0,
+                  }}
+                >
+                  <i className="tiny">close</i>
+                </button>
+              )}
+            </div>
+
+            {/* Quick Tag Selector Chips */}
+            {availableTags.length > 0 && (
+              <div
+                className="row no-wrap items-center scroll no-margin"
+                style={{
+                  gap: '6px',
+                  overflowX: 'auto',
+                  WebkitOverflowScrolling: 'touch',
+                  paddingTop: '2px',
+                  paddingBottom: '2px',
+                }}
+              >
+                <span className="micro-text secondary-text bold" style={{ whiteSpace: 'nowrap' }}>
+                  แท็ก:
+                </span>
+                {availableTags.map((t) => {
+                  const isSelected = filter.selectedTags.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      data-testid={`tag-chip-${t}`}
+                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'}`}
+                      style={{
+                        height: '24px',
+                        padding: '0 8px',
+                        fontSize: '11px',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                      }}
+                      onClick={() =>
+                        isSelected ? handleRemoveSearchTag(t) : handleAddSearchTag(t)
+                      }
+                    >
+                      <span>#{t}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         )}
-
-        {filter.maxPrice !== null && filter.maxPrice !== undefined && (
-          <button
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, maxPrice: null }))}
-            aria-label={`ลบตัวกรองราคาสูงสุด`}
-          >
-            <span>ราคา ≤ ฿{filter.maxPrice.toLocaleString('en-US')}</span>
-            <i>close</i>
-          </button>
-        )}
-
-        {filter.selectedSizes.map((size) => (
-          <button
-            key={`size-${size}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedSizes: prev.selectedSizes.filter((s) => s !== size),
-              }))
-            }
-            aria-label={`ลบตัวกรองไซส์ ${size}`}
-          >
-            <span>ไซส์: {size}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedBrands.map((brand) => (
-          <button
-            key={`brand-${brand}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedBrands: prev.selectedBrands.filter((b) => b !== brand),
-              }))
-            }
-            aria-label={`ลบตัวกรองแบรนด์ ${brand}`}
-          >
-            <span>แบรนด์: {brand}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedColors.map((color) => (
-          <button
-            key={`color-${color}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedColors: prev.selectedColors.filter((c) => c !== color),
-              }))
-            }
-            aria-label={`ลบตัวกรองสี ${color}`}
-          >
-            <span>สี: {color}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedTags.map((tag) => (
-          <button
-            key={`tag-${tag}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedTags: prev.selectedTags.filter((t) => t !== tag),
-              }))
-            }
-            aria-label={`ลบตัวกรองแท็ก ${tag}`}
-          >
-            <span>แท็ก: {tag}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedOwners.map((owner) => (
-          <button
-            key={`owner-${owner}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedOwners: prev.selectedOwners.filter((o) => o !== owner),
-              }))
-            }
-            aria-label={`ลบตัวกรองเจ้าของ ${owner}`}
-          >
-            <span>เจ้าของ: {owner}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {hasNonDefaultSort && (
-          <button
-            type="button"
-            className="chip small fill tertiary-container no-margin"
-            onClick={() => setSort('code_asc')}
-            aria-label={`รีเซ็ตการจัดเรียง ${currentSortLabel}`}
-          >
-            <i>sort</i>
-            <span>เรียง: {currentSortLabel}</span>
-            <i>close</i>
-          </button>
-        )}
-
-        <button
-          type="button"
-          className="chip small border no-margin"
-          onClick={handleResetAllFilters}
-        >
-          <i>restart_alt</i>
-          <span>ล้างตัวกรองทั้งหมด</span>
-        </button>
       </div>
     );
   };
@@ -343,7 +605,9 @@ export const InventoryPage: React.FC = () => {
         />
       ) : (
         <>
-          {renderActiveFilterBar()}
+          {headerSlot
+            ? createPortal(renderActiveFilterBar(), headerSlot)
+            : renderActiveFilterBar()}
 
           {filteredItems.length === 0 ? (
             <EmptyState
@@ -382,122 +646,11 @@ export const InventoryPage: React.FC = () => {
           maxWidth: 'calc(100vw - 24px)',
         }}
       >
-        {searchExpanded && (
-          <div
-            className="surface-container-highest round medium-elevate row items-center no-margin"
-            data-testid="floating-search-bar"
-            style={{
-              padding: '4px 12px',
-              width: isMobile ? 'min(360px, calc(100vw - 24px))' : '340px',
-              boxSizing: 'border-box',
-              gap: '6px',
-            }}
-          >
-            <i className="small secondary-text">search</i>
-            <input
-              ref={searchInputRef}
-              type="search"
-              aria-label="ค้นหาชุดในคลัง"
-              placeholder="ค้นหารหัส, ชื่อชุด, แบรนด์, สี, ไซส์..."
-              value={filter.searchQuery}
-              onChange={(e) =>
-                setFilter((prev) => ({ ...prev, searchQuery: e.target.value }))
-              }
-              style={{
-                flex: 1,
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                color: 'var(--on-surface)',
-                height: '38px',
-                minWidth: 0,
-              }}
-            />
-            {filter.searchQuery && (
-              <button
-                type="button"
-                className="circle transparent small no-margin"
-                onClick={() =>
-                  setFilter((prev) => ({ ...prev, searchQuery: '' }))
-                }
-                aria-label="ล้างคำค้นหา"
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  minWidth: '28px',
-                  minHeight: '28px',
-                  padding: 0,
-                }}
-              >
-                <i className="small">close</i>
-              </button>
-            )}
-            <button
-              type="button"
-              className="circle transparent small no-margin"
-              onClick={() => setSearchExpanded(false)}
-              aria-label="ซ่อนช่องค้นหา"
-              style={{
-                width: '28px',
-                height: '28px',
-                minWidth: '28px',
-                minHeight: '28px',
-                padding: 0,
-              }}
-            >
-              <i className="small">keyboard_arrow_down</i>
-            </button>
-          </div>
-        )}
-
         <nav className="center-align tiny-space no-margin">
           <nav className="toolbar secondary-container medium-elevate">
             <span className="bold" data-testid="inventory-count-badge">
               {countText}
             </span>
-            <button
-              className={`circle no-margin ${
-                searchExpanded || hasSearchQuery ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={handleToggleSearch}
-              aria-label="ค้นหา"
-              title="ค้นหา"
-            >
-              <i>search</i>
-            </button>
-            <button
-              className="chip transparent small no-margin"
-              type="button"
-              onClick={handleOpenQuickFilter}
-              aria-label="เพิ่มฟิลเตอร์"
-              title="เพิ่ม 1 ฟิลเตอร์ด่วน"
-              data-testid="btn-toolbar-add-filter"
-            >
-              <i>add</i>
-              <span>ฟิลเตอร์</span>
-            </button>
-            <button
-              className={`circle no-margin ${
-                activeFilterCount > 0 ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={handleOpenFilter}
-              aria-label="ตัวกรอง"
-              title="ตัวกรอง"
-              style={{ position: 'relative' }}
-              data-testid="filter-button"
-            >
-              <i>tune</i>
-              {activeFilterCount > 0 && (
-                <span
-                  className="badge circle small primary"
-                  data-testid="active-filter-badge"
-                >
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
             <button
               className={`circle no-margin ${
                 hasNonDefaultSort ? 'fill primary' : 'transparent'

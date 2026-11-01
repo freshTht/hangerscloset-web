@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
 import type { InventoryItem } from '../types/inventory';
 import type { InventoryFilterState } from '../types/catalogFilter';
-import { getItemTags, countActiveFilters } from '../hooks/useFilteredInventory';
+import {
+  getItemTags,
+  countActiveFilters,
+  mergeUniqueStrings,
+} from '../hooks/useFilteredInventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { Stack } from './Stack';
@@ -15,21 +19,6 @@ export interface InventoryFilterSheetProps {
   onChangeFilter: (nextFilter: InventoryFilterState) => void;
   onResetFilter: () => void;
   onClose: () => void;
-}
-
-function mergeUniqueStrings(primary: string[], secondary: string[]): string[] {
-  const seen = new Set<string>();
-  const result: string[] = [];
-  for (const raw of [...primary, ...secondary]) {
-    const trimmed = (raw ?? '').trim();
-    if (!trimmed) continue;
-    const key = trimmed.toLowerCase();
-    if (!seen.has(key)) {
-      seen.add(key);
-      result.push(trimmed);
-    }
-  }
-  return result;
 }
 
 function toggleArrayItem(list: string[], value: string): string[] {

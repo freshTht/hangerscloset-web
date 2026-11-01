@@ -3,6 +3,10 @@ import {
   BOOKING_STATUS_META,
   BOOKING_STATUS_ORDER,
   isBookingFullyReturned,
+  getBookingStatusOnDate,
+  getLatestBookingStatus,
+  getEffectiveBookingStatus,
+  getSubsequentStatusBlock,
   getTodayISO,
   addDaysISO,
   formatDateThaiShort,
@@ -37,6 +41,14 @@ interface SheetState {
   isOpen: boolean;
   mode: 'add' | 'edit';
   booking?: Booking | null;
+}
+
+interface PendingStatusConfirm {
+  booking: Booking;
+  itemId: string;
+  currentStatus: BookingItemStatus;
+  nextStatus: BookingItemStatus;
+  targetDate: string;
 }
 
 const FILTER_TABS: { id: BookingFilterTab; label: string }[] = [
@@ -84,11 +96,15 @@ function findItemBooking(
     for (const b of itemBookings) {
       const match = b.items.find(
         (li) =>
-          (li.itemId === item.id ||
-            li.itemCode.toLowerCase() === item.code.toLowerCase()) &&
-          li.status === 'returned'
+          li.itemId === item.id ||
+          li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
-      if (match) {
+      const computed = isAllDates
+        ? getLatestBookingStatus(b)
+        : selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
+        ? getBookingStatusOnDate(b, selectedDate)
+        : getLatestBookingStatus(b);
+      if (match && computed === 'returned') {
         return { booking: b, lineItem: match, status: 'returned' };
       }
     }
@@ -105,22 +121,14 @@ function findItemBooking(
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
       if (lineItem) {
-        return { booking: matching, lineItem, status: lineItem.status };
+        const status = getBookingStatusOnDate(matching, selectedDate);
+        return { booking: matching, lineItem, status };
       }
     }
     return { booking: null, lineItem: null, status: 'available' };
   } else {
     // isAllDates: check for active booking
-    const active = itemBookings.find(
-      (b) =>
-        !isBookingFullyReturned(b) &&
-        b.items.some(
-          (li) =>
-            (li.itemId === item.id ||
-              li.itemCode.toLowerCase() === item.code.toLowerCase()) &&
-            li.status !== 'returned'
-        )
-    );
+    const active = itemBookings.find((b) => !isBookingFullyReturned(b));
     if (active) {
       const lineItem = active.items.find(
         (li) =>
@@ -128,7 +136,11 @@ function findItemBooking(
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
       if (lineItem) {
-        return { booking: active, lineItem, status: lineItem.status };
+        return {
+          booking: active,
+          lineItem,
+          status: getLatestBookingStatus(active),
+        };
       }
     }
 
@@ -138,7 +150,7 @@ function findItemBooking(
         li.itemId === item.id ||
         li.itemCode.toLowerCase() === item.code.toLowerCase()
     );
-    if (lineItem && lineItem.status === 'returned') {
+    if (lineItem && getLatestBookingStatus(anyBooking) === 'returned') {
       return { booking: anyBooking, lineItem, status: 'returned' };
     }
 
@@ -189,6 +201,8 @@ export const BookingsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<BookingSortKey>('startDate_asc');
   const [sortDialogOpen, setSortDialogOpen] = useState(false);
+  const [pendingStatusConfirm, setPendingStatusConfirm] =
+    useState<PendingStatusConfirm | null>(null);
 
   const [sheetState, setSheetState] = useState<SheetState>({
     isOpen: false,
@@ -288,20 +302,35 @@ export const BookingsPage: React.FC = () => {
 
   // Order-centric bookings list
   const filteredBookings = useMemo(() => {
-    const byStatus = bookings.filter((b) => {
+    const byDate = isAllDates
+      ? bookings
+      : bookings.filter((b) => {
+          if (statusFilter === 'returned') {
+            return (
+              (selectedDate >= b.startDate &&
+                selectedDate <= b.cleaningEndDate &&
+                getBookingStatusOnDate(b, selectedDate) === 'returned') ||
+              getLatestBookingStatus(b) === 'returned'
+            );
+          }
+          return selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate;
+        });
+
+    const byStatus = byDate.filter((b) => {
+      const computed = getEffectiveBookingStatus(b, selectedDate, isAllDates);
       if (statusFilter === 'active') {
-        return !isBookingFullyReturned(b);
+        return isAllDates ? !isBookingFullyReturned(b) : computed !== 'returned';
       }
-      return b.items.some((li) => li.status === statusFilter);
+      if (statusFilter === 'available') {
+        return false;
+      }
+      if (statusFilter === 'returned') {
+        return computed === 'returned' || getLatestBookingStatus(b) === 'returned';
+      }
+      return computed === statusFilter;
     });
 
-    const byDate = isAllDates
-      ? byStatus
-      : byStatus.filter(
-          (b) => selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
-        );
-
-    const bySearch = byDate.filter((b) =>
+    const bySearch = byStatus.filter((b) =>
       matchesBookingSearch(b, searchQuery)
     );
 
@@ -337,13 +366,13 @@ export const BookingsPage: React.FC = () => {
     }
 
     counts.returned = inventoryItems.filter((item) =>
-      bookings.some((b) =>
-        b.items.some(
-          (li) =>
-            (li.itemId === item.id ||
-              li.itemCode.toLowerCase() === item.code.toLowerCase()) &&
-            li.status === 'returned'
-        )
+      bookings.some(
+        (b) =>
+          b.items.some(
+            (li) =>
+              li.itemId === item.id ||
+              li.itemCode.toLowerCase() === item.code.toLowerCase()
+          ) && getLatestBookingStatus(b) === 'returned'
       )
     ).length;
 
@@ -371,6 +400,7 @@ export const BookingsPage: React.FC = () => {
         depositRefunded: false,
         createdAt: '',
         updatedAt: '',
+        transactionDates: { reserved: start < today ? start : today },
         items: [],
       },
     });
@@ -401,13 +431,13 @@ export const BookingsPage: React.FC = () => {
         note: '',
         createdAt: '',
         updatedAt: '',
+        transactionDates: { reserved: start < today ? start : today },
         items: [
           {
             itemId: item.id,
             itemCode: item.code,
             itemName: item.name,
             itemImageUrl: item.imageUrl,
-            status: 'reserved',
           },
         ],
       },
@@ -441,9 +471,35 @@ export const BookingsPage: React.FC = () => {
   const handleAdvanceItemStatus = async (
     bookingId: string,
     itemId: string,
-    nextStatus: BookingItemStatus
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
   ) => {
-    await updateItemStatus(bookingId, itemId, nextStatus);
+    const targetDate = effectiveDate ?? (isAllDates ? today : selectedDate);
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (booking) {
+      const block = getSubsequentStatusBlock(booking, targetDate, nextStatus);
+      if (block) {
+        return;
+      }
+      if (targetDate !== today && nextStatus !== 'reserved') {
+        setPendingStatusConfirm({
+          booking,
+          itemId,
+          currentStatus: getBookingStatusOnDate(booking, targetDate),
+          nextStatus,
+          targetDate,
+        });
+        return;
+      }
+    }
+    await updateItemStatus(bookingId, itemId, nextStatus, undefined, targetDate);
+  };
+
+  const handleConfirmPendingStatus = async () => {
+    if (!pendingStatusConfirm) return;
+    const { booking, itemId, nextStatus, targetDate } = pendingStatusConfirm;
+    setPendingStatusConfirm(null);
+    await updateItemStatus(booking.id, itemId, nextStatus, undefined, targetDate);
   };
 
   const handleToggleDepositRefunded = async (booking: Booking) => {
@@ -871,6 +927,8 @@ export const BookingsPage: React.FC = () => {
             <div key={booking.id} className="s12 m6">
               <BookingCard
                 booking={booking}
+                selectedDate={selectedDate}
+                isAllDates={isAllDates}
                 onEdit={handleOpenEdit}
                 onAdvanceItemStatus={handleAdvanceItemStatus}
                 onToggleDepositRefunded={handleToggleDepositRefunded}
@@ -893,6 +951,71 @@ export const BookingsPage: React.FC = () => {
       <div className="fixed bottom right margin front m l">
         {renderFloatingToolbar()}
       </div>
+
+      {/* Past / Future Status Change Confirmation Dialog */}
+      {pendingStatusConfirm && (
+        <>
+          <div
+            className="overlay active"
+            onClick={() => setPendingStatusConfirm(null)}
+            style={{ zIndex: 1002 }}
+          />
+          <dialog
+            open
+            className="active round medium-padding"
+            aria-label="ยืนยันการเปลี่ยนสถานะต่างวัน"
+            data-testid="confirm-status-date-dialog"
+            style={{ zIndex: 1003, maxWidth: '380px', width: '92vw' }}
+          >
+            <Stack orientation="column" gap="medium">
+              <Stack orientation="row" align="center" gap="small">
+                <i className="tertiary-text">warning</i>
+                <h6 className="bold no-margin">
+                  ยืนยันการเปลี่ยนสถานะ
+                  {pendingStatusConfirm.targetDate < today
+                    ? 'ย้อนหลัง'
+                    : 'ล่วงหน้า'}
+                </h6>
+              </Stack>
+
+              <p className="small-text no-margin">
+                คุณกำลังเปลี่ยนสถานะของการจองลูกค้า{' '}
+                <strong>{pendingStatusConfirm.booking.customerName}</strong>{' '}
+                ในวันที่{' '}
+                <strong>
+                  {formatDateThaiFull(pendingStatusConfirm.targetDate)}
+                </strong>{' '}
+                (ไม่ใช่วันปัจจุบัน) จาก{' '}
+                <strong>
+                  "{BOOKING_STATUS_META[pendingStatusConfirm.currentStatus].label}"
+                </strong>{' '}
+                เป็น{' '}
+                <strong>
+                  "{BOOKING_STATUS_META[pendingStatusConfirm.nextStatus].label}"
+                </strong>
+              </p>
+
+              <Stack orientation="row" gap="small" justify="flex-end">
+                <button
+                  type="button"
+                  className="border round no-margin"
+                  onClick={() => setPendingStatusConfirm(null)}
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="button"
+                  className="primary round no-margin"
+                  data-testid="confirm-status-date-submit"
+                  onClick={handleConfirmPendingStatus}
+                >
+                  ยืนยันเปลี่ยนสถานะ
+                </button>
+              </Stack>
+            </Stack>
+          </dialog>
+        </>
+      )}
 
       {/* Sort Dialog */}
       {sortDialogOpen && (
@@ -938,6 +1061,7 @@ export const BookingsPage: React.FC = () => {
         mode={sheetState.mode}
         booking={sheetState.booking}
         bookings={bookings}
+        selectedDate={isAllDates ? today : selectedDate}
         inventoryItems={inventoryItems}
         customers={customers}
         onAddCustomer={addCustomer}

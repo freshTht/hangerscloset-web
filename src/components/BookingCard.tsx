@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import {
   BOOKING_STATUS_META,
   formatDateThaiShort,
+  getEffectiveBookingStatus,
+  getSubsequentStatusBlock,
+  getTodayISO,
   type Booking,
   type BookingItemStatus,
 } from '../types/booking';
@@ -10,22 +13,39 @@ import { Stack } from './Stack';
 
 export interface BookingCardProps {
   booking: Booking;
+  selectedDate?: string;
+  isAllDates?: boolean;
   onEdit: (booking: Booking) => void;
   onAdvanceItemStatus: (
     bookingId: string,
     itemId: string,
-    nextStatus: BookingItemStatus
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
   ) => Promise<void> | void;
   onToggleDepositRefunded?: (booking: Booking) => Promise<void> | void;
 }
 
 export const BookingCard: React.FC<BookingCardProps> = ({
   booking,
+  selectedDate,
+  isAllDates = false,
   onEdit,
   onAdvanceItemStatus,
   onToggleDepositRefunded,
 }) => {
   const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+
+  const today = getTodayISO();
+  const effectiveDate = isAllDates ? today : (selectedDate ?? today);
+  const computedStatus = getEffectiveBookingStatus(
+    booking,
+    selectedDate ?? today,
+    isAllDates
+  );
+  const meta = BOOKING_STATUS_META[computedStatus];
+  const subsequentBlock = meta.nextStatus
+    ? getSubsequentStatusBlock(booking, effectiveDate, meta.nextStatus)
+    : null;
 
   const handleAdvanceStatus = async (
     itemId: string,
@@ -33,7 +53,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   ) => {
     try {
       setUpdatingItemId(itemId);
-      await onAdvanceItemStatus(booking.id, itemId, nextStatus);
+      await onAdvanceItemStatus(booking.id, itemId, nextStatus, effectiveDate);
     } finally {
       setUpdatingItemId(null);
     }
@@ -65,7 +85,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                 title={`เผื่อซักถึง ${booking.cleaningEndDate}`}
               >
                 <i>local_laundry_service</i>
-                <span>พร้อมเช่าต่อหลัง {formatDateThaiShort(booking.cleaningEndDate)}</span>
+                <span>
+                  พร้อมเช่าต่อหลัง {formatDateThaiShort(booking.cleaningEndDate)}
+                </span>
               </span>
             </Stack>
 
@@ -97,7 +119,6 @@ export const BookingCard: React.FC<BookingCardProps> = ({
         {/* Line Items List */}
         <Stack orientation="column" gap="small">
           {booking.items.map((lineItem) => {
-            const meta = BOOKING_STATUS_META[lineItem.status];
             const isUpdating = updatingItemId === lineItem.itemId;
 
             return (
@@ -191,11 +212,16 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                     <button
                       type="button"
                       className="small round border no-margin"
-                      disabled={isUpdating}
+                      disabled={isUpdating || Boolean(subsequentBlock)}
                       onClick={() =>
                         handleAdvanceStatus(lineItem.itemId, meta.nextStatus!)
                       }
                       aria-label={`ปรับสถานะ ${lineItem.itemCode} เป็น ${meta.nextActionLabel}`}
+                      title={
+                        subsequentBlock
+                          ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
+                          : undefined
+                      }
                       style={{ flexShrink: 0 }}
                     >
                       {isUpdating ? (
@@ -205,7 +231,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                         />
                       ) : (
                         <>
-                          <i>arrow_forward</i>
+                          <i>{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
                           <span>{meta.nextActionLabel}</span>
                         </>
                       )}
@@ -219,41 +245,35 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
         {/* Note */}
         {booking.note && (
-          <div className="round surface-container-low small-padding">
+          <div className="round surface-container small-padding">
             <Stack orientation="row" align="flex-start" gap="small">
-              <i className="small secondary-text">notes</i>
-              <p className="small-text secondary-text no-margin">
-                {booking.note}
-              </p>
+              <i className="tiny secondary-text">notes</i>
+              <span className="small-text secondary-text">{booking.note}</span>
             </Stack>
           </div>
         )}
 
-        {/* Footer: Pricing & Deposit */}
+        {/* Footer: Financials & Deposit Toggle */}
         <Stack
           orientation="row"
           align="center"
           justify="space-between"
           gap="small"
           wrap
-          style={{
-            paddingTop: '8px',
-            borderTop: '1px solid var(--surface-variant)',
-          }}
         >
           <Stack orientation="row" align="center" gap="medium" wrap>
             <span className="small-text">
-              ค่าเช่ารวม:{' '}
-              <strong className="primary-text">
+              ค่าเช่า:{' '}
+              <b className="primary-text">
                 ฿{booking.rentalPrice.toLocaleString()}
-              </strong>
+              </b>
             </span>
-            <span className="small-text secondary-text">
-              มัดจำ: <strong>฿{booking.deposit.toLocaleString()}</strong>
+            <span className="small-text">
+              มัดจำ: <b>฿{booking.deposit.toLocaleString()}</b>
             </span>
           </Stack>
 
-          {booking.deposit > 0 && (
+          {onToggleDepositRefunded && (
             <button
               type="button"
               className={`chip small no-margin ${
@@ -261,11 +281,17 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   ? 'status-badge-available'
                   : 'surface-container-high'
               }`}
-              onClick={() => onToggleDepositRefunded?.(booking)}
-              title="คลิกเพื่อสลับสถานะคืนมัดจำ"
+              onClick={() => onToggleDepositRefunded(booking)}
+              aria-label={
+                booking.depositRefunded
+                  ? 'คืนเงินมัดจำแล้ว'
+                  : 'ทำเครื่องหมายว่าคืนมัดจำแล้ว'
+              }
             >
               <i>
-                {booking.depositRefunded ? 'check_circle' : 'pending'}
+                {booking.depositRefunded
+                  ? 'check_circle'
+                  : 'radio_button_unchecked'}
               </i>
               <span>
                 {booking.depositRefunded ? 'คืนมัดจำแล้ว' : 'ยังไม่คืนมัดจำ'}

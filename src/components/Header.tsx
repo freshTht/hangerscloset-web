@@ -3,9 +3,9 @@ import { NavLink } from 'react-router-dom';
 
 export const Header: React.FC = () => {
   return (
-    <header className="fixed blur surface top s">
-      {/* Top App Bar with Hanger Icon (Small screens) */}
-      <nav className="top-app-bar center-align">
+    <header className="fixed surface top app-header">
+      {/* Top App Bar with Hanger Icon (Small screens only) */}
+      <nav className="top-app-bar center-align s">
         <i className="extra primary-text">checkroom</i>
       </nav>
 
@@ -33,6 +33,9 @@ export const Header: React.FC = () => {
           <span>การตั้งค่า</span>
         </NavLink>
       </div>
+
+      {/* Dynamic slot for page-specific headers / sticky filter bars */}
+      <div id="page-header-slot" className="page-header-slot" />
     </header>
   );
 };
