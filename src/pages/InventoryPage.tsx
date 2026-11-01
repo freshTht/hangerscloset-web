@@ -147,7 +147,6 @@ export const InventoryPage: React.FC = () => {
         <nav
           className="toolbar scroll no-wrap no-margin hc-inventory-filter-toolbar secondary-container"
           data-testid="active-filters-bar"
-          style={{ width: '100%', boxSizing: 'border-box' }}
         >
           <button
             type="button"
@@ -161,9 +160,8 @@ export const InventoryPage: React.FC = () => {
             <span>ตัวกรอง</span>
             {activeFilterCount > 0 && (
               <span
-                className="badge"
+                className="badge hc-inventory-filter-badge"
                 data-testid="filter-active-count"
-                style={{ position: 'static' }}
               >
                 {activeFilterCount}
               </span>
@@ -194,15 +192,7 @@ export const InventoryPage: React.FC = () => {
           </button>
         </nav>
 
-        <div
-          className="row no-wrap scroll no-margin"
-          style={{
-            gap: '8px',
-            overflowX: 'auto',
-            WebkitOverflowScrolling: 'touch',
-            minWidth: 0,
-          }}
-        >
+        <div className="row no-wrap scroll no-margin hc-inventory-facet-chips-row">
             {/* Additional Facet Chips: Search query */}
             {hasSearchQuery && (
               <button
@@ -324,23 +314,13 @@ export const InventoryPage: React.FC = () => {
         {/* Expandable Search + Tag Filter Box */}
         {searchExpanded && (
           <div
-            className="round surface-container-low border small-padding margin-top"
+            className="round surface-container-low border small-padding margin-top hc-inventory-search-box"
             data-testid="filter-search-box"
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-            }}
           >
-            <div
-              className="row no-margin"
-              style={{
-                gap: '8px',
-                width: '100%',
-              }}
-            >
+            <div className="row no-margin hc-inventory-search-input-row">
               <i className="small secondary-text">search</i>
-              <input className="medium-text"
+              <input
+                className="medium-text hc-inventory-search-input"
                 ref={searchInputRef}
                 type="search"
                 aria-label="ค้นหาชุดในคลัง"
@@ -349,31 +329,15 @@ export const InventoryPage: React.FC = () => {
                 onChange={(e) =>
                   setFilter((prev) => ({ ...prev, searchQuery: e.target.value }))
                 }
-                style={{
-                  flex: 1,
-                  border: 'none',
-                  outline: 'none',
-                  background: 'transparent',
-                  color: 'var(--on-surface)',
-                  height: '32px',
-                  minWidth: 0,
-                }}
               />
               {filter.searchQuery && (
                 <button
                   type="button"
-                  className="circle transparent small no-margin"
+                  className="circle transparent small no-margin hc-inventory-search-clear-btn"
                   onClick={() =>
                     setFilter((prev) => ({ ...prev, searchQuery: '' }))
                   }
                   aria-label="ล้างคำค้นหา"
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    minWidth: '24px',
-                    minHeight: '24px',
-                    padding: 0,
-                  }}
                 >
                   <i className="tiny">close</i>
                 </button>
@@ -382,17 +346,8 @@ export const InventoryPage: React.FC = () => {
 
             {/* Quick Tag Selector Chips */}
             {availableTags.length > 0 && (
-              <div
-                className="row no-wrap scroll no-margin"
-                style={{
-                  gap: '6px',
-                  overflowX: 'auto',
-                  WebkitOverflowScrolling: 'touch',
-                  paddingTop: '2px',
-                  paddingBottom: '2px',
-                }}
-              >
-                <span className="hc-micro-text secondary-text bold" style={{ whiteSpace: 'nowrap' }}>
+              <div className="row no-wrap scroll no-margin hc-inventory-quick-tags-row">
+                <span className="hc-micro-text secondary-text bold truncate">
                   แท็ก:
                 </span>
                 {availableTags.map((t) => {
@@ -402,13 +357,7 @@ export const InventoryPage: React.FC = () => {
                       key={t}
                       type="button"
                       data-testid={`tag-chip-${t}`}
-                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-micro-text`}
-                      style={{
-                        height: '24px',
-                        padding: '0 8px',
-                        cursor: 'pointer',
-                        whiteSpace: 'nowrap',
-                      }}
+                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-micro-text hc-inventory-tag-chip`}
                       onClick={() =>
                         isSelected ? handleRemoveSearchTag(t) : handleAddSearchTag(t)
                       }

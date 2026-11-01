@@ -26,6 +26,7 @@ import { BookingCalendar } from '../components/BookingCalendar';
 import { BookingSheet } from '../components/BookingSheet';
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
+import './BookingsPage.css';
 
 export type BookingFilterTab = 'active' | 'available' | BookingItemStatus;
 export type BookingViewMode = 'list' | 'calendar';
@@ -511,17 +512,14 @@ export const BookingsPage: React.FC = () => {
   const renderFloatingToolbar = () => (
     <nav className="center-align tiny-space">
       <nav className="toolbar secondary-container medium-elevate">
-        <span className="bold" style={{ whiteSpace: 'nowrap' }}>
+        <span className="bold hc-bookings-toolbar-count">
           {listLayout === 'items' && viewMode === 'list'
             ? `${filteredItemEntries.length} ชุด`
             : `${filteredBookings.length} การจอง`}
         </span>
 
         {searchOpen ? (
-          <div
-            className="field small round border surface no-margin"
-            style={{ width: '180px' }}
-          >
+          <div className="field small round border surface no-margin hc-bookings-search-field">
             <input
               type="search"
               aria-label="ค้นหาการจอง"
@@ -614,30 +612,23 @@ export const BookingsPage: React.FC = () => {
     <div>
       {/* Date Navigation & Selector Bar */}
       <div
-        className="row center-align bottom-margin"
+        className="row center-align bottom-margin hc-bookings-date-bar"
         data-testid="bookings-date-bar"
-        style={{
-          gap: '8px',
-          padding: '8px 12px',
-          background: 'var(--surface-container-low)',
-          borderRadius: '16px',
-        }}
       >
         <button
           type="button"
-          className="circle transparent no-margin"
+          className="circle transparent no-margin hc-bookings-date-nav-btn"
           onClick={() => {
             setSelectedDate((prev) => addDaysISO(prev, -1));
             setIsAllDates(false);
           }}
           aria-label="วันก่อนหน้า"
           title="วันก่อนหน้า"
-          style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px', padding: 0 }}
         >
           <i>chevron_left</i>
         </button>
 
-        <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+        <div className="hc-bookings-date-picker-wrap">
           <input
             ref={dateInputRef}
             type="date"
@@ -648,19 +639,13 @@ export const BookingsPage: React.FC = () => {
                 setIsAllDates(false);
               }
             }}
-            style={{
-              position: 'absolute',
-              opacity: 0,
-              pointerEvents: 'none',
-              width: 0,
-              height: 0,
-            }}
+            className="hc-bookings-date-hidden-input"
             tabIndex={-1}
             aria-hidden="true"
           />
           <button
             type="button"
-            className="chip transparent border bold no-margin"
+            className="chip transparent border bold no-margin hc-bookings-date-picker-btn"
             onClick={() => {
               if (dateInputRef.current) {
                 if ('showPicker' in HTMLInputElement.prototype) {
@@ -676,13 +661,6 @@ export const BookingsPage: React.FC = () => {
             }}
             aria-label="เลือกวันที่"
             title="คลิกเพื่อเลือกวันที่"
-            style={{
-              minHeight: '40px',
-              padding: '0 14px',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-            }}
           >
             <i className="small">calendar_month</i>
             <span>{dateButtonLabel}</span>
@@ -692,14 +670,13 @@ export const BookingsPage: React.FC = () => {
 
         <button
           type="button"
-          className="circle transparent no-margin"
+          className="circle transparent no-margin hc-bookings-date-nav-btn"
           onClick={() => {
             setSelectedDate((prev) => addDaysISO(prev, 1));
             setIsAllDates(false);
           }}
           aria-label="วันถัดไป"
           title="วันถัดไป"
-          style={{ width: '40px', height: '40px', minWidth: '40px', minHeight: '40px', padding: 0 }}
         >
           <i>chevron_right</i>
         </button>
@@ -764,18 +741,9 @@ export const BookingsPage: React.FC = () => {
             <div key={idx} className="s12 m6">
               <article className="border round surface hc-medium-padding no-margin">
                 <Stack orientation="column" gap="small">
-                  <div
-                    className="hc-skeleton round"
-                    style={{ width: '60%', height: '24px' }}
-                  />
-                  <div
-                    className="hc-skeleton round"
-                    style={{ width: '100%', height: '64px' }}
-                  />
-                  <div
-                    className="hc-skeleton round"
-                    style={{ width: '45%', height: '20px' }}
-                  />
+                  <div className="hc-skeleton round hc-bookings-skeleton-title" />
+                  <div className="hc-skeleton round hc-bookings-skeleton-body" />
+                  <div className="hc-skeleton round hc-bookings-skeleton-footer" />
                 </Stack>
               </article>
             </div>
@@ -956,16 +924,14 @@ export const BookingsPage: React.FC = () => {
       {pendingStatusConfirm && (
         <>
           <div
-            className="overlay active"
+            className="overlay active hc-bookings-confirm-overlay"
             onClick={() => setPendingStatusConfirm(null)}
-            style={{ zIndex: 1002 }}
           />
           <dialog
             open
-            className="active round hc-medium-padding"
+            className="active round hc-medium-padding hc-bookings-confirm-dialog"
             aria-label="ยืนยันการเปลี่ยนสถานะต่างวัน"
             data-testid="confirm-status-date-dialog"
-            style={{ zIndex: 1003, maxWidth: '380px', width: '92vw' }}
           >
             <Stack orientation="column" gap="medium">
               <Stack orientation="row" align="center" gap="small">
@@ -1021,15 +987,13 @@ export const BookingsPage: React.FC = () => {
       {sortDialogOpen && (
         <>
           <div
-            className="overlay active"
+            className="overlay active hc-bookings-sort-overlay"
             onClick={() => setSortDialogOpen(false)}
-            style={{ zIndex: 998 }}
           />
           <dialog
             open
-            className="active round hc-medium-padding"
+            className="active round hc-medium-padding hc-bookings-sort-dialog"
             aria-label="จัดเรียงรายการจอง"
-            style={{ zIndex: 999, minWidth: '280px' }}
           >
             <Stack orientation="column" gap="small">
               <h6 className="bold no-margin">จัดเรียงรายการจอง</h6>

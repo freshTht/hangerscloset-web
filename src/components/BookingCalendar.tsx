@@ -9,6 +9,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { BookingCard } from './BookingCard';
 import { Stack } from './Stack';
 import './StatusBadge.css';
+import './BookingCalendar.css';
 
 export interface BookingCalendarProps {
   bookings: Booking[];
@@ -191,18 +192,11 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
           </Stack>
 
           {/* Weekday Headers */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-              gap: '4px',
-            }}
-          >
+          <div className="hc-booking-calendar-grid">
             {WEEKDAY_LABELS.map((label) => (
               <div
                 key={label}
-                className="center-align small-text bold secondary-text"
-                style={{ padding: '4px 0' }}
+                className="center-align small-text bold secondary-text hc-booking-calendar-weekday-header"
               >
                 {label}
               </div>
@@ -210,23 +204,13 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
           </div>
 
           {/* Calendar 7-Column Grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-              gap: '4px',
-            }}
-          >
+          <div className="hc-booking-calendar-grid">
             {cells.map((isoDate, idx) => {
               if (!isoDate) {
                 return (
                   <div
                     key={`empty-${idx}`}
-                    className="round surface-container-low"
-                    style={{
-                      minHeight: isMobile ? '52px' : '84px',
-                      opacity: 0.35,
-                    }}
+                    className="round surface-container-low hc-booking-calendar-empty-cell"
                   />
                 );
               }
@@ -244,27 +228,11 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                   type="button"
                   onClick={() => setSelectedDate(isoDate)}
                   aria-label={`วันที่ ${isoDate}`}
-                  className={`round no-margin ${
+                  className={`round no-margin hc-booking-calendar-day-btn ${
                     isSelected
-                      ? 'secondary-container border'
+                      ? 'secondary-container is-selected'
                       : 'surface-container-low'
                   }`}
-                  style={{
-                    minHeight: isMobile ? '52px' : '84px',
-                    minWidth: 0,
-                    width: '100%',
-                    padding: isMobile ? '4px' : '6px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'stretch',
-                    justifyContent: 'flex-start',
-                    gap: '4px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    border: isSelected
-                      ? '2px solid var(--primary)'
-                      : '1px solid transparent',
-                  }}
                 >
                   <Stack
                     orientation="row"
@@ -292,21 +260,12 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                         align="center"
                         gap="tiny"
                         wrap
-                        style={{ marginTop: 'auto' }}
+                        className="hc-booking-calendar-mobile-dots"
                       >
                         {entries.slice(0, 4).map((entry, eIdx) => (
                           <span
                             key={`${entry.booking.id}-${entry.itemCode}-${eIdx}`}
-                            style={{
-                              width: '6px',
-                              height: '6px',
-                              borderRadius: '9999px',
-                              backgroundColor:
-                                entry.windowType === 'rental'
-                                  ? 'var(--primary)'
-                                  : '#0288d1',
-                              display: 'inline-block',
-                            }}
+                            className={`hc-booking-calendar-dot ${entry.windowType}`}
                           />
                         ))}
                       </Stack>
@@ -315,23 +274,16 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                     <Stack
                       orientation="column"
                       gap="tiny"
-                      style={{ minWidth: 0, width: '100%' }}
+                      className="hc-booking-calendar-pills-container"
                     >
                       {visiblePills.map((entry, eIdx) => (
                         <span
                           key={`${entry.booking.id}-${entry.itemCode}-${eIdx}`}
-                          className={`hc-micro-text bold round ${
+                          className={`hc-micro-text bold round truncate hc-booking-calendar-pill ${
                             entry.windowType === 'rental'
                               ? 'primary-container'
                               : 'hc-status-badge-laundry'
                           }`}
-                          style={{
-                            padding: '1px 6px',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            display: 'block',
-                          }}
                         >
                           {entry.itemCode}
                         </span>

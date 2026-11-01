@@ -12,6 +12,7 @@ import {
 } from '../types/booking';
 import { LazyImage } from './LazyImage';
 import { StatusBadge } from './StatusBadge';
+import './BookingInventoryCard.css';
 
 export interface BookingInventoryCardProps {
   item: InventoryItem;
@@ -73,41 +74,22 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
 
   return (
     <article
-      className="no-padding round row no-space no-scroll border surface"
+      className="no-padding round row no-space no-scroll border surface hc-booking-inv-card"
       data-testid={`inventory-booking-card-${item.code}`}
-      style={{
-        minHeight: '160px',
-        alignItems: 'stretch',
-      }}
     >
       {/* Left Column: Image */}
       <LazyImage
         className="left-round"
         src={item.imageUrl}
         alt={item.name}
-        containerStyle={{
-          width: 120,
-          minWidth: 120,
-          maxWidth: 120,
-          alignSelf: 'stretch',
-          flexShrink: 0,
-        }}
+        containerClassName="hc-booking-inv-card-image"
       />
 
       {/* Right Column: Information & Actions */}
-      <div
-        className="max vertical"
-        style={{
-          minWidth: 0,
-          padding: '10px 14px 10px 12px',
-        }}
-      >
+      <div className="max vertical hc-booking-inv-card-content">
         {/* Top: Code, Status Badge, Edit Button */}
-        <div className="vertical" style={{ gap: '4px' }}>
-          <div
-            className="row no-margin align-center no-space"
-            style={{ gap: '6px' }}
-          >
+        <div className="hc-booking-inv-card-header">
+          <div className="row no-margin align-center no-space hc-booking-inv-card-header-top">
             <span className="hc-micro-text secondary-text bold">{item.code}</span>
 
             {isBooked && meta ? (
@@ -120,9 +102,8 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
               </StatusBadge>
             ) : (
               <span
-                className="chip tiny fill primary-container bold no-margin"
+                className="chip tiny fill primary-container bold no-margin hc-booking-inv-card-available-chip"
                 data-testid={`status-badge-${item.code}`}
-                style={{ height: '22px' }}
               >
                 <i>check_circle</i>
                 <span>ว่าง (พร้อมเช่า)</span>
@@ -134,20 +115,13 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
             {isBooked && booking && (
               <button
                 type="button"
-                className="circle transparent no-margin"
+                className="circle transparent no-margin hc-booking-inv-card-edit-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   onEditBooking(booking);
                 }}
                 aria-label={`แก้ไขการจอง ${item.code}`}
                 title="แก้ไขการจอง"
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  minWidth: '28px',
-                  minHeight: '28px',
-                  padding: 0,
-                }}
               >
                 <i className="tiny">edit</i>
               </button>
@@ -155,28 +129,15 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
           </div>
 
           {/* Title */}
-          <h6
-            className="small bold no-margin"
-            style={{
-              display: '-webkit-box',
-              WebkitLineClamp: 1,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              lineHeight: 1.25,
-            }}
-          >
+          <h6 className="small bold no-margin hc-booking-inv-card-title">
             {item.name}
           </h6>
         </div>
 
         {/* Item Attributes */}
-        <div
-          className="row no-margin tiny-space hc-micro-text secondary-text wrap"
-          style={{ alignItems: 'center', gap: '6px', marginTop: '2px' }}
-        >
+        <div className="row no-margin tiny-space hc-micro-text secondary-text wrap hc-booking-inv-card-attrs">
           {item.brand && (
-            <span className="middle-align" style={{ gap: '2px' }}>
+            <span className="middle-align hc-booking-inv-card-attr-item">
               <i className="tiny">sell</i>
               <b className="on-surface-text">{item.brand}</b>
             </span>
@@ -184,7 +145,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
           {item.color && (
             <>
               <span className="medium-opacity">•</span>
-              <span className="middle-align" style={{ gap: '2px' }}>
+              <span className="middle-align hc-booking-inv-card-attr-item">
                 <i className="tiny">palette</i>
                 <span>{item.color}</span>
               </span>
@@ -193,7 +154,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
           {item.size && (
             <>
               <span className="medium-opacity">•</span>
-              <span className="middle-align" style={{ gap: '2px' }}>
+              <span className="middle-align hc-booking-inv-card-attr-item">
                 <i className="tiny">height</i>
                 <b>{item.size}</b>
               </span>
@@ -203,17 +164,8 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
 
         {/* Booking Details if booked */}
         {isBooked && booking && (
-          <div
-            className="round surface-container-low small-text"
-            style={{
-              padding: '6px 8px',
-              marginTop: '6px',
-            }}
-          >
-            <div
-              className="row no-margin align-center no-space"
-              style={{ gap: '4px' }}
-            >
+          <div className="round surface-container-low small-text hc-booking-inv-card-details">
+            <div className="row no-margin align-center no-space hc-booking-inv-card-customer-row">
               <i className="tiny primary-text">person</i>
               <b className="truncate on-surface-text">{booking.customerName}</b>
               {booking.customerPhone && (
@@ -222,10 +174,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
                 </span>
               )}
             </div>
-            <div
-              className="row no-margin align-center no-space"
-              style={{ gap: '4px', marginTop: '2px' }}
-            >
+            <div className="row no-margin align-center no-space hc-booking-inv-card-date-row">
               <i className="tiny secondary-text">date_range</i>
               <span className="secondary-text hc-micro-text">
                 {formatDateThaiShort(booking.startDate)} –{' '}
@@ -236,10 +185,10 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
         )}
 
         {/* Action Area at bottom */}
-        <div className="vertical" style={{ marginTop: 'auto', paddingTop: '8px' }}>
+        <div className="vertical hc-booking-inv-card-actions">
           {isBooked && booking && lineItem && meta ? (
-            <div className="vertical" style={{ gap: '4px' }}>
-              <div className="row no-margin align-center" style={{ gap: '6px' }}>
+            <div className="vertical hc-booking-inv-card-action-group">
+              <div className="row no-margin align-center hc-booking-inv-card-action-row">
                 {meta.nextStatus && meta.nextActionLabel && (
                   <button
                     type="button"

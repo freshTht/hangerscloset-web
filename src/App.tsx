@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Layout } from './components/Layout';
 import { MaterialShapesBackground } from './components/MaterialShapesBackground';
+import './App.css';
 
 // Lazy-loaded route components for improved initial page load performance
 const LoginPage = React.lazy(() =>
@@ -20,15 +21,7 @@ const SettingsPage = React.lazy(() =>
 );
 
 const PageLoadingFallback: React.FC = () => (
-  <div
-    className="center-align middle-align padding"
-    style={{
-      minHeight: '80dvh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
+  <div className="center-align middle-align padding hc-app-page-loading">
     <div
       className="shape loading-indicator extra"
       role="status"

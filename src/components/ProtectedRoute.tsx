@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import './ProtectedRoute.css';
 
 const UnauthorizedPage = React.lazy(() =>
   import('../pages/UnauthorizedPage').then((m) => ({ default: m.UnauthorizedPage }))
@@ -16,16 +17,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (loading || checkingAccess) {
     return (
-      <div
-        className="center-align middle-align padding"
-        style={{
-          minHeight: '100dvh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'relative',
-        }}
-      >
+      <div className="center-align middle-align padding hc-protected-loading-container">
         <div
           className="shape loading-indicator extra"
           role="status"
@@ -43,16 +35,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return (
       <Suspense
         fallback={
-          <div
-            className="center-align middle-align padding"
-            style={{
-              minHeight: '100dvh',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-            }}
-          >
+          <div className="center-align middle-align padding hc-protected-loading-container">
             <div
               className="shape loading-indicator extra"
               role="status"

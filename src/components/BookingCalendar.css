@@ -1,0 +1,73 @@
+.hc-booking-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.hc-booking-calendar-weekday-header {
+  padding: 4px 0;
+}
+
+.hc-booking-calendar-empty-cell {
+  min-height: 84px;
+  opacity: 0.35;
+}
+
+.hc-booking-calendar-day-btn {
+  min-height: 84px;
+  min-width: 0;
+  width: 100%;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 4px;
+  cursor: pointer;
+  text-align: left;
+  border: 1px solid transparent;
+}
+
+.hc-booking-calendar-day-btn.is-selected {
+  border: 2px solid var(--primary);
+}
+
+@media (max-width: 600px) {
+  .hc-booking-calendar-empty-cell {
+    min-height: 52px;
+  }
+
+  .hc-booking-calendar-day-btn {
+    min-height: 52px;
+    padding: 4px;
+  }
+}
+
+.hc-booking-calendar-mobile-dots {
+  margin-top: auto;
+}
+
+.hc-booking-calendar-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+.hc-booking-calendar-dot.rental {
+  background-color: var(--primary);
+}
+
+.hc-booking-calendar-dot.cleaning {
+  background-color: #0288d1;
+}
+
+.hc-booking-calendar-pills-container {
+  min-width: 0;
+  width: 100%;
+}
+
+.hc-booking-calendar-pill {
+  padding: 1px 6px;
+  display: block;
+}

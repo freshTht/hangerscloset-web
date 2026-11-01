@@ -11,6 +11,7 @@ import {
 import { LazyImage } from './LazyImage';
 import { Stack } from './Stack';
 import { StatusBadge } from './StatusBadge';
+import './BookingCard.css';
 
 export interface BookingCardProps {
   booking: Booking;
@@ -138,38 +139,18 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                     orientation="row"
                     align="center"
                     gap="small"
-                    style={{ minWidth: 0, flex: 1 }}
+                    className="hc-booking-card-item-content"
                   >
-                    <div
-                      className="round surface-container-high"
-                      style={{
-                        width: '52px',
-                        height: '52px',
-                        overflow: 'hidden',
-                        flexShrink: 0,
-                      }}
-                    >
+                    <div className="round surface-container-high hc-booking-card-thumbnail">
                       {lineItem.itemImageUrl ? (
                         <LazyImage
                           src={lineItem.itemImageUrl}
                           alt={lineItem.itemName}
-                          containerStyle={{
-                            width: '52px',
-                            height: '52px',
-                          }}
-                          style={{ objectFit: 'cover' }}
+                          containerClassName="hc-booking-card-lazy-image"
+                          className="hc-booking-card-image"
                         />
                       ) : (
-                        <div
-                          className="center-align middle-align"
-                          style={{
-                            width: '52px',
-                            height: '52px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                          }}
-                        >
+                        <div className="center-align middle-align hc-booking-card-thumbnail-placeholder">
                           <i className="secondary-text">checkroom</i>
                         </div>
                       )}
@@ -178,7 +159,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                     <Stack
                       orientation="column"
                       gap="tiny"
-                      style={{ minWidth: 0, flex: 1 }}
+                      className="hc-booking-card-item-content"
                     >
                       <Stack orientation="row" align="center" gap="tiny" wrap>
                         <span className="chip tiny surface-container-high bold no-margin">
@@ -192,14 +173,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                           {meta.label}
                         </StatusBadge>
                       </Stack>
-                      <span
-                        className="small-text bold"
-                        style={{
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
+                      <span className="small-text bold truncate">
                         {lineItem.itemName}
                       </span>
                       {lineItem.conditionNote && (
@@ -213,7 +187,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   {meta.nextStatus && meta.nextActionLabel && (
                     <button
                       type="button"
-                      className="small round border no-margin"
+                      className="small round border no-margin hc-booking-card-action-btn"
                       disabled={isUpdating || Boolean(subsequentBlock)}
                       onClick={() =>
                         handleAdvanceStatus(lineItem.itemId, meta.nextStatus!)
@@ -224,7 +198,6 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                           ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
                           : undefined
                       }
-                      style={{ flexShrink: 0 }}
                     >
                       {isUpdating ? (
                         <div

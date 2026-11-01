@@ -1,0 +1,32 @@
+.hc-booking-card-item-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.hc-booking-card-thumbnail {
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.hc-booking-card-thumbnail-placeholder {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-booking-card-lazy-image {
+  width: 52px;
+  height: 52px;
+}
+
+.hc-booking-card-image {
+  object-fit: cover;
+}
+
+.hc-booking-card-action-btn {
+  flex-shrink: 0;
+}
