@@ -20,6 +20,7 @@ import {
   type InventorySortOption,
 } from '../types/catalogFilter';
 import type { InventoryItem } from '../types/inventory';
+import './InventoryPage.css';
 
 interface SheetState {
   isOpen: boolean;
@@ -144,7 +145,7 @@ export const InventoryPage: React.FC = () => {
     return (
       <div className="hc-active-filters-sticky-wrapper">
         <nav
-          className="toolbar scroll no-margin hc-inventory-filter-toolbar secondary-container"
+          className="toolbar scroll no-wrap no-margin hc-inventory-filter-toolbar secondary-container"
           data-testid="active-filters-bar"
           style={{ width: '100%', boxSizing: 'border-box' }}
         >

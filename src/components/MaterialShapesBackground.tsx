@@ -1,4 +1,5 @@
 import React from 'react';
+import './MaterialShapesBackground.css';
 
 interface MaterialShapesBackgroundProps {
   active?: boolean;

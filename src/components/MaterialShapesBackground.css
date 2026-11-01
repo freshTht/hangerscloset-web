@@ -1,0 +1,42 @@
+/* Ambient Material Shapes Background (Pixel style) */
+.hc-material-shapes-bg-flower,
+.hc-material-shapes-bg-wavy,
+.hc-material-shapes-bg-hanger {
+  transition: opacity 0.3s ease;
+}
+
+.hc-material-shapes-bg-flower {
+  opacity: 0.75;
+}
+
+.hc-material-shapes-bg-wavy {
+  opacity: 0.75;
+}
+
+.hc-material-shapes-bg-hanger {
+  opacity: 0.28;
+}
+
+body.dark .hc-material-shapes-bg-flower {
+  opacity: 0.30;
+}
+
+body.dark .hc-material-shapes-bg-wavy {
+  opacity: 0.30;
+}
+
+body.dark .hc-material-shapes-bg-hanger {
+  opacity: 0.22;
+}
+
+@keyframes hc-hanger-sway {
+  0% {
+    transform: rotate(-8deg);
+  }
+  50% {
+    transform: rotate(8deg);
+  }
+  100% {
+    transform: rotate(-8deg);
+  }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Header } from './Header';
+import './Layout.css';
 
 interface NavItem {
   to: string;

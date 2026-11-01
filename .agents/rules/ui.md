@@ -16,8 +16,8 @@ Beer CSS is built around 3 core concepts:
    - **Colors**: `primary`, `secondary`, `tertiary`, `surface`, `surface-container-low`, `surface-container`, `surface-container-high`, `surface-container-highest`, `error`.
    - **Sizes**: `tiny`, `small`, `medium`, `large`, `extra`.
    - **Spacing**: `no-space`, `small-space`, `medium-space`, `large-space`, `extra-space`.
-   - **Margins**: `no-margin`, `small-margin`, `medium-margin`, `large-margin`, `extra-margin`, `top-margin`, `bottom-margin`, etc.
-   - **Padding**: `no-padding`, `tiny-padding`, `small-padding`, `padding` (16px), `hc-medium-padding` (20px), `large-padding` (24px), `extra-padding`.
+   - **Margins**: `no-margin`, `tiny-margin` (4px), `small-margin` (8px), `margin` (16px), `large-margin` (24px), `top-margin`, `bottom-margin`, etc.
+   - **Padding**: `no-padding`, `tiny-padding` (4px), `small-padding` (8px), `padding` (16px), `hc-medium-padding` (20px), `large-padding` (24px).
    - **Alignments**: `left-align`, `right-align`, `center-align`, `top-align`, `middle-align`, `bottom-align`.
    - **Elevations**: `no-elevate`, `small-elevate`, `elevate`, `medium-elevate`, `large-elevate`.
    - **Shapes**: `round`, `square`, `circle`.
