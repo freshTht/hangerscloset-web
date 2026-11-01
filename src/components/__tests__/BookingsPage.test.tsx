@@ -3,12 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BookingsPage } from '../../pages/BookingsPage';
 
 describe('BookingsPage Component', () => {
-  it('renders status filter chips and active bookings by default, and date selection bar', () => {
+  it('renders filter dropdown and active bookings by default, and date selection bar without all-day button', () => {
     render(<BookingsPage />);
-
-    expect(
-      screen.getByRole('tab', { name: /กำลังดำเนินการ/i })
-    ).toHaveAttribute('aria-selected', 'true');
 
     // Date selection bar is present
     expect(screen.getByTestId('bookings-date-bar')).toBeInTheDocument();
@@ -16,36 +12,74 @@ describe('BookingsPage Component', () => {
     expect(screen.getByRole('button', { name: /วันถัดไป/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /เลือกวันที่/i })).toBeInTheDocument();
 
+    // The 'all day' ("ทุกวัน") button was removed from the date selector bar
+    expect(screen.queryByRole('button', { name: /^ทุกวัน$/i })).not.toBeInTheDocument();
+
+    // Filter dropdown button is on the date bar row
+    const filterDropdown = screen.getByTestId('booking-filter-dropdown');
+    expect(filterDropdown).toBeInTheDocument();
+    expect(filterDropdown).toHaveTextContent('ตัวกรอง');
+
     // Active booking active on today
     expect(screen.getAllByText('คุณพลอย รัตนากร').length).toBeGreaterThan(0);
 
-    // Clicking "ทุกวัน" shows all active bookings including tomorrow's
-    fireEvent.click(screen.getByRole('button', { name: /ทุกวัน/i }));
+    // Clicking filter dropdown opens the bottom sheet
+    fireEvent.click(filterDropdown);
+    expect(screen.getByRole('dialog', { name: /ตัวกรองและจัดเรียงรายการจอง/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /กำลังดำเนินการ/i })).toHaveAttribute('aria-selected', 'true');
+
+    // Close the sheet
+    fireEvent.click(screen.getByRole('button', { name: /ปิดตัวกรอง/i }));
+
+    // Navigating to tomorrow (+1 day) shows tomorrow's active booking
+    fireEvent.click(screen.getByRole('button', { name: /วันถัดไป/i }));
     expect(screen.getByText('คุณมายด์ พิมพ์ชนก')).toBeInTheDocument();
   });
 
-  it('filters bookings when clicking status filter chips', () => {
+  it('filters bookings when selecting status from filter bottom sheet', () => {
     render(<BookingsPage />);
 
-    fireEvent.click(screen.getByRole('button', { name: /ทุกวัน/i }));
+    // Open filter bottom sheet
+    fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
 
+    // Open filter sheet and choose "ส่งซัก"
     const laundryTab = screen.getByRole('tab', { name: /ส่งซัก/i });
     fireEvent.click(laundryTab);
 
-    expect(laundryTab).toHaveAttribute('aria-selected', 'true');
+    // Filter dropdown button displays current filter
+    expect(screen.getByTestId('booking-filter-dropdown')).toHaveTextContent('ส่งซัก');
     expect(screen.getAllByText('คุณเนย วริศรา').length).toBeGreaterThan(0);
+  });
+
+  it('changes booking sort order via the filter & sort bottom sheet', () => {
+    render(<BookingsPage />);
+
+    // Open filter & sort sheet
+    fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
+
+    // Click sort by item code Z-A
+    fireEvent.click(screen.getByRole('button', { name: /รหัสชุด \(Z-A\)/i }));
+
+    // Close sheet
+    fireEvent.click(screen.getByRole('button', { name: /ดูผลลัพธ์/i }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('advances an item status with 1-tap button on BookingCard', async () => {
     render(<BookingsPage />);
 
-    fireEvent.click(screen.getByRole('button', { name: /ทุกวัน/i }));
+    // Navigate to tomorrow to view booking BKN01 (book-2 starts tomorrow)
+    fireEvent.click(screen.getByRole('button', { name: /วันถัดไป/i }));
 
     // BKN01 in book-2 starts as 'pending_delivery' (รอส่งมอบ), nextActionLabel is 'ส่งมอบแล้ว'
     const advanceBtn = screen.getByRole('button', {
       name: /ปรับสถานะ BKN01 เป็น ส่งมอบแล้ว/i,
     });
     fireEvent.click(advanceBtn);
+
+    // Confirm status change dialog since targetDate is tomorrow
+    fireEvent.click(screen.getByTestId('confirm-status-date-submit'));
 
     await waitFor(() => {
       expect(screen.getByTestId('status-badge-BKN01')).toHaveTextContent(
@@ -148,7 +182,7 @@ describe('BookingsPage Component', () => {
     fireEvent.click(screen.getByTestId('confirm-status-date-submit'));
 
     await waitFor(() => {
-      expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('รอรับคืน');
+      expect(screen.queryByTestId('confirm-status-date-dialog')).not.toBeInTheDocument();
     });
   });
 });

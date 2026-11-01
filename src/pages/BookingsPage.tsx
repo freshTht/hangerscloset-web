@@ -1,7 +1,6 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   BOOKING_STATUS_META,
-  BOOKING_STATUS_ORDER,
   isBookingFullyReturned,
   getBookingStatusOnDate,
   getLatestBookingStatus,
@@ -9,7 +8,6 @@ import {
   getSubsequentStatusBlock,
   getTodayISO,
   addDaysISO,
-  formatDateThaiShort,
   formatDateThaiFull,
   type Booking,
   type BookingLineItem,
@@ -22,22 +20,25 @@ import { useCustomers } from '../hooks/useCustomers';
 import { useInventory } from '../hooks/useInventory';
 import { BookingCard } from '../components/BookingCard';
 import { BookingInventoryCard } from '../components/BookingInventoryCard';
+import { BookingDateBar } from '../components/BookingDateBar';
 import { BookingCalendar } from '../components/BookingCalendar';
 import { BookingSheet } from '../components/BookingSheet';
+import {
+  BookingFilterSheet,
+  FILTER_TABS,
+  SORT_OPTIONS,
+  type BookingFilterTab,
+  type BookingSortKey,
+} from '../components/BookingFilterSheet';
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
 import './BookingsPage.css';
 
-export type BookingFilterTab = 'active' | 'available' | BookingItemStatus;
+export type { BookingFilterTab, BookingSortKey };
+export { FILTER_TABS, SORT_OPTIONS };
 export type BookingViewMode = 'list' | 'calendar';
 export type BookingListLayout = 'items' | 'orders';
-export type BookingSortKey =
-  | 'code_asc'
-  | 'code_desc'
-  | 'startDate_asc'
-  | 'startDate_desc'
-  | 'createdAt_desc';
 
 interface SheetState {
   isOpen: boolean;
@@ -52,23 +53,6 @@ interface PendingStatusConfirm {
   nextStatus: BookingItemStatus;
   targetDate: string;
 }
-
-const FILTER_TABS: { id: BookingFilterTab; label: string }[] = [
-  { id: 'active', label: 'กำลังดำเนินการ' },
-  { id: 'available', label: 'ว่าง (พร้อมเช่า)' },
-  ...BOOKING_STATUS_ORDER.map((status) => ({
-    id: status,
-    label: BOOKING_STATUS_META[status].label,
-  })),
-];
-
-const SORT_OPTIONS: { key: BookingSortKey; label: string }[] = [
-  { key: 'code_asc', label: 'รหัสชุด (A-Z)' },
-  { key: 'code_desc', label: 'รหัสชุด (Z-A)' },
-  { key: 'startDate_asc', label: 'วันรับชุด (ใกล้สุดก่อน)' },
-  { key: 'startDate_desc', label: 'วันรับชุด (ไกลสุดก่อน)' },
-  { key: 'createdAt_desc', label: 'วันที่ทำรายการล่าสุด' },
-];
 
 function findItemBooking(
   item: InventoryItem,
@@ -194,7 +178,6 @@ export const BookingsPage: React.FC = () => {
   const today = useMemo(() => getTodayISO(), []);
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
-  const dateInputRef = useRef<HTMLInputElement>(null);
 
   const [statusFilter, setStatusFilter] = useState<BookingFilterTab>('active');
   const [viewMode, setViewMode] = useState<BookingViewMode>('list');
@@ -202,7 +185,7 @@ export const BookingsPage: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<BookingSortKey>('startDate_asc');
-  const [sortDialogOpen, setSortDialogOpen] = useState(false);
+  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
   const [pendingStatusConfirm, setPendingStatusConfirm] =
     useState<PendingStatusConfirm | null>(null);
 
@@ -211,12 +194,6 @@ export const BookingsPage: React.FC = () => {
     mode: 'add',
     booking: null,
   });
-
-  const dateButtonLabel = useMemo(() => {
-    if (isAllDates) return 'แสดงทุกวัน (คลิกเพื่อเลือกวัน)';
-    if (selectedDate === today) return `${formatDateThaiShort(selectedDate)} (วันนี้)`;
-    return formatDateThaiFull(selectedDate);
-  }, [isAllDates, selectedDate, today]);
 
   // Inventory-centric items list with booking status on selected date
   const itemBookingEntries = useMemo(() => {
@@ -585,16 +562,6 @@ export const BookingsPage: React.FC = () => {
         >
           <i>{viewMode === 'list' ? 'calendar_month' : 'view_agenda'}</i>
         </button>
-
-        <button
-          className="circle transparent no-margin"
-          type="button"
-          onClick={() => setSortDialogOpen(true)}
-          aria-label="จัดเรียง"
-          title="จัดเรียง"
-        >
-          <i>sort</i>
-        </button>
       </nav>
 
       <button
@@ -610,126 +577,21 @@ export const BookingsPage: React.FC = () => {
   );
 
   return (
-    <div>
-      {/* Date Navigation & Selector Bar */}
-      <div
-        className="row center-align bottom-margin hc-bookings-date-bar"
-        data-testid="bookings-date-bar"
-      >
-        <button
-          type="button"
-          className="circle transparent no-margin hc-bookings-date-nav-btn"
-          onClick={() => {
-            setSelectedDate((prev) => addDaysISO(prev, -1));
-            setIsAllDates(false);
-          }}
-          aria-label="วันก่อนหน้า"
-          title="วันก่อนหน้า"
-        >
-          <i>chevron_left</i>
-        </button>
-
-        <div className="hc-bookings-date-picker-wrap">
-          <input
-            ref={dateInputRef}
-            type="date"
-            value={selectedDate}
-            onChange={(e) => {
-              if (e.target.value) {
-                setSelectedDate(e.target.value);
-                setIsAllDates(false);
-              }
-            }}
-            className="hc-bookings-date-hidden-input"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-          <button
-            type="button"
-            className="chip transparent border bold no-margin hc-bookings-date-picker-btn"
-            onClick={() => {
-              if (dateInputRef.current) {
-                if ('showPicker' in HTMLInputElement.prototype) {
-                  try {
-                    dateInputRef.current.showPicker();
-                  } catch {
-                    dateInputRef.current.focus();
-                  }
-                } else {
-                  dateInputRef.current.focus();
-                }
-              }
-            }}
-            aria-label="เลือกวันที่"
-            title="คลิกเพื่อเลือกวันที่"
-          >
-            <i className="small">calendar_month</i>
-            <span>{dateButtonLabel}</span>
-            <i className="tiny">arrow_drop_down</i>
-          </button>
-        </div>
-
-        <button
-          type="button"
-          className="circle transparent no-margin hc-bookings-date-nav-btn"
-          onClick={() => {
-            setSelectedDate((prev) => addDaysISO(prev, 1));
-            setIsAllDates(false);
-          }}
-          aria-label="วันถัดไป"
-          title="วันถัดไป"
-        >
-          <i>chevron_right</i>
-        </button>
-
-        {selectedDate !== today && !isAllDates && (
-          <button
-            type="button"
-            className="chip small transparent border no-margin"
-            onClick={() => {
-              setSelectedDate(today);
-              setIsAllDates(false);
-            }}
-            title="กลับไปวันนี้"
-          >
-            <span>วันนี้</span>
-          </button>
-        )}
-
-        <button
-          type="button"
-          className={`chip small no-margin ${isAllDates ? 'fill primary' : 'border'}`}
-          onClick={() => setIsAllDates((prev) => !prev)}
-          title={isAllDates ? 'กำลังแสดงทุกวัน' : 'คลิกเพื่อดูทุกวัน'}
-        >
-          <span>ทุกวัน</span>
-        </button>
-      </div>
-
-      {/* Status Filter Tabs */}
-      <div
-        className="tabs scroll small bottom-margin"
-        role="tablist"
-        aria-label="ตัวกรองสถานะการจอง"
-      >
-        {FILTER_TABS.map((tab) => {
-          const isSelected = statusFilter === tab.id;
-          const count = tabCounts[tab.id];
-
-          return (
-            <button
-              key={tab.id}
-              role="tab"
-              aria-selected={isSelected}
-              className={isSelected ? 'active' : ''}
-              onClick={() => setStatusFilter(tab.id)}
-            >
-              <span>{tab.label}</span>
-              <span className="badge small">{count}</span>
-            </button>
-          );
-        })}
-      </div>
+    <div className="bookings-page">
+      {/* Date Navigation & Filter Bar (BeerCSS Toolbar) */}
+      <BookingDateBar
+        selectedDate={selectedDate}
+        today={today}
+        isAllDates={isAllDates}
+        statusFilter={statusFilter}
+        tabCounts={tabCounts}
+        filterSheetOpen={filterSheetOpen}
+        onDateChange={(newDate) => {
+          setSelectedDate(newDate);
+          setIsAllDates(false);
+        }}
+        onFilterClick={() => setFilterSheetOpen(true)}
+      />
 
       {/* Main Content Area */}
       {loading ? (
@@ -984,41 +846,16 @@ export const BookingsPage: React.FC = () => {
         </>
       )}
 
-      {/* Sort Dialog */}
-      {sortDialogOpen && (
-        <>
-          <div
-            className="overlay active hc-bookings-sort-overlay"
-            onClick={() => setSortDialogOpen(false)}
-          />
-          <dialog
-            open
-            className="active round hc-medium-padding hc-bookings-sort-dialog"
-            aria-label="จัดเรียงรายการจอง"
-          >
-            <Stack orientation="column" gap="small">
-              <h6 className="bold no-margin">จัดเรียงรายการจอง</h6>
-              {SORT_OPTIONS.map((opt) => (
-                <button
-                  key={opt.key}
-                  type="button"
-                  className={
-                    sortKey === opt.key
-                      ? 'chip fill primary'
-                      : 'chip border transparent'
-                  }
-                  onClick={() => {
-                    setSortKey(opt.key);
-                    setSortDialogOpen(false);
-                  }}
-                >
-                  <span>{opt.label}</span>
-                </button>
-              ))}
-            </Stack>
-          </dialog>
-        </>
-      )}
+      {/* Booking Filter & Sort Bottom Sheet */}
+      <BookingFilterSheet
+        isOpen={filterSheetOpen}
+        selectedFilter={statusFilter}
+        tabCounts={tabCounts}
+        selectedSort={sortKey}
+        onSelectFilter={setStatusFilter}
+        onSelectSort={setSortKey}
+        onClose={() => setFilterSheetOpen(false)}
+      />
 
       {/* Booking Add / Edit Sheet */}
       <BookingSheet
