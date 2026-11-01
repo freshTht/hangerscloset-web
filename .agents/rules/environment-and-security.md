@@ -31,6 +31,7 @@ These variables identify public endpoints and project resources; they **do not g
 | `VITE_FIREBASE_STORAGE_BUCKET`| GCS bucket name (`<project>.firebasestorage.app`). | Public asset bucket address. Governed by Cloud Storage rules. |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Project number. | Public routing key for Web Push notifications. |
 | `VITE_FIREBASE_APP_ID` | Web client registration ID. | Public app identifier. |
+| `VITE_FIREBASE_DATABASE_ID` | Optional named Firestore database ID (defaults to `(default)`). | Public identifier specifying which named Firestore database to target. |
 | `VITE_ALLOWED_EMAILS` | Comma-separated list of permitted emails. | Client-side fallback whitelist. Server authorization is strictly enforced by `firestore.rules`. |
 
 > **Netlify Hosting Rule**: Because these values appear in plain text in build output, **do not mark `VITE_*` variables as "Secret" or "Sensitive" in Netlify**, or add them to `SECRETS_SCAN_OMIT_KEYS` in `netlify.toml` to prevent false positive build failures.

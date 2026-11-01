@@ -21,22 +21,43 @@ hangerscloset-web/
 └── src/
     ├── main.tsx                # Application bootstrap (Beer CSS & root render)
     ├── App.tsx                 # Router definition & route mapping
-    ├── index.css               # Global responsive tweaks & animations
-    ├── components/
-    │   ├── Header.tsx          # Top bar with simple text brand & Navigation tabbed
+    ├── index.css               # Global responsive tweaks & core variables
+    ├── components/             # Reusable UI components with colocated .css
+    │   ├── BookingCalendar.tsx # Monthly grid calendar with rental/cleaning turns
+    │   ├── BookingCard.tsx     # Booking item card with line items and status progression
+    │   ├── BookingInventoryCard.tsx # Unified inventory status & reserve/booking card
+    │   ├── BookingSheet.tsx    # Multi-step booking creation & edit modal wizard
+    │   ├── CustomerPicker.tsx  # Customer selection and inline creation dropdown
+    │   ├── EmptyState.tsx      # Standardized empty state presentation
+    │   ├── GoogleSignInButton.tsx # Material design Google sign-in button
+    │   ├── Header.tsx          # Top app bar (mobile) & rail branding
     │   ├── InventoryCard.tsx   # Card component displaying a single inventory item
+    │   ├── InventoryFilterSheet.tsx # Advanced inventory filter bottom/side sheet
     │   ├── InventorySheet.tsx  # Add/Edit clothing item responsive side/bottom sheet
+    │   ├── InventorySortDialog.tsx  # Inventory sorting dialog
+    │   ├── Layout.tsx          # App shell layout (Header + responsive main content)
+    │   ├── LazyImage.tsx       # Intersection-observer lazy loaded image with shimmer
+    │   ├── MaterialShapesBackground.tsx # Organic material decorative background shapes
+    │   ├── ModeBadge.tsx       # Subtle badge visible only in mock data mode
     │   ├── OptionPicker.tsx    # Docked single-select picker with dynamic adding
-    │   ├── TagPicker.tsx       # Docked multi-tag picker with chip tags
-    │   ├── Stack.tsx           # Flexbox stack component (orientation, gap, Beer CSS margin/padding)
-    │   └── Layout.tsx          # App shell layout (Header + responsive main content)
+    │   ├── ProtectedRoute.tsx  # Auth & allowlist access guard
+    │   ├── Skeleton.tsx        # Responsive skeleton shimmer loading placeholder
+    │   ├── Stack.tsx           # Flexbox stack component (orientation, gap, margin/padding)
+    │   ├── StatusBadge.tsx     # Color-coded rental lifecycle status badge
+    │   └── TagPicker.tsx       # Docked multi-tag picker with chip tags
+    ├── contexts/               # React contexts (AuthContext, RepositoryContext)
+    ├── hooks/                  # Custom hooks (useBookings, useInventory, useCustomers, useIsMobile)
+    ├── lib/                    # Shared utilities (firebase, date helpers, image resizing)
     ├── data/
     │   └── mockInventory.ts    # Pre-populated mock clothing item records
     ├── types/
+    │   ├── booking.ts          # Booking domain models, statuses & lifecycle transitions
+    │   ├── customer.ts         # Customer domain model
     │   └── inventory.ts        # Types: InventoryItem, InventoryStatus, RentalPrices
     ├── services/               # Service layer & repository pattern (Mock & Firebase)
     └── pages/
         ├── HomePage.tsx        # Placeholder home page ('/')
+        ├── BookingsPage.tsx    # Bookings list and calendar view ('/bookings')
         ├── InventoryPage.tsx   # Inventory grid with floating add toolbar ('/inventory')
         ├── SettingsPage.tsx    # App preferences with dark mode switch ('/settings')
         ├── LoginPage.tsx       # Google sign-in page ('/login')
@@ -49,6 +70,7 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
 - Root layout route: `Layout` component wraps all view routes.
 - Child routes:
   - `/` &rarr; `HomePage`: Simple placeholder.
+  - `/bookings` &rarr; `BookingsPage`: Rental bookings management with List and Calendar views.
   - `/inventory` &rarr; `InventoryPage`: Responsive grid of rental clothing items with floating add toolbar.
   - `/settings` &rarr; `SettingsPage`: App preferences containing dark mode switch.
   - `/login` &rarr; `LoginPage`: Google authentication page.

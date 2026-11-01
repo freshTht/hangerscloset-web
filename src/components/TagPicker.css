@@ -11,12 +11,27 @@
 }
 
 .hc-tag-remove-btn {
+  position: relative;
   width: 22px;
   height: 22px;
   min-width: 22px;
   min-height: 22px;
   padding: 0;
   color: inherit;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-tag-remove-btn::before,
+  .hc-tag-clear-btn::before,
+  .hc-tag-toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+  }
 }
 
 .hc-tag-remove-icon {
