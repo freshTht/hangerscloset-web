@@ -76,7 +76,7 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
         }}
       >
         <div
-          className="row hc-items-center no-margin"
+          className="row no-margin"
           style={{ gap: '8px' }}
         >
           <i>sort</i>

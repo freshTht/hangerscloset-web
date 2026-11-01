@@ -611,10 +611,10 @@ export const BookingsPage: React.FC = () => {
   );
 
   return (
-    <div className="hc-bookings-page">
+    <div>
       {/* Date Navigation & Selector Bar */}
       <div
-        className="row hc-items-center hc-justify-center bottom-margin"
+        className="row center-align bottom-margin"
         data-testid="bookings-date-bar"
         style={{
           gap: '8px',
@@ -783,7 +783,7 @@ export const BookingsPage: React.FC = () => {
         </div>
       ) : error ? (
         <article className="border error-container round margin">
-          <div className="row hc-items-center">
+          <div className="row">
             <i className="error-text">error</i>
             <div className="max">
               <h6 className="bold no-margin error-text">

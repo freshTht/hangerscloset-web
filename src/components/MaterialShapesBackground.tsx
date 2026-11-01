@@ -27,7 +27,6 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
 }) => {
   return (
     <div
-      className="hc-material-shapes-bg-container"
       style={{
         position: 'fixed',
         inset: 0,

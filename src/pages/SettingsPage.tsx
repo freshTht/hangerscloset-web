@@ -35,11 +35,11 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="hc-settings-page">
+    <div>
       {/* User Profile Card */}
       {user && (
         <article className="border round hc-medium-padding margin-bottom surface-container-low">
-          <div className="row hc-items-center">
+          <div className="row">
             {user.photoURL ? (
               <LazyImage
                 src={user.photoURL}
@@ -52,7 +52,7 @@ export const SettingsPage: React.FC = () => {
               <i className="extra circle surface-container-high primary-text">person</i>
             )}
             <div className="max" style={{ minWidth: 0 }}>
-              <div className="row hc-items-center no-margin" style={{ gap: '8px' }}>
+              <div className="row no-margin" style={{ gap: '8px' }}>
                 <h6
                   className="bold no-margin"
                   style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
@@ -110,7 +110,7 @@ export const SettingsPage: React.FC = () => {
 
       {/* Theme Toggle Card */}
       <article className="border round hc-medium-padding">
-        <div className="row hc-items-center">
+        <div className="row">
           <div className="max">
             <h6 className="bold no-margin">ธีมมืด</h6>
             <p className="no-margin secondary-text">

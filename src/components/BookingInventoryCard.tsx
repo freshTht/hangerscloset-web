@@ -202,7 +202,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
         {/* Booking Details if booked */}
         {isBooked && booking && (
           <div
-            className="round surface-container-low hc-text-9pt"
+            className="round surface-container-low small-text"
             style={{
               padding: '6px 8px',
               marginTop: '6px',

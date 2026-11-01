@@ -1,9 +1,5 @@
 /* Custom responsive and mobile optimizations */
 
-:root {
-  --hc-app-header-height: auto;
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -46,25 +42,6 @@ nav.left.m .hc-rail-top {
 nav.left.max.l .hc-rail-top {
   justify-content: flex-start;
   padding: 0 16px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Middle-aligned destinations group */
-.hc-rail-nav-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.hc-rail-nav-group > a {
-  text-decoration: none;
-  cursor: pointer;
-  touch-action: manipulation;
-  margin-bottom: 8px;
-}
-
-nav.left.max > .hc-rail-nav-group > a {
   width: 100%;
   box-sizing: border-box;
 }
@@ -155,27 +132,6 @@ main.responsive {
 .hc-micro-text {
   font-size: 8pt;
   line-height: normal;
-}
-
-/* Font-size utilities (pt) - replace inline fontSize styles */
-.hc-text-8pt {
-  font-size: 8pt !important;
-}
-
-.hc-text-9pt {
-  font-size: 9pt !important;
-}
-
-.hc-text-10pt {
-  font-size: 10pt !important;
-}
-
-.hc-text-11pt {
-  font-size: 11pt !important;
-}
-
-.hc-text-12pt {
-  font-size: 12pt !important;
 }
 
 .hc-status-badge-available {
@@ -295,84 +251,13 @@ body.dark .hc-material-shapes-bg-hanger {
   display: block;
 }
 
-/* Joined Segmented Inputs Group */
-.hc-joined-fields-group {
-  display: flex;
-  width: 100%;
-}
-
-.hc-joined-fields-group > .field {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.hc-joined-fields-group > .field:focus-within {
-  z-index: 3;
-}
-
-.hc-joined-fields-group > .field:not(:first-child) {
-  margin-left: -1px;
-}
-
-.hc-joined-fields-group > .field:first-child,
-.hc-joined-fields-group > .field:first-child > input {
-  border-top-left-radius: 24px !important;
-  border-bottom-left-radius: 24px !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-
-.hc-joined-fields-group > .field:not(:first-child):not(:last-child),
-.hc-joined-fields-group > .field:not(:first-child):not(:last-child) > input {
-  border-radius: 0 !important;
-}
-
-.hc-joined-fields-group > .field:last-child,
-.hc-joined-fields-group > .field:last-child > input {
-  border-top-right-radius: 24px !important;
-  border-bottom-right-radius: 24px !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-}
-
 /* Custom Beer CSS padding enhancement */
 .hc-medium-padding {
   --_padding: 20px !important;
 }
 
-/* Flex and margin helper utilities missing in Beer CSS */
-.hc-justify-between {
-  justify-content: space-between !important;
-}
-
-.hc-justify-center {
-  justify-content: center !important;
-}
-
-.hc-items-center {
-  align-items: center !important;
-}
-
 .hc-cursor-pointer {
   cursor: pointer !important;
-}
-
-.hc-top-margin-tiny {
-  margin-top: 4px !important;
-}
-
-.hc-bottom-margin-tiny {
-  margin-bottom: 4px !important;
-}
-
-.hc-top-margin-small {
-  margin-top: 8px !important;
-}
-
-.hc-bottom-margin-small {
-  margin-bottom: 8px !important;
 }
 
 /* Inventory filter toolbar: single non-wrapping scrollable row */

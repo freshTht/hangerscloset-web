@@ -408,7 +408,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       >
         {/* Top bar: title only for Add; SKU chip for Edit; close button */}
         <div
-          className="row hc-items-center no-margin"
+          className="row no-margin"
           style={{ paddingBottom: '6px', flexShrink: 0 }}
         >
           {mode === 'add' ? (
@@ -440,7 +440,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 className="border error-container round margin-bottom"
                 style={{ flexShrink: 0 }}
               >
-                <div className="row hc-items-center no-margin">
+                <div className="row no-margin">
                   <i className="error-text">error</i>
                   <div className="max">
                     <p className="no-margin error-text small-text">{errorMessage}</p>
@@ -737,7 +737,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 style={{ flexShrink: 0 }}
               >
                 <div className="vertical" style={{ gap: '8px' }}>
-                  <div className="row hc-items-center no-margin">
+                  <div className="row no-margin">
                     <i className="error-text">warning</i>
                     <div className="max">
                       <h6 className="bold no-margin error-text small">ยืนยันการลบรายการนี้?</h6>
@@ -773,7 +773,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
             )}
 
             <div
-              className="row hc-items-center no-margin"
+              className="row no-margin"
               style={{
                 paddingTop: '12px',
                 borderTop: '1px solid var(--surface-variant)',

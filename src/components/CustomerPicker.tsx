@@ -405,7 +405,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
         <button
           type="button"
-          className="border no-margin hc-text-10pt"
+          className="border no-margin medium-text"
           onClick={handleOpenCreateForm}
           title="เพิ่มลูกค้าใหม่"
           style={{

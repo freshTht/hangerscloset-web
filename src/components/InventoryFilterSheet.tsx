@@ -327,7 +327,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
       >
         {/* Header */}
         <div
-          className="row hc-items-center no-margin"
+          className="row no-margin"
           style={{ paddingBottom: '8px', flexShrink: 0, gap: '8px' }}
         >
           <i>{quickAddMode ? 'add' : 'tune'}</i>
@@ -588,7 +588,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
 
         {/* Footer Actions */}
         <div
-          className="row hc-items-center no-margin"
+          className="row no-margin"
           style={{
             paddingTop: '12px',
             borderTop: '1px solid var(--surface-variant)',

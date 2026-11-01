@@ -107,7 +107,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
           <div
-            className="bold medium-text hc-text-11pt"
+            className="bold medium-text"
             style={{
               textAlign: 'center',
               marginTop: '4px',
@@ -131,7 +131,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
           }}
         >
           <span
-            className="secondary-text bold hc-text-8pt"
+            className="secondary-text bold hc-micro-text"
             style={{ marginBottom: '3px' }}
           >
             ระยะเวลา
@@ -246,7 +246,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
           <div
-            className="bold medium-text hc-text-11pt"
+            className="bold medium-text"
             style={{
               textAlign: 'center',
               marginTop: '4px',
@@ -318,7 +318,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
 
       {/* Turnaround schedule info below separator */}
       <div
-        className="center-align secondary-text hc-text-8pt"
+        className="center-align secondary-text hc-micro-text"
         style={{
           borderTop: '1px solid var(--surface-variant)',
           paddingTop: '6px',

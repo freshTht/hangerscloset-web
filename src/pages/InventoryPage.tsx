@@ -194,7 +194,7 @@ export const InventoryPage: React.FC = () => {
         </nav>
 
         <div
-          className="row no-wrap hc-items-center scroll no-margin"
+          className="row no-wrap scroll no-margin"
           style={{
             gap: '8px',
             overflowX: 'auto',
@@ -332,14 +332,14 @@ export const InventoryPage: React.FC = () => {
             }}
           >
             <div
-              className="row hc-items-center no-margin"
+              className="row no-margin"
               style={{
                 gap: '8px',
                 width: '100%',
               }}
             >
               <i className="small secondary-text">search</i>
-              <input className="hc-text-10pt"
+              <input className="medium-text"
                 ref={searchInputRef}
                 type="search"
                 aria-label="ค้นหาชุดในคลัง"
@@ -382,7 +382,7 @@ export const InventoryPage: React.FC = () => {
             {/* Quick Tag Selector Chips */}
             {availableTags.length > 0 && (
               <div
-                className="row no-wrap hc-items-center scroll no-margin"
+                className="row no-wrap scroll no-margin"
                 style={{
                   gap: '6px',
                   overflowX: 'auto',
@@ -401,7 +401,7 @@ export const InventoryPage: React.FC = () => {
                       key={t}
                       type="button"
                       data-testid={`tag-chip-${t}`}
-                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-text-8pt`}
+                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-micro-text`}
                       style={{
                         height: '24px',
                         padding: '0 8px',
@@ -440,7 +440,7 @@ export const InventoryPage: React.FC = () => {
         </div>
       ) : error ? (
         <article className="border error-container round margin">
-          <div className="row hc-items-center">
+          <div className="row">
             <i className="error-text">error</i>
             <div className="max">
               <h6 className="bold no-margin error-text">

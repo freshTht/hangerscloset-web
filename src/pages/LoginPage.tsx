@@ -63,7 +63,7 @@ export const LoginPage: React.FC = () => {
           }}
         >
           {/* App Name & Simple Mode Badge */}
-          <div className="row center-align hc-items-center" style={{ gap: '10px' }}>
+          <div className="row center-align" style={{ gap: '10px' }}>
             <h3 className="bold no-margin">Hanger's Closet</h3>
             <ModeBadge />
           </div>

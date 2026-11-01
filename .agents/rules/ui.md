@@ -41,7 +41,7 @@ Beer CSS is built around 3 core concepts:
 
 ### D. Custom Style Tracking & `hc-` Namespace Rule
 > [!IMPORTANT]
-> All custom CSS classes, custom CSS variables, and custom keyframe animations created for this project MUST strictly use the **`hc-`** prefix (e.g., `.hc-status-badge`, `.hc-text-10pt`, `.hc-skeleton`, `.hc-medium-padding`, `--hc-app-header-height`, `@keyframes hc-fade-in`). This ensures that custom overrides are immediately tracked, auditable, and never confused with native Beer CSS classes or browser primitives. Do NOT introduce new custom styles without the `hc-` prefix.
+> All custom CSS classes, custom CSS variables, and custom keyframe animations created for this project MUST strictly use the **`hc-`** prefix (e.g., `.hc-status-badge`, `.hc-micro-text`, `.hc-skeleton`, `.hc-medium-padding`, `@keyframes hc-fade-in`). This ensures that custom overrides are immediately tracked, auditable, and never confused with native Beer CSS classes or browser primitives. Do NOT introduce new custom styles without the `hc-` prefix.
 
 ---
 
