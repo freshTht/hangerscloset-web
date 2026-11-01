@@ -211,7 +211,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           placeholder={isOpen ? 'ค้นหา หรือพิมพ์เพิ่มแท็กใหม่...' : placeholder}
           autoComplete="off"
           style={{
-            paddingRight: searchTerm ? '4.25rem' : '2.5rem',
+            paddingRight: searchTerm ? '68px' : '40px',
           }}
         />
         <label htmlFor={id}>{label}</label>
@@ -228,7 +228,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
             aria-label="ล้างค่า"
             style={{
               position: 'absolute',
-              right: '2.25rem',
+              right: '36px',
               top: '50%',
               transform: 'translateY(-50%)',
               width: 28,
@@ -259,7 +259,7 @@ export const TagPicker: React.FC<TagPickerProps> = ({
           aria-label="แสดงรายการแท็ก"
           style={{
             position: 'absolute',
-            right: '0.35rem',
+            right: '6px',
             top: '50%',
             transform: 'translateY(-50%)',
             width: 28,

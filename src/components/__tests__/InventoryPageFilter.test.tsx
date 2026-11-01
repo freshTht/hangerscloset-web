@@ -81,7 +81,7 @@ describe('InventoryCard (Simplified)', () => {
     expect(screen.queryByText('พร้อมเช่า')).not.toBeInTheDocument();
     expect(screen.queryByText('จองแล้ว')).not.toBeInTheDocument();
     expect(screen.queryByText('ส่งซัก')).not.toBeInTheDocument();
-    expect(container.querySelector('.status-badge')).toBeNull();
+    expect(container.querySelector('.hc-status-badge')).toBeNull();
 
     // Price tiers are displayed clearly
     expect(screen.getByTestId('price-tier-1')).toHaveTextContent('1 วัน');

@@ -140,7 +140,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
   return (
     <Stack orientation="column" gap="medium">
-      <article className="border round surface medium-padding no-margin">
+      <article className="border round surface hc-medium-padding no-margin">
         <Stack orientation="column" gap="medium">
           {/* Calendar Header */}
           <Stack
@@ -176,7 +176,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               <span className="chip tiny primary-container no-margin">
                 วันเช่าชุด
               </span>
-              <span className="chip tiny status-badge-laundry no-margin">
+              <span className="chip tiny hc-status-badge-laundry no-margin">
                 วันซัก/เตรียมชุด
               </span>
               <button
@@ -278,7 +278,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                       {dayNum}
                     </span>
                     {isMobile && entries.length > 0 && (
-                      <span className="micro-text bold primary-text">
+                      <span className="hc-micro-text bold primary-text">
                         {entries.length}
                       </span>
                     )}
@@ -319,10 +319,10 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                       {visiblePills.map((entry, eIdx) => (
                         <span
                           key={`${entry.booking.id}-${entry.itemCode}-${eIdx}`}
-                          className={`micro-text bold round ${
+                          className={`hc-micro-text bold round ${
                             entry.windowType === 'rental'
                               ? 'primary-container'
-                              : 'status-badge-laundry'
+                              : 'hc-status-badge-laundry'
                           }`}
                           style={{
                             padding: '1px 6px',
@@ -336,7 +336,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                         </span>
                       ))}
                       {overflowCount > 0 && (
-                        <span className="micro-text secondary-text bold">
+                        <span className="hc-micro-text secondary-text bold">
                           +{overflowCount} ชุด
                         </span>
                       )}
@@ -359,7 +359,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
         </Stack>
 
         {selectedDateBookings.length === 0 ? (
-          <article className="border round surface medium-padding center-align no-margin">
+          <article className="border round surface hc-medium-padding center-align no-margin">
             <p className="secondary-text no-margin">
               ไม่มีคิวเช่าหรือซักชุดในวันที่เลือก
             </p>

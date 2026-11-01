@@ -211,7 +211,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
         required={required && !value}
         autoComplete="off"
         style={{
-          paddingRight: searchTerm ? '4.5rem' : '2.75rem',
+          paddingRight: searchTerm ? '72px' : '44px',
         }}
       />
       <label htmlFor={id}>{label}</label>
@@ -229,7 +229,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
           aria-label="ล้างค่า"
           style={{
             position: 'absolute',
-            right: '2.5rem',
+            right: '40px',
             top: '50%',
             transform: 'translateY(-50%)',
             width: 32,
@@ -260,7 +260,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
         aria-label="แสดงตัวเลือก"
         style={{
           position: 'absolute',
-          right: '0.5rem',
+          right: '8px',
           top: '50%',
           transform: 'translateY(-50%)',
           width: 36,

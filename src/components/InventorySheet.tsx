@@ -394,22 +394,22 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 maxHeight: '90dvh',
                 width: '100%',
                 maxWidth: '100vw',
-                borderRadius: '1.25rem 1.25rem 0 0',
-                padding: '0.75rem 1rem 1rem 1rem',
+                borderRadius: '20px 20px 0 0',
+                padding: '12px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
                 margin: 0,
               }
             : {
-                width: '32rem',
+                width: '512px',
                 maxWidth: '90vw',
                 height: '100dvh',
-                padding: '1.25rem',
+                padding: '20px',
               }),
         }}
       >
         {/* Top bar: title only for Add; SKU chip for Edit; close button */}
         <div
-          className="row items-center no-margin"
-          style={{ paddingBottom: '0.35rem', flexShrink: 0 }}
+          className="row hc-items-center no-margin"
+          style={{ paddingBottom: '6px', flexShrink: 0 }}
         >
           {mode === 'add' ? (
             <h6 className="bold no-margin">เพิ่มชุดใหม่</h6>
@@ -440,7 +440,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 className="border error-container round margin-bottom"
                 style={{ flexShrink: 0 }}
               >
-                <div className="row items-center no-margin">
+                <div className="row hc-items-center no-margin">
                   <i className="error-text">error</i>
                   <div className="max">
                     <p className="no-margin error-text small-text">{errorMessage}</p>
@@ -452,17 +452,17 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
             {loading ? (
               <div
                 className="vertical"
-                style={{ flex: 1, gap: 12, padding: '1rem 0' }}
+                style={{ flex: 1, gap: 12, padding: '16px 0' }}
                 aria-busy="true"
                 aria-label="กำลังโหลดข้อมูลชุด"
               >
                 <div
-                  className="skeleton round"
+                  className="hc-skeleton round"
                   style={{ width: imageSize, aspectRatio: '1 / 1', margin: '0 auto' }}
                 />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
+                <div className="hc-skeleton round" style={{ width: '100%', height: 48 }} />
+                <div className="hc-skeleton round" style={{ width: '100%', height: 48 }} />
+                <div className="hc-skeleton round" style={{ width: '100%', height: 48 }} />
               </div>
             ) : (
               <form
@@ -474,8 +474,8 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                   overflowX: 'hidden',
                   WebkitOverflowScrolling: 'touch',
                   overscrollBehavior: 'contain',
-                  paddingTop: '0.25rem',
-                  paddingBottom: '3rem',
+                  paddingTop: '4px',
+                  paddingBottom: '48px',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
@@ -737,7 +737,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 style={{ flexShrink: 0 }}
               >
                 <div className="vertical" style={{ gap: '8px' }}>
-                  <div className="row items-center no-margin">
+                  <div className="row hc-items-center no-margin">
                     <i className="error-text">warning</i>
                     <div className="max">
                       <h6 className="bold no-margin error-text small">ยืนยันการลบรายการนี้?</h6>
@@ -773,9 +773,9 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
             )}
 
             <div
-              className="row items-center no-margin"
+              className="row hc-items-center no-margin"
               style={{
-                paddingTop: '0.75rem',
+                paddingTop: '12px',
                 borderTop: '1px solid var(--surface-variant)',
                 flexShrink: 0,
                 gap: '8px',

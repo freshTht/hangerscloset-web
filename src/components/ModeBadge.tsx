@@ -25,11 +25,10 @@ export const ModeBadge: React.FC<ModeBadgeProps> = ({
 
   return (
     <span
-      className={`chip fill error small bold no-margin ${className}`.trim()}
+      className={`chip fill error small bold no-margin hc-text-9pt ${className}`.trim()}
       style={{
         padding: '2px 8px',
         height: 'auto',
-        fontSize: '0.75rem',
         borderRadius: '6px',
         letterSpacing: '0.05em',
         fontWeight: 700,

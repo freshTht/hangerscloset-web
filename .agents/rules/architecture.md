@@ -11,7 +11,6 @@ hangerscloset-web/
 │   │   ├── environment-and-security.md # Env var rules, public VITE_ keys & secret prevention
 │   │   └── architecture.md     # Layout shell, routing & data architecture
 │   └── skills/                 # Workspace Firebase & development skills
-├── .cursor/rules/              # Thin Cursor IDE adapters delegating to .agents/rules/
 ├── .context/
 │   └── pending-features/      # Scored feature specifications & roadmap backlog
 ├── index.html                  # HTML entry point with viewport & theme setup

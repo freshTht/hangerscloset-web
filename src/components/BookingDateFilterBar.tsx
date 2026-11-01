@@ -35,7 +35,7 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
 
   return (
     <div
-      className="surface-container-low border medium-padding bottom-margin"
+      className="surface-container-low border hc-medium-padding bottom-margin"
       data-testid="booking-date-filter-bar"
       style={{
         width: '100%',
@@ -107,13 +107,12 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
           <div
-            className="bold medium-text"
+            className="bold medium-text hc-text-11pt"
             style={{
               textAlign: 'center',
               marginTop: '4px',
               whiteSpace: 'nowrap',
               pointerEvents: 'none',
-              fontSize: '15px',
             }}
           >
             {formatDateThaiShortWithYear(startDate)}
@@ -132,8 +131,8 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
           }}
         >
           <span
-            className="secondary-text bold"
-            style={{ fontSize: '11px', marginBottom: '3px' }}
+            className="secondary-text bold hc-text-8pt"
+            style={{ marginBottom: '3px' }}
           >
             ระยะเวลา
           </span>
@@ -247,13 +246,12 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
             <i className="tiny secondary-text">arrow_drop_down</i>
           </div>
           <div
-            className="bold medium-text"
+            className="bold medium-text hc-text-11pt"
             style={{
               textAlign: 'center',
               marginTop: '4px',
               whiteSpace: 'nowrap',
               pointerEvents: 'none',
-              fontSize: '15px',
             }}
           >
             {formatDateThaiShortWithYear(endDate)}
@@ -320,12 +318,11 @@ export const BookingDateFilterBar: React.FC<BookingDateFilterBarProps> = ({
 
       {/* Turnaround schedule info below separator */}
       <div
-        className="center-align secondary-text"
+        className="center-align secondary-text hc-text-8pt"
         style={{
           borderTop: '1px solid var(--surface-variant)',
           paddingTop: '6px',
           marginTop: '8px',
-          fontSize: '11px',
         }}
       >
         <span>พร้อมให้เช่าต่อ: </span>

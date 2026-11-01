@@ -49,7 +49,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
                 borderRight: !isLast ? '1px solid var(--surface-variant)' : undefined,
               }}
             >
-              <span className="secondary-text micro-text">{tier.durationDays} วัน</span>
+              <span className="secondary-text hc-micro-text">{tier.durationDays} วัน</span>
               <span className="bold on-surface-text">{formatPrice(tier.price)}</span>
             </div>
           );
@@ -123,7 +123,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
           {/* Top: Code, Edit Action, and Title */}
           <div className="vertical" style={{ gap: '4px' }}>
             <div className="row no-margin align-center no-space" style={{ gap: '6px' }}>
-              <span className="micro-text secondary-text medium">
+              <span className="hc-micro-text secondary-text medium">
                 {item.code}
               </span>
               <div className="max"></div>

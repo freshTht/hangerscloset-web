@@ -652,7 +652,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 width: '100%',
                 maxWidth: '100vw',
                 borderRadius: '20px 20px 0 0',
-                padding: '12px 16px 16px 16px',
+                padding: '12px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
                 margin: 0,
               }
             : {
@@ -665,7 +665,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
       >
         {/* Top bar */}
         <div
-          className="row items-center no-margin"
+          className="row hc-items-center no-margin"
           style={{ paddingBottom: '6px', flexShrink: 0 }}
         >
           <h6 className="bold no-margin">
@@ -696,7 +696,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 className="border error-container round margin-bottom"
                 style={{ flexShrink: 0 }}
               >
-                <div className="row items-center no-margin">
+                <div className="row hc-items-center no-margin">
                   <i className="error-text">error</i>
                   <div className="max">
                     <p className="no-margin error-text small-text">
@@ -741,24 +741,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         : currentStep > 1
                         ? 'surface border primary-text'
                         : 'border secondary-text'
-                    }`}
+                    } ${isMobile ? 'hc-text-9pt' : 'hc-text-10pt'}`}
                     onClick={() => handleGoToStep(1)}
                     style={{
                       cursor: currentStep > 1 ? 'pointer' : 'default',
                       height: '28px',
                       padding: isMobile ? '0 6px' : '0 10px',
                       borderRadius: '14px',
-                      fontSize: isMobile ? '12px' : '13px',
-                      display: 'inline-flex',
+                                    display: 'inline-flex',
                       alignItems: 'center',
                       gap: '4px',
                       whiteSpace: 'nowrap',
                     }}
                   >
                     {currentStep > 1 ? (
-                      <i style={{ fontSize: '14px' }}>check</i>
+                      <i className="hc-text-10pt">check</i>
                     ) : (
-                      <span className="bold" style={{ fontSize: '12px' }}>
+                      <span className="bold hc-text-9pt">
                         1
                       </span>
                     )}
@@ -766,8 +765,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   </button>
 
                   <i
-                    className="secondary-text"
-                    style={{ fontSize: '14px', flexShrink: 0 }}
+                    className="secondary-text hc-text-10pt"
+                    style={{ flexShrink: 0 }}
                   >
                     chevron_right
                   </i>
@@ -780,24 +779,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         : currentStep > 2
                         ? 'surface border primary-text'
                         : 'border secondary-text'
-                    }`}
+                    } ${isMobile ? 'hc-text-9pt' : 'hc-text-10pt'}`}
                     onClick={() => handleGoToStep(2)}
                     style={{
                       cursor: currentStep > 2 ? 'pointer' : 'default',
                       height: '28px',
                       padding: isMobile ? '0 6px' : '0 10px',
                       borderRadius: '14px',
-                      fontSize: isMobile ? '12px' : '13px',
-                      display: 'inline-flex',
+                                    display: 'inline-flex',
                       alignItems: 'center',
                       gap: '4px',
                       whiteSpace: 'nowrap',
                     }}
                   >
                     {currentStep > 2 ? (
-                      <i style={{ fontSize: '14px' }}>check</i>
+                      <i className="hc-text-10pt">check</i>
                     ) : (
-                      <span className="bold" style={{ fontSize: '12px' }}>
+                      <span className="bold hc-text-9pt">
                         2
                       </span>
                     )}
@@ -805,8 +803,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   </button>
 
                   <i
-                    className="secondary-text"
-                    style={{ fontSize: '14px', flexShrink: 0 }}
+                    className="secondary-text hc-text-10pt"
+                    style={{ flexShrink: 0 }}
                   >
                     chevron_right
                   </i>
@@ -817,20 +815,19 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       currentStep === 3
                         ? 'fill primary bold'
                         : 'border secondary-text'
-                    }`}
+                    } ${isMobile ? 'hc-text-9pt' : 'hc-text-10pt'}`}
                     style={{
                       cursor: 'default',
                       height: '28px',
                       padding: isMobile ? '0 6px' : '0 10px',
                       borderRadius: '14px',
-                      fontSize: isMobile ? '12px' : '13px',
-                      display: 'inline-flex',
+                                    display: 'inline-flex',
                       alignItems: 'center',
                       gap: '4px',
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    <span className="bold" style={{ fontSize: '12px' }}>
+                    <span className="bold hc-text-9pt">
                       3
                     </span>
                     <span>ยืนยันการจอง</span>
@@ -916,7 +913,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                     {/* Full height outfit list */}
                     <div
-                      className="wizard-outfit-list-container"
+                      className="hc-wizard-outfit-list-container"
                       data-testid="wizard-outfit-list"
                       style={{
                         flex: 1,
@@ -932,7 +929,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       {filteredInventory.length === 0 ? (
                         <div className="center-align padding secondary-text">
                           <i>search_off</i>
-                          <p className="small-text top-margin-tiny">
+                          <p className="small-text hc-top-margin-tiny">
                             ไม่พบชุดที่ตรงกับคำค้นหา
                           </p>
                         </div>
@@ -959,7 +956,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           return (
                             <div
                               key={invItem.id}
-                              className={`border small-padding cursor-pointer ${
+                              className={`border small-padding hc-cursor-pointer ${
                                 isSelected
                                   ? isSelectedConflict
                                     ? 'error-container'
@@ -1041,12 +1038,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   }}
                                 >
                                   <span
-                                    className="chip tiny primary-container bold no-margin"
+                                    className="chip tiny primary-container bold no-margin hc-text-8pt"
                                     style={{
                                       borderRadius: '6px',
                                       padding: '0 6px',
                                       height: '20px',
-                                      fontSize: '11px',
                                     }}
                                   >
                                     {invItem.code}
@@ -1073,23 +1069,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   }}
                                 >
                                   {invItem.brand && (
-                                    <span className="micro-text secondary-text">
+                                    <span className="hc-micro-text secondary-text">
                                       {invItem.brand}
                                     </span>
                                   )}
                                   {invItem.size && (
-                                    <span className="micro-text secondary-text">
+                                    <span className="hc-micro-text secondary-text">
                                       • ไซส์ {invItem.size}
                                     </span>
                                   )}
-                                  <span className="bold micro-text primary-text">
+                                  <span className="bold hc-micro-text primary-text">
                                     • ฿{priceForDuration.toLocaleString()} / {durationDays} วัน
                                   </span>
                                 </div>
 
                                 {hasConflict && (
                                   <span
-                                    className="micro-text error-text bold"
+                                    className="hc-micro-text error-text bold"
                                     style={{ lineHeight: '1.2' }}
                                   >
                                     ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
@@ -1106,7 +1102,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                       ? 'fill error'
                                       : 'fill primary'
                                     : 'border'
-                                }`}
+                                } hc-text-9pt`}
                                 disabled={hasConflict && !isSelected}
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -1122,7 +1118,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   borderRadius: '8px',
                                   padding: '0 10px',
                                   height: '32px',
-                                  fontSize: '12px',
                                   display: 'inline-flex',
                                   alignItems: 'center',
                                   gap: '4px',
@@ -1135,7 +1130,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                               >
                                 {isSelected ? (
                                   <>
-                                    <i style={{ fontSize: '16px' }}>
+                                    <i className="hc-text-12pt">
                                       {isSelectedConflict ? 'warning' : 'check'}
                                     </i>
                                     <span>
@@ -1146,9 +1141,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   </>
                                 ) : hasConflict ? (
                                   <>
-                                    <i
+                                    <i className="hc-text-10pt"
                                       style={{
-                                        fontSize: '14px',
                                         marginRight: '2px',
                                       }}
                                     >
@@ -1158,7 +1152,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   </>
                                 ) : (
                                   <>
-                                    <i style={{ fontSize: '16px' }}>add</i>
+                                    <i className="hc-text-12pt">add</i>
                                     <span>เลือก</span>
                                   </>
                                 )}
@@ -1388,8 +1382,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                         {/* Selected outfits price recap */}
                         <div
-                          className="surface border small-padding"
-                          style={{ fontSize: '13px', borderRadius: '12px' }}
+                          className="surface border small-padding hc-text-10pt"
+                          style={{ borderRadius: '12px' }}
                         >
                           <div className="bold" style={{ marginBottom: '6px' }}>
                             สรุปราคาแนะนำ ({selectedItems.length} ชุด, {durationDays} วัน):
@@ -1645,23 +1639,23 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         style={{ borderRadius: '16px' }}
                       >
                         <Stack orientation="column" gap="small">
-                          <div className="row items-center no-margin" style={{ gap: '6px' }}>
+                          <div className="row hc-items-center no-margin" style={{ gap: '6px' }}>
                             <i className="primary-text">event</i>
                             <span className="bold small-text">ช่วงเวลาเช่า</span>
                           </div>
                           <div className="grid no-margin" style={{ gap: '8px' }}>
                             <div className="s6">
-                              <span className="micro-text secondary-text">วันรับชุด</span>
+                              <span className="hc-micro-text secondary-text">วันรับชุด</span>
                               <div className="bold">{formatDateThaiFull(startDate)}</div>
                             </div>
                             <div className="s6">
-                              <span className="micro-text secondary-text">
+                              <span className="hc-micro-text secondary-text">
                                 วันส่งคืน ({durationDays} วัน)
                               </span>
                               <div className="bold">{formatDateThaiFull(endDate)}</div>
                             </div>
                             <div className="s12">
-                              <span className="micro-text secondary-text">
+                              <span className="hc-micro-text secondary-text">
                                 วันสิ้นสุดการทำความสะอาด (พร้อมให้เช่าต่อ)
                               </span>
                               <div className="bold primary-text">
@@ -1678,7 +1672,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         style={{ borderRadius: '16px' }}
                       >
                         <Stack orientation="column" gap="small">
-                          <div className="row items-center no-margin" style={{ gap: '6px' }}>
+                          <div className="row hc-items-center no-margin" style={{ gap: '6px' }}>
                             <i className="primary-text">checkroom</i>
                             <span className="bold small-text">
                               ชุดที่เลือก ({selectedItems.length} ชุด)
@@ -1721,7 +1715,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                 </div>
                                 {li.conditionNote && (
                                   <span
-                                    className="micro-text secondary-text truncate"
+                                    className="hc-micro-text secondary-text truncate"
                                     style={{ maxWidth: '45%' }}
                                   >
                                     หมายเหตุ: {li.conditionNote}
@@ -1739,22 +1733,22 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         style={{ borderRadius: '16px' }}
                       >
                         <Stack orientation="column" gap="small">
-                          <div className="row items-center no-margin" style={{ gap: '6px' }}>
+                          <div className="row hc-items-center no-margin" style={{ gap: '6px' }}>
                             <i className="primary-text">person</i>
                             <span className="bold small-text">ข้อมูลลูกค้า</span>
                           </div>
                           <div className="grid no-margin" style={{ gap: '8px' }}>
                             <div className="s12 m6">
-                              <span className="micro-text secondary-text">ชื่อลูกค้า</span>
+                              <span className="hc-micro-text secondary-text">ชื่อลูกค้า</span>
                               <div className="bold">{selectedCustomer?.name}</div>
                             </div>
                             <div className="s12 m6">
-                              <span className="micro-text secondary-text">เบอร์โทรศัพท์</span>
+                              <span className="hc-micro-text secondary-text">เบอร์โทรศัพท์</span>
                               <div className="bold">{selectedCustomer?.phone}</div>
                             </div>
                             {selectedCustomer?.lineId && (
                               <div className="s12">
-                                <span className="micro-text secondary-text">LINE ID</span>
+                                <span className="hc-micro-text secondary-text">LINE ID</span>
                                 <div>{selectedCustomer.lineId}</div>
                               </div>
                             )}
@@ -1768,7 +1762,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         style={{ borderRadius: '16px' }}
                       >
                         <Stack orientation="column" gap="small">
-                          <div className="row items-center no-margin" style={{ gap: '6px' }}>
+                          <div className="row hc-items-center no-margin" style={{ gap: '6px' }}>
                             <i>payments</i>
                             <span className="bold small-text">สรุปยอดชำระ</span>
                           </div>
@@ -1824,7 +1818,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           style={{ borderRadius: '16px' }}
                         >
                           <Stack orientation="column" gap="tiny">
-                            <span className="micro-text secondary-text bold">
+                            <span className="hc-micro-text secondary-text bold">
                               หมายเหตุการจัดส่ง / การจอง:
                             </span>
                             <p className="no-margin small-text">{note}</p>
@@ -2053,11 +2047,10 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                     {subsequentSheetBlock && (
                       <div
-                        className="round small-padding border"
+                        className="round small-padding border hc-text-9pt"
                         style={{
                           backgroundColor: 'var(--error-container)',
                           color: 'var(--on-error-container)',
-                          fontSize: '12px',
                         }}
                       >
                         ไม่สามารถแก้ไขสถานะในวันที่{' '}
@@ -2113,8 +2106,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       ).map((st) => (
                         <span
                           key={st}
-                          className="chip tiny border no-margin"
-                          style={{ height: '24px', fontSize: '11px' }}
+                          className="chip tiny border no-margin hc-text-8pt"
+                          style={{ height: '24px' }}
                         >
                           {BOOKING_STATUS_META[st].label}:{' '}
                           {formatDateThaiShort(transactionDates[st]!)}
@@ -2333,7 +2326,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                       </span>
                                     </Stack>
                                     {hasConflict && (
-                                      <span className="micro-text error-text bold">
+                                      <span className="hc-micro-text error-text bold">
                                         ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
                                       </span>
                                     )}
@@ -2483,7 +2476,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     style={{ flexShrink: 0 }}
                   >
                     <div className="vertical" style={{ gap: '8px' }}>
-                      <div className="row items-center no-margin">
+                      <div className="row hc-items-center no-margin">
                         <i className="error-text">warning</i>
                         <div className="max">
                           <h6 className="bold no-margin error-text small">
@@ -2528,7 +2521,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                 {/* Footer Action Buttons for Edit Mode */}
                 <div
-                  className="row items-center no-margin"
+                  className="row hc-items-center no-margin"
                   style={{
                     paddingTop: '12px',
                     borderTop: '1px solid var(--surface-variant)',

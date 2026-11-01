@@ -105,10 +105,10 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         ...containerStyle,
       }}
     >
-      {/* Shimmer skeleton placeholder while loading */}
+      {/* Shimmer hc-skeleton placeholder while loading */}
       {!isLoaded && !hasError && (
         <div
-          className="skeleton"
+          className="hc-skeleton"
           style={{
             position: 'absolute',
             inset: 0,
@@ -137,7 +137,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
           aria-label={alt}
         >
           <i className="secondary-text">{fallbackIcon}</i>
-          <span className="micro-text secondary-text">ไม่มีรูปภาพ</span>
+          <span className="hc-micro-text secondary-text">ไม่มีรูปภาพ</span>
         </div>
       )}
 

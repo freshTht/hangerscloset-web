@@ -29,12 +29,12 @@ describe('LazyImage Component', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders skeleton placeholder before the image is in view', () => {
+  it('renders hc-skeleton placeholder before the image is in view', () => {
     const { container } = render(
       <LazyImage src="https://example.com/test1.jpg" alt="Test dress" />
     );
 
-    const skeleton = container.querySelector('.skeleton');
+    const skeleton = container.querySelector('.hc-skeleton');
     expect(skeleton).toBeInTheDocument();
     // Image should not yet be mounted
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('LazyImage Component', () => {
 
     expect(onLoadSpy).toHaveBeenCalledTimes(1);
     // Skeleton should now be removed
-    expect(container.querySelector('.skeleton')).not.toBeInTheDocument();
+    expect(container.querySelector('.hc-skeleton')).not.toBeInTheDocument();
     expect(img).toHaveStyle({ opacity: '1' });
   });
 
@@ -118,7 +118,7 @@ describe('LazyImage Component', () => {
     expect(screen.getByText('ไม่มีรูปภาพ')).toBeInTheDocument();
   });
 
-  it('immediately shows cached image without re-showing skeleton', () => {
+  it('immediately shows cached image without re-showing hc-skeleton', () => {
     // 1st render & load
     const { unmount } = render(
       <LazyImage src="https://example.com/cached.jpg" alt="Cached dress" />
@@ -140,6 +140,6 @@ describe('LazyImage Component', () => {
     );
     const img = screen.getByRole('img');
     expect(img).toBeInTheDocument();
-    expect(container.querySelector('.skeleton')).not.toBeInTheDocument();
+    expect(container.querySelector('.hc-skeleton')).not.toBeInTheDocument();
   });
 });

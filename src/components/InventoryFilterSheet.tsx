@@ -314,7 +314,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
                 width: '100%',
                 maxWidth: '100vw',
                 borderRadius: '20px 20px 0 0',
-                padding: '12px 16px 16px 16px',
+                padding: '12px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
                 margin: 0,
               }
             : {
@@ -327,7 +327,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
       >
         {/* Header */}
         <div
-          className="row items-center no-margin"
+          className="row hc-items-center no-margin"
           style={{ paddingBottom: '8px', flexShrink: 0, gap: '8px' }}
         >
           <i>{quickAddMode ? 'add' : 'tune'}</i>
@@ -336,7 +336,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
               {quickAddMode ? 'เพิ่ม 1 ฟิลเตอร์' : 'ตัวกรองสินค้า'}
             </h6>
             {quickAddMode && (
-              <span className="micro-text secondary-text">
+              <span className="hc-micro-text secondary-text">
                 เลือก 1 ตัวกรองเพื่อเพิ่มและใช้งานทันที
               </span>
             )}
@@ -588,7 +588,7 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
 
         {/* Footer Actions */}
         <div
-          className="row items-center no-margin"
+          className="row hc-items-center no-margin"
           style={{
             paddingTop: '12px',
             borderTop: '1px solid var(--surface-variant)',

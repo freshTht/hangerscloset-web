@@ -18,7 +18,7 @@ export const InventoryCardSkeleton: React.FC = () => {
       >
         {/* Fixed 120px photo placeholder */}
         <div
-          className="skeleton left-round"
+          className="hc-skeleton left-round"
           style={{
             width: 120,
             flexShrink: 0,
@@ -51,20 +51,20 @@ export const InventoryCardSkeleton: React.FC = () => {
               }}
             >
               <div
-                className="skeleton"
+                className="hc-skeleton"
                 style={{ width: 48, height: 14, borderRadius: 4 }}
               />
               <div
-                className="skeleton"
+                className="hc-skeleton"
                 style={{ width: 56, height: 20, borderRadius: 9999 }}
               />
             </div>
             <div
-              className="skeleton"
+              className="hc-skeleton"
               style={{ width: '85%', height: 16, borderRadius: 4, marginBottom: 4 }}
             />
             <div
-              className="skeleton"
+              className="hc-skeleton"
               style={{ width: '55%', height: 16, borderRadius: 4 }}
             />
           </div>
@@ -72,11 +72,11 @@ export const InventoryCardSkeleton: React.FC = () => {
           {/* Bottom Block: Attributes + Prices */}
           <div style={{ marginTop: 'auto' }}>
             <div
-              className="skeleton"
+              className="hc-skeleton"
               style={{ width: '70%', height: 12, borderRadius: 4, marginBottom: 8 }}
             />
             <div
-              className="skeleton round"
+              className="hc-skeleton round"
               style={{ width: '100%', height: 34, borderRadius: 8 }}
             />
           </div>
@@ -97,7 +97,7 @@ export const InventoryCardSkeleton: React.FC = () => {
     >
       {/* 1:1 Square top photo placeholder */}
       <div
-        className="skeleton top-round"
+        className="hc-skeleton top-round"
         style={{
           width: '100%',
           aspectRatio: '1 / 1',
@@ -115,28 +115,28 @@ export const InventoryCardSkeleton: React.FC = () => {
         }}
       >
         <div
-          className="skeleton"
+          className="hc-skeleton"
           style={{ width: 56, height: 14, borderRadius: 4 }}
         />
         <div
-          className="skeleton"
+          className="hc-skeleton"
           style={{ width: '90%', height: 18, borderRadius: 4 }}
         />
         <div
-          className="skeleton"
+          className="hc-skeleton"
           style={{ width: '60%', height: 18, borderRadius: 4 }}
         />
 
         <div style={{ marginTop: 4 }}>
           <div
-            className="skeleton"
+            className="hc-skeleton"
             style={{ width: '75%', height: 14, borderRadius: 4 }}
           />
         </div>
 
         <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
           <div
-            className="skeleton round"
+            className="hc-skeleton round"
             style={{ width: '100%', height: 42, borderRadius: 8 }}
           />
         </div>

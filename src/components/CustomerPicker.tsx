@@ -154,7 +154,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
   if (isCreatingNew) {
     return (
       <article
-        className="border surface-container-low medium-padding no-margin"
+        className="border surface-container-low hc-medium-padding no-margin"
         style={{ borderRadius: '16px' }}
       >
         <Stack orientation="column" gap="medium">
@@ -405,7 +405,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
         <button
           type="button"
-          className="border no-margin"
+          className="border no-margin hc-text-10pt"
           onClick={handleOpenCreateForm}
           title="เพิ่มลูกค้าใหม่"
           style={{
@@ -417,7 +417,6 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             gap: '4px',
-            fontSize: '13px',
             alignSelf: isMobile ? 'flex-end' : 'auto',
           }}
         >

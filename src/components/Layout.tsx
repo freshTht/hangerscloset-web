@@ -32,16 +32,16 @@ export const Layout: React.FC = () => {
   );
 
   return (
-    <div className="app-container">
+    <div className="hc-app-container">
       {/* Compact Rail on medium & large screens (601px and above) */}
       <nav className="left m l">
-        <div className="rail-top">
+        <div className="hc-rail-top">
           <i className="extra primary-text">checkroom</i>
         </div>
         <div className="max"></div>
         {renderNavLinks()}
         <div className="max"></div>
-        <div className="rail-bottom-spacer" aria-hidden="true"></div>
+        <div className="hc-rail-bottom-spacer" aria-hidden="true"></div>
       </nav>
 
       {/* Mobile Top App Bar with sticky fixed behavior (Small screens only) */}
@@ -49,7 +49,7 @@ export const Layout: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="responsive">
-        <div className="page-content">
+        <div className="hc-page-content">
           <Outlet />
         </div>
       </main>

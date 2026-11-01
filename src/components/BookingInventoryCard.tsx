@@ -107,11 +107,11 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
             className="row no-margin align-center no-space"
             style={{ gap: '6px' }}
           >
-            <span className="micro-text secondary-text bold">{item.code}</span>
+            <span className="hc-micro-text secondary-text bold">{item.code}</span>
 
             {isBooked && meta ? (
               <span
-                className={`status-badge small ${meta.chipClass}`}
+                className={`hc-status-badge small ${meta.chipClass}`}
                 data-testid={`status-badge-${item.code}`}
               >
                 {meta.label}
@@ -170,7 +170,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
 
         {/* Item Attributes */}
         <div
-          className="row no-margin tiny-space micro-text secondary-text wrap"
+          className="row no-margin tiny-space hc-micro-text secondary-text wrap"
           style={{ alignItems: 'center', gap: '6px', marginTop: '2px' }}
         >
           {item.brand && (
@@ -202,11 +202,10 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
         {/* Booking Details if booked */}
         {isBooked && booking && (
           <div
-            className="round surface-container-low"
+            className="round surface-container-low hc-text-9pt"
             style={{
               padding: '6px 8px',
               marginTop: '6px',
-              fontSize: '12px',
             }}
           >
             <div
@@ -216,7 +215,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
               <i className="tiny primary-text">person</i>
               <b className="truncate on-surface-text">{booking.customerName}</b>
               {booking.customerPhone && (
-                <span className="secondary-text micro-text truncate">
+                <span className="secondary-text hc-micro-text truncate">
                   ({booking.customerPhone})
                 </span>
               )}
@@ -226,7 +225,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
               style={{ gap: '4px', marginTop: '2px' }}
             >
               <i className="tiny secondary-text">date_range</i>
-              <span className="secondary-text micro-text">
+              <span className="secondary-text hc-micro-text">
                 {formatDateThaiShort(booking.startDate)} –{' '}
                 {formatDateThaiShort(booking.endDate)}
               </span>
@@ -280,7 +279,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
               </div>
               {subsequentBlock && (
                 <span
-                  className="micro-text error-text"
+                  className="hc-micro-text error-text"
                   data-testid={`subsequent-block-msg-${item.code}`}
                 >
                   อัปเดตเป็น "{BOOKING_STATUS_META[subsequentBlock.status].label}" เมื่อ{' '}

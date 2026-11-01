@@ -32,7 +32,7 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
 
   const dialogClass = isMobile
     ? `bottom s ${isOpen ? 'active' : ''}`
-    : `medium-padding round m l ${isOpen ? 'active' : ''}`;
+    : `hc-medium-padding round m l ${isOpen ? 'active' : ''}`;
 
   const handleChoose = (option: InventorySortOption) => {
     onSelectSort(option);
@@ -65,7 +65,7 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
                 width: '100%',
                 maxWidth: '100vw',
                 borderRadius: '20px 20px 0 0',
-                padding: '16px',
+                padding: '16px 16px calc(16px + env(safe-area-inset-bottom)) 16px',
                 margin: 0,
               }
             : {
@@ -76,7 +76,7 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
         }}
       >
         <div
-          className="row items-center no-margin"
+          className="row hc-items-center no-margin"
           style={{ gap: '8px' }}
         >
           <i>sort</i>

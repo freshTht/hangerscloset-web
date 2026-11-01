@@ -60,7 +60,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
   };
 
   return (
-    <article className="border round surface medium-padding no-margin">
+    <article className="border round surface hc-medium-padding no-margin">
       <Stack orientation="column" gap="medium">
         {/* Top Row: Dates & Edit Button */}
         <Stack
@@ -184,7 +184,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                           {lineItem.itemCode}
                         </span>
                         <span
-                          className={`status-badge small ${meta.chipClass}`}
+                          className={`hc-status-badge small ${meta.chipClass}`}
                           data-testid={`status-badge-${lineItem.itemCode}`}
                         >
                           {meta.label}
@@ -201,7 +201,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                         {lineItem.itemName}
                       </span>
                       {lineItem.conditionNote && (
-                        <span className="micro-text secondary-text">
+                        <span className="hc-micro-text secondary-text">
                           หมายเหตุชุด: {lineItem.conditionNote}
                         </span>
                       )}
@@ -278,7 +278,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
               type="button"
               className={`chip small no-margin ${
                 booking.depositRefunded
-                  ? 'status-badge-available'
+                  ? 'hc-status-badge-available'
                   : 'surface-container-high'
               }`}
               onClick={() => onToggleDepositRefunded(booking)}

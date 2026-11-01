@@ -26,7 +26,7 @@ export const BOOKING_STATUS_META: Record<
     label: 'จองแล้ว',
     nextStatus: 'pending_delivery',
     nextActionLabel: 'รอส่งมอบ',
-    chipClass: 'status-badge-reserved',
+    chipClass: 'hc-status-badge-reserved',
   },
   pending_delivery: {
     label: 'รอส่งมอบ',
@@ -50,11 +50,11 @@ export const BOOKING_STATUS_META: Record<
     label: 'ส่งซัก',
     nextStatus: 'returned',
     nextActionLabel: 'รับคืนเสร็จสิ้น',
-    chipClass: 'status-badge-laundry',
+    chipClass: 'hc-status-badge-laundry',
   },
   returned: {
     label: 'รับคืนเสร็จสิ้น',
-    chipClass: 'status-badge-available',
+    chipClass: 'hc-status-badge-available',
   },
 };
 

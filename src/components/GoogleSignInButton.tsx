@@ -92,7 +92,7 @@ export const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
         const errorInfo = getAuthErrorInfo(errorMessage);
         return (
           <div
-            className="row center-align items-center justify-center"
+            className="row center-align hc-items-center hc-justify-center"
             style={{
               marginTop: '16px',
               gap: '6px',

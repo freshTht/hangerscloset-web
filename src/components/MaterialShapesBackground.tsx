@@ -27,7 +27,7 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
 }) => {
   return (
     <div
-      className="material-shapes-bg-container"
+      className="hc-material-shapes-bg-container"
       style={{
         position: 'fixed',
         inset: 0,
@@ -42,25 +42,25 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
     >
       {/* Top-left corner decorative shape */}
       <div
-        className="shape flower slow-rotate primary-container material-shapes-bg-flower"
+        className="shape flower slow-rotate primary-container hc-material-shapes-bg-flower"
         style={{
           position: 'absolute',
-          top: '-4rem',
-          left: '-4rem',
-          width: '18rem',
-          height: '18rem',
+          top: '-64px',
+          left: '-64px',
+          width: '288px',
+          height: '288px',
         }}
       />
 
       {/* Bottom-right corner decorative shape */}
       <div
-        className="shape wavy-circle slow-rotate tertiary-container material-shapes-bg-wavy"
+        className="shape wavy-circle slow-rotate tertiary-container hc-material-shapes-bg-wavy"
         style={{
           position: 'absolute',
-          bottom: '-5rem',
-          right: '-5rem',
-          width: '20rem',
-          height: '20rem',
+          bottom: '-80px',
+          right: '-80px',
+          width: '320px',
+          height: '320px',
         }}
       />
 
@@ -76,12 +76,12 @@ export const MaterialShapesBackground: React.FC<MaterialShapesBackgroundProps> =
         }}
       >
         <div
-          className="material-shapes-bg-hanger"
+          className="hc-material-shapes-bg-hanger"
           style={{
             width: '100%',
             height: '100%',
             transformOrigin: '50% 8%',
-            animation: 'hanger-sway 6s ease-in-out infinite',
+            animation: 'hc-hanger-sway 6s ease-in-out infinite',
           }}
         >
           <HangerIcon size={170} className="primary-text" />

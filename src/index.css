@@ -1,7 +1,7 @@
 /* Custom responsive and mobile optimizations */
 
 :root {
-  --app-header-height: auto;
+  --hc-app-header-height: auto;
 }
 
 body {
@@ -17,7 +17,7 @@ body {
 }
 
 /* Let Beer CSS :has(> main) grid layout take effect */
-.app-container {
+.hc-app-container {
   min-height: 100dvh;
   width: 100%;
 }
@@ -31,48 +31,48 @@ nav.left {
 }
 
 /* Top-aligned hanger icon in rail */
-.rail-top {
+.hc-rail-top {
   display: flex;
   align-items: center;
-  min-height: 3rem;
-  margin-top: 0.5rem;
+  min-height: 48px;
+  margin-top: 8px;
 }
 
-nav.left.m .rail-top {
+nav.left.m .hc-rail-top {
   justify-content: center;
   width: 100%;
 }
 
-nav.left.max.l .rail-top {
+nav.left.max.l .hc-rail-top {
   justify-content: flex-start;
-  padding: 0 1rem;
+  padding: 0 16px;
   width: 100%;
   box-sizing: border-box;
 }
 
 /* Middle-aligned destinations group */
-.rail-nav-group {
+.hc-rail-nav-group {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.rail-nav-group > a {
+.hc-rail-nav-group > a {
   text-decoration: none;
   cursor: pointer;
   touch-action: manipulation;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
-nav.left.max > .rail-nav-group > a {
+nav.left.max > .hc-rail-nav-group > a {
   width: 100%;
   box-sizing: border-box;
 }
 
 /* Balancer spacer to keep middle alignment centered */
-.rail-bottom-spacer {
-  min-height: 3rem;
-  margin-bottom: 0.5rem;
+.hc-rail-bottom-spacer {
+  min-height: 48px;
+  margin-bottom: 8px;
   visibility: hidden;
 }
 
@@ -83,13 +83,14 @@ nav.left.max > .rail-nav-group > a {
   }
 
   main.responsive {
-    padding: 0.75rem !important;
+    padding: 12px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
   }
 }
 
 @media (min-width: 601px) {
   main.responsive {
-    padding: 1.5rem 1.5rem !important;
+    padding: 24px 24px !important;
   }
 }
 
@@ -104,35 +105,35 @@ main.responsive {
 }
 
 /* Sticky inventory filter bar container (kept still below header no matter scroll position) */
-.active-filters-sticky-wrapper {
+.hc-active-filters-sticky-wrapper {
   position: sticky;
-  top: calc(var(--top, 0px) + 3rem);
+  top: calc(var(--top, 0px) + 48px);
   z-index: 10;
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  margin-top: -0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: -12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
   background: transparent;
 }
 
 @media (min-width: 601px) {
-  .active-filters-sticky-wrapper {
+  .hc-active-filters-sticky-wrapper {
     top: 0;
-    margin-top: -1.5rem;
-    padding-top: 1rem;
+    margin-top: -24px;
+    padding-top: 16px;
   }
 }
 
-.page-content {
+.hc-page-content {
   width: 100%;
-  animation: fadeIn 0.2s ease-in-out;
+  animation: hc-fade-in 0.2s ease-in-out;
 }
 
 /* Status badge styling with dark mode blending */
-.status-badge {
+.hc-status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -141,52 +142,73 @@ main.responsive {
   white-space: nowrap;
   height: 24px;
   padding: 0 10px;
-  font-size: 12px;
+  font-size: 9pt;
 }
 
-.status-badge.small {
+.hc-status-badge.small {
   height: 20px;
   padding: 0 8px;
-  font-size: 11px;
+  font-size: 8pt;
 }
 
 /* Micro text utility for compact metadata (e.g. SKU codes) */
-.micro-text {
-  font-size: 11px;
+.hc-micro-text {
+  font-size: 8pt;
   line-height: normal;
 }
 
-.status-badge-available {
+/* Font-size utilities (pt) - replace inline fontSize styles */
+.hc-text-8pt {
+  font-size: 8pt !important;
+}
+
+.hc-text-9pt {
+  font-size: 9pt !important;
+}
+
+.hc-text-10pt {
+  font-size: 10pt !important;
+}
+
+.hc-text-11pt {
+  font-size: 11pt !important;
+}
+
+.hc-text-12pt {
+  font-size: 12pt !important;
+}
+
+.hc-status-badge-available {
   background-color: #e8f5e9;
   color: #1b5e20;
 }
 
-.status-badge-reserved {
+.hc-status-badge-reserved {
   background-color: #fff3e0;
   color: #b74700;
 }
 
-.status-badge-laundry {
+.hc-status-badge-laundry {
   background-color: #e1f5fe;
   color: #0277bd;
 }
 
-body.dark .status-badge-available {
+body.dark .hc-status-badge-available {
   background-color: rgba(76, 175, 80, 0.22);
   color: #81c784;
 }
 
-body.dark .status-badge-reserved {
+body.dark .hc-status-badge-reserved {
   background-color: rgba(255, 152, 0, 0.22);
   color: #ffb74d;
 }
 
-body.dark .status-badge-laundry {
+body.dark .hc-status-badge-laundry {
   background-color: rgba(3, 169, 244, 0.22);
   color: #81d4fa;
 }
 
-@keyframes fadeIn {
+@keyframes hc-fade-in {
   from {
     opacity: 0;
   }
@@ -195,7 +217,7 @@ body.dark .status-badge-laundry {
   }
 }
 
-@keyframes hanger-sway {
+@keyframes hc-hanger-sway {
   0% {
     transform: rotate(-8deg);
   }
@@ -208,38 +230,38 @@ body.dark .status-badge-laundry {
 }
 
 /* Ambient Material Shapes Background (Pixel style) */
-.material-shapes-bg-flower,
-.material-shapes-bg-wavy,
-.material-shapes-bg-hanger {
+.hc-material-shapes-bg-flower,
+.hc-material-shapes-bg-wavy,
+.hc-material-shapes-bg-hanger {
   transition: opacity 0.3s ease;
 }
 
-.material-shapes-bg-flower {
+.hc-material-shapes-bg-flower {
   opacity: 0.75;
 }
 
-.material-shapes-bg-wavy {
+.hc-material-shapes-bg-wavy {
   opacity: 0.75;
 }
 
-.material-shapes-bg-hanger {
+.hc-material-shapes-bg-hanger {
   opacity: 0.28;
 }
 
-body.dark .material-shapes-bg-flower {
+body.dark .hc-material-shapes-bg-flower {
   opacity: 0.30;
 }
 
-body.dark .material-shapes-bg-wavy {
+body.dark .hc-material-shapes-bg-wavy {
   opacity: 0.30;
 }
 
-body.dark .material-shapes-bg-hanger {
+body.dark .hc-material-shapes-bg-hanger {
   opacity: 0.22;
 }
 
 /* Skeleton Loading Shimmer & Glowing Blinking Pulse */
-@keyframes skeleton-shimmer {
+@keyframes hc-skeleton-shimmer {
   0% {
     background-position: -200% 0;
   }
@@ -248,7 +270,7 @@ body.dark .material-shapes-bg-hanger {
   }
 }
 
-@keyframes skeleton-pulse {
+@keyframes hc-skeleton-pulse {
   0%, 100% {
     opacity: 1;
     filter: brightness(1);
@@ -259,7 +281,7 @@ body.dark .material-shapes-bg-hanger {
   }
 }
 
-.skeleton {
+.hc-skeleton {
   background: linear-gradient(
     90deg,
     var(--surface-container-high) 25%,
@@ -268,97 +290,105 @@ body.dark .material-shapes-bg-hanger {
   );
   background-size: 400% 100%;
   animation:
-    skeleton-shimmer 2s ease-in-out infinite,
-    skeleton-pulse 1.6s ease-in-out infinite;
+    hc-skeleton-shimmer 2s ease-in-out infinite,
+    hc-skeleton-pulse 1.6s ease-in-out infinite;
   display: block;
 }
 
 /* Joined Segmented Inputs Group */
-.joined-fields-group {
+.hc-joined-fields-group {
   display: flex;
   width: 100%;
 }
 
-.joined-fields-group > .field {
+.hc-joined-fields-group > .field {
   flex: 1;
   min-width: 0;
   position: relative;
   z-index: 1;
 }
 
-.joined-fields-group > .field:focus-within {
+.hc-joined-fields-group > .field:focus-within {
   z-index: 3;
 }
 
-.joined-fields-group > .field:not(:first-child) {
+.hc-joined-fields-group > .field:not(:first-child) {
   margin-left: -1px;
 }
 
-.joined-fields-group > .field:first-child,
-.joined-fields-group > .field:first-child > input {
-  border-top-left-radius: 1.5rem !important;
-  border-bottom-left-radius: 1.5rem !important;
+.hc-joined-fields-group > .field:first-child,
+.hc-joined-fields-group > .field:first-child > input {
+  border-top-left-radius: 24px !important;
+  border-bottom-left-radius: 24px !important;
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
 
-.joined-fields-group > .field:not(:first-child):not(:last-child),
-.joined-fields-group > .field:not(:first-child):not(:last-child) > input {
+.hc-joined-fields-group > .field:not(:first-child):not(:last-child),
+.hc-joined-fields-group > .field:not(:first-child):not(:last-child) > input {
   border-radius: 0 !important;
 }
 
-.joined-fields-group > .field:last-child,
-.joined-fields-group > .field:last-child > input {
-  border-top-right-radius: 1.5rem !important;
-  border-bottom-right-radius: 1.5rem !important;
+.hc-joined-fields-group > .field:last-child,
+.hc-joined-fields-group > .field:last-child > input {
+  border-top-right-radius: 24px !important;
+  border-bottom-right-radius: 24px !important;
   border-top-left-radius: 0 !important;
   border-bottom-left-radius: 0 !important;
 }
 
-/* Beer CSS padding enhancement */
-.medium-padding {
+/* Custom Beer CSS padding enhancement */
+.hc-medium-padding {
   --_padding: 20px !important;
 }
 
 /* Flex and margin helper utilities missing in Beer CSS */
-.justify-between {
+.hc-justify-between {
   justify-content: space-between !important;
 }
 
-.items-center {
+.hc-justify-center {
+  justify-content: center !important;
+}
+
+.hc-items-center {
   align-items: center !important;
 }
 
-.top-margin-tiny {
+.hc-cursor-pointer {
+  cursor: pointer !important;
+}
+
+.hc-top-margin-tiny {
   margin-top: 4px !important;
 }
 
-.bottom-margin-tiny {
+.hc-bottom-margin-tiny {
   margin-bottom: 4px !important;
 }
 
-.top-margin-small {
+.hc-top-margin-small {
   margin-top: 8px !important;
 }
 
-.bottom-margin-small {
+.hc-bottom-margin-small {
   margin-bottom: 8px !important;
 }
 
 /* Inventory filter toolbar: single non-wrapping scrollable row */
-.inventory-filter-toolbar {
+.hc-inventory-filter-toolbar {
   flex-wrap: nowrap;
   overflow-x: auto;
-  min-block-size: 2.75rem;
-  padding-inline: 0.5rem;
-  gap: 0.375rem;
+  min-block-size: 44px;
+  padding-inline: 8px;
+  gap: 6px;
   scrollbar-width: none;
 }
 
-.inventory-filter-toolbar::-webkit-scrollbar {
+.hc-inventory-filter-toolbar::-webkit-scrollbar {
   display: none;
 }
 
-.inventory-filter-toolbar > * {
+.hc-inventory-filter-toolbar > * {
   flex-shrink: 0;
 }

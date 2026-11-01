@@ -34,7 +34,7 @@ const PADDING_CLASS_MAP: Record<BeerPadding, string> = {
   none: 'no-padding',
   tiny: 'tiny-padding',
   small: 'small-padding',
-  medium: 'medium-padding',
+  medium: 'hc-medium-padding',
   large: 'large-padding',
   extra: 'extra-padding',
   horizontal: 'horizontal-padding',

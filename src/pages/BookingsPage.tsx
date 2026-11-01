@@ -611,10 +611,10 @@ export const BookingsPage: React.FC = () => {
   );
 
   return (
-    <div className="bookings-page">
+    <div className="hc-bookings-page">
       {/* Date Navigation & Selector Bar */}
       <div
-        className="row items-center justify-center bottom-margin"
+        className="row hc-items-center hc-justify-center bottom-margin"
         data-testid="bookings-date-bar"
         style={{
           gap: '8px',
@@ -762,18 +762,18 @@ export const BookingsPage: React.FC = () => {
         >
           {Array.from({ length: 4 }).map((_, idx) => (
             <div key={idx} className="s12 m6">
-              <article className="border round surface medium-padding no-margin">
+              <article className="border round surface hc-medium-padding no-margin">
                 <Stack orientation="column" gap="small">
                   <div
-                    className="skeleton round"
+                    className="hc-skeleton round"
                     style={{ width: '60%', height: '24px' }}
                   />
                   <div
-                    className="skeleton round"
+                    className="hc-skeleton round"
                     style={{ width: '100%', height: '64px' }}
                   />
                   <div
-                    className="skeleton round"
+                    className="hc-skeleton round"
                     style={{ width: '45%', height: '20px' }}
                   />
                 </Stack>
@@ -783,7 +783,7 @@ export const BookingsPage: React.FC = () => {
         </div>
       ) : error ? (
         <article className="border error-container round margin">
-          <div className="row items-center">
+          <div className="row hc-items-center">
             <i className="error-text">error</i>
             <div className="max">
               <h6 className="bold no-margin error-text">
@@ -962,7 +962,7 @@ export const BookingsPage: React.FC = () => {
           />
           <dialog
             open
-            className="active round medium-padding"
+            className="active round hc-medium-padding"
             aria-label="ยืนยันการเปลี่ยนสถานะต่างวัน"
             data-testid="confirm-status-date-dialog"
             style={{ zIndex: 1003, maxWidth: '380px', width: '92vw' }}
@@ -1027,7 +1027,7 @@ export const BookingsPage: React.FC = () => {
           />
           <dialog
             open
-            className="active round medium-padding"
+            className="active round hc-medium-padding"
             aria-label="จัดเรียงรายการจอง"
             style={{ zIndex: 999, minWidth: '280px' }}
           >

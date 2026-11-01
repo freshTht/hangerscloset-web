@@ -142,9 +142,9 @@ export const InventoryPage: React.FC = () => {
 
   const renderActiveFilterBar = () => {
     return (
-      <div className="active-filters-sticky-wrapper">
+      <div className="hc-active-filters-sticky-wrapper">
         <nav
-          className="toolbar scroll no-margin inventory-filter-toolbar secondary-container"
+          className="toolbar scroll no-margin hc-inventory-filter-toolbar secondary-container"
           data-testid="active-filters-bar"
           style={{ width: '100%', boxSizing: 'border-box' }}
         >
@@ -194,7 +194,7 @@ export const InventoryPage: React.FC = () => {
         </nav>
 
         <div
-          className="row no-wrap items-center scroll no-margin"
+          className="row no-wrap hc-items-center scroll no-margin"
           style={{
             gap: '8px',
             overflowX: 'auto',
@@ -332,14 +332,14 @@ export const InventoryPage: React.FC = () => {
             }}
           >
             <div
-              className="row items-center no-margin"
+              className="row hc-items-center no-margin"
               style={{
                 gap: '8px',
                 width: '100%',
               }}
             >
               <i className="small secondary-text">search</i>
-              <input
+              <input className="hc-text-10pt"
                 ref={searchInputRef}
                 type="search"
                 aria-label="ค้นหาชุดในคลัง"
@@ -356,7 +356,6 @@ export const InventoryPage: React.FC = () => {
                   color: 'var(--on-surface)',
                   height: '32px',
                   minWidth: 0,
-                  fontSize: '13px',
                 }}
               />
               {filter.searchQuery && (
@@ -383,7 +382,7 @@ export const InventoryPage: React.FC = () => {
             {/* Quick Tag Selector Chips */}
             {availableTags.length > 0 && (
               <div
-                className="row no-wrap items-center scroll no-margin"
+                className="row no-wrap hc-items-center scroll no-margin"
                 style={{
                   gap: '6px',
                   overflowX: 'auto',
@@ -392,7 +391,7 @@ export const InventoryPage: React.FC = () => {
                   paddingBottom: '2px',
                 }}
               >
-                <span className="micro-text secondary-text bold" style={{ whiteSpace: 'nowrap' }}>
+                <span className="hc-micro-text secondary-text bold" style={{ whiteSpace: 'nowrap' }}>
                   แท็ก:
                 </span>
                 {availableTags.map((t) => {
@@ -402,11 +401,10 @@ export const InventoryPage: React.FC = () => {
                       key={t}
                       type="button"
                       data-testid={`tag-chip-${t}`}
-                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'}`}
+                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-text-8pt`}
                       style={{
                         height: '24px',
                         padding: '0 8px',
-                        fontSize: '11px',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
                       }}
@@ -442,7 +440,7 @@ export const InventoryPage: React.FC = () => {
         </div>
       ) : error ? (
         <article className="border error-container round margin">
-          <div className="row items-center">
+          <div className="row hc-items-center">
             <i className="error-text">error</i>
             <div className="max">
               <h6 className="bold no-margin error-text">
