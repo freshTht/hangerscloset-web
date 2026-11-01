@@ -36,6 +36,24 @@ export const FloatingBottomToolbar: React.FC<FloatingBottomToolbarProps> = ({
   fabAriaLabel = 'สร้างการจองใหม่',
   fabTitle,
 }) => {
+  const renderFab = () => {
+    if (fab) return fab;
+    if (onFabClick) {
+      return (
+        <button
+          type="button"
+          className="circle primary medium-elevate extra no-margin hc-floating-bottom-fab"
+          onClick={onFabClick}
+          aria-label={fabAriaLabel}
+          title={fabTitle ?? fabAriaLabel}
+        >
+          <i>add</i>
+        </button>
+      );
+    }
+    return null;
+  };
+
   return (
     <div
       className={`hc-floating-bottom-bar-container ${className}`.trim()}
@@ -54,19 +72,7 @@ export const FloatingBottomToolbar: React.FC<FloatingBottomToolbarProps> = ({
         <div className="hc-floating-bottom-toolbar-actions">{actions}</div>
       </nav>
 
-      {fab ? (
-        fab
-      ) : onFabClick ? (
-        <button
-          type="button"
-          className="circle primary medium-elevate extra no-margin hc-floating-bottom-fab"
-          onClick={onFabClick}
-          aria-label={fabAriaLabel}
-          title={fabTitle ?? fabAriaLabel}
-        >
-          <i>add</i>
-        </button>
-      ) : null}
+      {renderFab()}
     </div>
   );
 };

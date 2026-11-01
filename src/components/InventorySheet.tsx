@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { InventoryItem, InventoryStatus } from '../types/inventory';
+import { normalizeItemTags } from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { resizeImageFile } from '../lib/resizeImage';
@@ -78,11 +79,7 @@ const DEFAULT_FORM: FormState = {
 const CLOSE_CLEANUP_DELAY_MS = 350;
 
 const itemToForm = (item: InventoryItem): FormState => {
-  const tags: string[] = Array.isArray(item.tags)
-    ? item.tags
-    : typeof item.type === 'string' && item.type.trim()
-    ? [item.type.trim()]
-    : [];
+  const tags = normalizeItemTags(item.tags, item.type);
 
   const rentalPrices: FormRentalPriceTier[] =
     Array.isArray(item.rentalPrices) && item.rentalPrices.length > 0

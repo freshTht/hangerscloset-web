@@ -1,5 +1,9 @@
 import { mockInventory } from '../../data/mockInventory';
-import type { InventoryItem, InventoryStatus } from '../../types/inventory';
+import {
+  type InventoryItem,
+  type InventoryStatus,
+  normalizeItemTags,
+} from '../../types/inventory';
 import type { IInventoryRepository } from './types';
 
 export class MockInventoryRepository implements IInventoryRepository {
@@ -11,11 +15,7 @@ export class MockInventoryRepository implements IInventoryRepository {
     // Clone array and normalize tags/note
     this.items = initialItems.map((item) => ({
       ...item,
-      tags: Array.isArray(item.tags)
-        ? item.tags
-        : typeof item.type === 'string' && item.type.trim()
-        ? [item.type.trim()]
-        : [],
+      tags: normalizeItemTags(item.tags, item.type),
       note: item.note ?? null,
     }));
   }

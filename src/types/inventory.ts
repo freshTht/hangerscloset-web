@@ -24,3 +24,17 @@ export interface InventoryItem {
   rentalPrices: RentalPrices;
   status: InventoryStatus;
 }
+
+/**
+ * Normalizes item tags from data sources, supporting legacy string type fallbacks
+ * while ensuring clean, trimmed string arrays.
+ */
+export function normalizeItemTags(tags: unknown, legacyType?: unknown): string[] {
+  if (Array.isArray(tags)) {
+    return tags.filter((t): t is string => typeof t === 'string' && t.trim().length > 0);
+  }
+  if (typeof legacyType === 'string' && legacyType.trim().length > 0) {
+    return [legacyType.trim()];
+  }
+  return [];
+}

@@ -12,7 +12,11 @@ import {
   type QuerySnapshot,
 } from 'firebase/firestore';
 import { db, isFirebaseConfigured } from '../../lib/firebase';
-import type { InventoryItem, InventoryStatus } from '../../types/inventory';
+import {
+  type InventoryItem,
+  type InventoryStatus,
+  normalizeItemTags,
+} from '../../types/inventory';
 import type { IInventoryRepository } from './types';
 
 const COLLECTION_NAME = 'inventory';
@@ -25,11 +29,7 @@ function stripUndefined<T extends object>(data: T): T {
 }
 
 function docToInventoryItem(id: string, data: DocumentData): InventoryItem {
-  const tags: string[] = Array.isArray(data.tags)
-    ? data.tags
-    : typeof data.type === 'string' && data.type.trim()
-    ? [data.type.trim()]
-    : [];
+  const tags = normalizeItemTags(data.tags, data.type);
 
   return {
     id,

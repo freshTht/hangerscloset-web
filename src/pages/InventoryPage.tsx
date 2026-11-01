@@ -373,9 +373,9 @@ export const InventoryPage: React.FC = () => {
     );
   };
 
-  return (
-    <>
-      {loading ? (
+  const renderContent = () => {
+    if (loading) {
+      return (
         <div
           className="grid"
           aria-busy="true"
@@ -387,7 +387,11 @@ export const InventoryPage: React.FC = () => {
             </div>
           ))}
         </div>
-      ) : error ? (
+      );
+    }
+
+    if (error) {
+      return (
         <article className="border error-container round margin">
           <div className="row">
             <i className="error-text">error</i>
@@ -399,7 +403,11 @@ export const InventoryPage: React.FC = () => {
             </div>
           </div>
         </article>
-      ) : items.length === 0 ? (
+      );
+    }
+
+    if (items.length === 0) {
+      return (
         <EmptyState
           icon="inventory_2"
           title="ไม่พบรายการเสื้อผ้าในคลัง"
@@ -412,31 +420,39 @@ export const InventoryPage: React.FC = () => {
           actionText="เพิ่มชุดแรก"
           onAction={handleOpenAdd}
         />
-      ) : (
-        <>
-          {renderActiveFilterBar()}
+      );
+    }
 
-          {filteredItems.length === 0 ? (
-            <EmptyState
-              testId="empty-filter-results"
-              icon="search_off"
-              title="ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา"
-              description="ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด"
-              actionIcon="restart_alt"
-              actionText="ล้างตัวกรองทั้งหมด"
-              onAction={handleResetAllFilters}
-            />
-          ) : (
-            <div className="grid">
-              {filteredItems.map((item) => (
-                <div key={item.id} className="s12 m6 l4">
-                  <InventoryCard item={item} onEdit={handleOpenEdit} />
-                </div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+    return (
+      <>
+        {renderActiveFilterBar()}
+
+        {filteredItems.length === 0 ? (
+          <EmptyState
+            testId="empty-filter-results"
+            icon="search_off"
+            title="ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา"
+            description="ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด"
+            actionIcon="restart_alt"
+            actionText="ล้างตัวกรองทั้งหมด"
+            onAction={handleResetAllFilters}
+          />
+        ) : (
+          <div className="grid">
+            {filteredItems.map((item) => (
+              <div key={item.id} className="s12 m6 l4">
+                <InventoryCard item={item} onEdit={handleOpenEdit} />
+              </div>
+            ))}
+          </div>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <>
+      {renderContent()}
 
       {/* Spacing using Beer CSS built-in helpers */}
       <div className="extra-space"></div>

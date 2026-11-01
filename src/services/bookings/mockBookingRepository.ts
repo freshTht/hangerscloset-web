@@ -22,7 +22,7 @@ export class MockBookingRepository implements IBookingRepository {
       transactionDates: normalizeTransactionDates(
         b.transactionDates,
         b.startDate,
-        b.items as unknown as Array<{ status?: BookingItemStatus }>
+        b.items
       ),
       items: b.items.map((item) => ({
         itemId: item.itemId,
