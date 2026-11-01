@@ -90,6 +90,84 @@ function getItemRentalPriceForDuration(
   return (lowerOrEqual ?? sorted[0]).price;
 }
 
+function getStepButtonClass(step: number, currentStep: number): string {
+  if (currentStep === step) {
+    return 'fill primary bold';
+  }
+  if (currentStep > step) {
+    return 'surface border primary-text clickable';
+  }
+  return 'border secondary-text';
+}
+
+function getOutfitCardClass(isSelected: boolean, hasConflict: boolean): string {
+  if (isSelected && hasConflict) {
+    return 'error-container is-selected is-conflict';
+  }
+  if (isSelected) {
+    return 'secondary-container is-selected';
+  }
+  if (hasConflict) {
+    return 'surface-container-low is-conflict';
+  }
+  return 'surface-container-low';
+}
+
+function getOutfitButtonClass(isSelected: boolean, hasConflict: boolean): string {
+  if (isSelected && hasConflict) {
+    return 'fill error';
+  }
+  if (isSelected) {
+    return 'fill primary';
+  }
+  return 'border';
+}
+
+function renderOutfitButtonContent(isSelected: boolean, hasConflict: boolean) {
+  if (isSelected) {
+    return (
+      <>
+        <i className="tiny">{hasConflict ? 'warning' : 'check'}</i>
+        <span>{hasConflict ? 'ติดจอง (คลิกเพื่อยกเลิก)' : 'เลือกแล้ว'}</span>
+      </>
+    );
+  }
+  if (hasConflict) {
+    return (
+      <>
+        <i className="tiny hc-booking-sheet-icon-gap-right">event_busy</i>
+        <span>ติดจอง</span>
+      </>
+    );
+  }
+  return (
+    <>
+      <i className="tiny">add</i>
+      <span>เลือก</span>
+    </>
+  );
+}
+
+function renderEditOutfitButtonContent(isSelected: boolean, hasConflict: boolean) {
+  if (isSelected) {
+    return (
+      <>
+        <i>check</i>
+        <span>เลือกแล้ว</span>
+      </>
+    );
+  }
+  if (hasConflict) {
+    return <span>ติดจองช่วงเวลานี้</span>;
+  }
+  return (
+    <>
+      <i>add</i>
+      <span>เลือก</span>
+    </>
+  );
+}
+
 export const BookingSheet: React.FC<BookingSheetProps> = ({
   isOpen,
   mode,
@@ -682,13 +760,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 >
                   <button
                     type="button"
-                    className={`no-margin hc-booking-sheet-step-btn ${
-                      currentStep === 1
-                        ? 'fill primary bold'
-                        : currentStep > 1
-                        ? 'surface border primary-text clickable'
-                        : 'border secondary-text'
-                    } ${isMobile ? 'small-text' : 'medium-text'}`}
+                    className={`no-margin hc-booking-sheet-step-btn ${getStepButtonClass(1, currentStep)} ${isMobile ? 'small-text' : 'medium-text'}`}
                     onClick={() => handleGoToStep(1)}
                   >
                     {currentStep > 1 ? (
@@ -707,13 +779,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                   <button
                     type="button"
-                    className={`no-margin hc-booking-sheet-step-btn ${
-                      currentStep === 2
-                        ? 'fill primary bold'
-                        : currentStep > 2
-                        ? 'surface border primary-text clickable'
-                        : 'border secondary-text'
-                    } ${isMobile ? 'small-text' : 'medium-text'}`}
+                    className={`no-margin hc-booking-sheet-step-btn ${getStepButtonClass(2, currentStep)} ${isMobile ? 'small-text' : 'medium-text'}`}
                     onClick={() => handleGoToStep(2)}
                   >
                     {currentStep > 2 ? (
@@ -732,11 +798,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                   <button
                     type="button"
-                    className={`no-margin hc-booking-sheet-step-btn ${
-                      currentStep === 3
-                        ? 'fill primary bold'
-                        : 'border secondary-text'
-                    } ${isMobile ? 'small-text' : 'medium-text'}`}
+                    className={`no-margin hc-booking-sheet-step-btn ${getStepButtonClass(3, currentStep)} ${isMobile ? 'small-text' : 'medium-text'}`}
                   >
                     <span className="bold small-text">
                       3
@@ -818,20 +880,10 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                             durationDays
                           );
 
-                          const isSelectedConflict = isSelected && hasConflict;
-
                           return (
                             <div
                               key={invItem.id}
-                              className={`border small-padding hc-booking-sheet-outfit-item ${
-                                isSelected
-                                  ? isSelectedConflict
-                                    ? 'error-container is-selected is-conflict'
-                                    : 'secondary-container is-selected'
-                                  : hasConflict
-                                  ? 'surface-container-low is-conflict'
-                                  : 'surface-container-low'
-                              }`}
+                              className={`border small-padding hc-booking-sheet-outfit-item ${getOutfitCardClass(isSelected, hasConflict)}`}
                               onClick={() => {
                                 if (!hasConflict || isSelected) {
                                   handleToggleItem(invItem);
@@ -891,13 +943,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                               {/* Action Button */}
                               <button
                                 type="button"
-                                className={`small no-margin hc-booking-sheet-outfit-select-btn ${
-                                  isSelected
-                                    ? isSelectedConflict
-                                      ? 'fill error'
-                                      : 'fill primary'
-                                    : 'border'
-                                } small-text`}
+                                className={`small no-margin hc-booking-sheet-outfit-select-btn ${getOutfitButtonClass(isSelected, hasConflict)} small-text`}
                                 disabled={hasConflict && !isSelected}
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -909,30 +955,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                     : `เลือกชุด ${invItem.code}`
                                 }
                               >
-                                {isSelected ? (
-                                  <>
-                                    <i className="tiny">
-                                      {isSelectedConflict ? 'warning' : 'check'}
-                                    </i>
-                                    <span>
-                                      {isSelectedConflict
-                                        ? 'ติดจอง (คลิกเพื่อยกเลิก)'
-                                        : 'เลือกแล้ว'}
-                                    </span>
-                                  </>
-                                ) : hasConflict ? (
-                                  <>
-                                    <i className="tiny hc-booking-sheet-icon-gap-right">
-                                      event_busy
-                                    </i>
-                                    <span>ติดจอง</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <i className="tiny">add</i>
-                                    <span>เลือก</span>
-                                  </>
-                                )}
+                                {renderOutfitButtonContent(isSelected, hasConflict)}
                               </button>
                             </div>
                           );
@@ -1755,13 +1778,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           return (
                             <div
                               key={invItem.id}
-                              className={`round small-padding hc-booking-sheet-edit-outfit-item ${
-                                isSelected
-                                  ? 'secondary-container is-selected'
-                                  : hasConflict
-                                  ? 'surface-container-low is-conflict'
-                                  : 'surface-container-low'
-                              }`}
+                              className={`round small-padding hc-booking-sheet-edit-outfit-item ${getOutfitCardClass(isSelected, hasConflict)}`}
                             >
                               <Stack
                                 orientation="row"
@@ -1820,13 +1837,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
                                 <button
                                   type="button"
-                                  className={`small round no-margin ${
-                                    isSelected
-                                      ? 'primary'
-                                      : hasConflict
-                                      ? 'border'
-                                      : 'border'
-                                  }`}
+                                  className={`small round no-margin ${isSelected ? 'primary' : 'border'}`}
                                   disabled={hasConflict && !isSelected}
                                   onClick={() => handleToggleItem(invItem)}
                                   aria-label={
@@ -1835,19 +1846,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                       : `เลือกชุด ${invItem.code}`
                                   }
                                 >
-                                  {isSelected ? (
-                                    <>
-                                      <i>check</i>
-                                      <span>เลือกแล้ว</span>
-                                    </>
-                                  ) : hasConflict ? (
-                                    <span>ติดจองช่วงเวลานี้</span>
-                                  ) : (
-                                    <>
-                                      <i>add</i>
-                                      <span>เลือก</span>
-                                    </>
-                                  )}
+                                  {renderEditOutfitButtonContent(isSelected, hasConflict)}
                                 </button>
                               </Stack>
                             </div>
