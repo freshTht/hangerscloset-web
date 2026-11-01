@@ -1,0 +1,102 @@
+/* Container for Floating Bottom Toolbar + FAB Pairing */
+.hc-floating-bottom-bar-container {
+  position: fixed;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Material 3 Expressive 8dp pairing gap */
+  pointer-events: none;
+}
+
+/* Small screens (<= 600px): Centered at the bottom with safe-area spacing */
+@media (max-width: 600px) {
+  .hc-floating-bottom-bar-container {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: calc(100vw - 24px);
+  }
+}
+
+/* Medium & Large screens (> 600px): Floating at bottom-right corner */
+@media (min-width: 601px) {
+  .hc-floating-bottom-bar-container {
+    bottom: 24px;
+    right: 24px;
+  }
+}
+
+/* M3 Expressive Floating Action Toolbar Container (Boutique Dual-Accent) */
+.hc-floating-bottom-toolbar {
+  display: inline-flex;
+  align-items: center;
+  height: 52px;
+  min-height: 52px;
+  padding: 0 12px 0 18px;
+  gap: 6px;
+  border-radius: 9999px; /* Pill shape */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--outline-variant, rgba(0, 0, 0, 0.08));
+  background-color: var(--surface-container);
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.hc-floating-bottom-toolbar-status {
+  font-size: 10pt;
+  font-weight: 800;
+  white-space: nowrap;
+  padding-right: 2px;
+  display: flex;
+  align-items: center;
+  color: var(--tertiary);
+}
+
+.hc-floating-bottom-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Action Icon Buttons within Floating Toolbar (Tactile circular surfaces) */
+.hc-floating-bottom-toolbar-actions button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-container-high);
+  border: none;
+  color: var(--on-surface);
+  border-radius: 9999px;
+  cursor: pointer;
+}
+
+/* Active action toggle button pops in Tertiary Rose */
+.hc-floating-bottom-toolbar-actions button.fill.tertiary,
+.hc-floating-bottom-toolbar-actions button.fill.primary {
+  background-color: var(--tertiary) !important;
+  color: var(--on-tertiary) !important;
+}
+
+/* Paired Primary FAB Button */
+.hc-floating-bottom-fab {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  min-height: 52px;
+  border-radius: 9999px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  box-sizing: border-box;
+  cursor: pointer;
+  background-color: var(--primary) !important;
+  color: var(--on-primary) !important;
+}

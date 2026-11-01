@@ -5,6 +5,7 @@ import { InventorySheet } from '../components/InventorySheet';
 import { InventoryFilterSheet } from '../components/InventoryFilterSheet';
 import { InventorySortDialog } from '../components/InventorySortDialog';
 import { EmptyState } from '../components/EmptyState';
+import { HeaderToolbar, ToolbarDivider } from '../components/HeaderToolbar';
 import { useInventory } from '../hooks/useInventory';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import {
@@ -144,14 +145,11 @@ export const InventoryPage: React.FC = () => {
   const renderActiveFilterBar = () => {
     return (
       <div className="hc-active-filters-sticky-wrapper">
-        <nav
-          className="toolbar scroll no-wrap no-margin hc-inventory-filter-toolbar secondary-container"
-          data-testid="active-filters-bar"
-        >
+        <HeaderToolbar sticky={false} testId="active-filters-bar">
           <button
             type="button"
             data-testid="btn-filters"
-            className={`small ${activeFilterCount > 0 ? 'fill primary' : 'secondary-container'}`}
+            className={`small ${activeFilterCount > 0 ? 'fill primary' : 'tertiary-container'}`}
             onClick={handleOpenFilters}
             aria-label="ตัวกรอง"
             title="ตัวกรอง"
@@ -171,6 +169,7 @@ export const InventoryPage: React.FC = () => {
           <span className="bold" data-testid="inventory-count-badge">
             {countText}
           </span>
+          <ToolbarDivider />
           <button
             type="button"
             className={`circle small ${hasNonDefaultSort ? 'fill primary' : 'transparent'}`}
@@ -190,7 +189,7 @@ export const InventoryPage: React.FC = () => {
           >
             <i>{searchExpanded ? 'close' : 'search'}</i>
           </button>
-        </nav>
+        </HeaderToolbar>
 
         <div className="row no-wrap scroll no-margin hc-inventory-facet-chips-row">
             {/* Additional Facet Chips: Search query */}

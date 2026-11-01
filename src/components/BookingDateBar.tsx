@@ -1,4 +1,5 @@
 import React, { useRef, useMemo } from 'react';
+import { HeaderToolbar, ToolbarDivider } from './HeaderToolbar';
 import {
   FILTER_TABS,
   type BookingFilterTab,
@@ -8,6 +9,7 @@ import {
   formatDateThaiShortWithYear,
   addDaysISO,
 } from '../lib/bookingAvailability';
+import './BookingDateBar.css';
 
 export interface BookingDateBarProps {
   selectedDate: string;
@@ -22,7 +24,7 @@ export interface BookingDateBarProps {
 
 /**
  * BookingDateBar - BeerCSS Toolbar component for date navigation and filter triggering on Bookings page.
- * Uses BeerCSS `<nav className="toolbar ...">` with `.max` spacer for robust responsive layout.
+ * Uses shared `<HeaderToolbar>` (`nav.toolbar.secondary-container`) with `.max` spacer for consistency with InventoryPage.
  */
 export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   selectedDate,
@@ -54,43 +56,20 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   }, [isAllDates, selectedDate, today]);
 
   return (
-    <nav
-      data-testid="bookings-date-bar"
-      className="toolbar surface-container-low border round bottom-margin"
-      style={{
-        width: '100%',
-        boxSizing: 'border-box',
-        minHeight: '48px',
-        height: '48px',
-        padding: '0 8px',
-        gap: '4px',
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
+    <HeaderToolbar testId="bookings-date-bar">
       {/* Previous Day Button */}
       <button
         type="button"
-        className="circle transparent no-margin"
+        className="circle small transparent no-margin hc-datebar-chevron"
         onClick={() => onDateChange(addDaysISO(selectedDate, -1))}
         aria-label="วันก่อนหน้า"
         title="วันก่อนหน้า"
-        style={{
-          width: '32px',
-          height: '32px',
-          minWidth: '32px',
-          minHeight: '32px',
-          padding: 0,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
       >
-        <i style={{ fontSize: '18px' }}>chevron_left</i>
+        <i className="hc-datebar-chevron-icon">chevron_left</i>
       </button>
 
       {/* Date Picker Trigger with hidden native input */}
-      <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', minWidth: 0 }}>
+      <div className="hc-datebar-picker-wrap">
         <input
           ref={dateInputRef}
           type="date"
@@ -100,19 +79,13 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
               onDateChange(e.target.value);
             }
           }}
-          style={{
-            position: 'absolute',
-            opacity: 0,
-            pointerEvents: 'none',
-            width: 0,
-            height: 0,
-          }}
+          className="hc-datebar-hidden-input"
           tabIndex={-1}
           aria-hidden="true"
         />
         <button
           type="button"
-          className="chip surface-container-high border bold no-margin"
+          className="chip small primary-container bold no-margin hc-datebar-picker-btn"
           onClick={() => {
             if (dateInputRef.current) {
               if ('showPicker' in HTMLInputElement.prototype) {
@@ -128,79 +101,39 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
           }}
           aria-label="เลือกวันที่"
           title="คลิกเพื่อเลือกวันที่"
-          style={{
-            minHeight: '32px',
-            height: '32px',
-            padding: '0 8px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            borderRadius: '8px',
-            minWidth: 0,
-            cursor: 'pointer',
-          }}
         >
-          <i className="small" style={{ fontSize: '16px', flexShrink: 0 }}>
-            calendar_month
-          </i>
-          <span
-            style={{
-              fontSize: '12px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {dateButtonLabel}
-          </span>
-          <i className="tiny" style={{ fontSize: '14px', flexShrink: 0 }}>
-            arrow_drop_down
-          </i>
+          <i className="small">calendar_month</i>
+          <span className="hc-datebar-picker-text">{dateButtonLabel}</span>
+          <i className="tiny">arrow_drop_down</i>
         </button>
       </div>
 
       {/* Next Day Button */}
       <button
         type="button"
-        className="circle transparent no-margin"
+        className="circle small transparent no-margin hc-datebar-chevron"
         onClick={() => onDateChange(addDaysISO(selectedDate, 1))}
         aria-label="วันถัดไป"
         title="วันถัดไป"
-        style={{
-          width: '32px',
-          height: '32px',
-          minWidth: '32px',
-          minHeight: '32px',
-          padding: 0,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
       >
-        <i style={{ fontSize: '18px' }}>chevron_right</i>
+        <i className="hc-datebar-chevron-icon">chevron_right</i>
       </button>
 
       {/* Return to Today Quick-Jump (Shown only when selectedDate !== today) */}
       {selectedDate !== today && !isAllDates && (
         <button
           type="button"
-          className="chip surface-container-high border primary-text bold no-margin"
+          className="chip small primary-container bold no-margin hc-datebar-today-btn"
           onClick={() => onDateChange(today)}
           title="กลับไปวันนี้"
           aria-label="กลับไปวันนี้"
-          style={{
-            height: '32px',
-            minHeight: '32px',
-            padding: '0 8px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            flexShrink: 0,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '3px',
-          }}
         >
-          <span style={{ fontSize: '11.5px' }}>วันนี้</span>
+          <span className="hc-datebar-today-text">วันนี้</span>
         </button>
       )}
+
+      {/* Material 3 Expressive Divider separating Date Navigation from Status Filter */}
+      <ToolbarDivider />
 
       {/* BeerCSS Max Spacer: Pushes Filter Dropdown to Far Right */}
       <div className="max" />
@@ -208,65 +141,35 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
       {/* Filter Dropdown Button */}
       <button
         type="button"
-        className={`chip surface-container-high ${
-          statusFilter !== 'active' ? 'primary' : 'border'
-        } bold no-margin`}
+        className={`chip small bold no-margin ${
+          statusFilter !== 'active' ? 'primary' : 'tertiary-container'
+        } hc-datebar-filter-btn`}
         data-testid="booking-filter-dropdown"
         aria-label={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
         title={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
         aria-haspopup="dialog"
         aria-expanded={filterSheetOpen}
         onClick={onFilterClick}
-        style={{
-          minHeight: '32px',
-          height: '32px',
-          padding: '0 8px',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '5px',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          flexShrink: 0,
-          maxWidth: '145px',
-        }}
       >
-        <i className="small" style={{ fontSize: '16px', flexShrink: 0 }}>
-          tune
-        </i>
+        <i className="small">tune</i>
+        <span className="hc-datebar-filter-label">{currentFilterLabel}</span>
         <span
+          className="hc-datebar-badge"
           style={{
-            fontSize: '12px',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
-          {currentFilterLabel}
-        </span>
-        <span
-          style={{
-            fontSize: '10.5px',
-            fontWeight: 700,
-            padding: '1px 5px',
-            borderRadius: '6px',
             backgroundColor:
               statusFilter !== 'active'
                 ? 'var(--on-primary)'
-                : 'var(--primary)',
+                : 'var(--tertiary)',
             color:
               statusFilter !== 'active'
                 ? 'var(--primary)'
-                : 'var(--on-primary)',
-            lineHeight: '14px',
-            flexShrink: 0,
+                : 'var(--on-tertiary)',
           }}
         >
           {tabCounts[statusFilter]}
         </span>
-        <i className="tiny" style={{ fontSize: '14px', flexShrink: 0 }}>
-          arrow_drop_down
-        </i>
+        <i className="tiny">arrow_drop_down</i>
       </button>
-    </nav>
+    </HeaderToolbar>
   );
 };

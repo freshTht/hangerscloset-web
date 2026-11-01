@@ -3,7 +3,8 @@
 }
 
 .hc-bookings-search-field {
-  width: 180px;
+  width: 160px;
+  max-width: 38vw;
 }
 
 .hc-bookings-date-bar {

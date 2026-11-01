@@ -33,6 +33,7 @@ import {
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
+import { FloatingBottomToolbar } from '../components/FloatingBottomToolbar';
 import './BookingsPage.css';
 
 export type { BookingFilterTab, BookingSortKey };
@@ -488,92 +489,87 @@ export const BookingsPage: React.FC = () => {
   };
 
   const renderFloatingToolbar = () => (
-    <nav className="center-align tiny-space">
-      <nav className="toolbar secondary-container medium-elevate">
+    <FloatingBottomToolbar
+      status={
         <span className="bold hc-bookings-toolbar-count">
           {listLayout === 'items' && viewMode === 'list'
             ? `${filteredItemEntries.length} ชุด`
             : `${filteredBookings.length} การจอง`}
         </span>
+      }
+      actions={
+        <>
+          {searchOpen && (
+            <div className="field small round border surface no-margin hc-bookings-search-field">
+              <input
+                type="search"
+                aria-label="ค้นหาการจอง"
+                placeholder="ค้นหาชื่อ, เบอร์, รหัสชุด..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                autoFocus
+              />
+            </div>
+          )}
 
-        {searchOpen ? (
-          <div className="field small round border surface no-margin hc-bookings-search-field">
-            <input
-              type="search"
-              aria-label="ค้นหาการจอง"
-              placeholder="ค้นหาชื่อ, เบอร์, รหัสชุด..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus
-            />
-          </div>
-        ) : null}
-
-        <button
-          className="circle transparent no-margin"
-          type="button"
-          onClick={() => {
-            if (searchOpen && searchQuery) {
-              setSearchQuery('');
-            } else {
-              setSearchOpen((prev) => !prev);
-            }
-          }}
-          aria-label="ค้นหา"
-          title="ค้นหา"
-        >
-          <i>{searchOpen ? 'close' : 'search'}</i>
-        </button>
-
-        {viewMode === 'list' && (
           <button
-            className={`circle no-margin ${listLayout === 'items' ? 'fill primary' : 'transparent'}`}
+            className="circle transparent no-margin"
+            type="button"
+            onClick={() => {
+              if (searchOpen && searchQuery) {
+                setSearchQuery('');
+              } else {
+                setSearchOpen((prev) => !prev);
+              }
+            }}
+            aria-label="ค้นหา"
+            title="ค้นหา"
+          >
+            <i>{searchOpen ? 'close' : 'search'}</i>
+          </button>
+
+          {viewMode === 'list' && (
+            <button
+              className={`circle no-margin ${listLayout === 'items' ? 'fill tertiary' : 'transparent'}`}
+              type="button"
+              onClick={() =>
+                setListLayout((prev) => (prev === 'items' ? 'orders' : 'items'))
+              }
+              aria-label={
+                listLayout === 'items'
+                  ? 'สลับเป็นมุมมองใบจอง'
+                  : 'สลับเป็นมุมมองรายชุด'
+              }
+              title={
+                listLayout === 'items'
+                  ? 'สลับเป็นมุมมองใบจอง'
+                  : 'สลับเป็นมุมมองรายชุด'
+              }
+            >
+              <i>{listLayout === 'items' ? 'checkroom' : 'receipt_long'}</i>
+            </button>
+          )}
+
+          <button
+            className="circle transparent no-margin"
             type="button"
             onClick={() =>
-              setListLayout((prev) => (prev === 'items' ? 'orders' : 'items'))
+              setViewMode((prev) => (prev === 'list' ? 'calendar' : 'list'))
             }
             aria-label={
-              listLayout === 'items'
-                ? 'สลับเป็นมุมมองใบจอง'
-                : 'สลับเป็นมุมมองรายชุด'
+              viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
             }
             title={
-              listLayout === 'items'
-                ? 'สลับเป็นมุมมองใบจอง'
-                : 'สลับเป็นมุมมองรายชุด'
+              viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
             }
           >
-            <i>{listLayout === 'items' ? 'checkroom' : 'receipt_long'}</i>
+            <i>{viewMode === 'list' ? 'calendar_month' : 'view_agenda'}</i>
           </button>
-        )}
-
-        <button
-          className="circle transparent no-margin"
-          type="button"
-          onClick={() =>
-            setViewMode((prev) => (prev === 'list' ? 'calendar' : 'list'))
-          }
-          aria-label={
-            viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
-          }
-          title={
-            viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
-          }
-        >
-          <i>{viewMode === 'list' ? 'calendar_month' : 'view_agenda'}</i>
-        </button>
-      </nav>
-
-      <button
-        className="circle primary medium-elevate extra no-margin"
-        type="button"
-        onClick={handleOpenAdd}
-        aria-label="สร้างการจองใหม่"
-        title="สร้างการจองใหม่"
-      >
-        <i>add</i>
-      </button>
-    </nav>
+        </>
+      }
+      onFabClick={handleOpenAdd}
+      fabAriaLabel="สร้างการจองใหม่"
+    />
   );
 
   return (
@@ -773,15 +769,8 @@ export const BookingsPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Small screens: centered floating bottom toolbar */}
-      <div className="fixed bottom center margin front s">
-        {renderFloatingToolbar()}
-      </div>
-
-      {/* Medium & Large screens: right-aligned floating bottom toolbar */}
-      <div className="fixed bottom right margin front m l">
-        {renderFloatingToolbar()}
-      </div>
+      {/* M3 Expressive Floating Bottom Action Toolbar + FAB */}
+      {renderFloatingToolbar()}
 
       {/* Past / Future Status Change Confirmation Dialog */}
       {pendingStatusConfirm && (

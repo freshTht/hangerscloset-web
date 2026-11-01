@@ -1,0 +1,102 @@
+/* Colocated styles for BookingDateBar */
+.hc-datebar-chevron {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface);
+}
+
+.hc-datebar-chevron-icon {
+  font-size: 18px;
+}
+
+.hc-datebar-picker-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.hc-datebar-hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.hc-datebar-picker-btn {
+  min-height: 32px;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 9999px;
+  border: none;
+  min-width: 0;
+  cursor: pointer;
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 700;
+}
+
+.hc-datebar-picker-text {
+  font-size: 9pt;
+  white-space: nowrap;
+}
+
+.hc-datebar-today-btn {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 700;
+}
+
+.hc-datebar-today-text {
+  font-size: 8.5pt;
+}
+
+.hc-datebar-filter-btn {
+  min-height: 32px;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  max-width: 145px;
+}
+
+.hc-datebar-filter-label {
+  font-size: 9pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hc-datebar-badge {
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  line-height: 14px;
+  flex-shrink: 0;
+}
