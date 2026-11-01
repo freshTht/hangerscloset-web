@@ -257,25 +257,42 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
                         ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
                         : undefined
                     }
+                    style={{
+                      whiteSpace: 'nowrap',
+                      minWidth: 0,
+                      padding: '0 8px',
+                      height: '32px',
+                      fontSize: '12px',
+                    }}
                   >
                     {isUpdating ? (
                       <div className="shape loading-indicator tiny" role="status" />
                     ) : (
                       <>
                         <i>{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
-                        <span>{meta.nextActionLabel}</span>
+                        <span style={{ whiteSpace: 'nowrap' }}>{meta.nextActionLabel}</span>
                       </>
                     )}
                   </button>
                 )}
                 <button
                   type="button"
-                  className="small round transparent border no-margin"
+                  className="circle transparent border no-margin"
                   onClick={() => onEditBooking(booking)}
                   title="แก้ไขการจอง"
+                  aria-label={`แก้ไขการจอง ${item.code}`}
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    minWidth: '32px',
+                    minHeight: '32px',
+                    padding: 0,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
                 >
-                  <i>edit</i>
-                  <span>แก้ไข</span>
+                  <i className="tiny">edit</i>
                 </button>
               </div>
               {subsequentBlock && (
