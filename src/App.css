@@ -1,0 +1,6 @@
+.hc-app-page-loading {
+  min-height: 80dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

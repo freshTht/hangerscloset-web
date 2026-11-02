@@ -70,7 +70,7 @@ describe('Stack Component', () => {
         Content
       </Stack>
     );
-    expect(screen.getByTestId('stack')).toHaveClass('medium-margin');
+    expect(screen.getByTestId('stack')).toHaveClass('margin');
 
     rerender(
       <Stack data-testid="stack" margin="large">
@@ -100,7 +100,7 @@ describe('Stack Component', () => {
         Content
       </Stack>
     );
-    expect(screen.getByTestId('stack')).toHaveClass('medium-padding');
+    expect(screen.getByTestId('stack')).toHaveClass('hc-medium-padding');
 
     rerender(
       <Stack data-testid="stack" padding="large">

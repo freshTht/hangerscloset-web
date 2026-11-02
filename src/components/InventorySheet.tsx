@@ -7,6 +7,8 @@ import { LazyImage } from './LazyImage';
 import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
 import { Stack } from './Stack';
+import { Skeleton } from './Skeleton';
+import './InventorySheet.css';
 
 export interface InventorySheetProps {
   isOpen: boolean;
@@ -295,43 +297,17 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     ? `bottom s ${isOpen ? 'active' : ''}`
     : `right medium m l ${isOpen ? 'active' : ''}`;
 
-  const imageSize = isMobile ? 'min(100%, 240px)' : 'min(100%, 280px)';
-
   const renderImage = () => (
-    <div
-      className="round surface-container-high"
-      style={{
-        position: 'relative',
-        width: imageSize,
-        aspectRatio: '1 / 1',
-        margin: '0 auto',
-        overflow: 'hidden',
-        flexShrink: 0,
-      }}
-    >
+    <div className="round surface-container-high hc-inventory-sheet-image-wrap">
       {formData.imageUrl ? (
         <LazyImage
           src={formData.imageUrl}
           alt={formData.name || 'รูปภาพชุด'}
-          containerStyle={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'transparent',
-          }}
-          style={{ objectFit: 'cover' }}
+          containerClassName="hc-inventory-sheet-lazy-image-container"
+          className="hc-inventory-sheet-image"
         />
       ) : (
-        <div
-          className="center-align middle-align secondary-text"
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-          }}
-        >
+        <div className="center-align middle-align secondary-text hc-inventory-sheet-image-placeholder">
           <i className="extra">add_photo_alternate</i>
           <span className="small-text">ยังไม่มีรูปภาพ</span>
         </div>
@@ -340,20 +316,18 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
       {/* Overlay actions */}
       <button
         type="button"
-        className="small round fill no-margin"
+        className="small round fill no-margin hc-inventory-sheet-image-change-btn"
         onClick={() => fileInputRef.current?.click()}
-        style={{ position: 'absolute', left: 8, bottom: 8 }}
       >
         เปลี่ยน
       </button>
       {formData.imageUrl && (
         <button
           type="button"
-          className="small circle fill no-margin"
+          className="small circle fill no-margin hc-inventory-sheet-image-delete-btn"
           onClick={() => setFormData((prev) => ({ ...prev, imageUrl: '' }))}
           aria-label="ลบรูปภาพ"
           title="ลบรูปภาพ"
-          style={{ position: 'absolute', right: 8, bottom: 8 }}
         >
           <i>delete</i>
         </button>
@@ -372,45 +346,19 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
   return (
     <>
       <div
-        className={`overlay ${isOpen ? 'active' : ''}`}
+        className={`overlay hc-inventory-sheet-overlay ${isOpen ? 'active' : ''}`}
         onClick={onClose}
         aria-hidden={!isOpen}
-        style={{ zIndex: 1000, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       <dialog
         id="inventory-sheet"
-        className={sheetClass.trim()}
+        className={`${sheetClass} hc-inventory-sheet-dialog`.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
-        style={{
-          zIndex: 1001,
-          display: isOpen ? 'flex' : undefined,
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          overflowX: 'hidden',
-          ...(isMobile
-            ? {
-                maxHeight: '90dvh',
-                width: '100%',
-                maxWidth: '100vw',
-                borderRadius: '1.25rem 1.25rem 0 0',
-                padding: '0.75rem 1rem 1rem 1rem',
-                margin: 0,
-              }
-            : {
-                width: '32rem',
-                maxWidth: '90vw',
-                height: '100dvh',
-                padding: '1.25rem',
-              }),
-        }}
       >
         {/* Top bar: title only for Add; SKU chip for Edit; close button */}
-        <div
-          className="row items-center no-margin"
-          style={{ paddingBottom: '0.35rem', flexShrink: 0 }}
-        >
+        <div className="row no-margin hc-inventory-sheet-top-bar">
           {mode === 'add' ? (
             <h6 className="bold no-margin">เพิ่มชุดใหม่</h6>
           ) : (
@@ -424,10 +372,9 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
           <div className="max" />
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-inventory-sheet-close-btn"
             onClick={onClose}
             aria-label="ปิดหน้าต่าง"
-            style={{ width: 36, height: 36, minWidth: 36, minHeight: 36, padding: 0 }}
           >
             <i>close</i>
           </button>
@@ -436,11 +383,8 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         {contentReady && (
           <>
             {errorMessage && (
-              <article
-                className="border error-container round margin-bottom"
-                style={{ flexShrink: 0 }}
-              >
-                <div className="row items-center no-margin">
+              <article className="border error-container round margin-bottom hc-inventory-sheet-error-banner">
+                <div className="row no-margin">
                   <i className="error-text">error</i>
                   <div className="max">
                     <p className="no-margin error-text small-text">{errorMessage}</p>
@@ -451,42 +395,26 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
 
             {loading ? (
               <div
-                className="vertical"
-                style={{ flex: 1, gap: 12, padding: '1rem 0' }}
+                className="vertical hc-inventory-sheet-loading-container"
                 aria-busy="true"
                 aria-label="กำลังโหลดข้อมูลชุด"
               >
-                <div
-                  className="skeleton round"
-                  style={{ width: imageSize, aspectRatio: '1 / 1', margin: '0 auto' }}
-                />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
-                <div className="skeleton round" style={{ width: '100%', height: 48 }} />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-image" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
+                <Skeleton shape="round" className="hc-inventory-sheet-skeleton-field" />
               </div>
             ) : (
               <form
                 id="inventory-form"
                 onSubmit={handleSubmit}
-                style={{
-                  flex: 1,
-                  overflowY: 'auto',
-                  overflowX: 'hidden',
-                  WebkitOverflowScrolling: 'touch',
-                  overscrollBehavior: 'contain',
-                  paddingTop: '0.25rem',
-                  paddingBottom: '3rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  minHeight: 0,
-                }}
+                className="hc-inventory-sheet-form"
               >
                 {/* 1. Image Section at the VERY TOP */}
                 {renderImage()}
 
                 {/* 2. Responsive Grid for Form Fields */}
-                <div className="grid no-margin" style={{ gap: '20px' }}>
+                <div className="grid no-margin hc-inventory-sheet-grid">
                   {/* SKU Code (s12) */}
                   <div className="s12">
                     <div className="field label border round no-margin">
@@ -536,20 +464,16 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                       >
                         <Stack orientation="row" align="center" gap="small">
                           <i>payments</i>
-                          <label
-                            className="bold small-text"
-                            style={{ color: 'inherit' }}
-                          >
+                          <label className="bold small-text hc-inventory-sheet-inherit-color">
                             ราคาเช่า (บาท) *
                           </label>
                         </Stack>
                         <button
                           type="button"
-                          className="chip transparent small border no-margin"
+                          className="chip transparent small border no-margin hc-inventory-sheet-inherit-color"
                           onClick={handleAddTier}
                           title="เพิ่มระยะเวลาเช่า"
                           aria-label="เพิ่มระยะเวลาเช่า"
-                          style={{ color: 'inherit' }}
                         >
                           <i>add</i>
                           <span>เพิ่มระยะเวลา</span>
@@ -564,10 +488,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                             align="center"
                             gap="small"
                           >
-                            <div
-                              className="field label border surface round no-margin"
-                              style={{ width: '110px', flexShrink: 0 }}
-                            >
+                            <div className="field label border surface round no-margin hc-inventory-sheet-duration-field">
                               <input
                                 id={`field-duration-${index}`}
                                 type="number"
@@ -608,11 +529,10 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                             {formData.rentalPrices.length > 1 && (
                               <button
                                 type="button"
-                                className="circle transparent small no-margin"
+                                className="circle transparent small no-margin hc-inventory-sheet-shrink-zero"
                                 onClick={() => handleRemoveTier(index)}
                                 title={`ลบราคาเช่า ${tier.durationDays || index + 1} วัน`}
                                 aria-label={`ลบราคาเช่า ${tier.durationDays || index + 1} วัน`}
-                                style={{ flexShrink: 0 }}
                               >
                                 <i>delete</i>
                               </button>
@@ -721,7 +641,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                         value={formData.note}
                         onChange={handleChange}
                         placeholder=" "
-                        style={{ minHeight: '85px', resize: 'vertical' }}
+                        className="hc-inventory-sheet-note-input"
                       />
                       <label htmlFor="field-note">โน๊ต</label>
                       <i>edit_note</i>
@@ -732,12 +652,9 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
             )}
 
             {confirmDelete && (
-              <article
-                className="border error-container round margin-top margin-bottom"
-                style={{ flexShrink: 0 }}
-              >
-                <div className="vertical" style={{ gap: '8px' }}>
-                  <div className="row items-center no-margin">
+              <article className="border error-container round margin-top margin-bottom hc-inventory-sheet-confirm-delete-box">
+                <div className="vertical hc-inventory-sheet-confirm-delete-content">
+                  <div className="row no-margin">
                     <i className="error-text">warning</i>
                     <div className="max">
                       <h6 className="bold no-margin error-text small">ยืนยันการลบรายการนี้?</h6>
@@ -746,7 +663,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                       </p>
                     </div>
                   </div>
-                  <div className="row no-margin right-align" style={{ gap: '8px' }}>
+                  <div className="row no-margin right-align hc-inventory-sheet-confirm-delete-actions">
                     <button
                       type="button"
                       className="border small round no-margin"
@@ -772,28 +689,14 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
               </article>
             )}
 
-            <div
-              className="row items-center no-margin"
-              style={{
-                paddingTop: '0.75rem',
-                borderTop: '1px solid var(--surface-variant)',
-                flexShrink: 0,
-                gap: '8px',
-                width: '100%',
-                boxSizing: 'border-box',
-              }}
-            >
+            <div className="row no-margin hc-inventory-sheet-footer">
               {mode === 'edit' && onDelete && !confirmDelete && (
                 <button
                   type="button"
-                  className="border round error-text no-margin"
+                  className="border round error-text no-margin hc-inventory-sheet-delete-trigger-btn"
                   onClick={() => setConfirmDelete(true)}
                   disabled={submitting}
                   title="ลบรายการนี้"
-                  style={{
-                    minWidth: isMobile ? 44 : 'auto',
-                    padding: isMobile ? '0 12px' : undefined,
-                  }}
                 >
                   <i>delete</i>
                   {!isMobile && <span>ลบชุด</span>}
@@ -814,9 +717,8 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
               <button
                 type="submit"
                 form="inventory-form"
-                className="primary round no-margin"
+                className="primary round no-margin hc-inventory-sheet-submit-btn"
                 disabled={submitting}
-                style={{ minWidth: isMobile ? 90 : 110 }}
               >
                 {submitting ? (
                   <div className="shape loading-indicator small" role="status" />

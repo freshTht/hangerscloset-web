@@ -16,8 +16,8 @@ Beer CSS is built around 3 core concepts:
    - **Colors**: `primary`, `secondary`, `tertiary`, `surface`, `surface-container-low`, `surface-container`, `surface-container-high`, `surface-container-highest`, `error`.
    - **Sizes**: `tiny`, `small`, `medium`, `large`, `extra`.
    - **Spacing**: `no-space`, `small-space`, `medium-space`, `large-space`, `extra-space`.
-   - **Margins**: `no-margin`, `small-margin`, `medium-margin`, `large-margin`, `extra-margin`, `top-margin`, `bottom-margin`, etc.
-   - **Padding**: `no-padding`, `tiny-padding`, `small-padding`, `padding` (16px), `medium-padding` (20px), `large-padding` (24px), `extra-padding`.
+   - **Margins**: `no-margin`, `tiny-margin` (4px), `small-margin` (8px), `margin` (16px), `large-margin` (24px), `top-margin`, `bottom-margin`, etc.
+   - **Padding**: `no-padding`, `tiny-padding` (4px), `small-padding` (8px), `padding` (16px), `hc-medium-padding` (20px), `large-padding` (24px).
    - **Alignments**: `left-align`, `right-align`, `center-align`, `top-align`, `middle-align`, `bottom-align`.
    - **Elevations**: `no-elevate`, `small-elevate`, `elevate`, `medium-elevate`, `large-elevate`.
    - **Shapes**: `round`, `square`, `circle`.
@@ -29,7 +29,7 @@ Beer CSS is built around 3 core concepts:
 
 ### A. Beer CSS Native-First Rule
 > [!IMPORTANT]
-> Always explore and use what Beer CSS provides natively out-of-the-box before writing custom CSS. Leverage Beer CSS semantic elements, helpers, padding classes (`medium-padding`), and depth (`front`). Avoid custom CSS unless Beer CSS fundamentally lacks the capability (then keep custom styles minimal).
+> Always explore and use what Beer CSS provides natively out-of-the-box before writing custom CSS. Leverage Beer CSS semantic elements, helpers, padding classes (`hc-medium-padding`), and depth (`front`). Avoid custom CSS unless Beer CSS fundamentally lacks the capability (then keep custom styles minimal).
 
 ### B. Custom Style Units Rule
 > [!IMPORTANT]
@@ -37,7 +37,17 @@ Beer CSS is built around 3 core concepts:
 
 ### C. Typography Standards
 - **No Manual `fontSize` in Style Attributes**: Do NOT use `fontSize` (or font sizing styles) inside inline `style={{ ... }}` attributes.
-- Use Beer CSS typography classes (`h1`–`h6`, `.small`, `.large`, `.small-text`, `.medium-text`, `.large-text`) or pre-declared generic CSS classes (e.g. `.micro-text`, `.status-badge.small`) in stylesheet files.
+- Use Beer CSS typography classes (`h1`–`h6`, `.small`, `.large`, `.small-text`, `.medium-text`, `.large-text`) or pre-declared generic CSS classes (e.g. `.hc-micro-text`, `.hc-status-badge.small`) in stylesheet files.
+
+### D. Custom Style Tracking & `hc-` Namespace Rule
+> [!IMPORTANT]
+> All custom CSS classes, custom CSS variables, and custom keyframe animations created for this project MUST strictly use the **`hc-`** prefix (e.g., `.hc-status-badge`, `.hc-micro-text`, `.hc-skeleton`, `.hc-medium-padding`, `@keyframes hc-fade-in`). This ensures that custom overrides are immediately tracked, auditable, and never confused with native Beer CSS classes or browser primitives. Do NOT introduce new custom styles without the `hc-` prefix.
+
+### E. Component-Specific Style Colocation Rule
+> [!IMPORTANT]
+> - Custom styles that are specific to a single component or page MUST live in a dedicated, colocated `.css` file in the same directory (e.g. `ComponentName.css` next to `ComponentName.tsx`).
+> - Avoid inline `style={{ ... }}` for static styling rules. Extract static styles into the component's colocated `.css` file using the `hc-` class namespace. Inline styles should only be reserved for dynamic values calculated at runtime (e.g., dynamic coordinates, dynamic progress percentages, or runtime colors).
+> - **Do NOT add new shared or common CSS classes to global stylesheets (`index.css`) without explicit confirmation from the human author.** New styles should default to component-specific `.css` files unless authorized to become global design tokens.
 
 ---
 
@@ -51,7 +61,7 @@ Beer CSS is built around 3 core concepts:
 
 ### Containers, Cards & Modals
 - **Cards**: `<article className="border round">` (content card) or `<article className="no-padding round">` (edge-to-edge media with `<img className="responsive small top-round">`).
-- **Container Highlights**: Use `.round.secondary-container.medium-padding` or `.round.tertiary-container.medium-padding` for grouped form sections (e.g. pricing, tags).
+- **Container Highlights**: Use `.round.secondary-container.hc-medium-padding` or `.round.tertiary-container.hc-medium-padding` for grouped form sections (e.g. pricing, tags).
 - **Dialogs & Sheets**: Use native HTML `<dialog>`. For mobile bottom sheets with desktop side sheets, combine responsive position helpers: `<dialog className="bottom s right m l">`.
 
 ### Responsive Layout & Breakpoints

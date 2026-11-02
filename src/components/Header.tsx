@@ -3,14 +3,16 @@ import { NavLink } from 'react-router-dom';
 
 export const Header: React.FC = () => {
   return (
-    <header className="fixed blur surface top s">
-      {/* Top App Bar with Hanger Icon (Small screens) */}
-      <nav className="top-app-bar center-align">
-        <i className="extra primary-text">checkroom</i>
-      </nav>
-
+    <header className="fixed blur top s">
       {/* Default Tabs on small screens */}
       <div className="tabs s">
+        <NavLink
+          to="/bookings"
+          className={({ isActive }) => (isActive ? 'active' : '')}
+        >
+          <i>event_note</i>
+          <span>การจอง</span>
+        </NavLink>
         <NavLink
           to="/inventory"
           className={({ isActive }) => (isActive ? 'active' : '')}

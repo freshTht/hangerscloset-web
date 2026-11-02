@@ -7,7 +7,7 @@ describe('InventoryCardSkeleton', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders desktop vertical skeleton layout when width > 600px', () => {
+  it('renders desktop vertical hc-skeleton layout when width > 600px', () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: false,
       media: query,
@@ -25,11 +25,11 @@ describe('InventoryCardSkeleton', () => {
     expect(article).toBeInTheDocument();
     expect(article).toHaveClass('vertical');
 
-    const skeletons = container.querySelectorAll('.skeleton');
+    const skeletons = container.querySelectorAll('.hc-skeleton');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
-  it('renders mobile horizontal row skeleton layout when width <= 600px', () => {
+  it('renders mobile horizontal row hc-skeleton layout when width <= 600px', () => {
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
       matches: true,
       media: query,
@@ -47,7 +47,7 @@ describe('InventoryCardSkeleton', () => {
     expect(article).toBeInTheDocument();
     expect(article).toHaveClass('row');
 
-    const skeletons = container.querySelectorAll('.skeleton');
+    const skeletons = container.querySelectorAll('.hc-skeleton');
     expect(skeletons.length).toBeGreaterThan(0);
   });
 });

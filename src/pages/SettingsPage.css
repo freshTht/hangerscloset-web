@@ -1,0 +1,13 @@
+.hc-settings-avatar {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.hc-settings-user-info {
+  min-width: 0;
+}
+
+.hc-settings-user-row {
+  gap: 8px;
+}

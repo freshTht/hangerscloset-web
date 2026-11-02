@@ -1,9 +1,5 @@
 /* Custom responsive and mobile optimizations */
 
-:root {
-  --app-header-height: auto;
-}
-
 body {
   margin: 0;
   padding: 0;
@@ -16,332 +12,37 @@ body {
   min-height: 100dvh;
 }
 
-/* Let Beer CSS :has(> main) grid layout take effect */
-.app-container {
-  min-height: 100dvh;
-  width: 100%;
-}
-
-/* Mobile Top App Bar with fixed sticky behavior */
-header.fixed {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--surface-variant);
-  background-color: var(--surface);
-  padding: 0;
-  padding-top: env(safe-area-inset-top, 0);
-}
-
-header.fixed nav.top-app-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 3rem;
-  padding: 0.5rem 1rem 0.25rem 1rem;
-}
-
-/* Default Tabs on Mobile */
-header.fixed nav.tabs {
-  margin: 0;
-  width: 100%;
-  border-top: 1px solid var(--surface-variant);
-  border-bottom: none;
-}
-
-header.fixed nav.tabs > a {
-  justify-content: center;
-  align-items: center;
-  text-decoration: none;
-  cursor: pointer;
-  touch-action: manipulation;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  gap: 0.35rem;
-  transition: color 0.15s ease;
-}
-
-/* Left Navigation Rail (Medium and Large screens) */
-nav.left {
-  border-right: 1px solid var(--surface-variant);
-  z-index: 101;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Top-aligned hanger icon in rail */
-.rail-top {
-  display: flex;
-  align-items: center;
-  min-height: 3rem;
-  margin-top: 0.5rem;
-}
-
-nav.left.m .rail-top {
-  justify-content: center;
-  width: 100%;
-}
-
-nav.left.max.l .rail-top {
-  justify-content: flex-start;
-  padding: 0 1rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Middle-aligned destinations group */
-.rail-nav-group {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.rail-nav-group > a {
-  text-decoration: none;
-  cursor: pointer;
-  touch-action: manipulation;
-  margin-bottom: 0.5rem;
-}
-
-nav.left.max > .rail-nav-group > a {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Balancer spacer to keep middle alignment centered */
-.rail-bottom-spacer {
-  min-height: 3rem;
-  margin-bottom: 0.5rem;
-  visibility: hidden;
-}
-
 /* Responsive Switching Rules (Breakpoint 600px) */
 @media (max-width: 600px) {
-  nav.left {
-    display: none !important;
-  }
-
   main.responsive {
-    padding: 0.75rem !important;
+    padding: 12px !important;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
   }
 }
 
 @media (min-width: 601px) {
-  /* Hide mobile header app bar when nav rail is active */
-  header.fixed {
-    display: none !important;
-  }
-
   main.responsive {
-    padding: 2rem 1.5rem !important;
+    padding: 24px 24px !important;
   }
 }
 
+main,
 main.responsive {
   width: 100%;
-  max-width: 1200px;
+  min-width: 0;
+  max-width: min(100vw, 1200px);
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-y: auto;
-}
-
-.page-content {
-  width: 100%;
-  animation: fadeIn 0.2s ease-in-out;
-}
-
-/* Status badge styling with dark mode blending */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  font-weight: 600;
-  white-space: nowrap;
-  height: 24px;
-  padding: 0 10px;
-  font-size: 12px;
-}
-
-.status-badge.small {
-  height: 20px;
-  padding: 0 8px;
-  font-size: 11px;
+  overflow: visible !important;
 }
 
 /* Micro text utility for compact metadata (e.g. SKU codes) */
-.micro-text {
-  font-size: 11px;
+.hc-micro-text {
+  font-size: 8pt;
   line-height: normal;
 }
 
-.status-badge-available {
-  background-color: #e8f5e9;
-  color: #1b5e20;
-}
-
-.status-badge-reserved {
-  background-color: #fff3e0;
-  color: #b74700;
-}
-
-.status-badge-laundry {
-  background-color: #e1f5fe;
-  color: #0277bd;
-}
-
-body.dark .status-badge-available {
-  background-color: rgba(76, 175, 80, 0.22);
-  color: #81c784;
-}
-
-body.dark .status-badge-reserved {
-  background-color: rgba(255, 152, 0, 0.22);
-  color: #ffb74d;
-}
-
-body.dark .status-badge-laundry {
-  background-color: rgba(3, 169, 244, 0.22);
-  color: #81d4fa;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes hanger-sway {
-  0% {
-    transform: rotate(-8deg);
-  }
-  50% {
-    transform: rotate(8deg);
-  }
-  100% {
-    transform: rotate(-8deg);
-  }
-}
-
-/* Ambient Material Shapes Background (Pixel style) */
-.material-shapes-bg-flower,
-.material-shapes-bg-wavy,
-.material-shapes-bg-hanger {
-  transition: opacity 0.3s ease;
-}
-
-.material-shapes-bg-flower {
-  opacity: 0.75;
-}
-
-.material-shapes-bg-wavy {
-  opacity: 0.75;
-}
-
-.material-shapes-bg-hanger {
-  opacity: 0.28;
-}
-
-body.dark .material-shapes-bg-flower {
-  opacity: 0.30;
-}
-
-body.dark .material-shapes-bg-wavy {
-  opacity: 0.30;
-}
-
-body.dark .material-shapes-bg-hanger {
-  opacity: 0.22;
-}
-
-/* Skeleton Loading Shimmer & Glowing Blinking Pulse */
-@keyframes skeleton-shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes skeleton-pulse {
-  0%, 100% {
-    opacity: 1;
-    filter: brightness(1);
-  }
-  50% {
-    opacity: 0.35;
-    filter: brightness(1.25);
-  }
-}
-
-.skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--surface-container-high) 25%,
-    var(--surface-variant) 37%,
-    var(--surface-container-high) 63%
-  );
-  background-size: 400% 100%;
-  animation:
-    skeleton-shimmer 2s ease-in-out infinite,
-    skeleton-pulse 1.6s ease-in-out infinite;
-  display: block;
-}
-
-/* Joined Segmented Inputs Group */
-.joined-fields-group {
-  display: flex;
-  width: 100%;
-}
-
-.joined-fields-group > .field {
-  flex: 1;
-  min-width: 0;
-  position: relative;
-  z-index: 1;
-}
-
-.joined-fields-group > .field:focus-within {
-  z-index: 3;
-}
-
-.joined-fields-group > .field:not(:first-child) {
-  margin-left: -1px;
-}
-
-.joined-fields-group > .field:first-child,
-.joined-fields-group > .field:first-child > input {
-  border-top-left-radius: 1.5rem !important;
-  border-bottom-left-radius: 1.5rem !important;
-  border-top-right-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-
-.joined-fields-group > .field:not(:first-child):not(:last-child),
-.joined-fields-group > .field:not(:first-child):not(:last-child) > input {
-  border-radius: 0 !important;
-}
-
-.joined-fields-group > .field:last-child,
-.joined-fields-group > .field:last-child > input {
-  border-top-right-radius: 1.5rem !important;
-  border-bottom-right-radius: 1.5rem !important;
-  border-top-left-radius: 0 !important;
-  border-bottom-left-radius: 0 !important;
-}
-
-/* Beer CSS padding enhancement */
-.medium-padding {
+/* Custom Beer CSS padding enhancement */
+.hc-medium-padding {
   --_padding: 20px !important;
 }
-
-
-
-

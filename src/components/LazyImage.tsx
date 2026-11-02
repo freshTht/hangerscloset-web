@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Skeleton } from './Skeleton';
+import './LazyImage.css';
 
 export interface LazyImageProps {
   src: string;
@@ -97,47 +99,22 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`lazy-image-container ${containerClassName} ${className}`.trim()}
-      style={{
-        position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: 'var(--surface-container-low)',
-        ...containerStyle,
-      }}
+      className={`lazy-image-container hc-lazy-image-container ${containerClassName} ${className}`.trim()}
+      style={containerStyle}
     >
-      {/* Shimmer skeleton placeholder while loading */}
+      {/* Shimmer hc-skeleton placeholder while loading */}
       {!isLoaded && !hasError && (
-        <div
-          className="skeleton"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-          }}
-          aria-hidden="true"
-        />
+        <Skeleton className="hc-lazy-image-skeleton" aria-hidden={true} />
       )}
 
       {/* Fallback view when image fails to load */}
       {hasError && (
         <div
-          className="center-align middle-align surface-container-high"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            gap: 4,
-          }}
+          className="center-align middle-align surface-container-high hc-lazy-image-fallback"
           aria-label={alt}
         >
           <i className="secondary-text">{fallbackIcon}</i>
-          <span className="micro-text secondary-text">ไม่มีรูปภาพ</span>
+          <span className="hc-micro-text secondary-text">ไม่มีรูปภาพ</span>
         </div>
       )}
 
@@ -150,13 +127,9 @@ export const LazyImage: React.FC<LazyImageProps> = ({
           decoding="async"
           onLoad={handleImageLoad}
           onError={handleImageError}
+          className="hc-lazy-image-img"
           style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            display: 'block',
             opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease-in-out',
             ...style,
           }}
         />

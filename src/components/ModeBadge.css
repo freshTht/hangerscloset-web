@@ -1,0 +1,8 @@
+.hc-mode-badge {
+  padding: 2px 8px;
+  height: auto;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  white-space: nowrap;
+}

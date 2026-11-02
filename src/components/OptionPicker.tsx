@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import './OptionPicker.css';
 
 export interface OptionPickerProps {
   id: string;
@@ -196,8 +197,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
   return (
     <div
       ref={containerRef}
-      className="field label border round no-margin"
-      style={{ position: 'relative' }}
+      className="field label border round no-margin hc-option-picker-container"
     >
       <input
         id={id}
@@ -210,9 +210,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
         placeholder={isOpen ? activeSearchPlaceholder : placeholder}
         required={required && !value}
         autoComplete="off"
-        style={{
-          paddingRight: searchTerm ? '4.5rem' : '2.75rem',
-        }}
+        className={`hc-option-picker-input ${searchTerm ? 'has-clear' : ''}`.trim()}
       />
       <label htmlFor={id}>{label}</label>
 
@@ -220,25 +218,13 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
       {searchTerm && (
         <button
           type="button"
-          className="circle transparent no-margin"
+          className="circle transparent no-margin hc-option-clear-btn"
           onClick={(e) => {
             e.stopPropagation();
             setSearchTerm('');
             onChange('');
           }}
           aria-label="ล้างค่า"
-          style={{
-            position: 'absolute',
-            right: '2.5rem',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: 32,
-            height: 32,
-            minWidth: 32,
-            minHeight: 32,
-            padding: 0,
-            zIndex: 2,
-          }}
         >
           <i>close</i>
         </button>
@@ -247,7 +233,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
       {/* Trailing trigger icon button positioned absolutely - NEVER overflows to new row */}
       <button
         type="button"
-        className="circle transparent no-margin"
+        className="circle transparent no-margin hc-option-toggle-btn"
         onClick={(e) => {
           e.stopPropagation();
           if (isOpen) {
@@ -258,18 +244,6 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
           }
         }}
         aria-label="แสดงตัวเลือก"
-        style={{
-          position: 'absolute',
-          right: '0.5rem',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: 36,
-          height: 36,
-          minWidth: 36,
-          minHeight: 36,
-          padding: 0,
-          zIndex: 2,
-        }}
       >
         <i>{isOpen ? 'arrow_drop_up' : (icon || 'arrow_drop_down')}</i>
       </button>
@@ -278,30 +252,20 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
       {isOpen && (
         <div
           ref={menuRef}
-          className="card surface-container-high round padding no-margin medium-elevate"
+          className="card surface-container-high round padding no-margin medium-elevate hc-option-dropdown"
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 4px)',
             ...(dropdownAlign === 'right' ? { right: 0 } : { left: 0 }),
-            minWidth: '100%',
-            width: 'max(100%, min(300px, 88vw))',
-            maxWidth: maxDropdownWidth ? `${maxDropdownWidth}px` : '92vw',
-            boxSizing: 'border-box',
-            zIndex: 100,
-            maxHeight: '260px',
-            overflowY: 'auto',
-            scrollBehavior: 'smooth',
+            ...(maxDropdownWidth ? { maxWidth: `${maxDropdownWidth}px` } : {}),
           }}
         >
-          <div className="row wrap" style={{ gap: '8px', alignItems: 'center' }}>
+          <div className="row wrap hc-option-grid">
             {/* Add New Option Button */}
             {searchTerm.trim() && !exactMatch && onAddOption && (
               <button
                 type="button"
-                className="border no-margin"
+                className="border no-margin hc-option-btn"
                 onClick={handleAddNew}
                 disabled={adding}
-                style={{ cursor: 'pointer' }}
               >
                 <i className="primary-text">add</i>
                 <span className="bold">เพิ่ม "{searchTerm.trim()}"</span>
@@ -319,9 +283,8 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
                     key={opt}
                     ref={isSelected ? selectedButtonRef : undefined}
                     type="button"
-                    className={`${isSelected ? 'primary' : 'border'} no-margin`}
+                    className={`${isSelected ? 'primary' : 'border'} no-margin hc-option-btn`}
                     onClick={() => handleSelect(opt)}
-                    style={{ cursor: 'pointer' }}
                   >
                     {isSelected && <i>check</i>}
                     <span>{opt}</span>
@@ -330,7 +293,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
               })
             ) : (
               !searchTerm.trim() && (
-                <p className="no-margin secondary-text small-text center-align padding" style={{ width: '100%' }}>
+                <p className="no-margin secondary-text small-text center-align padding max">
                   {onAddOption ? `ยังไม่มีตัวเลือก (พิมพ์เพื่อเพิ่ม${labelClean}ใหม่)` : 'ไม่มีตัวเลือก'}
                 </p>
               )
@@ -338,7 +301,7 @@ export const OptionPicker: React.FC<OptionPickerProps> = ({
           </div>
 
           {filteredOptions.length === 0 && searchTerm.trim() && !exactMatch && !onAddOption && (
-            <p className="no-margin secondary-text small-text center-align padding">
+            <p className="no-margin secondary-text small-text center-align padding max">
               ไม่พบตัวเลือก
             </p>
           )}

@@ -133,6 +133,19 @@ describe('useFilteredInventory & filterAndSortInventory', () => {
     expect(filterAndSortInventory(SAMPLE_ITEMS, ownerColorTagFilter).map((i) => i.id)).toEqual([
       '3',
     ]);
+
+    // All-inclusive tags filter (must have ALL selected tags)
+    const allTagsFilter: InventoryFilterState = {
+      ...INITIAL_INVENTORY_FILTER,
+      selectedTags: ['เดรส', 'ออกงาน'],
+    };
+    expect(filterAndSortInventory(SAMPLE_ITEMS, allTagsFilter).map((i) => i.id)).toEqual(['1']);
+
+    const conflictingTagsFilter: InventoryFilterState = {
+      ...INITIAL_INVENTORY_FILTER,
+      selectedTags: ['เดรส', 'คาเฟ่'],
+    };
+    expect(filterAndSortInventory(SAMPLE_ITEMS, conflictingTagsFilter).map((i) => i.id)).toEqual([]);
   });
 
   it('filters by durationDaysFilter and price range accurately', () => {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import './ModeBadge.css';
 
 export interface ModeBadgeProps {
   provider?: 'mock' | 'firebase';
@@ -25,17 +26,8 @@ export const ModeBadge: React.FC<ModeBadgeProps> = ({
 
   return (
     <span
-      className={`chip fill error small bold no-margin ${className}`.trim()}
-      style={{
-        padding: '2px 8px',
-        height: 'auto',
-        fontSize: '0.75rem',
-        borderRadius: '6px',
-        letterSpacing: '0.05em',
-        fontWeight: 700,
-        whiteSpace: 'nowrap',
-        ...style,
-      }}
+      className={`chip fill error small bold no-margin small-text hc-mode-badge ${className}`.trim()}
+      style={style}
     >
       MOCK
     </span>

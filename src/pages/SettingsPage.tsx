@@ -3,6 +3,7 @@ import ui from 'beercss';
 import { useAuth } from '../contexts/AuthContext';
 import { ModeBadge } from '../components/ModeBadge';
 import { LazyImage } from '../components/LazyImage';
+import './SettingsPage.css';
 
 export const SettingsPage: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -35,36 +36,30 @@ export const SettingsPage: React.FC = () => {
   };
 
   return (
-    <div className="settings-page">
+    <div>
       {/* User Profile Card */}
       {user && (
-        <article className="border round medium-padding margin-bottom surface-container-low">
-          <div className="row items-center">
+        <article className="border round hc-medium-padding margin-bottom surface-container-low">
+          <div className="row">
             {user.photoURL ? (
               <LazyImage
                 src={user.photoURL}
                 alt={user.displayName || 'ผู้ใช้งาน'}
                 className="circle large"
                 fallbackIcon="person"
-                containerStyle={{ width: '56px', height: '56px', flexShrink: 0 }}
+                containerClassName="hc-settings-avatar"
               />
             ) : (
               <i className="extra circle surface-container-high primary-text">person</i>
             )}
-            <div className="max" style={{ minWidth: 0 }}>
-              <div className="row items-center no-margin" style={{ gap: '8px' }}>
-                <h6
-                  className="bold no-margin"
-                  style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-                >
+            <div className="max hc-settings-user-info">
+              <div className="row no-margin hc-settings-user-row">
+                <h6 className="bold no-margin truncate">
                   {user.displayName || 'ผู้ใช้งาน'}
                 </h6>
                 <ModeBadge />
               </div>
-              <p
-                className="no-margin secondary-text small-text"
-                style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              >
+              <p className="no-margin secondary-text small-text truncate">
                 {user.email || 'ไม่มีอีเมล'}
               </p>
             </div>
@@ -109,8 +104,8 @@ export const SettingsPage: React.FC = () => {
       )}
 
       {/* Theme Toggle Card */}
-      <article className="border round medium-padding">
-        <div className="row items-center">
+      <article className="border round hc-medium-padding">
+        <div className="row">
           <div className="max">
             <h6 className="bold no-margin">ธีมมืด</h6>
             <p className="no-margin secondary-text">

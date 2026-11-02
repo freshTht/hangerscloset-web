@@ -34,9 +34,9 @@ const PADDING_CLASS_MAP: Record<BeerPadding, string> = {
   none: 'no-padding',
   tiny: 'tiny-padding',
   small: 'small-padding',
-  medium: 'medium-padding',
+  medium: 'hc-medium-padding',
   large: 'large-padding',
-  extra: 'extra-padding',
+  extra: 'large-padding',
   horizontal: 'horizontal-padding',
   vertical: 'vertical-padding',
   top: 'top-padding',
@@ -49,9 +49,9 @@ const MARGIN_CLASS_MAP: Record<BeerSpacing, string> = {
   none: 'no-margin',
   tiny: 'tiny-margin',
   small: 'small-margin',
-  medium: 'medium-margin',
+  medium: 'margin',
   large: 'large-margin',
-  extra: 'extra-margin',
+  extra: 'large-margin',
 };
 
 // Spacing in pixels matching Beer CSS scale (rhymes with beercss padding: 4px, 8px, 16px, 24px, 32px)

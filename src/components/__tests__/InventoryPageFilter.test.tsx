@@ -81,7 +81,7 @@ describe('InventoryCard (Simplified)', () => {
     expect(screen.queryByText('พร้อมเช่า')).not.toBeInTheDocument();
     expect(screen.queryByText('จองแล้ว')).not.toBeInTheDocument();
     expect(screen.queryByText('ส่งซัก')).not.toBeInTheDocument();
-    expect(container.querySelector('.status-badge')).toBeNull();
+    expect(container.querySelector('.hc-status-badge')).toBeNull();
 
     // Price tiers are displayed clearly
     expect(screen.getByTestId('price-tier-1')).toHaveTextContent('1 วัน');
@@ -133,11 +133,10 @@ describe('InventoryPage Search, Filter & Sort', () => {
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
   });
 
-  it('opens filter sheet, applies multi-facet filters, shows badge count, and supports chip dismissal', () => {
+  it('opens filter sheet via top bar button, applies multi-facet filters, and shows active count', () => {
     render(<InventoryPage />);
 
-    // Open filter sheet
-    fireEvent.click(screen.getByRole('button', { name: 'ตัวกรอง' }));
+    fireEvent.click(screen.getByTestId('btn-filters'));
     expect(
       screen.getByRole('dialog', { name: 'ตัวกรองสินค้า' })
     ).toBeInTheDocument();
@@ -145,22 +144,23 @@ describe('InventoryPage Search, Filter & Sort', () => {
     // Select tag 'เดรส' (matches item-1 and item-3)
     fireEvent.click(screen.getByTestId('filter-tag-เดรส'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('2/3 ชุด');
-    expect(screen.getByTestId('active-filter-badge')).toHaveTextContent('1');
 
-    // Also select size 'S' (narrows down to item-1 only)
+    // Add size 'S' (narrows down to item-1 only)
     fireEvent.click(screen.getByTestId('filter-size-S'));
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
-    expect(screen.getByTestId('active-filter-badge')).toHaveTextContent('2');
-
-    // Close filter sheet via apply button
-    fireEvent.click(screen.getByRole('button', { name: /ดูผลลัพธ์ \(1 ชุด\)/ }));
-
     expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
     expect(screen.queryByText('Fabrique Gold Gown')).not.toBeInTheDocument();
 
-    // Dismiss the size filter chip from the active bar
-    fireEvent.click(screen.getByRole('button', { name: 'ลบตัวกรองไซส์ S' }));
-    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('2/3 ชุด');
+    // Filter button shows the number of active filters
+    expect(screen.getByTestId('filter-active-count')).toHaveTextContent('2');
+
+    // Dismiss the tag filter chip from the active bar
+    fireEvent.click(screen.getByRole('button', { name: 'ลบตัวกรองแท็ก เดรส' }));
+    expect(screen.getByTestId('filter-active-count')).toHaveTextContent('1');
+
+    // Toggle size off again
+    fireEvent.click(screen.getByTestId('filter-size-S'));
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
     expect(screen.getByText('Fabrique Gold Gown')).toBeInTheDocument();
   });
 
@@ -212,5 +212,68 @@ describe('InventoryPage Search, Filter & Sort', () => {
 
     expect(screen.queryByTestId('empty-filter-results')).not.toBeInTheDocument();
     expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
+  });
+
+  it('shows clear button only when 1 or more filter is applied and resets on click', () => {
+    render(<InventoryPage />);
+
+    // Initially, no filter is applied: clear button is not in document
+    expect(screen.queryByRole('button', { name: 'เคลียร์' })).not.toBeInTheDocument();
+
+    // Apply a search query
+    fireEvent.click(screen.getByRole('button', { name: 'ค้นหา' }));
+    fireEvent.change(screen.getByLabelText('ค้นหาชุดในคลัง'), {
+      target: { value: 'Dress' },
+    });
+
+    // Clear button should now be visible
+    const clearBtn = screen.getByRole('button', { name: 'เคลียร์' });
+    expect(clearBtn).toBeInTheDocument();
+
+    // Clicking clear resets the filters
+    fireEvent.click(clearBtn);
+
+    // After reset, clear button should disappear again
+    expect(screen.queryByRole('button', { name: 'เคลียร์' })).not.toBeInTheDocument();
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
+  });
+
+  it('filters by brand and color from the filter sheet', () => {
+    render(<InventoryPage />);
+
+    fireEvent.click(screen.getByTestId('btn-filters'));
+
+    fireEvent.click(screen.getByTestId('filter-brand-Avaalene'));
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
+    expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('filter-brand-Avaalene'));
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
+
+    fireEvent.click(screen.getByTestId('filter-color-Blue'));
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('1/3 ชุด');
+    expect(screen.getByText('Avaalene Blue Dress')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('filter-color-Blue'));
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('3 ชุด');
+  });
+
+  it('expands search and tag box via right toggle icon and filters by tag chips', () => {
+    render(<InventoryPage />);
+
+    // Click search toggle icon on the right of filter bar
+    const searchToggle = screen.getByTestId('filter-bar-search-toggle');
+    fireEvent.click(searchToggle);
+
+    // Tag pills should be visible inside expanded search box
+    const dressTagChip = screen.getByTestId('tag-chip-เดรส');
+    expect(dressTagChip).toBeInTheDocument();
+
+    // Click tag chip to filter
+    fireEvent.click(dressTagChip);
+    expect(screen.getByTestId('inventory-count-badge')).toHaveTextContent('2/3 ชุด');
+
+    // Tag chip should show active class and chip in filter bar
+    expect(screen.getByRole('button', { name: 'ลบตัวกรองแท็ก เดรส' })).toBeInTheDocument();
   });
 });

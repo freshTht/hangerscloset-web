@@ -1,5 +1,7 @@
 import React from 'react';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { Skeleton } from './Skeleton';
+import './InventoryCardSkeleton.css';
 
 export const InventoryCardSkeleton: React.FC = () => {
   const isMobile = useIsMobile();
@@ -7,78 +9,28 @@ export const InventoryCardSkeleton: React.FC = () => {
   if (isMobile) {
     return (
       <article
-        className="no-padding round row no-space no-scroll border"
-        style={{
-          minHeight: 160,
-          display: 'flex',
-          alignItems: 'stretch',
-          position: 'relative',
-        }}
+        className="no-padding round row no-space no-scroll border hc-card-skeleton-mobile"
         aria-hidden="true"
       >
         {/* Fixed 120px photo placeholder */}
-        <div
-          className="skeleton left-round"
-          style={{
-            width: 120,
-            flexShrink: 0,
-            alignSelf: 'stretch',
-            minHeight: 160,
-          }}
-        />
+        <Skeleton className="left-round hc-card-skeleton-mobile-photo" />
 
         {/* Content Body placeholder */}
-        <div
-          className="padding vertical"
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: 6,
-          }}
-        >
+        <div className="padding vertical hc-card-skeleton-mobile-body">
           {/* Top Block: Code + Status Badge, Title */}
           <div>
-            <div
-              className="row no-margin"
-              style={{
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 4,
-                marginBottom: 6,
-              }}
-            >
-              <div
-                className="skeleton"
-                style={{ width: 48, height: 14, borderRadius: 4 }}
-              />
-              <div
-                className="skeleton"
-                style={{ width: 56, height: 20, borderRadius: 9999 }}
-              />
+            <div className="row no-margin hc-card-skeleton-mobile-header-row">
+              <Skeleton className="hc-card-skeleton-chip-code" />
+              <Skeleton className="hc-card-skeleton-chip-status" />
             </div>
-            <div
-              className="skeleton"
-              style={{ width: '85%', height: 16, borderRadius: 4, marginBottom: 4 }}
-            />
-            <div
-              className="skeleton"
-              style={{ width: '55%', height: 16, borderRadius: 4 }}
-            />
+            <Skeleton className="hc-card-skeleton-title-1" />
+            <Skeleton className="hc-card-skeleton-title-2" />
           </div>
 
           {/* Bottom Block: Attributes + Prices */}
-          <div style={{ marginTop: 'auto' }}>
-            <div
-              className="skeleton"
-              style={{ width: '70%', height: 12, borderRadius: 4, marginBottom: 8 }}
-            />
-            <div
-              className="skeleton round"
-              style={{ width: '100%', height: 34, borderRadius: 8 }}
-            />
+          <div className="hc-inventory-card-bottom-section">
+            <Skeleton className="hc-card-skeleton-attr-line" />
+            <Skeleton shape="round" className="hc-card-skeleton-price-block" />
           </div>
         </div>
       </article>
@@ -87,58 +39,24 @@ export const InventoryCardSkeleton: React.FC = () => {
 
   return (
     <article
-      className="no-padding round vertical border"
-      style={{
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+      className="no-padding round vertical border hc-card-skeleton-desktop"
       aria-hidden="true"
     >
       {/* 1:1 Square top photo placeholder */}
-      <div
-        className="skeleton top-round"
-        style={{
-          width: '100%',
-          aspectRatio: '1 / 1',
-        }}
-      />
+      <Skeleton className="top-round hc-card-skeleton-desktop-photo" />
 
       {/* Content body placeholder */}
-      <div
-        className="padding vertical"
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-        }}
-      >
-        <div
-          className="skeleton"
-          style={{ width: 56, height: 14, borderRadius: 4 }}
-        />
-        <div
-          className="skeleton"
-          style={{ width: '90%', height: 18, borderRadius: 4 }}
-        />
-        <div
-          className="skeleton"
-          style={{ width: '60%', height: 18, borderRadius: 4 }}
-        />
+      <div className="padding vertical hc-card-skeleton-desktop-body">
+        <Skeleton className="hc-card-skeleton-desktop-code" />
+        <Skeleton className="hc-card-skeleton-desktop-title-1" />
+        <Skeleton className="hc-card-skeleton-desktop-title-2" />
 
-        <div style={{ marginTop: 4 }}>
-          <div
-            className="skeleton"
-            style={{ width: '75%', height: 14, borderRadius: 4 }}
-          />
+        <div className="hc-card-skeleton-desktop-attr-spacer">
+          <Skeleton className="hc-card-skeleton-desktop-attr" />
         </div>
 
-        <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
-          <div
-            className="skeleton round"
-            style={{ width: '100%', height: 42, borderRadius: 8 }}
-          />
+        <div className="hc-card-skeleton-desktop-bottom">
+          <Skeleton shape="round" className="hc-card-skeleton-desktop-price-block" />
         </div>
       </div>
     </article>

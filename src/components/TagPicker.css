@@ -1,0 +1,107 @@
+/* TagPicker Styles */
+
+.hc-tag-picker-label {
+  color: inherit;
+}
+
+.hc-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hc-tag-remove-btn {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  padding: 0;
+  color: inherit;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-tag-remove-btn::before,
+  .hc-tag-clear-btn::before,
+  .hc-tag-toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.hc-tag-remove-icon {
+  color: inherit;
+}
+
+.hc-tag-input-container {
+  position: relative;
+}
+
+.hc-tag-search-input {
+  padding-right: 40px;
+}
+
+.hc-tag-search-input.has-clear {
+  padding-right: 68px;
+}
+
+.hc-tag-clear-btn {
+  position: absolute;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  z-index: 2;
+}
+
+.hc-tag-toggle-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0;
+  z-index: 2;
+}
+
+.hc-tag-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  min-width: 100%;
+  width: max(100%, min(300px, 88vw));
+  max-width: 92vw;
+  box-sizing: border-box;
+  z-index: 100;
+  max-height: 260px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.hc-tag-dropdown.align-right {
+  right: 0;
+}
+
+.hc-tag-dropdown.align-left {
+  left: 0;
+}
+
+.hc-tag-options-grid {
+  gap: 8px;
+  align-items: center;
+}
+
+.hc-tag-option-btn {
+  cursor: pointer;
+}

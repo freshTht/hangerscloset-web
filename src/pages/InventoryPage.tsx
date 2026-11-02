@@ -1,15 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { InventoryCard } from '../components/InventoryCard';
 import { InventoryCardSkeleton } from '../components/InventoryCardSkeleton';
 import { InventorySheet } from '../components/InventorySheet';
 import { InventoryFilterSheet } from '../components/InventoryFilterSheet';
 import { InventorySortDialog } from '../components/InventorySortDialog';
+import { EmptyState } from '../components/EmptyState';
+import { HeaderToolbar, ToolbarDivider } from '../components/HeaderToolbar';
 import { useInventory } from '../hooks/useInventory';
-import { useIsMobile } from '../hooks/useIsMobile';
+import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import {
   useFilteredInventory,
   INITIAL_INVENTORY_FILTER,
   countActiveFilters,
+  mergeUniqueStrings,
+  getItemTags,
 } from '../hooks/useFilteredInventory';
 import {
   INVENTORY_SORT_OPTIONS,
@@ -17,6 +21,7 @@ import {
   type InventorySortOption,
 } from '../types/catalogFilter';
 import type { InventoryItem } from '../types/inventory';
+import './InventoryPage.css';
 
 interface SheetState {
   isOpen: boolean;
@@ -27,7 +32,7 @@ interface SheetState {
 export const InventoryPage: React.FC = () => {
   const { items, loading, error, provider, addItem, updateItem, deleteItem } =
     useInventory();
-  const isMobile = useIsMobile();
+  const { tags: metaTags } = useMetadataOptions();
 
   const [filter, setFilter] = useState<InventoryFilterState>(
     INITIAL_INVENTORY_FILTER
@@ -35,8 +40,18 @@ export const InventoryPage: React.FC = () => {
   const [sort, setSort] = useState<InventorySortOption>('code_asc');
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [quickAddMode, setQuickAddMode] = useState(false);
   const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const availableTags = useMemo(
+    () =>
+      mergeUniqueStrings(
+        metaTags,
+        items.flatMap((item) => getItemTags(item))
+      ),
+    [metaTags, items]
+  );
 
   const [sheetState, setSheetState] = useState<SheetState>({
     isOpen: false,
@@ -48,8 +63,7 @@ export const InventoryPage: React.FC = () => {
   const activeFilterCount = countActiveFilters(filter);
   const hasSearchQuery = filter.searchQuery.trim().length > 0;
   const hasNonDefaultSort = sort !== 'code_asc';
-  const hasAnyActiveFilterOrSort =
-    activeFilterCount > 0 || hasSearchQuery || hasNonDefaultSort;
+  const hasAppliedFilters = activeFilterCount > 0 || hasSearchQuery || hasNonDefaultSort;
 
   useEffect(() => {
     if (searchExpanded && searchInputRef.current) {
@@ -98,189 +112,266 @@ export const InventoryPage: React.FC = () => {
     setSearchExpanded((prev) => !prev);
   };
 
+  const handleOpenFilters = () => {
+    setQuickAddMode(false);
+    setFilterSheetOpen(true);
+  };
+
+
+  const handleAddSearchTag = (tag: string) => {
+    if (!filter.selectedTags.includes(tag)) {
+      setFilter((prev) => ({
+        ...prev,
+        selectedTags: [...prev.selectedTags, tag],
+      }));
+    }
+  };
+
+  const handleRemoveSearchTag = (tag: string) => {
+    setFilter((prev) => ({
+      ...prev,
+      selectedTags: prev.selectedTags.filter((t) => t !== tag),
+    }));
+  };
+
   const currentSortLabel =
     INVENTORY_SORT_OPTIONS.find((opt) => opt.value === sort)?.label ?? '';
-
-  const renderActiveFilterBar = () => {
-    if (!hasAnyActiveFilterOrSort) return null;
-
-    return (
-      <div
-        className="row wrap items-center bottom-margin"
-        data-testid="active-filters-bar"
-        style={{ gap: '8px' }}
-      >
-        {hasSearchQuery && (
-          <button
-            type="button"
-            className="chip small fill primary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, searchQuery: '' }))}
-            aria-label={`ลบคำค้นหา ${filter.searchQuery.trim()}`}
-          >
-            <i>search</i>
-            <span>ค้นหา: "{filter.searchQuery.trim()}"</span>
-            <i>close</i>
-          </button>
-        )}
-
-        {filter.durationDaysFilter !== null &&
-          filter.durationDaysFilter !== undefined && (
-            <button
-              type="button"
-              className="chip small fill secondary-container no-margin"
-              onClick={() =>
-                setFilter((prev) => ({ ...prev, durationDaysFilter: null }))
-              }
-              aria-label={`ลบตัวกรองระยะเวลา ${filter.durationDaysFilter} วัน`}
-            >
-              <span>เช่า {filter.durationDaysFilter} วัน</span>
-              <i>close</i>
-            </button>
-          )}
-
-        {filter.minPrice !== null && filter.minPrice !== undefined && (
-          <button
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, minPrice: null }))}
-            aria-label={`ลบตัวกรองราคาต่ำสุด`}
-          >
-            <span>ราคา ≥ ฿{filter.minPrice.toLocaleString('en-US')}</span>
-            <i>close</i>
-          </button>
-        )}
-
-        {filter.maxPrice !== null && filter.maxPrice !== undefined && (
-          <button
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() => setFilter((prev) => ({ ...prev, maxPrice: null }))}
-            aria-label={`ลบตัวกรองราคาสูงสุด`}
-          >
-            <span>ราคา ≤ ฿{filter.maxPrice.toLocaleString('en-US')}</span>
-            <i>close</i>
-          </button>
-        )}
-
-        {filter.selectedSizes.map((size) => (
-          <button
-            key={`size-${size}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedSizes: prev.selectedSizes.filter((s) => s !== size),
-              }))
-            }
-            aria-label={`ลบตัวกรองไซส์ ${size}`}
-          >
-            <span>ไซส์: {size}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedBrands.map((brand) => (
-          <button
-            key={`brand-${brand}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedBrands: prev.selectedBrands.filter((b) => b !== brand),
-              }))
-            }
-            aria-label={`ลบตัวกรองแบรนด์ ${brand}`}
-          >
-            <span>แบรนด์: {brand}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedColors.map((color) => (
-          <button
-            key={`color-${color}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedColors: prev.selectedColors.filter((c) => c !== color),
-              }))
-            }
-            aria-label={`ลบตัวกรองสี ${color}`}
-          >
-            <span>สี: {color}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedTags.map((tag) => (
-          <button
-            key={`tag-${tag}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedTags: prev.selectedTags.filter((t) => t !== tag),
-              }))
-            }
-            aria-label={`ลบตัวกรองแท็ก ${tag}`}
-          >
-            <span>แท็ก: {tag}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {filter.selectedOwners.map((owner) => (
-          <button
-            key={`owner-${owner}`}
-            type="button"
-            className="chip small fill secondary-container no-margin"
-            onClick={() =>
-              setFilter((prev) => ({
-                ...prev,
-                selectedOwners: prev.selectedOwners.filter((o) => o !== owner),
-              }))
-            }
-            aria-label={`ลบตัวกรองเจ้าของ ${owner}`}
-          >
-            <span>เจ้าของ: {owner}</span>
-            <i>close</i>
-          </button>
-        ))}
-
-        {hasNonDefaultSort && (
-          <button
-            type="button"
-            className="chip small fill tertiary-container no-margin"
-            onClick={() => setSort('code_asc')}
-            aria-label={`รีเซ็ตการจัดเรียง ${currentSortLabel}`}
-          >
-            <i>sort</i>
-            <span>เรียง: {currentSortLabel}</span>
-            <i>close</i>
-          </button>
-        )}
-
-        <button
-          type="button"
-          className="chip small border no-margin"
-          onClick={handleResetAllFilters}
-        >
-          <i>restart_alt</i>
-          <span>ล้างตัวกรองทั้งหมด</span>
-        </button>
-      </div>
-    );
-  };
 
   const countText =
     filteredItems.length === items.length
       ? `${items.length} ชุด`
       : `${filteredItems.length}/${items.length} ชุด`;
+
+  const renderActiveFilterBar = () => {
+    return (
+      <div className="hc-active-filters-sticky-wrapper">
+        <HeaderToolbar sticky={false} testId="active-filters-bar">
+          <button
+            type="button"
+            data-testid="btn-filters"
+            className={`small ${activeFilterCount > 0 ? 'fill primary' : 'tertiary-container'}`}
+            onClick={handleOpenFilters}
+            aria-label="ตัวกรอง"
+            title="ตัวกรอง"
+          >
+            <i>tune</i>
+            <span>ตัวกรอง</span>
+            {activeFilterCount > 0 && (
+              <span
+                className="badge hc-inventory-filter-badge"
+                data-testid="filter-active-count"
+              >
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+          <div className="max" />
+          <span className="bold" data-testid="inventory-count-badge">
+            {countText}
+          </span>
+          <ToolbarDivider />
+          <button
+            type="button"
+            className={`circle small ${hasNonDefaultSort ? 'fill primary' : 'transparent'}`}
+            onClick={() => setSortDialogOpen(true)}
+            aria-label="จัดเรียง"
+            title="จัดเรียง"
+          >
+            <i>sort</i>
+          </button>
+          <button
+            type="button"
+            className={`circle small ${searchExpanded || hasSearchQuery || filter.selectedTags.length > 0 ? 'fill primary' : 'transparent'}`}
+            onClick={handleToggleSearch}
+            aria-label="ค้นหา"
+            title="ค้นหาและแท็ก"
+            data-testid="filter-bar-search-toggle"
+          >
+            <i>{searchExpanded ? 'close' : 'search'}</i>
+          </button>
+        </HeaderToolbar>
+
+        <div className="row no-wrap scroll no-margin hc-inventory-facet-chips-row">
+            {/* Additional Facet Chips: Search query */}
+            {hasSearchQuery && (
+              <button
+                type="button"
+                className="chip small fill primary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, searchQuery: '' }))}
+                aria-label={`ลบคำค้นหา ${filter.searchQuery.trim()}`}
+              >
+                <i>search</i>
+                <span>ค้นหา: "{filter.searchQuery.trim()}"</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Selected Tags */}
+            {filter.selectedTags.map((tag) => (
+              <button
+                key={`tag-${tag}`}
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => handleRemoveSearchTag(tag)}
+                aria-label={`ลบตัวกรองแท็ก ${tag}`}
+              >
+                <span>#{tag}</span>
+                <i>close</i>
+              </button>
+            ))}
+
+            {/* Additional Facet Chips: Duration */}
+            {filter.durationDaysFilter !== null &&
+              filter.durationDaysFilter !== undefined && (
+                <button
+                  type="button"
+                  className="chip small fill secondary-container no-margin"
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, durationDaysFilter: null }))
+                  }
+                  aria-label={`ลบตัวกรองระยะเวลา ${filter.durationDaysFilter} วัน`}
+                >
+                  <span>เช่า {filter.durationDaysFilter} วัน</span>
+                  <i>close</i>
+                </button>
+              )}
+
+            {/* Additional Facet Chips: Min Price */}
+            {filter.minPrice !== null && filter.minPrice !== undefined && (
+              <button
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, minPrice: null }))}
+                aria-label={`ลบตัวกรองราคาต่ำสุด`}
+              >
+                <span>ราคา ≥ ฿{filter.minPrice.toLocaleString('en-US')}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Max Price */}
+            {filter.maxPrice !== null && filter.maxPrice !== undefined && (
+              <button
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() => setFilter((prev) => ({ ...prev, maxPrice: null }))}
+                aria-label={`ลบตัวกรองราคาสูงสุด`}
+              >
+                <span>ราคา ≤ ฿{filter.maxPrice.toLocaleString('en-US')}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Additional Facet Chips: Owner */}
+            {filter.selectedOwners.map((owner) => (
+              <button
+                key={`owner-${owner}`}
+                type="button"
+                className="chip small fill secondary-container no-margin"
+                onClick={() =>
+                  setFilter((prev) => ({
+                    ...prev,
+                    selectedOwners: prev.selectedOwners.filter((o) => o !== owner),
+                  }))
+                }
+                aria-label={`ลบตัวกรองเจ้าของ ${owner}`}
+              >
+                <span>เจ้าของ: {owner}</span>
+                <i>close</i>
+              </button>
+            ))}
+
+            {/* Additional Facet Chips: Sort */}
+            {hasNonDefaultSort && (
+              <button
+                type="button"
+                className="chip small fill tertiary-container no-margin"
+                onClick={() => setSort('code_asc')}
+                aria-label={`รีเซ็ตการจัดเรียง ${currentSortLabel}`}
+              >
+                <i>sort</i>
+                <span>เรียง: {currentSortLabel}</span>
+                <i>close</i>
+              </button>
+            )}
+
+            {/* Clear All button */}
+            {hasAppliedFilters && (
+              <button
+                type="button"
+                className="chip small border no-margin"
+                onClick={handleResetAllFilters}
+                aria-label="เคลียร์"
+                title="เคลียร์"
+              >
+                <i>clear_all</i>
+                <span>เคลียร์</span>
+              </button>
+            )}
+        </div>
+
+        {/* Expandable Search + Tag Filter Box */}
+        {searchExpanded && (
+          <div
+            className="round surface-container-low border small-padding margin-top hc-inventory-search-box"
+            data-testid="filter-search-box"
+          >
+            <div className="row no-margin hc-inventory-search-input-row">
+              <i className="small secondary-text">search</i>
+              <input
+                className="medium-text hc-inventory-search-input"
+                ref={searchInputRef}
+                type="search"
+                aria-label="ค้นหาชุดในคลัง"
+                placeholder="ค้นหารหัส, ชื่อชุด, แบรนด์, สี, ไซส์..."
+                value={filter.searchQuery}
+                onChange={(e) =>
+                  setFilter((prev) => ({ ...prev, searchQuery: e.target.value }))
+                }
+              />
+              {filter.searchQuery && (
+                <button
+                  type="button"
+                  className="circle transparent small no-margin hc-inventory-search-clear-btn"
+                  onClick={() =>
+                    setFilter((prev) => ({ ...prev, searchQuery: '' }))
+                  }
+                  aria-label="ล้างคำค้นหา"
+                >
+                  <i className="tiny">close</i>
+                </button>
+              )}
+            </div>
+
+            {/* Quick Tag Selector Chips */}
+            {availableTags.length > 0 && (
+              <div className="row no-wrap scroll no-margin hc-inventory-quick-tags-row">
+                <span className="hc-micro-text secondary-text bold truncate">
+                  แท็ก:
+                </span>
+                {availableTags.map((t) => {
+                  const isSelected = filter.selectedTags.includes(t);
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      data-testid={`tag-chip-${t}`}
+                      className={`chip tiny no-margin ${isSelected ? 'fill primary' : 'border'} hc-micro-text hc-inventory-tag-chip`}
+                      onClick={() =>
+                        isSelected ? handleRemoveSearchTag(t) : handleAddSearchTag(t)
+                      }
+                    >
+                      <span>#{t}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -298,7 +389,7 @@ export const InventoryPage: React.FC = () => {
         </div>
       ) : error ? (
         <article className="border error-container round margin">
-          <div className="row items-center">
+          <div className="row">
             <i className="error-text">error</i>
             <div className="max">
               <h6 className="bold no-margin error-text">
@@ -309,54 +400,32 @@ export const InventoryPage: React.FC = () => {
           </div>
         </article>
       ) : items.length === 0 ? (
-        <div
-          className="center-align middle-align padding"
-          style={{ minHeight: '50vh' }}
-        >
-          <i className="extra secondary-text">inventory_2</i>
-          <h5 className="secondary-text">ไม่พบรายการเสื้อผ้าในคลัง</h5>
-          <p className="secondary-text">
-            {provider === 'firebase'
-              ? 'คุณสามารถใช้คำสั่ง pnpm seed:firestore เพื่อนำเข้าข้อมูลจำลองเริ่มต้น หรือกดปุ่ม + ด้านล่างเพื่อเพิ่มชุด'
-              : 'ยังไม่มีข้อมูลในคลังสินค้า กดปุ่ม + ด้านล่างเพื่อเพิ่มชุดใหม่'}
-          </p>
-          <div className="space" />
-          <button
-            type="button"
-            className="primary round"
-            onClick={handleOpenAdd}
-          >
-            <i>add</i>
-            <span>เพิ่มชุดแรก</span>
-          </button>
-        </div>
+        <EmptyState
+          icon="inventory_2"
+          title="ไม่พบรายการเสื้อผ้าในคลัง"
+          description={
+            provider === 'firebase'
+              ? 'คุณสามารถใช้คำสั่ง pnpm firebase:firestore:seed เพื่อนำเข้าข้อมูลจำลองเริ่มต้น หรือกดปุ่ม + ด้านล่างเพื่อเพิ่มชุด'
+              : 'ยังไม่มีข้อมูลในคลังสินค้า กดปุ่ม + ด้านล่างเพื่อเพิ่มชุดใหม่'
+          }
+          actionIcon="add"
+          actionText="เพิ่มชุดแรก"
+          onAction={handleOpenAdd}
+        />
       ) : (
         <>
           {renderActiveFilterBar()}
 
           {filteredItems.length === 0 ? (
-            <div
-              className="center-align middle-align padding"
-              data-testid="empty-filter-results"
-              style={{ minHeight: '45vh' }}
-            >
-              <i className="extra secondary-text">search_off</i>
-              <h5 className="secondary-text">
-                ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา
-              </h5>
-              <p className="secondary-text">
-                ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด
-              </p>
-              <div className="space" />
-              <button
-                type="button"
-                className="primary round"
-                onClick={handleResetAllFilters}
-              >
-                <i>restart_alt</i>
-                <span>ล้างตัวกรองทั้งหมด</span>
-              </button>
-            </div>
+            <EmptyState
+              testId="empty-filter-results"
+              icon="search_off"
+              title="ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา"
+              description="ลองเปลี่ยนคำค้นหา หรือล้างตัวกรองเพื่อดูรายการชุดทั้งหมด"
+              actionIcon="restart_alt"
+              actionText="ล้างตัวกรองทั้งหมด"
+              onAction={handleResetAllFilters}
+            />
           ) : (
             <div className="grid">
               {filteredItems.map((item) => (
@@ -373,144 +442,16 @@ export const InventoryPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Responsive Floating Bottom Toolbar + Expandable Search Bar */}
-      <div
-        className={`fixed bottom ${isMobile ? 'center' : 'right'} margin front`}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: isMobile ? 'center' : 'flex-end',
-          gap: '8px',
-          maxWidth: 'calc(100vw - 24px)',
-        }}
+      {/* Standalone FAB (right aligned) */}
+      <button
+        className="extra circle primary medium-elevate fixed bottom right margin front"
+        type="button"
+        onClick={handleOpenAdd}
+        aria-label="เพิ่มชุด"
+        title="เพิ่มชุด"
       >
-        {searchExpanded && (
-          <div
-            className="surface-container-highest round medium-elevate row items-center no-margin"
-            data-testid="floating-search-bar"
-            style={{
-              padding: '4px 12px',
-              width: isMobile ? 'min(360px, calc(100vw - 24px))' : '340px',
-              boxSizing: 'border-box',
-              gap: '6px',
-            }}
-          >
-            <i className="small secondary-text">search</i>
-            <input
-              ref={searchInputRef}
-              type="search"
-              aria-label="ค้นหาชุดในคลัง"
-              placeholder="ค้นหารหัส, ชื่อชุด, แบรนด์, สี, ไซส์..."
-              value={filter.searchQuery}
-              onChange={(e) =>
-                setFilter((prev) => ({ ...prev, searchQuery: e.target.value }))
-              }
-              style={{
-                flex: 1,
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                color: 'var(--on-surface)',
-                height: '38px',
-                minWidth: 0,
-              }}
-            />
-            {filter.searchQuery && (
-              <button
-                type="button"
-                className="circle transparent small no-margin"
-                onClick={() =>
-                  setFilter((prev) => ({ ...prev, searchQuery: '' }))
-                }
-                aria-label="ล้างคำค้นหา"
-                style={{
-                  width: '28px',
-                  height: '28px',
-                  minWidth: '28px',
-                  minHeight: '28px',
-                  padding: 0,
-                }}
-              >
-                <i className="small">close</i>
-              </button>
-            )}
-            <button
-              type="button"
-              className="circle transparent small no-margin"
-              onClick={() => setSearchExpanded(false)}
-              aria-label="ซ่อนช่องค้นหา"
-              style={{
-                width: '28px',
-                height: '28px',
-                minWidth: '28px',
-                minHeight: '28px',
-                padding: 0,
-              }}
-            >
-              <i className="small">keyboard_arrow_down</i>
-            </button>
-          </div>
-        )}
-
-        <nav className="center-align tiny-space no-margin">
-          <nav className="toolbar secondary-container medium-elevate">
-            <span className="bold" data-testid="inventory-count-badge">
-              {countText}
-            </span>
-            <button
-              className={`circle no-margin ${
-                searchExpanded || hasSearchQuery ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={handleToggleSearch}
-              aria-label="ค้นหา"
-              title="ค้นหา"
-            >
-              <i>search</i>
-            </button>
-            <button
-              className={`circle no-margin ${
-                activeFilterCount > 0 ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={() => setFilterSheetOpen(true)}
-              aria-label="ตัวกรอง"
-              title="ตัวกรอง"
-              style={{ position: 'relative' }}
-            >
-              <i>tune</i>
-              {activeFilterCount > 0 && (
-                <span
-                  className="badge circle small primary"
-                  data-testid="active-filter-badge"
-                >
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-            <button
-              className={`circle no-margin ${
-                hasNonDefaultSort ? 'fill primary' : 'transparent'
-              }`}
-              type="button"
-              onClick={() => setSortDialogOpen(true)}
-              aria-label="จัดเรียง"
-              title="จัดเรียง"
-            >
-              <i>sort</i>
-            </button>
-          </nav>
-          <button
-            className="extra circle primary medium-elevate no-margin"
-            type="button"
-            onClick={handleOpenAdd}
-            aria-label="เพิ่มชุด"
-            title="เพิ่มชุด"
-          >
-            <i>add</i>
-          </button>
-        </nav>
-      </div>
+        <i>add</i>
+      </button>
 
       {/* Add / Edit Sheet Component */}
       <InventorySheet
@@ -528,6 +469,7 @@ export const InventoryPage: React.FC = () => {
         items={items}
         filter={filter}
         filteredCount={filteredItems.length}
+        quickAddMode={quickAddMode}
         onChangeFilter={setFilter}
         onResetFilter={() => setFilter(INITIAL_INVENTORY_FILTER)}
         onClose={() => setFilterSheetOpen(false)}

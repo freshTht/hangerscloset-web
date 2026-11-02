@@ -1,0 +1,79 @@
+.hc-bookings-toolbar-count {
+  white-space: nowrap;
+}
+
+.hc-bookings-search-field {
+  width: 160px;
+  max-width: 38vw;
+}
+
+.hc-bookings-date-bar {
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface-container-low);
+  border-radius: 16px;
+}
+
+.hc-bookings-date-nav-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+}
+
+.hc-bookings-date-picker-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.hc-bookings-date-hidden-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.hc-bookings-date-picker-btn {
+  min-height: 40px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hc-bookings-skeleton-title {
+  width: 60%;
+  height: 24px;
+}
+
+.hc-bookings-skeleton-body {
+  width: 100%;
+  height: 64px;
+}
+
+.hc-bookings-skeleton-footer {
+  width: 45%;
+  height: 20px;
+}
+
+.hc-bookings-confirm-overlay {
+  z-index: 1002;
+}
+
+.hc-bookings-confirm-dialog {
+  z-index: 1003;
+  max-width: 380px;
+  width: 92vw;
+}
+
+.hc-bookings-sort-overlay {
+  z-index: 998;
+}
+
+.hc-bookings-sort-dialog {
+  z-index: 999;
+  min-width: 280px;
+}

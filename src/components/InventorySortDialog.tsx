@@ -4,6 +4,7 @@ import {
   type InventorySortOption,
 } from '../types/catalogFilter';
 import { useIsMobile } from '../hooks/useIsMobile';
+import './InventorySortDialog.css';
 
 export interface InventorySortDialogProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
 
   const dialogClass = isMobile
     ? `bottom s ${isOpen ? 'active' : ''}`
-    : `medium-padding round m l ${isOpen ? 'active' : ''}`;
+    : `hc-medium-padding round m l ${isOpen ? 'active' : ''}`;
 
   const handleChoose = (option: InventorySortOption) => {
     onSelectSort(option);
@@ -42,66 +43,34 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
   return (
     <>
       <div
-        className={`overlay ${isOpen ? 'active' : ''}`}
+        className={`overlay ${isOpen ? 'active' : ''} hc-sort-dialog-overlay`}
         onClick={onClose}
         aria-hidden={!isOpen}
-        style={{ zIndex: 1000, pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       <dialog
         id="inventory-sort-dialog"
-        className={dialogClass.trim()}
+        className={`${dialogClass} hc-sort-dialog ${isMobile ? 'mobile' : ''}`.trim()}
         open={isOpen}
         aria-hidden={!isOpen}
         aria-label="จัดเรียงสินค้า"
-        style={{
-          zIndex: 1001,
-          display: isOpen ? 'flex' : undefined,
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          gap: '12px',
-          ...(isMobile
-            ? {
-                width: '100%',
-                maxWidth: '100vw',
-                borderRadius: '20px 20px 0 0',
-                padding: '16px',
-                margin: 0,
-              }
-            : {
-                width: '360px',
-                maxWidth: '90vw',
-                padding: '20px',
-              }),
-        }}
       >
-        <div
-          className="row items-center no-margin"
-          style={{ gap: '8px' }}
-        >
+        <div className="row no-margin hc-sort-dialog-header">
           <i>sort</i>
           <h6 className="bold no-margin">จัดเรียงรายการสินค้า</h6>
           <div className="max" />
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-sort-dialog-close-btn"
             onClick={onClose}
             aria-label="ปิดหน้าต่างจัดเรียง"
-            style={{
-              width: '36px',
-              height: '36px',
-              minWidth: '36px',
-              minHeight: '36px',
-              padding: 0,
-            }}
           >
             <i>close</i>
           </button>
         </div>
 
         <div
-          className="vertical"
-          style={{ gap: '6px' }}
+          className="vertical hc-sort-dialog-options"
           role="radiogroup"
           aria-label="ตัวเลือกการจัดเรียง"
         >
@@ -114,18 +83,10 @@ export const InventorySortDialog: React.FC<InventorySortDialogProps> = ({
                 role="radio"
                 aria-checked={isSelected}
                 data-testid={`sort-option-${option.value}`}
-                className={`row round no-margin ${
+                className={`row round no-margin hc-sort-dialog-option-btn ${
                   isSelected ? 'primary-container' : 'transparent border'
                 }`}
                 onClick={() => handleChoose(option.value)}
-                style={{
-                  width: '100%',
-                  justifyContent: 'flex-start',
-                  padding: '10px 14px',
-                  height: 'auto',
-                  minHeight: '48px',
-                  gap: '10px',
-                }}
               >
                 <i>{option.icon}</i>
                 <span className={`max left-align ${isSelected ? 'bold' : ''}`}>
