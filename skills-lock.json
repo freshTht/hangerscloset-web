@@ -79,6 +79,12 @@
       "skillPath": "skills/firestore-rules-creation/SKILL.md",
       "computedHash": "c69dbffa4ad5165ed6dff2da79b8fc9bb96272b2cea0a90b32372845c93f5946"
     },
+    "ui-review": {
+      "source": "arla6ka/skills",
+      "sourceType": "github",
+      "skillPath": "skills/ui-review/SKILL.md",
+      "computedHash": "d693f31476d9f94a683e5e07bdcaa51117b2aeb02f1d9895b8248313f3bcfdf7"
+    },
     "xcode-project-setup": {
       "source": "firebase/agent-skills",
       "sourceType": "github",
