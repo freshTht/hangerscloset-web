@@ -1,5 +1,15 @@
 /* Custom responsive and mobile optimizations */
 
+html {
+  scroll-padding-block-start: 64px;
+}
+
+@media (max-width: 600px) {
+  html {
+    scroll-padding-block-start: 112px;
+  }
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -30,7 +40,7 @@ main,
 main.responsive {
   width: 100%;
   min-width: 0;
-  max-width: min(100vw, 1200px);
+  max-width: 1200px;
   margin: 0 auto;
   box-sizing: border-box;
   overflow: visible !important;

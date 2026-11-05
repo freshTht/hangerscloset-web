@@ -11,6 +11,14 @@
   flex-shrink: 0;
 }
 
+@media (max-width: 360px) {
+  .hc-booking-inv-card-image {
+    width: 96px;
+    min-width: 96px;
+    max-width: 96px;
+  }
+}
+
 .hc-booking-inv-card-content {
   min-width: 0;
   padding: 10px 14px 10px 12px;
@@ -95,4 +103,5 @@
 
 .hc-booking-inv-card-action-row {
   gap: 6px;
+  flex-wrap: wrap;
 }

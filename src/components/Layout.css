@@ -6,7 +6,7 @@
 
 /* Left Navigation Rail (Medium and Large screens) */
 nav.left {
-  border-right: 1px solid var(--surface-variant);
+  border-inline-end: 1px solid var(--surface-variant);
   z-index: 101;
   display: flex;
   flex-direction: column;

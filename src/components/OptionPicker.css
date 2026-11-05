@@ -5,16 +5,16 @@
 }
 
 .hc-option-picker-input {
-  padding-right: 44px;
+  padding-inline-end: 44px;
 }
 
 .hc-option-picker-input.has-clear {
-  padding-right: 72px;
+  padding-inline-end: 72px;
 }
 
 .hc-option-clear-btn {
   position: absolute;
-  right: 40px;
+  inset-inline-end: 40px;
   top: 50%;
   transform: translateY(-50%);
   width: 32px;
@@ -27,7 +27,7 @@
 
 .hc-option-toggle-btn {
   position: absolute;
-  right: 8px;
+  inset-inline-end: 8px;
   top: 50%;
   transform: translateY(-50%);
   width: 36px;
@@ -65,11 +65,11 @@
 }
 
 .hc-option-dropdown.align-right {
-  right: 0;
+  inset-inline-end: 0;
 }
 
 .hc-option-dropdown.align-left {
-  left: 0;
+  inset-inline-start: 0;
 }
 
 .hc-option-grid {

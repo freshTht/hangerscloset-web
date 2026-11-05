@@ -113,7 +113,7 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
           width: '100%',
           margin: '0 auto',
           padding: '16px 20px 20px',
-          maxHeight: '85vh',
+          maxHeight: '85dvh',
           overflowY: 'auto',
           background: 'var(--surface-container-low)',
         }}
