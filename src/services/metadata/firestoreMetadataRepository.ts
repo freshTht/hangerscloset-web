@@ -58,7 +58,7 @@ export class FirestoreMetadataRepository implements IMetadataRepository {
         const catSnap = await getDocs(catCol);
         if (catSnap.empty && sets[cat].size > 0) {
           const promises = Array.from(sets[cat]).map((name) => {
-            const docId = encodeURIComponent(name.toLowerCase().replace(/[\/\s]+/g, '_'));
+            const docId = encodeURIComponent(name.toLowerCase().replace(/[/\s]+/g, '_'));
             return setDoc(doc(db!, cat, docId), { name });
           });
           await Promise.all(promises);
@@ -126,7 +126,7 @@ export class FirestoreMetadataRepository implements IMetadataRepository {
       throw new Error('Firestore is not configured.');
     }
 
-    const docId = encodeURIComponent(trimmed.toLowerCase().replace(/[\/\s]+/g, '_'));
+    const docId = encodeURIComponent(trimmed.toLowerCase().replace(/[/\s]+/g, '_'));
     const docRef = doc(db, category, docId);
     await setDoc(docRef, { name: trimmed }, { merge: true });
     return trimmed;

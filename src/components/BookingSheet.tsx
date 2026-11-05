@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   BOOKING_STATUS_META,
   BOOKING_STATUS_ORDER,
@@ -373,18 +373,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     };
   }, [isOpen, mode, onClose]);
 
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleCloseCleanly();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
-
-  const handleCloseCleanly = () => {
+  const handleCloseCleanly = useCallback(() => {
     if (isClosingRef.current) return;
     isClosingRef.current = true;
 
@@ -402,7 +391,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
       }
     }
     onClose();
-  };
+  }, [mode, onClose]);
+
+  // Handle ESC key to close
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleCloseCleanly();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handleCloseCleanly]);
 
   const handleNextStep = () => {
     if (currentStep < 3) {

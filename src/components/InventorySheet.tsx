@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { InventoryItem, InventoryStatus } from '../types/inventory';
-import { normalizeItemTags } from '../types/inventory';
+import {
+  normalizeItemTags,
+  type InventoryItem,
+  type InventoryStatus,
+} from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { resizeImageFile } from '../lib/resizeImage';

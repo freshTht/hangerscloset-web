@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { Customer } from '../types/customer';
-import type { NewCustomerInput } from '../services/customers';
-import { matchesCustomerQuery } from '../services/customers';
+import { matchesCustomerQuery, type NewCustomerInput } from '../services/customers';
 import { Stack } from './Stack';
 import { useIsMobile } from '../hooks/useIsMobile';
 import './CustomerPicker.css';

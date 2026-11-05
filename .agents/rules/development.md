@@ -16,16 +16,22 @@
 - `pnpm build:firebase`: Production build against Firebase.
 - `pnpm test`: Runs Vitest test suites once (`vitest run`).
 - `pnpm test:watch`: Runs Vitest in interactive watch mode.
+- `pnpm lint`: Runs ESLint across all TypeScript and React files (`eslint .`).
+- `pnpm lint:fix`: Automatically fixes fixable lint violations (`eslint . --fix`).
 - `pnpm preview`: Locally previews the production build.
 - `pnpm update:beercss-docs`: Synchronizes version-bound Beer CSS documentation into `.agents/rules/references/beercss.md`. Runs automatically on `postinstall`.
 
 ## Code Quality & Verification
-- **Validation**: After modifying code, always verify by running `pnpm test` and `pnpm build` (`tsc -b && vite build`) to ensure type safety and bundling pass without errors.
-- **TypeScript Standards**:
-  - TypeScript is configured in strict mode (`tsconfig.json`).
-  - Prefer functional components with typed props.
-  - Keep components modular and single-responsibility.
-  - Maintain path aliases and standard module imports.
+- **Validation**: After modifying code, always verify by running `pnpm lint && pnpm test && pnpm build` to ensure linting, unit tests, and production bundling pass without errors.
+- **TypeScript & Code Style Standards**:
+  - **No Nested Ternaries**: Strictly avoid nested ternary expressions (`a ? b ? c : d : e`). Mechanically enforced via ESLint's `no-nested-ternary: "error"`. Replace nested conditions with:
+    - Pure helper functions with `switch-case` (e.g. for discrete status, duration, or tier values).
+    - Guard clauses with early returns (`if (...) return ...;`).
+  - **Component Render Trees**: Avoid deep top-level JSX conditional rendering trees (e.g. `loading ? <Skeleton /> : error ? <Error /> : ...`). Extract dedicated sub-render helper functions like `renderContent()` that use early returns for loading, error, and view-mode branches.
+  - **Zero Double Type Assertions**: Avoid `as unknown as Type` casts. Model types accurately with union types, discriminated unions, or optional legacy fields on incoming data objects.
+  - **TypeScript Strict Mode**: TypeScript is configured in strict mode (`tsconfig.json`).
+  - **Component Architecture**: Prefer functional components with typed props; keep components modular and single-responsibility.
+  - **Module Imports**: Maintain path aliases and standard module imports.
 
 ## Environment Variables & Security
 - **Follow `environment-and-security.md`**: Refer to [`.agents/rules/environment-and-security.md`](environment-and-security.md) for full policy.

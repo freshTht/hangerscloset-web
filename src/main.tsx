@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ui from 'beercss';
-import 'beercss';
 import 'material-dynamic-colors';
 import './index.css';
 import App from './App';

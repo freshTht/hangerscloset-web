@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { BookingDateBar, BookingDateBarProps } from '../BookingDateBar';
+import { BookingDateBar, type BookingDateBarProps } from '../BookingDateBar';
 
 describe('BookingDateBar Component', () => {
   const defaultTabCounts = {
