@@ -155,7 +155,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
             <Stack orientation="row" align="center" gap="tiny">
               <button
                 type="button"
-                className="circle transparent small no-margin"
+                className="circle transparent small no-margin hc-booking-calendar-nav-btn"
                 onClick={handlePrevMonth}
                 aria-label="เดือนก่อนหน้า"
               >
@@ -166,7 +166,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               </h6>
               <button
                 type="button"
-                className="circle transparent small no-margin"
+                className="circle transparent small no-margin hc-booking-calendar-nav-btn"
                 onClick={handleNextMonth}
                 aria-label="เดือนถัดไป"
               >
@@ -183,7 +183,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               </span>
               <button
                 type="button"
-                className="border small round no-margin"
+                className="border small round no-margin hc-booking-calendar-today-btn"
                 onClick={handleToday}
               >
                 วันนี้
@@ -210,7 +210,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                 return (
                   <div
                     key={`empty-${idx}`}
-                    className="round surface-container-low hc-booking-calendar-empty-cell"
+                    className="surface-container-low hc-booking-calendar-empty-cell"
                   />
                 );
               }
@@ -228,7 +228,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                   type="button"
                   onClick={() => setSelectedDate(isoDate)}
                   aria-label={`วันที่ ${isoDate}`}
-                  className={`round no-margin hc-booking-calendar-day-btn ${
+                  className={`no-margin hc-booking-calendar-day-btn ${
                     isSelected
                       ? 'secondary-container is-selected'
                       : 'surface-container-low'

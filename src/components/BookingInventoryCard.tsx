@@ -192,7 +192,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
                 {meta.nextStatus && meta.nextActionLabel && (
                   <button
                     type="button"
-                    className="small round border primary bold no-margin max"
+                    className="small round border primary bold no-margin max small-text hc-booking-inv-card-advance-btn"
                     disabled={isUpdating || Boolean(subsequentBlock)}
                     onClick={() =>
                       handleAdvanceStatus(
@@ -207,43 +207,19 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
                         ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
                         : undefined
                     }
-                    style={{
-                      whiteSpace: 'nowrap',
-                      minWidth: 0,
-                      padding: '0 8px',
-                      height: '32px',
-                      fontSize: '12px',
-                    }}
                   >
                     {isUpdating ? (
                       <div className="shape loading-indicator tiny" role="status" />
                     ) : (
                       <>
                         <i>{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
-                        <span style={{ whiteSpace: 'nowrap' }}>{meta.nextActionLabel}</span>
+                        <span className="hc-booking-inv-card-advance-label">
+                          {meta.nextActionLabel}
+                        </span>
                       </>
                     )}
                   </button>
                 )}
-                <button
-                  type="button"
-                  className="circle transparent border no-margin"
-                  onClick={() => onEditBooking(booking)}
-                  title="แก้ไขการจอง"
-                  aria-label={`แก้ไขการจอง ${item.code}`}
-                  style={{
-                    width: '32px',
-                    height: '32px',
-                    minWidth: '32px',
-                    minHeight: '32px',
-                    padding: 0,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <i className="tiny">edit</i>
-                </button>
               </div>
               {subsequentBlock && (
                 <span
@@ -258,7 +234,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
           ) : (
             <button
               type="button"
-              className="small round fill primary bold no-margin max"
+              className="small round fill primary bold no-margin max hc-booking-inv-card-reserve-btn"
               onClick={() => onReserve(item)}
               aria-label={`จองชุด ${item.code}`}
               title="สร้างการจองสำหรับชุดนี้"

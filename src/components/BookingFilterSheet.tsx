@@ -1,9 +1,7 @@
-import React, { useEffect } from 'react';
-import {
-  BOOKING_STATUS_ORDER,
-  BOOKING_STATUS_META,
-  type BookingItemStatus,
-} from '../types/booking';
+/* eslint-disable react-refresh/only-export-components */
+import React, { useEffect, useRef } from 'react';
+import { type BookingItemStatus } from '../types/booking';
+import './BookingFilterSheet.css';
 
 export type BookingFilterTab = 'active' | 'available' | BookingItemStatus;
 
@@ -14,24 +12,26 @@ export type BookingSortKey =
   | 'code_desc'
   | 'createdAt_desc';
 
-export const FILTER_TABS: { id: BookingFilterTab; label: string }[] = [
+export const FILTER_TABS = [
   { id: 'active', label: 'กำลังดำเนินการ' },
   { id: 'available', label: 'ว่าง (พร้อมเช่า)' },
-  ...BOOKING_STATUS_ORDER.map((status) => ({
-    id: status,
-    label: BOOKING_STATUS_META[status].label,
-  })),
-];
+  { id: 'reserved', label: 'จองแล้ว' },
+  { id: 'pending_delivery', label: 'รอส่งมอบ' },
+  { id: 'delivered', label: 'ส่งมอบแล้ว' },
+  { id: 'pending_return', label: 'รอรับคืน' },
+  { id: 'in_laundry', label: 'ส่งซัก' },
+  { id: 'returned', label: 'รับคืนเสร็จสิ้น' },
+] as const;
 
-export const SORT_OPTIONS: { key: BookingSortKey; label: string; icon: string }[] = [
+export const SORT_OPTIONS = [
   { key: 'startDate_asc', label: 'วันรับชุด (ใกล้สุดก่อน)', icon: 'event' },
   { key: 'startDate_desc', label: 'วันรับชุด (ไกลสุดก่อน)', icon: 'schedule' },
   { key: 'code_asc', label: 'รหัสชุด (A-Z)', icon: 'sort_by_alpha' },
   { key: 'code_desc', label: 'รหัสชุด (Z-A)', icon: 'sort_by_alpha' },
   { key: 'createdAt_desc', label: 'วันที่ทำรายการล่าสุด', icon: 'history' },
-];
+] as const;
 
-export function getBookingFilterIcon(id: BookingFilterTab): string {
+function getBookingFilterIcon(id: BookingFilterTab): string {
   switch (id) {
     case 'active':
       return 'pending_actions';
@@ -73,105 +73,121 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
   onSelectSort,
   onClose,
 }) => {
-  // ESC key listener
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
+
+  // Capture trigger focus on open, focus inside dialog, and restore trigger focus on close
   useEffect(() => {
+    if (isOpen) {
+      if (
+        document.activeElement instanceof HTMLElement &&
+        !dialogRef.current?.contains(document.activeElement)
+      ) {
+        previousActiveElementRef.current = document.activeElement;
+      }
+      const timer = window.setTimeout(() => {
+        closeBtnRef.current?.focus();
+      }, 0);
+      return () => window.clearTimeout(timer);
+    } else if (previousActiveElementRef.current) {
+      const prev = previousActiveElementRef.current;
+      previousActiveElementRef.current = null;
+      if (document.contains(prev)) {
+        prev.focus();
+      }
+    }
+  }, [isOpen]);
+
+  // ESC key + Tab focus trap listener
+  useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         onClose();
+        return;
+      }
+
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusables = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not(:disabled), [href], input:not(:disabled):not([tabindex="-1"]), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+
+        if (!active || !dialogRef.current.contains(active)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+        } else if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
+
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const isCustomized = selectedFilter !== 'active' || selectedSort !== 'startDate_asc';
+  const isCustomized =
+    selectedFilter !== 'active' || selectedSort !== 'startDate_asc';
 
   return (
     <>
       <div
-        className="overlay active"
+        className="overlay active hc-filter-sheet-overlay"
         onClick={onClose}
         aria-hidden={!isOpen}
-        style={{ zIndex: 1000 }}
       />
 
       <dialog
+        ref={dialogRef}
         id="booking-filter-sheet"
-        className="bottom active"
+        className="bottom active hc-filter-sheet-dialog"
         open={isOpen}
         aria-modal="true"
         aria-label="ตัวกรองและจัดเรียงรายการจอง"
-        style={{
-          zIndex: 1001,
-          display: 'flex',
-          flexDirection: 'column',
-          boxSizing: 'border-box',
-          borderRadius: '20px 20px 0 0',
-          maxWidth: '540px',
-          width: '100%',
-          margin: '0 auto',
-          padding: '16px 20px 20px',
-          maxHeight: '85dvh',
-          overflowY: 'auto',
-          background: 'var(--surface-container-low)',
-        }}
       >
         {/* Drag pill handle */}
-        <div
-          style={{
-            width: '40px',
-            height: '4px',
-            borderRadius: '2px',
-            backgroundColor: 'var(--outline-variant)',
-            margin: '0 auto 12px',
-            flexShrink: 0,
-          }}
-        />
+        <div className="hc-filter-sheet-handle" />
 
         {/* Header */}
-        <div
-          className="row items-center no-margin"
-          style={{ gap: '8px', marginBottom: '16px', flexShrink: 0 }}
-        >
+        <div className="row items-center no-margin hc-filter-sheet-header">
           <i className="primary-text">tune</i>
           <h6 className="bold no-margin">ตัวกรองและจัดเรียง</h6>
           <div className="max" />
           <button
+            ref={closeBtnRef}
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-filter-sheet-close-btn"
             onClick={onClose}
             aria-label="ปิดตัวกรอง"
-            style={{
-              width: '36px',
-              height: '36px',
-              minWidth: '36px',
-              minHeight: '36px',
-              padding: 0,
-            }}
           >
             <i>close</i>
           </button>
         </div>
 
         {/* Section 1: Status Picker (2-Column Grid) */}
-        <div style={{ marginBottom: '18px', flexShrink: 0 }}>
-          <div
-            className="small-text secondary-text bold"
-            style={{ marginBottom: '8px' }}
-          >
+        <div className="hc-filter-sheet-section">
+          <div className="small-text secondary-text bold hc-filter-sheet-section-title">
             สถานะการจอง
           </div>
 
           <div
             role="tablist"
             aria-label="ตัวกรองสถานะการจอง"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-              gap: '8px',
-            }}
+            className="hc-filter-sheet-grid"
           >
             {FILTER_TABS.map((tab) => {
               const isSelected = selectedFilter === tab.id;
@@ -184,49 +200,23 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
                   role="tab"
                   aria-selected={isSelected}
                   type="button"
-                  className={`row items-center no-margin ${
-                    isSelected ? 'primary-container bold' : 'surface-container-high'
+                  className={`row items-center no-margin hc-filter-sheet-tab-btn ${
+                    isSelected
+                      ? 'primary-container bold is-selected'
+                      : 'surface-container-high'
                   }`}
                   onClick={() => onSelectFilter(tab.id)}
-                  style={{
-                    padding: '6px 8px',
-                    borderRadius: '10px',
-                    border: isSelected
-                      ? '1.5px solid var(--primary)'
-                      : '1px solid var(--outline-variant)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '4px',
-                    minHeight: '40px',
-                    boxSizing: 'border-box',
-                    textAlign: 'left',
-                  }}
                 >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      minWidth: 0,
-                      flex: 1,
-                      overflow: 'hidden',
-                    }}
-                  >
+                  <div className="hc-filter-sheet-tab-label-wrap">
                     <i
-                      className={`small ${isSelected ? 'primary-text' : 'secondary-text'}`}
-                      style={{ flexShrink: 0, fontSize: '16px' }}
+                      className={`small hc-filter-sheet-tab-icon ${
+                        isSelected ? 'primary-text' : 'secondary-text'
+                      }`}
                     >
                       {icon}
                     </i>
                     <span
-                      style={{
-                        fontSize: '12px',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                      }}
+                      className="small-text hc-filter-sheet-tab-label"
                       title={tab.label}
                     >
                       {tab.label}
@@ -234,22 +224,9 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
                   </div>
 
                   <span
-                    style={{
-                      fontWeight: 700,
-                      fontSize: '10.5px',
-                      padding: '1px 5px',
-                      borderRadius: '6px',
-                      backgroundColor: isSelected
-                        ? 'var(--primary)'
-                        : 'var(--surface-container-highest, rgba(255, 255, 255, 0.08))',
-                      color: isSelected
-                        ? 'var(--on-primary)'
-                        : 'var(--on-surface-variant)',
-                      flexShrink: 0,
-                      minWidth: '16px',
-                      textAlign: 'center',
-                      lineHeight: '14px',
-                    }}
+                    className={`hc-micro-text hc-filter-sheet-tab-count ${
+                      isSelected ? 'is-selected' : ''
+                    }`}
                   >
                     {count}
                   </span>
@@ -260,21 +237,12 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
         </div>
 
         {/* Section 2: Sorting Options (Structured 2-Column Grid) */}
-        <div style={{ marginBottom: '18px', flexShrink: 0 }}>
-          <div
-            className="small-text secondary-text bold"
-            style={{ marginBottom: '8px' }}
-          >
+        <div className="hc-filter-sheet-section">
+          <div className="small-text secondary-text bold hc-filter-sheet-section-title">
             จัดเรียงตาม
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-              gap: '8px',
-            }}
-          >
+          <div className="hc-filter-sheet-grid">
             {SORT_OPTIONS.map((opt) => {
               const isSelected = selectedSort === opt.key;
 
@@ -282,36 +250,17 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
                 <button
                   key={opt.key}
                   type="button"
-                  className={`chip small no-margin ${
-                    isSelected ? 'fill primary bold' : 'border surface-container-high'
-                  }`}
+                  className={`chip small no-margin hc-filter-sheet-sort-btn ${
+                    isSelected
+                      ? 'fill primary bold'
+                      : 'border surface-container-high'
+                  } ${opt.key === 'createdAt_desc' ? 'span-2' : ''}`.trim()}
                   onClick={() => onSelectSort(opt.key)}
-                  style={{
-                    cursor: 'pointer',
-                    minHeight: '34px',
-                    height: '34px',
-                    padding: '0 8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '5px',
-                    width: '100%',
-                    boxSizing: 'border-box',
-                    borderRadius: '8px',
-                    gridColumn: opt.key === 'createdAt_desc' ? 'span 2' : undefined,
-                  }}
                 >
-                  <i className="tiny" style={{ fontSize: '14px', flexShrink: 0 }}>
+                  <i className="tiny hc-filter-sheet-sort-icon">
                     {isSelected ? 'check' : opt.icon}
                   </i>
-                  <span
-                    style={{
-                      fontSize: '11.5px',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                    }}
-                  >
+                  <span className="small-text hc-filter-sheet-sort-label">
                     {opt.label}
                   </span>
                 </button>
@@ -321,32 +270,15 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div
-          className="row items-center no-margin"
-          style={{
-            paddingTop: '12px',
-            borderTop: '1px solid var(--surface-variant)',
-            flexShrink: 0,
-            gap: '10px',
-            width: '100%',
-          }}
-        >
+        <div className="row items-center no-margin hc-filter-sheet-footer">
           <button
             type="button"
-            className="transparent secondary-text small-text no-margin"
+            className="transparent secondary-text small-text no-margin hc-filter-sheet-reset-btn"
             onClick={() => {
               onSelectFilter('active');
               onSelectSort('startDate_asc');
             }}
             disabled={!isCustomized}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '8px 12px',
-              opacity: isCustomized ? 1 : 0.4,
-              cursor: isCustomized ? 'pointer' : 'default',
-            }}
           >
             <i className="small">restart_alt</i>
             <span>รีเซ็ต</span>
@@ -356,12 +288,8 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
 
           <button
             type="button"
-            className="primary round no-margin bold"
+            className="primary round no-margin bold hc-filter-sheet-apply-btn"
             onClick={onClose}
-            style={{
-              padding: '8px 20px',
-              minHeight: '38px',
-            }}
           >
             <span>ดูผลลัพธ์</span>
           </button>

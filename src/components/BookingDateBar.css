@@ -1,5 +1,6 @@
 /* Colocated styles for BookingDateBar */
 .hc-datebar-chevron {
+  position: relative;
   width: 32px;
   height: 32px;
   min-width: 32px;
@@ -31,6 +32,7 @@
 }
 
 .hc-datebar-picker-btn {
+  position: relative;
   min-height: 32px;
   height: 32px;
   padding: 0 10px;
@@ -52,6 +54,7 @@
 }
 
 .hc-datebar-today-btn {
+  position: relative;
   height: 32px;
   min-height: 32px;
   padding: 0 10px;
@@ -72,6 +75,7 @@
 }
 
 .hc-datebar-filter-btn {
+  position: relative;
   min-height: 32px;
   height: 32px;
   padding: 0 10px;
@@ -83,6 +87,23 @@
   cursor: pointer;
   flex-shrink: 0;
   max-width: 145px;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-datebar-chevron::before,
+  .hc-datebar-picker-btn::before,
+  .hc-datebar-today-btn::before,
+  .hc-datebar-filter-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
 }
 
 .hc-datebar-filter-label {
@@ -99,4 +120,11 @@
   border-radius: 9999px;
   line-height: 14px;
   flex-shrink: 0;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
+}
+
+.hc-datebar-badge.is-active-filter {
+  background-color: var(--on-primary);
+  color: var(--primary);
 }

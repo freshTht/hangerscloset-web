@@ -109,7 +109,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
           <button
             type="button"
-            className="circle transparent no-margin"
+            className="circle transparent no-margin hc-booking-card-edit-btn"
             onClick={() => onEdit(booking)}
             aria-label={`แก้ไขการจองของ ${booking.customerName}`}
             title="แก้ไขการจอง"
@@ -251,7 +251,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
           {onToggleDepositRefunded && (
             <button
               type="button"
-              className={`chip small no-margin ${
+              className={`chip small no-margin hc-booking-card-deposit-btn ${
                 booking.depositRefunded
                   ? 'hc-status-badge-available'
                   : 'surface-container-high'

@@ -47,6 +47,25 @@
   padding: 0;
 }
 
+.hc-booking-inv-card-advance-btn {
+  position: relative;
+  white-space: nowrap;
+  min-width: 0;
+  padding: 0 10px;
+  height: 36px;
+  min-height: 36px;
+}
+
+.hc-booking-inv-card-advance-label {
+  white-space: nowrap;
+}
+
+.hc-booking-inv-card-reserve-btn {
+  position: relative;
+  height: 36px;
+  min-height: 36px;
+}
+
 @media (pointer: coarse), (max-width: 600px) {
   .hc-booking-inv-card-edit-btn::before {
     content: '';
@@ -55,6 +74,18 @@
     left: 50%;
     transform: translate(-50%, -50%);
     width: 48px;
+    height: 48px;
+  }
+
+  .hc-booking-inv-card-advance-btn::before,
+  .hc-booking-inv-card-reserve-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    min-width: 48px;
     height: 48px;
   }
 }

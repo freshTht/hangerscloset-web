@@ -113,9 +113,10 @@ describe('BookingsPage Component', () => {
     const reserveBtn = screen.getByRole('button', { name: /จองชุด AVL01/i });
     expect(reserveBtn).toBeInTheDocument();
 
-    // Clicking reserve button opens BookingSheet
+    // Clicking reserve button opens BookingSheet directly at Step 2 (Customer selection)
     fireEvent.click(reserveBtn);
     expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
   });
 
   it('toggles between Items list view and Orders list view', () => {

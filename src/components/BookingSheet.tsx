@@ -228,11 +228,36 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   // History stack synchronization & lifecycle refs
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const pushedStepsCountRef = useRef(0);
   const isClosingRef = useRef(false);
   const prevIsOpenRef = useRef(false);
   const prevModeRef = useRef(mode);
   const prevBookingIdRef = useRef(booking?.id);
+
+  // Capture trigger focus when sheet opens, move focus inside dialog, and restore trigger focus on close
+  useEffect(() => {
+    if (isOpen) {
+      if (
+        document.activeElement instanceof HTMLElement &&
+        !dialogRef.current?.contains(document.activeElement)
+      ) {
+        previousActiveElementRef.current = document.activeElement;
+      }
+      const focusTimer = window.setTimeout(() => {
+        closeBtnRef.current?.focus();
+      }, 0);
+      return () => window.clearTimeout(focusTimer);
+    } else if (previousActiveElementRef.current) {
+      const prev = previousActiveElementRef.current;
+      previousActiveElementRef.current = null;
+      if (document.contains(prev)) {
+        prev.focus();
+      }
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -393,11 +418,38 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     onClose();
   }, [mode, onClose]);
 
-  // Handle ESC key to close
+  // Handle ESC key to close and Tab key focus trap inside dialog
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (e.key === 'Escape') {
         handleCloseCleanly();
+        return;
+      }
+
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusables = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not(:disabled), [href], input:not(:disabled):not([tabindex="-1"]), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+
+        if (!active || !dialogRef.current.contains(active)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+        } else if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -712,9 +764,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
       />
 
       <dialog
+        ref={dialogRef}
         id="booking-sheet"
         className={`${sheetClass} hc-booking-sheet-dialog`.trim()}
         open={isOpen}
+        aria-modal="true"
         aria-hidden={!isOpen}
         aria-label={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
       >
@@ -725,6 +779,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
           </h6>
           <div className="max" />
           <button
+            ref={closeBtnRef}
             type="button"
             className="circle transparent no-margin hc-booking-sheet-close-btn"
             onClick={handleCloseCleanly}
@@ -1234,33 +1289,35 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </div>
 
                     {/* Step 2 Footer */}
-                    <div className="hc-booking-sheet-footer-row hc-booking-sheet-step-footer">
-                      <button
-                        type="button"
-                        className="border no-margin hc-booking-sheet-btn-round-10"
-                        data-testid="wizard-prev-step-2"
-                        onClick={handlePrevStep}
-                      >
-                        <i>arrow_back</i>
-                        <span>ย้อนกลับ</span>
-                      </button>
+                    <div className="hc-booking-sheet-step-footer">
+                      <div className="hc-booking-sheet-footer-row">
+                        <button
+                          type="button"
+                          className="border no-margin hc-booking-sheet-btn-round-10"
+                          data-testid="wizard-prev-step-2"
+                          onClick={handlePrevStep}
+                        >
+                          <i>arrow_back</i>
+                          <span>ย้อนกลับ</span>
+                        </button>
 
-                      <button
-                        type="button"
-                        className="primary no-margin hc-booking-sheet-btn-round-10"
-                        data-testid="wizard-next-step-2"
-                        disabled={
-                          !selectedCustomer ||
-                          isNaN(Number(rentalPrice)) ||
-                          Number(rentalPrice) < 0 ||
-                          isNaN(Number(deposit)) ||
-                          Number(deposit) < 0
-                        }
-                        onClick={handleNextStep}
-                      >
-                        <span>ถัดไป: ตรวจสอบ</span>
-                        <i>arrow_forward</i>
-                      </button>
+                        <button
+                          type="button"
+                          className="primary no-margin hc-booking-sheet-btn-round-10"
+                          data-testid="wizard-next-step-2"
+                          disabled={
+                            !selectedCustomer ||
+                            isNaN(Number(rentalPrice)) ||
+                            Number(rentalPrice) < 0 ||
+                            isNaN(Number(deposit)) ||
+                            Number(deposit) < 0
+                          }
+                          onClick={handleNextStep}
+                        >
+                          <span>ถัดไป: ตรวจสอบ</span>
+                          <i>arrow_forward</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1408,36 +1465,38 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     </div>
 
                     {/* Step 3 Footer */}
-                    <div className="hc-booking-sheet-footer-row hc-booking-sheet-step-footer">
-                      <button
-                        type="button"
-                        className="border no-margin hc-booking-sheet-btn-round-10"
-                        data-testid="wizard-prev-step-3"
-                        disabled={submitting}
-                        onClick={handlePrevStep}
-                      >
-                        <i>arrow_back</i>
-                        <span>ย้อนกลับ</span>
-                      </button>
+                    <div className="hc-booking-sheet-step-footer">
+                      <div className="hc-booking-sheet-footer-row">
+                        <button
+                          type="button"
+                          className="border no-margin hc-booking-sheet-btn-round-10"
+                          data-testid="wizard-prev-step-3"
+                          disabled={submitting}
+                          onClick={handlePrevStep}
+                        >
+                          <i>arrow_back</i>
+                          <span>ย้อนกลับ</span>
+                        </button>
 
-                      <button
-                        type="submit"
-                        className="primary no-margin hc-booking-sheet-step3-submit"
-                        data-testid="wizard-submit-booking"
-                        disabled={submitting}
-                      >
-                        {submitting ? (
-                          <div
-                            className="shape loading-indicator small"
-                            role="status"
-                          />
-                        ) : (
-                          <>
-                            <i>check</i>
-                            <span>ยืนยันการจอง</span>
-                          </>
-                        )}
-                      </button>
+                        <button
+                          type="submit"
+                          className="primary no-margin hc-booking-sheet-step3-submit"
+                          data-testid="wizard-submit-booking"
+                          disabled={submitting}
+                        >
+                          {submitting ? (
+                            <div
+                              className="shape loading-indicator small"
+                              role="status"
+                            />
+                          ) : (
+                            <>
+                              <i>check</i>
+                              <span>ยืนยันการจอง</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </form>
                 )}

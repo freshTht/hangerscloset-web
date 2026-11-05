@@ -27,6 +27,25 @@
   object-fit: cover;
 }
 
-.hc-booking-card-action-btn {
+.hc-booking-card-edit-btn,
+.hc-booking-card-action-btn,
+.hc-booking-card-deposit-btn {
+  position: relative;
   flex-shrink: 0;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-booking-card-edit-btn::before,
+  .hc-booking-card-action-btn::before,
+  .hc-booking-card-deposit-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
 }

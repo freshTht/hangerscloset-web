@@ -154,17 +154,9 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
         <i className="small">tune</i>
         <span className="hc-datebar-filter-label">{currentFilterLabel}</span>
         <span
-          className="hc-datebar-badge"
-          style={{
-            backgroundColor:
-              statusFilter !== 'active'
-                ? 'var(--on-primary)'
-                : 'var(--tertiary)',
-            color:
-              statusFilter !== 'active'
-                ? 'var(--primary)'
-                : 'var(--on-tertiary)',
-          }}
+          className={`hc-datebar-badge ${
+            statusFilter !== 'active' ? 'is-active-filter' : ''
+          }`.trim()}
         >
           {tabCounts[statusFilter]}
         </span>

@@ -45,6 +45,7 @@ interface SheetState {
   isOpen: boolean;
   mode: 'add' | 'edit';
   booking?: Booking | null;
+  initialStep?: number;
 }
 
 interface PendingStatusConfirm {
@@ -499,6 +500,7 @@ export const BookingsPage: React.FC = () => {
     setSheetState({
       isOpen: true,
       mode: 'add',
+      initialStep: 1,
       booking: {
         id: '',
         customerId: '',
@@ -528,6 +530,7 @@ export const BookingsPage: React.FC = () => {
     setSheetState({
       isOpen: true,
       mode: 'add',
+      initialStep: 2,
       booking: {
         id: '',
         customerId: '',
@@ -940,6 +943,7 @@ export const BookingsPage: React.FC = () => {
         selectedDate={isAllDates ? today : selectedDate}
         inventoryItems={inventoryItems}
         customers={customers}
+        initialStep={sheetState.initialStep ?? 1}
         onAddCustomer={addCustomer}
         onClose={handleCloseSheet}
         onSubmit={handleSubmitSheet}

@@ -1,0 +1,2753 @@
+{
+  "baseUrl": "http://localhost:5175",
+  "timestamp": "2026-11-05T18:05:41.406Z",
+  "touchTargetViolations390": {
+    "bookingsItemsView": [
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันก่อนหน้า",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "เลือกวันที่",
+        "className": "chip small primary-container bold no-margin hc-datebar-picker-btn",
+        "width": 131.5,
+        "height": 32,
+        "effectiveWidth": 131.5,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันถัดไป",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ตัวกรองสถานะ: กำลังดำเนินการ",
+        "className": "chip small bold no-margin tertiary-container hc-datebar-filter-btn",
+        "width": 138.1,
+        "height": 32,
+        "effectiveWidth": 138.1,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL01 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border primary bold no-margin max",
+        "width": 179.6,
+        "height": 34,
+        "effectiveWidth": 179.6,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": true,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจอง SEL01",
+        "className": "circle transparent border no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL02 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border primary bold no-margin max",
+        "width": 179.6,
+        "height": 34,
+        "effectiveWidth": 179.6,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": true,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจอง SEL02",
+        "className": "circle transparent border no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ MHA01 เป็น ส่งซัก",
+        "className": "small round border primary bold no-margin max",
+        "width": 179.6,
+        "height": 34,
+        "effectiveWidth": 179.6,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": true,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจอง MHA01",
+        "className": "circle transparent border no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ DIA01 เป็น รอรับคืน",
+        "className": "small round border primary bold no-margin max",
+        "width": 179.6,
+        "height": 34,
+        "effectiveWidth": 179.6,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": true,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจอง DIA01",
+        "className": "circle transparent border no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SH01 เป็น รอรับคืน",
+        "className": "small round border primary bold no-margin max",
+        "width": 179.6,
+        "height": 34,
+        "effectiveWidth": 179.6,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": true,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจอง SH01",
+        "className": "circle transparent border no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": true
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด AVL01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด AVL02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด BKN01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด CHA01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด DIA02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด DUE01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด FFR01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด FFR02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด FFR03",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด FFR04",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด FFR05",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด GLM01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด MEL01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด MHA02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด NAR01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด NAR02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด NAR03",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด PRI01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด RDY01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด RDY02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด RDY03",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SEL03",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SEL04",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SEL05",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SEL06",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SH02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด SLT01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB02",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB03",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB04",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB05",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB06",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB07",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB08",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB09",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TBB10",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "จองชุด TWT01",
+        "className": "small round fill primary bold no-margin max",
+        "width": 217.8,
+        "height": 32,
+        "effectiveWidth": 217.8,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ค้นหา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "สลับเป็นมุมมองใบจอง",
+        "className": "circle no-margin fill tertiary",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "สลับเป็นมุมมองปฏิทิน",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      }
+    ],
+    "bookingsOrdersView": [
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันก่อนหน้า",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "เลือกวันที่",
+        "className": "chip small primary-container bold no-margin hc-datebar-picker-btn",
+        "width": 131.5,
+        "height": 32,
+        "effectiveWidth": 131.5,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันถัดไป",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ตัวกรองสถานะ: กำลังดำเนินการ",
+        "className": "chip small bold no-margin tertiary-container hc-datebar-filter-btn",
+        "width": 138.1,
+        "height": 32,
+        "effectiveWidth": 138.1,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณเนย วริศรา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL01 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 135.3,
+        "height": 34,
+        "effectiveWidth": 135.3,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL02 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 135.3,
+        "height": 34,
+        "effectiveWidth": 135.3,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "คืนเงินมัดจำแล้ว",
+        "className": "chip small no-margin hc-status-badge-available",
+        "width": 127.4,
+        "height": 32,
+        "effectiveWidth": 127.4,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณฟ้า ณัฐชา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ MHA01 เป็น ส่งซัก",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 89.7,
+        "height": 34,
+        "effectiveWidth": 89.7,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ทำเครื่องหมายว่าคืนมัดจำแล้ว",
+        "className": "chip small no-margin surface-container-high",
+        "width": 133.9,
+        "height": 32,
+        "effectiveWidth": 133.9,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณพลอย รัตนากร",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ DIA01 เป็น รอรับคืน",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 106.2,
+        "height": 34,
+        "effectiveWidth": 106.2,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SH01 เป็น รอรับคืน",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 106.2,
+        "height": 34,
+        "effectiveWidth": 106.2,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ทำเครื่องหมายว่าคืนมัดจำแล้ว",
+        "className": "chip small no-margin surface-container-high",
+        "width": 133.9,
+        "height": 32,
+        "effectiveWidth": 133.9,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ค้นหา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "สลับเป็นมุมมองรายชุด",
+        "className": "circle no-margin transparent",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "สลับเป็นมุมมองปฏิทิน",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      }
+    ],
+    "bookingsCalendarView": [
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันก่อนหน้า",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "เลือกวันที่",
+        "className": "chip small primary-container bold no-margin hc-datebar-picker-btn",
+        "width": 131.5,
+        "height": 32,
+        "effectiveWidth": 131.5,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันถัดไป",
+        "className": "circle small transparent no-margin hc-datebar-chevron",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ตัวกรองสถานะ: กำลังดำเนินการ",
+        "className": "chip small bold no-margin tertiary-container hc-datebar-filter-btn",
+        "width": 138.1,
+        "height": 32,
+        "effectiveWidth": 138.1,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "เดือนก่อนหน้า",
+        "className": "circle transparent small no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "เดือนถัดไป",
+        "className": "circle transparent small no-margin",
+        "width": 32,
+        "height": 32,
+        "effectiveWidth": 32,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "วันนี้",
+        "className": "border small round no-margin",
+        "width": 50.5,
+        "height": 34,
+        "effectiveWidth": 50.5,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณเนย วริศรา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL01 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 135.3,
+        "height": 34,
+        "effectiveWidth": 135.3,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SEL02 เป็น รับคืนเสร็จสิ้น",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 135.3,
+        "height": 34,
+        "effectiveWidth": 135.3,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "คืนเงินมัดจำแล้ว",
+        "className": "chip small no-margin hc-status-badge-available",
+        "width": 127.4,
+        "height": 32,
+        "effectiveWidth": 127.4,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณฟ้า ณัฐชา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ MHA01 เป็น ส่งซัก",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 89.7,
+        "height": 34,
+        "effectiveWidth": 89.7,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ทำเครื่องหมายว่าคืนมัดจำแล้ว",
+        "className": "chip small no-margin surface-container-high",
+        "width": 133.9,
+        "height": 32,
+        "effectiveWidth": 133.9,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "แก้ไขการจองของ คุณพลอย รัตนากร",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ DIA01 เป็น รอรับคืน",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 106.2,
+        "height": 34,
+        "effectiveWidth": 106.2,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ปรับสถานะ SH01 เป็น รอรับคืน",
+        "className": "small round border no-margin hc-booking-card-action-btn",
+        "width": 106.2,
+        "height": 34,
+        "effectiveWidth": 106.2,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ทำเครื่องหมายว่าคืนมัดจำแล้ว",
+        "className": "chip small no-margin surface-container-high",
+        "width": 133.9,
+        "height": 32,
+        "effectiveWidth": 133.9,
+        "effectiveHeight": 32,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "ค้นหา",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      },
+      {
+        "tag": "button",
+        "role": "button",
+        "name": "สลับเป็นมุมมองรายการ",
+        "className": "circle transparent no-margin",
+        "width": 40,
+        "height": 40,
+        "effectiveWidth": 40,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "below44px": true,
+        "hasInlineFontSize": false,
+        "hasInlineStyle": false
+      }
+    ],
+    "bookingFilterSheet": [
+      {
+        "name": "ปิดตัวกรอง",
+        "role": "button",
+        "width": 36,
+        "height": 36,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "pending_actions กำลังดำเนินการ 43",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "check_circle ว่าง (พร้อมเช่า) 38",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "schedule จองแล้ว 0",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "local_shipping รอส่งมอบ 0",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "checkroom ส่งมอบแล้ว 2",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "assignment_return รอรับคืน 1",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "local_laundry_service ส่งซัก 2",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "done_all รับคืนเสร็จสิ้น 1",
+        "role": "tab",
+        "width": 170.9,
+        "height": 40,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "check วันรับชุด (ใกล้สุดก่อน)",
+        "role": "button",
+        "width": 170.9,
+        "height": 34,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "schedule วันรับชุด (ไกลสุดก่อน)",
+        "role": "button",
+        "width": 170.9,
+        "height": 34,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "sort_by_alpha รหัสชุด (A-Z)",
+        "role": "button",
+        "width": 170.9,
+        "height": 34,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "sort_by_alpha รหัสชุด (Z-A)",
+        "role": "button",
+        "width": 170.9,
+        "height": 34,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "history วันที่ทำรายการล่าสุด",
+        "role": "button",
+        "width": 349.8,
+        "height": 34,
+        "below48px": true,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "restart_alt รีเซ็ต",
+        "role": "button",
+        "width": 72.2,
+        "height": 56,
+        "below48px": false,
+        "hasInlineStyle": true
+      },
+      {
+        "name": "ดูผลลัพธ์",
+        "role": "button",
+        "width": 90.6,
+        "height": 56,
+        "below48px": false,
+        "hasInlineStyle": true
+      }
+    ],
+    "bookingCreateStep1": [
+      {
+        "tag": "button",
+        "name": "1 เลือกชุด",
+        "className": "no-margin hc-booking-sheet-step-btn fill primary bold small-text",
+        "width": 62.2,
+        "height": 28,
+        "effectiveWidth": 62.2,
+        "effectiveHeight": 28,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "2 ลูกค้าและราคา",
+        "className": "no-margin hc-booking-sheet-step-btn border secondary-text small-text",
+        "width": 97.4,
+        "height": 30,
+        "effectiveWidth": 97.4,
+        "effectiveHeight": 30,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "3 ยืนยันการจอง",
+        "className": "no-margin hc-booking-sheet-step-btn border secondary-text small-text",
+        "width": 92.2,
+        "height": 30,
+        "effectiveWidth": 92.2,
+        "effectiveHeight": 30,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "ระยะเวลา: 3 วัน คลิกเพื่อเปลี่ยน",
+        "className": "surface-container-high border tiny-padding no-margin hc-date-filter-duration-btn",
+        "width": 51.6,
+        "height": 27,
+        "effectiveWidth": 51.6,
+        "effectiveHeight": 27,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "input",
+        "name": "ค้นหาชุดในคลัง (SKU, ชื่อชุด, แบรนด์)...",
+        "className": "",
+        "width": 357.8,
+        "height": 40,
+        "effectiveWidth": 357.8,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด AVL01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด AVL02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด BKN01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด CHA01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DIA01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DIA02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DUE01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR03",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR04",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR05",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด GLM01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MEL01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MHA01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MHA02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR03",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด PRI01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY03",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL03",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL04",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL05",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL06",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SH01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 78.1,
+        "height": 34,
+        "effectiveWidth": 78.1,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SH02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SLT01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB02",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB03",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB04",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB05",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB06",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB07",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB08",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB09",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB10",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TWT01",
+        "className": "small no-margin hc-booking-sheet-outfit-select-btn border small-text",
+        "width": 66.9,
+        "height": 34,
+        "effectiveWidth": 66.9,
+        "effectiveHeight": 34,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "ยกเลิก",
+        "className": "border no-margin hc-booking-sheet-btn-round-10",
+        "width": 71.9,
+        "height": 42,
+        "effectiveWidth": 71.9,
+        "effectiveHeight": 42,
+        "below48px": true,
+        "disabled": false
+      },
+      {
+        "tag": "button",
+        "name": "ถัดไป arrow_forward",
+        "className": "primary no-margin hc-booking-sheet-btn-round-10",
+        "width": 96.3,
+        "height": 40,
+        "effectiveWidth": 96.3,
+        "effectiveHeight": 40,
+        "below48px": true,
+        "disabled": true
+      }
+    ],
+    "bookingCreateStep2": [
+      {
+        "tag": "button",
+        "name": "ปิดหน้าต่าง",
+        "width": 40,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "check เลือกชุด",
+        "width": 77.5,
+        "height": 30,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "2 ลูกค้าและราคา",
+        "width": 95.4,
+        "height": 28,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "3 ยืนยันการจอง",
+        "width": 92.2,
+        "height": 30,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "person_add + เพิ่มลูกค้าใหม่",
+        "width": 146.9,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "",
+        "width": 24,
+        "height": 24,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "condition-note-1",
+        "width": 305.9,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "arrow_back ย้อนกลับ",
+        "width": 117,
+        "height": 42,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "ถัดไป: ตรวจสอบ arrow_forward",
+        "width": 159.6,
+        "height": 40,
+        "below48px": true
+      }
+    ],
+    "bookingEditSheet": [
+      {
+        "tag": "button",
+        "name": "ปิดหน้าต่าง",
+        "width": 40,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "1 วัน",
+        "width": 58,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "3 วัน",
+        "width": 58,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "5 วัน",
+        "width": 53.5,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เปลี่ยนลูกค้า",
+        "width": 129.5,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "select",
+        "name": "สถานะการจอง",
+        "width": 108,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "นำชุด SEL01 ออก",
+        "width": 32,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "condition-note-24",
+        "width": 291.6,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "นำชุด SEL02 ออก",
+        "width": 32,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "condition-note-25",
+        "width": 291.6,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "booking-item-search",
+        "width": 309.8,
+        "height": 40,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด AVL01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด AVL02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด BKN01",
+        "width": 123.3,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด CHA01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DIA01",
+        "width": 123.3,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DIA02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด DUE01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR03",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR04",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด FFR05",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด GLM01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MEL01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MHA01",
+        "width": 123.3,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด MHA02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด NAR03",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด PRI01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด RDY03",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "ยกเลิกเลือก SEL01",
+        "width": 108.5,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "ยกเลิกเลือก SEL02",
+        "width": 108.5,
+        "height": 32,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL03",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL04",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL05",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SEL06",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SH01",
+        "width": 123.3,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SH02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด SLT01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB02",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB03",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB04",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB05",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB06",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB07",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB08",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB09",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TBB10",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "เลือกชุด TWT01",
+        "width": 87.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "ใช้ราคาแนะนำ (฿240)",
+        "width": 155.1,
+        "height": 34,
+        "below48px": true
+      },
+      {
+        "tag": "input",
+        "name": "",
+        "width": 24,
+        "height": 24,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "delete ลบการจอง",
+        "width": 127.6,
+        "height": 42,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "ยกเลิก",
+        "width": 71.9,
+        "height": 42,
+        "below48px": true
+      },
+      {
+        "tag": "button",
+        "name": "save บันทึก",
+        "width": 128,
+        "height": 40,
+        "below48px": true
+      }
+    ]
+  },
+  "duplicateControls": {
+    "bookingsItemsView": [
+      {
+        "key": "button:แก้ไขการจอง SEL01",
+        "count": 2
+      },
+      {
+        "key": "button:แก้ไขการจอง SEL02",
+        "count": 2
+      },
+      {
+        "key": "button:แก้ไขการจอง MHA01",
+        "count": 2
+      },
+      {
+        "key": "button:แก้ไขการจอง DIA01",
+        "count": 2
+      },
+      {
+        "key": "button:แก้ไขการจอง SH01",
+        "count": 2
+      }
+    ]
+  },
+  "keyboardProbes": {
+    "filterSheetTabStops": [
+      {
+        "tag": "BUTTON",
+        "label": "แก้ไขการจอง SEL01",
+        "insideFilterDialog": false
+      },
+      {
+        "tag": "BUTTON",
+        "label": "ปรับสถานะ SEL01 เป็น รับคืนเสร็จสิ้น",
+        "insideFilterDialog": false
+      },
+      {
+        "tag": "BUTTON",
+        "label": "แก้ไขการจอง SEL01",
+        "insideFilterDialog": false
+      },
+      {
+        "tag": "BUTTON",
+        "label": "แก้ไขการจอง SEL02",
+        "insideFilterDialog": false
+      },
+      {
+        "tag": "BUTTON",
+        "label": "ปรับสถานะ SEL02 เป็น รับคืนเสร็จสิ้น",
+        "insideFilterDialog": false
+      },
+      {
+        "tag": "BUTTON",
+        "label": "แก้ไขการจอง SEL02",
+        "insideFilterDialog": false
+      }
+    ],
+    "bookingSheetStep1": {
+      "initialFocus": {
+        "tag": "BUTTON",
+        "label": "สร้างการจองใหม่",
+        "insideBookingSheet": false,
+        "dialogHasAriaModal": null
+      },
+      "tabStops": [
+        {
+          "tag": "BUTTON",
+          "label": "ปิดหน้าต่าง",
+          "insideBookingSheet": true,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(207, 188, 255)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "BUTTON",
+          "label": "1 เลือกชุด",
+          "insideBookingSheet": true,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(207, 188, 255)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "BUTTON",
+          "label": "2 ลูกค้าและราคา",
+          "insideBookingSheet": true,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(207, 188, 255)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "BUTTON",
+          "label": "3 ยืนยันการจอง",
+          "insideBookingSheet": true,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(207, 188, 255)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "INPUT",
+          "label": "เลือกวันรับชุด",
+          "insideBookingSheet": true,
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(230, 225, 230)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "INPUT",
+          "label": "เลือกวันรับชุด",
+          "insideBookingSheet": true,
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(230, 225, 230)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "INPUT",
+          "label": "เลือกวันรับชุด",
+          "insideBookingSheet": true,
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(230, 225, 230)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "INPUT",
+          "label": "เลือกวันรับชุด",
+          "insideBookingSheet": true,
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(230, 225, 230)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "BUTTON",
+          "label": "ระยะเวลา: 3 วัน คลิกเพื่อเปลี่ยน",
+          "insideBookingSheet": true,
+          "outlineStyle": "solid",
+          "outlineWidth": "2px",
+          "outlineColor": "rgb(207, 188, 255)",
+          "boxShadow": "none"
+        },
+        {
+          "tag": "INPUT",
+          "label": "เลือกวันส่งคืน",
+          "insideBookingSheet": true,
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "outlineColor": "rgb(230, 225, 230)",
+          "boxShadow": "none"
+        }
+      ]
+    }
+  },
+  "focusAfterCloseProbes": {
+    "afterFilterSheetEscape": {
+      "isOpen": false,
+      "activeTag": "BUTTON",
+      "activeLabel": "แก้ไขการจอง SEL02"
+    },
+    "afterBookingSheetEscape": {
+      "dialogOpen": false,
+      "activeTag": "BODY",
+      "activeLabel": ""
+    }
+  },
+  "throttledCpuProbes": {
+    "sampleCount": 5,
+    "maxDurationMs": 264,
+    "over100ms": [
+      {
+        "name": "keydown",
+        "duration": 216,
+        "processingStart": 9524.199999988079,
+        "processingEnd": 9530.699999988079,
+        "startTime": 9516.899999976158
+      },
+      {
+        "name": "keydown",
+        "duration": 168,
+        "processingStart": 9630.299999952316,
+        "processingEnd": 9631,
+        "startTime": 9630.099999964237
+      },
+      {
+        "name": "keydown",
+        "duration": 264,
+        "processingStart": 9802.599999964237,
+        "processingEnd": 9803.699999988079,
+        "startTime": 9802.5
+      },
+      {
+        "name": "keydown",
+        "duration": 208,
+        "processingStart": 9887,
+        "processingEnd": 9887.399999976158,
+        "startTime": 9886.5
+      },
+      {
+        "name": "keydown",
+        "duration": 120,
+        "processingStart": 9970.099999964237,
+        "processingEnd": 9970.5,
+        "startTime": 9969.799999952316
+      }
+    ],
+    "samples": [
+      {
+        "name": "keydown",
+        "duration": 216,
+        "processingStart": 9524.199999988079,
+        "processingEnd": 9530.699999988079,
+        "startTime": 9516.899999976158
+      },
+      {
+        "name": "keydown",
+        "duration": 168,
+        "processingStart": 9630.299999952316,
+        "processingEnd": 9631,
+        "startTime": 9630.099999964237
+      },
+      {
+        "name": "keydown",
+        "duration": 264,
+        "processingStart": 9802.599999964237,
+        "processingEnd": 9803.699999988079,
+        "startTime": 9802.5
+      },
+      {
+        "name": "keydown",
+        "duration": 208,
+        "processingStart": 9887,
+        "processingEnd": 9887.399999976158,
+        "startTime": 9886.5
+      },
+      {
+        "name": "keydown",
+        "duration": 120,
+        "processingStart": 9970.099999964237,
+        "processingEnd": 9970.5,
+        "startTime": 9969.799999952316
+      }
+    ]
+  },
+  "reducedMotionProbes": {
+    "mediaMatches": true,
+    "dialogTransitionDuration": "0.3s, 0s",
+    "dateBarTransitionDuration": "0s",
+    "bottomBarTransitionDuration": null
+  },
+  "colorContrastAndTokens": {},
+  "reserveFromCardState": {
+    "openedAtStep": "1\nเลือกชุด",
+    "footerSummary": "เลือกแล้ว 1 ชุด\nAVL01\nclose"
+  },
+  "selectedBtnInspect": {
+    "btnRect": {
+      "x": 268.890625,
+      "y": 283.96875,
+      "width": 85.015625,
+      "height": 32
+    },
+    "btnClass": "small no-margin hc-booking-sheet-outfit-select-btn fill primary small-text",
+    "btnBg": "rgb(74, 68, 88)",
+    "btnPosition": "relative",
+    "iconRect": {
+      "x": 278.890625,
+      "y": 291.96875,
+      "width": 16,
+      "height": 16
+    },
+    "iconFontSize": "16px"
+  }
+}
