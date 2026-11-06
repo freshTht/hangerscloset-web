@@ -12,6 +12,7 @@ import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
 import { Stack } from './Stack';
 import { Skeleton } from './Skeleton';
+import { Modal } from '../common/components/Modal';
 import './InventorySheet.css';
 
 export interface InventorySheetProps {
@@ -149,17 +150,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     }, CLOSE_CLEANUP_DELAY_MS);
     return () => window.clearTimeout(timer);
   }, [isOpen, mode, item]);
-
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -305,10 +295,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     }
   };
 
-  const sheetClass = isMobile
-    ? `bottom s ${isOpen ? 'active' : ''}`
-    : `right medium m l ${isOpen ? 'active' : ''}`;
-
   const renderImage = () => (
     <div className="round surface-container-high hc-inventory-sheet-image-wrap">
       {formData.imageUrl ? (
@@ -376,20 +362,17 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
   };
 
   return (
-    <>
-      <div
-        className={`overlay hc-inventory-sheet-overlay ${isOpen ? 'active' : ''}`}
-        onClick={onClose}
-        aria-hidden={!isOpen}
-      />
-
-      <dialog
-        id="inventory-sheet"
-        className={`${sheetClass} hc-inventory-sheet-dialog`.trim()}
-        open={isOpen}
-        aria-hidden={!isOpen}
-      >
-        {/* Top bar: title only for Add; SKU chip for Edit; close button */}
+    <Modal
+      visible={isOpen}
+      variant="bottom-sheet"
+      onClose={onClose}
+      id="inventory-sheet"
+      testId="inventory-sheet"
+      overlayClassName="hc-inventory-sheet-overlay"
+      className="hc-inventory-sheet-dialog"
+      ariaLabel={mode === 'add' ? 'เพิ่มชุดใหม่' : 'แก้ไขข้อมูลชุด'}
+    >
+      {/* Top bar: title only for Add; SKU chip for Edit; close button */}
         <div className="row no-margin hc-inventory-sheet-top-bar">
           {mode === 'add' ? (
             <h6 className="bold no-margin">เพิ่มชุดใหม่</h6>
@@ -757,7 +740,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
             </div>
           </>
         )}
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };

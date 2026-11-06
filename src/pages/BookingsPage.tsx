@@ -35,6 +35,7 @@ import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
 import { FloatingBottomToolbar } from '../components/FloatingBottomToolbar';
+import { Modal } from '../common/components/Modal';
 import './BookingsPage.css';
 
 export type { BookingFilterTab, BookingSortKey };
@@ -835,65 +836,62 @@ export const BookingsPage: React.FC = () => {
 
       {/* Past / Future Status Change Confirmation Dialog */}
       {pendingStatusConfirm && (
-        <>
-          <div
-            className="overlay active hc-bookings-confirm-overlay"
-            onClick={() => setPendingStatusConfirm(null)}
-          />
-          <dialog
-            open
-            className="active round hc-medium-padding hc-bookings-confirm-dialog"
-            aria-label="ยืนยันการเปลี่ยนสถานะต่างวัน"
-            data-testid="confirm-status-date-dialog"
-          >
-            <Stack orientation="column" gap="medium">
-              <Stack orientation="row" align="center" gap="small">
-                <i className="tertiary-text">warning</i>
-                <h6 className="bold no-margin">
-                  ยืนยันการเปลี่ยนสถานะ
-                  {pendingStatusConfirm.targetDate < today
-                    ? 'ย้อนหลัง'
-                    : 'ล่วงหน้า'}
-                </h6>
-              </Stack>
-
-              <p className="small-text no-margin">
-                คุณกำลังเปลี่ยนสถานะของการจองลูกค้า{' '}
-                <strong>{pendingStatusConfirm.booking.customerName}</strong>{' '}
-                ในวันที่{' '}
-                <strong>
-                  {formatDateThaiFull(pendingStatusConfirm.targetDate)}
-                </strong>{' '}
-                (ไม่ใช่วันปัจจุบัน) จาก{' '}
-                <strong>
-                  "{BOOKING_STATUS_META[pendingStatusConfirm.currentStatus].label}"
-                </strong>{' '}
-                เป็น{' '}
-                <strong>
-                  "{BOOKING_STATUS_META[pendingStatusConfirm.nextStatus].label}"
-                </strong>
-              </p>
-
-              <Stack orientation="row" gap="small" justify="flex-end">
-                <button
-                  type="button"
-                  className="border round no-margin"
-                  onClick={() => setPendingStatusConfirm(null)}
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="button"
-                  className="primary round no-margin"
-                  data-testid="confirm-status-date-submit"
-                  onClick={handleConfirmPendingStatus}
-                >
-                  ยืนยันเปลี่ยนสถานะ
-                </button>
-              </Stack>
+        <Modal
+          visible={Boolean(pendingStatusConfirm)}
+          variant="floating"
+          onClose={() => setPendingStatusConfirm(null)}
+          overlayClassName="hc-bookings-confirm-overlay"
+          className="round hc-medium-padding hc-bookings-confirm-dialog"
+          ariaLabel="ยืนยันการเปลี่ยนสถานะต่างวัน"
+          testId="confirm-status-date-dialog"
+        >
+          <Stack orientation="column" gap="medium">
+            <Stack orientation="row" align="center" gap="small">
+              <i className="tertiary-text">warning</i>
+              <h6 className="bold no-margin">
+                ยืนยันการเปลี่ยนสถานะ
+                {pendingStatusConfirm.targetDate < today
+                  ? 'ย้อนหลัง'
+                  : 'ล่วงหน้า'}
+              </h6>
             </Stack>
-          </dialog>
-        </>
+
+            <p className="small-text no-margin">
+              คุณกำลังเปลี่ยนสถานะของการจองลูกค้า{' '}
+              <strong>{pendingStatusConfirm.booking.customerName}</strong>{' '}
+              ในวันที่{' '}
+              <strong>
+                {formatDateThaiFull(pendingStatusConfirm.targetDate)}
+              </strong>{' '}
+              (ไม่ใช่วันปัจจุบัน) จาก{' '}
+              <strong>
+                "{BOOKING_STATUS_META[pendingStatusConfirm.currentStatus].label}"
+              </strong>{' '}
+              เป็น{' '}
+              <strong>
+                "{BOOKING_STATUS_META[pendingStatusConfirm.nextStatus].label}"
+              </strong>
+            </p>
+
+            <Stack orientation="row" gap="small" justify="flex-end">
+              <button
+                type="button"
+                className="border round no-margin"
+                onClick={() => setPendingStatusConfirm(null)}
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                className="primary round no-margin"
+                data-testid="confirm-status-date-submit"
+                onClick={handleConfirmPendingStatus}
+              >
+                ยืนยันเปลี่ยนสถานะ
+              </button>
+            </Stack>
+          </Stack>
+        </Modal>
       )}
 
       {/* Booking Calendar Date Picker Bottom Sheet */}

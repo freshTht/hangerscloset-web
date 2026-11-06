@@ -26,6 +26,7 @@ import { CustomerPicker } from './CustomerPicker';
 import { BookingDateFilterBar } from './BookingDateFilterBar';
 import { LazyImage } from './LazyImage';
 import { Stack } from './Stack';
+import { Modal } from '../common/components/Modal';
 import './BookingSheet.css';
 
 export interface BookingSheetProps {
@@ -230,34 +231,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   // History stack synchronization & lifecycle refs
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const pushedStepsCountRef = useRef(0);
   const isClosingRef = useRef(false);
   const prevIsOpenRef = useRef(false);
   const prevModeRef = useRef(mode);
   const prevBookingIdRef = useRef(booking?.id);
-
-  // Capture trigger focus when sheet opens, move focus inside dialog, and restore trigger focus on close
-  useEffect(() => {
-    if (isOpen) {
-      if (
-        document.activeElement instanceof HTMLElement &&
-        !dialogRef.current?.contains(document.activeElement)
-      ) {
-        previousActiveElementRef.current = document.activeElement;
-      }
-      const focusTimer = window.setTimeout(() => {
-        closeBtnRef.current?.focus();
-      }, 0);
-      return () => window.clearTimeout(focusTimer);
-    } else if (previousActiveElementRef.current) {
-      const prev = previousActiveElementRef.current;
-      previousActiveElementRef.current = null;
-      if (document.contains(prev)) {
-        prev.focus();
-      }
-    }
-  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -417,44 +395,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     }
     onClose();
   }, [mode, onClose]);
-
-  // Handle ESC key to close and Tab key focus trap inside dialog
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleCloseCleanly();
-        return;
-      }
-
-      if (e.key === 'Tab' && dialogRef.current) {
-        const focusables = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(
-            'button:not(:disabled), [href], input:not(:disabled):not([tabindex="-1"]), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
-          )
-        );
-        if (focusables.length === 0) return;
-
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        const active = document.activeElement as HTMLElement | null;
-
-        if (!active || !dialogRef.current.contains(active)) {
-          e.preventDefault();
-          (e.shiftKey ? last : first).focus();
-        } else if (e.shiftKey && active === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && active === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, handleCloseCleanly]);
 
   const handleNextStep = () => {
     if (currentStep < 3) {
@@ -751,27 +691,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     }
   };
 
-  const sheetClass = isMobile
-    ? `bottom s ${isOpen ? 'active' : ''}`
-    : `right medium m l ${isOpen ? 'active' : ''}`;
-
   return (
-    <>
-      <div
-        className={`overlay hc-booking-sheet-overlay ${isOpen ? 'active' : ''}`}
-        onClick={handleCloseCleanly}
-        aria-hidden={!isOpen}
-      />
-
-      <dialog
-        ref={dialogRef}
-        id="booking-sheet"
-        className={`${sheetClass} hc-booking-sheet-dialog`.trim()}
-        open={isOpen}
-        aria-modal="true"
-        aria-hidden={!isOpen}
-        aria-label={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
-      >
+    <Modal
+      visible={isOpen}
+      variant="bottom-sheet"
+      onClose={handleCloseCleanly}
+      id="booking-sheet"
+      testId="booking-sheet"
+      overlayClassName="hc-booking-sheet-overlay"
+      className="hc-booking-sheet-dialog"
+      ariaLabel={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
+      dialogRef={dialogRef}
+    >
         {/* Top bar */}
         <div className="row no-margin hc-booking-sheet-top-bar">
           <h6 className="bold no-margin">
@@ -2087,7 +2018,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
             )}
           </>
         )}
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };

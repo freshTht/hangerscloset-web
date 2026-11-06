@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import type { InventoryItem } from '../types/inventory';
 import type { InventoryFilterState } from '../types/catalogFilter';
 import {
@@ -9,6 +9,7 @@ import {
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { Stack } from './Stack';
+import { Modal } from '../common/components/Modal';
 import './InventoryFilterSheet.css';
 
 export interface InventoryFilterSheetProps {
@@ -47,17 +48,6 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
   const isMobile = useIsMobile();
   const { brands: metaBrands, colors: metaColors, sizes: metaSizes, tags: metaTags } =
     useMetadataOptions();
-
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
 
   const availableSizes = useMemo(
     () =>
@@ -256,10 +246,6 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
     });
   };
 
-  const sheetClass = isMobile
-    ? `bottom s ${isOpen ? 'active' : ''}`
-    : `right medium m l ${isOpen ? 'active' : ''}`;
-
   const renderChipGroup = (
     options: string[],
     selectedList: string[],
@@ -289,21 +275,17 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
   );
 
   return (
-    <>
-      <div
-        className={`overlay ${isOpen ? 'active' : ''} hc-filter-sheet-overlay`}
-        onClick={onClose}
-        aria-hidden={!isOpen}
-      />
-
-      <dialog
-        id="inventory-filter-sheet"
-        className={`${sheetClass} hc-filter-sheet-dialog ${isMobile ? 'mobile' : ''}`.trim()}
-        open={isOpen}
-        aria-hidden={!isOpen}
-        aria-label={quickAddMode ? 'เลือกตัวกรองเพิ่ม' : 'ตัวกรองสินค้า'}
-      >
-        {/* Header */}
+    <Modal
+      visible={isOpen}
+      variant="bottom-sheet"
+      onClose={onClose}
+      id="inventory-filter-sheet"
+      testId="inventory-filter-sheet"
+      overlayClassName="hc-filter-sheet-overlay"
+      className={`hc-filter-sheet-dialog ${isMobile ? 'mobile' : ''}`}
+      ariaLabel={quickAddMode ? 'เลือกตัวกรองเพิ่ม' : 'ตัวกรองสินค้า'}
+    >
+      {/* Header */}
         <div className="row no-margin hc-filter-sheet-header">
           <i>{quickAddMode ? 'add' : 'tune'}</i>
           <Stack orientation="column" gap="none">
@@ -563,7 +545,6 @@ export const InventoryFilterSheet: React.FC<InventoryFilterSheetProps> = ({
             <span>ดูผลลัพธ์ ({filteredCount} ชุด)</span>
           </button>
         </div>
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };

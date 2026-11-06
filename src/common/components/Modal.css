@@ -1,0 +1,31 @@
+/* Centralized Modal & Bottom Sheet styles */
+
+.hc-modal-overlay {
+  z-index: 1000;
+}
+
+.hc-modal-overlay.active {
+  pointer-events: auto;
+}
+
+.hc-modal-overlay:not(.active) {
+  pointer-events: none;
+}
+
+.hc-modal-dialog {
+  z-index: 1001;
+  box-sizing: border-box;
+}
+
+/* Ensure floating variant dialogs never overflow viewport boundaries */
+.hc-modal-dialog-floating {
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-modal-dialog,
+  .hc-modal-overlay {
+    transition: none !important;
+  }
+}

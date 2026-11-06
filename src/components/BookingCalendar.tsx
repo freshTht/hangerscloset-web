@@ -1,6 +1,7 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { getTodayISO, type Booking } from '../types/booking';
 import { Stack } from './Stack';
+import { Modal } from '../common/components/Modal';
 import './StatusBadge.css';
 import './BookingCalendar.css';
 
@@ -90,61 +91,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
 
   const dialogRef = useRef<HTMLDialogElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const previousActiveElementRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    if (
-      document.activeElement instanceof HTMLElement &&
-      !dialogRef.current?.contains(document.activeElement)
-    ) {
-      previousActiveElementRef.current = document.activeElement;
-    }
-
-    const focusTimer = window.setTimeout(() => {
-      closeBtnRef.current?.focus();
-    }, 30);
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose?.();
-        return;
-      }
-
-      if (e.key === 'Tab' && dialogRef.current) {
-        const focusable = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(
-            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-          )
-        );
-        if (focusable.length === 0) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.clearTimeout(focusTimer);
-      window.removeEventListener('keydown', handleKeyDown);
-      if (
-        previousActiveElementRef.current &&
-        document.contains(previousActiveElementRef.current)
-      ) {
-        previousActiveElementRef.current.focus();
-      }
-    };
-  }, [isOpen, onClose]);
 
   const cells = useMemo(
     () => buildMonthGrid(viewYear, viewMonth),
@@ -206,24 +152,19 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
   };
 
   return (
-    <>
-      <div
-        className={`overlay ${isOpen ? 'active' : ''} hc-calendar-dialog-overlay`}
-        onClick={onClose}
-        aria-hidden={!isOpen}
-        data-testid="booking-calendar-backdrop"
-      />
-      <dialog
-        ref={dialogRef}
-        id="booking-calendar-dialog"
-        open={isOpen}
-        aria-hidden={!isOpen}
-        aria-modal="true"
-        aria-label="เลือกวันที่จากปฏิทิน"
-        data-testid="booking-calendar-dialog"
-        className={`hc-calendar-dialog ${isOpen ? 'active' : ''}`.trim()}
-      >
-        <Stack orientation="column" gap="medium">
+    <Modal
+      visible={isOpen}
+      variant="floating"
+      onClose={onClose ?? (() => {})}
+      id="booking-calendar-dialog"
+      testId="booking-calendar-dialog"
+      overlayTestId="booking-calendar-backdrop"
+      overlayClassName="hc-calendar-dialog-overlay"
+      className="hc-calendar-dialog"
+      ariaLabel="เลือกวันที่จากปฏิทิน"
+      dialogRef={dialogRef}
+    >
+      <Stack orientation="column" gap="medium">
           {/* Calendar Header: Month Navigation + Close Button */}
           <Stack
             orientation="row"
@@ -366,7 +307,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
             })}
           </div>
         </Stack>
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };

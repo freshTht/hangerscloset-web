@@ -1,10 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { type BookingItemStatus } from '../types/booking';
 import {
   type BookingSortKey,
   BOOKING_SORT_OPTIONS as SORT_OPTIONS,
-} from './BookingSortMenu';
+} from './BookingSortDialog';
+import { Modal } from '../common/components/Modal';
 import './BookingFilterSheet.css';
 
 export type { BookingSortKey };
@@ -66,71 +67,6 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
   onSelectFilter,
   onClose,
 }) => {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const previousActiveElementRef = useRef<HTMLElement | null>(null);
-
-  // Capture trigger focus on open, focus inside dialog, and restore trigger focus on close
-  useEffect(() => {
-    if (isOpen) {
-      if (
-        document.activeElement instanceof HTMLElement &&
-        !dialogRef.current?.contains(document.activeElement)
-      ) {
-        previousActiveElementRef.current = document.activeElement;
-      }
-      const timer = window.setTimeout(() => {
-        closeBtnRef.current?.focus();
-      }, 0);
-      return () => window.clearTimeout(timer);
-    } else if (previousActiveElementRef.current) {
-      const prev = previousActiveElementRef.current;
-      previousActiveElementRef.current = null;
-      if (document.contains(prev)) {
-        prev.focus();
-      }
-    }
-  }, [isOpen]);
-
-  // ESC key + Tab focus trap listener
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-        return;
-      }
-
-      if (e.key === 'Tab' && dialogRef.current) {
-        const focusables = Array.from(
-          dialogRef.current.querySelectorAll<HTMLElement>(
-            'button:not(:disabled), [href], input:not(:disabled):not([tabindex="-1"]), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
-          )
-        );
-        if (focusables.length === 0) return;
-
-        const first = focusables[0];
-        const last = focusables[focusables.length - 1];
-        const active = document.activeElement as HTMLElement | null;
-
-        if (!active || !dialogRef.current.contains(active)) {
-          e.preventDefault();
-          (e.shiftKey ? last : first).focus();
-        } else if (e.shiftKey && active === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && active === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   const selectedList = useMemo<BookingFilterTab[]>(() => {
     if (selectedFilters && selectedFilters.length > 0) return selectedFilters;
     if (Array.isArray(selectedFilter)) return selectedFilter;
@@ -183,29 +119,22 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
   const isCustomized = !isAllSelected;
 
   return (
-    <>
-      <div
-        className={`overlay ${isOpen ? 'active' : ''} hc-booking-filter-sheet-overlay`}
-        onClick={onClose}
-        aria-hidden={!isOpen}
-      />
-
-      <dialog
-        ref={dialogRef}
-        id="booking-filter-sheet"
-        className={`hc-booking-filter-sheet-dialog ${isOpen ? 'active' : ''}`.trim()}
-        open={isOpen}
-        aria-modal="true"
-        aria-hidden={!isOpen}
-        aria-label="ตัวกรองสถานะการจอง"
-      >
-        {/* Header */}
+    <Modal
+      visible={isOpen}
+      variant="floating"
+      onClose={onClose}
+      id="booking-filter-sheet"
+      testId="booking-filter-sheet"
+      overlayClassName="hc-booking-filter-sheet-overlay"
+      className="hc-booking-filter-sheet-dialog"
+      ariaLabel="ตัวกรองสถานะการจอง"
+    >
+      {/* Header */}
         <div className="row items-center no-margin hc-booking-filter-sheet-header">
           <i className="primary-text">tune</i>
           <h6 className="bold no-margin">ตัวกรองสถานะ</h6>
           <div className="max" />
           <button
-            ref={closeBtnRef}
             type="button"
             className="circle transparent no-margin hc-booking-filter-sheet-close-btn"
             onClick={onClose}
@@ -310,7 +239,6 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
             <span>ดูผลลัพธ์</span>
           </button>
         </div>
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };
