@@ -98,7 +98,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
   if (selectedCustomer && !isCreatingNew) {
     return (
-      <article className="border surface-container-low small-padding no-margin hc-customer-selected-card">
+      <article className="border surface-container-low small-padding no-margin">
         <div className="hc-customer-selected-row">
           <div className="hc-customer-selected-info">
             <i className="primary-text hc-customer-selected-icon">
@@ -134,7 +134,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
   if (isCreatingNew) {
     return (
-      <article className="border surface-container-low hc-medium-padding no-margin hc-customer-create-card">
+      <article className="border surface-container-low hc-medium-padding no-margin">
         <Stack orientation="column" gap="medium">
           <div className="hc-customer-create-header">
             <div className="hc-customer-create-title">
@@ -157,7 +157,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
           <div className="grid no-margin hc-customer-form-grid">
             <div className="s12 m6">
-              <div className="field label border no-margin hc-customer-input-field">
+              <div className="field label border no-margin">
                 <input
                   id="new-customer-name"
                   type="text"
@@ -171,7 +171,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             </div>
 
             <div className="s12 m6">
-              <div className="field label border no-margin hc-customer-input-field">
+              <div className="field label border no-margin">
                 <input
                   id="new-customer-phone"
                   type="tel"
@@ -185,7 +185,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             </div>
 
             <div className="s12 m6">
-              <div className="field label border no-margin hc-customer-input-field">
+              <div className="field label border no-margin">
                 <input
                   id="new-customer-line"
                   type="text"
@@ -199,7 +199,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             </div>
 
             <div className="s12 m6">
-              <div className="field label border no-margin hc-customer-input-field">
+              <div className="field label border no-margin">
                 <input
                   id="new-customer-note"
                   type="text"
@@ -247,7 +247,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
     <div ref={containerRef} className="hc-customer-picker-container">
       <div className={`hc-customer-search-row ${isMobile ? 'mobile' : ''}`.trim()}>
         <div className="hc-customer-input-wrapper">
-          <div className="field label prefix border no-margin hc-customer-input-field max">
+          <div className="field label prefix border no-margin max">
             <i className="front">person_search</i>
             <input
               id="customer-search-input"

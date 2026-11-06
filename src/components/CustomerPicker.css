@@ -1,9 +1,5 @@
 /* CustomerPicker Styles */
 
-.hc-customer-selected-card {
-  border-radius: 12px;
-}
-
 .hc-customer-selected-row {
   display: flex;
   align-items: center;
@@ -50,10 +46,6 @@
   }
 }
 
-.hc-customer-create-card {
-  border-radius: 16px;
-}
-
 .hc-customer-create-header {
   display: flex;
   align-items: center;
@@ -69,10 +61,6 @@
 
 .hc-customer-form-grid {
   gap: 12px;
-}
-
-.hc-customer-input-field {
-  border-radius: 12px;
 }
 
 .hc-customer-create-footer {

@@ -7,13 +7,6 @@
   max-width: 38vw;
 }
 
-.hc-bookings-date-bar {
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--surface-container-low);
-  border-radius: 16px;
-}
-
 .hc-bookings-date-nav-btn {
   width: 40px;
   height: 40px;

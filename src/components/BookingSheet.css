@@ -31,7 +31,6 @@
     max-height: 94dvh;
     width: 100%;
     max-width: 100%;
-    border-radius: 20px 20px 0 0;
     padding: 12px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
     margin: 0;
   }
@@ -96,7 +95,6 @@
   position: relative;
   height: 28px;
   padding: 0 10px;
-  border-radius: 14px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -142,7 +140,6 @@
 
 .hc-booking-sheet-search-wrap {
   width: 100%;
-  border-radius: 12px;
   margin-bottom: 8px;
   position: relative;
 }
@@ -185,22 +182,10 @@
   align-items: center;
   gap: 10px;
   transition: all 0.15s ease;
-  border-width: 1px;
-  border-radius: 12px;
-}
-
-.hc-booking-sheet-outfit-item.is-selected {
-  border-width: 2px;
-  border-color: var(--primary);
 }
 
 .hc-booking-sheet-outfit-item.is-conflict:not(.is-selected) {
   opacity: 0.6;
-}
-
-.hc-booking-sheet-outfit-item.is-selected.is-conflict {
-  border-width: 2px;
-  border-color: var(--error);
 }
 
 .hc-booking-sheet-outfit-thumb {
@@ -208,7 +193,6 @@
   height: 52px;
   overflow: hidden;
   flex-shrink: 0;
-  border-radius: 8px;
 }
 
 .hc-booking-sheet-outfit-thumb-img {
@@ -244,7 +228,6 @@
 }
 
 .hc-booking-sheet-outfit-code-badge {
-  border-radius: 6px;
   padding: 0 6px;
   height: 20px;
 }
@@ -264,7 +247,6 @@
 .hc-booking-sheet-outfit-select-btn {
   position: relative;
   flex-shrink: 0;
-  border-radius: 8px;
   padding: 0 10px;
   height: 36px;
   min-height: 36px;
@@ -331,7 +313,6 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  border-radius: 6px;
   padding: 0 6px;
   height: 20px;
 }
@@ -345,7 +326,6 @@
 
 .hc-booking-sheet-btn-round-10 {
   position: relative;
-  border-radius: 10px;
   min-height: 44px;
 }
 
@@ -359,18 +339,6 @@
   gap: 16px;
   padding-inline-end: 4px;
   padding-bottom: 16px;
-}
-
-.hc-booking-sheet-round-16 {
-  border-radius: 16px;
-}
-
-.hc-booking-sheet-round-12 {
-  border-radius: 12px;
-}
-
-.hc-booking-sheet-round-8 {
-  border-radius: 8px;
 }
 
 .hc-booking-sheet-recap-title {
@@ -401,11 +369,6 @@
 
 .hc-booking-sheet-pricing-grid {
   gap: 12px;
-}
-
-.hc-booking-sheet-condition-field {
-  border-radius: 12px;
-  width: 100%;
 }
 
 .hc-booking-sheet-note-input {
@@ -446,7 +409,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-radius: 10px;
 }
 
 .hc-booking-sheet-outfit-review-left {
@@ -477,7 +439,6 @@
 
 .hc-booking-sheet-step3-submit {
   position: relative;
-  border-radius: 10px;
   min-width: 150px;
   min-height: 44px;
 }
@@ -525,16 +486,6 @@
   border-color: var(--outline-variant);
   opacity: 0.85;
   cursor: not-allowed;
-}
-
-.hc-booking-sheet-status-error-msg {
-  background-color: var(--error-container);
-  color: var(--on-error-container);
-}
-
-.hc-booking-sheet-status-confirm-msg {
-  background-color: var(--tertiary-container);
-  color: var(--on-tertiary-container);
 }
 
 .hc-booking-sheet-history-chip {
