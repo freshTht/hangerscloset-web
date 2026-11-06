@@ -38,7 +38,6 @@ import './BookingsPage.css';
 
 export type { BookingFilterTab, BookingSortKey };
 export { FILTER_TABS, SORT_OPTIONS };
-export type BookingViewMode = 'list' | 'calendar';
 export type BookingListLayout = 'items' | 'orders';
 
 interface SheetState {
@@ -315,12 +314,12 @@ export const BookingsPage: React.FC = () => {
   const [isAllDates, setIsAllDates] = useState(false);
 
   const [statusFilter, setStatusFilter] = useState<BookingFilterTab>('active');
-  const [viewMode, setViewMode] = useState<BookingViewMode>('list');
   const [listLayout, setListLayout] = useState<BookingListLayout>('items');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<BookingSortKey>('startDate_asc');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
   const [pendingStatusConfirm, setPendingStatusConfirm] =
     useState<PendingStatusConfirm | null>(null);
 
@@ -628,7 +627,7 @@ export const BookingsPage: React.FC = () => {
     <FloatingBottomToolbar
       status={
         <span className="bold hc-bookings-toolbar-count">
-          {listLayout === 'items' && viewMode === 'list'
+          {listLayout === 'items'
             ? `${filteredItemEntries.length} ชุด`
             : `${filteredBookings.length} การจอง`}
         </span>
@@ -664,42 +663,24 @@ export const BookingsPage: React.FC = () => {
             <i>{searchOpen ? 'close' : 'search'}</i>
           </button>
 
-          {viewMode === 'list' && (
-            <button
-              className={`circle no-margin ${listLayout === 'items' ? 'fill tertiary' : 'transparent'}`}
-              type="button"
-              onClick={() =>
-                setListLayout((prev) => (prev === 'items' ? 'orders' : 'items'))
-              }
-              aria-label={
-                listLayout === 'items'
-                  ? 'สลับเป็นมุมมองใบจอง'
-                  : 'สลับเป็นมุมมองรายชุด'
-              }
-              title={
-                listLayout === 'items'
-                  ? 'สลับเป็นมุมมองใบจอง'
-                  : 'สลับเป็นมุมมองรายชุด'
-              }
-            >
-              <i>{listLayout === 'items' ? 'checkroom' : 'receipt_long'}</i>
-            </button>
-          )}
-
           <button
-            className="circle transparent no-margin"
+            className={`circle no-margin ${listLayout === 'items' ? 'fill tertiary' : 'transparent'}`}
             type="button"
             onClick={() =>
-              setViewMode((prev) => (prev === 'list' ? 'calendar' : 'list'))
+              setListLayout((prev) => (prev === 'items' ? 'orders' : 'items'))
             }
             aria-label={
-              viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
+              listLayout === 'items'
+                ? 'สลับเป็นมุมมองใบจอง'
+                : 'สลับเป็นมุมมองรายชุด'
             }
             title={
-              viewMode === 'list' ? 'สลับเป็นมุมมองปฏิทิน' : 'สลับเป็นมุมมองรายการ'
+              listLayout === 'items'
+                ? 'สลับเป็นมุมมองใบจอง'
+                : 'สลับเป็นมุมมองรายชุด'
             }
           >
-            <i>{viewMode === 'list' ? 'calendar_month' : 'view_agenda'}</i>
+            <i>{listLayout === 'items' ? 'checkroom' : 'receipt_long'}</i>
           </button>
         </>
       }
@@ -744,17 +725,6 @@ export const BookingsPage: React.FC = () => {
             </div>
           </div>
         </article>
-      );
-    }
-
-    if (viewMode === 'calendar') {
-      return (
-        <BookingCalendar
-          bookings={filteredBookings}
-          onEditBooking={handleOpenEdit}
-          onAdvanceItemStatus={handleAdvanceItemStatus}
-          onToggleDepositRefunded={handleToggleDepositRefunded}
-        />
       );
     }
 
@@ -843,11 +813,13 @@ export const BookingsPage: React.FC = () => {
         statusFilter={statusFilter}
         tabCounts={tabCounts}
         filterSheetOpen={filterSheetOpen}
+        calendarSheetOpen={calendarSheetOpen}
         onDateChange={(newDate) => {
           setSelectedDate(newDate);
           setIsAllDates(false);
         }}
         onFilterClick={() => setFilterSheetOpen(true)}
+        onCalendarClick={() => setCalendarSheetOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -922,6 +894,19 @@ export const BookingsPage: React.FC = () => {
           </dialog>
         </>
       )}
+
+      {/* Booking Calendar Date Picker Bottom Sheet */}
+      <BookingCalendar
+        isOpen={calendarSheetOpen}
+        selectedDate={isAllDates ? today : selectedDate}
+        today={today}
+        bookings={bookings}
+        onSelectDate={(newDate) => {
+          setSelectedDate(newDate);
+          setIsAllDates(false);
+        }}
+        onClose={() => setCalendarSheetOpen(false)}
+      />
 
       {/* Booking Filter & Sort Bottom Sheet */}
       <BookingFilterSheet

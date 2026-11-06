@@ -88,17 +88,28 @@ describe('BookingsPage Component', () => {
     });
   });
 
-  it('toggles between Card List View and Calendar View', () => {
+  it('opens calendar date picker dialog when clicking date button in BookingDateBar and auto-closes on date selection', () => {
     render(<BookingsPage />);
 
-    const calendarToggleBtns = screen.getAllByRole('button', {
-      name: /สลับเป็นมุมมองปฏิทิน/i,
-    });
-    fireEvent.click(calendarToggleBtns[0]);
+    // Calendar view toggle is removed from the floating bottom toolbar
+    expect(
+      screen.queryByRole('button', { name: /สลับเป็นมุมมองปฏิทิน/i })
+    ).not.toBeInTheDocument();
 
-    // Calendar view shows "วันนี้" button and weekday headers
+    // Clicking the date picker button in BookingDateBar opens BookingCalendar sheet
+    fireEvent.click(screen.getByRole('button', { name: /เลือกวันที่/i }));
+
+    expect(
+      screen.getByRole('dialog', { name: /เลือกวันที่จากปฏิทิน/i })
+    ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'วันนี้' })).toBeInTheDocument();
     expect(screen.getByText('อา.')).toBeInTheDocument();
+
+    // Clicking "วันนี้" selects today and auto-closes the calendar dialog
+    fireEvent.click(screen.getByRole('button', { name: 'วันนี้' }));
+    expect(
+      screen.queryByRole('dialog', { name: /เลือกวันที่จากปฏิทิน/i })
+    ).not.toBeInTheDocument();
   });
 
   it('renders all inventory items with list view and supports reserving unbooked items', () => {

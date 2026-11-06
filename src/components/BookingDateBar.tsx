@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { HeaderToolbar, ToolbarDivider } from './HeaderToolbar';
 import {
   FILTER_TABS,
@@ -18,8 +18,10 @@ export interface BookingDateBarProps {
   statusFilter: BookingFilterTab;
   tabCounts: Record<BookingFilterTab, number>;
   filterSheetOpen?: boolean;
+  calendarSheetOpen?: boolean;
   onDateChange: (newDate: string) => void;
   onFilterClick: () => void;
+  onCalendarClick?: () => void;
 }
 
 /**
@@ -33,11 +35,11 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   statusFilter,
   tabCounts,
   filterSheetOpen = false,
+  calendarSheetOpen = false,
   onDateChange,
   onFilterClick,
+  onCalendarClick,
 }) => {
-  const dateInputRef = useRef<HTMLInputElement>(null);
-
   const currentFilterTab = useMemo(
     () => FILTER_TABS.find((t) => t.id === statusFilter),
     [statusFilter]
@@ -68,39 +70,17 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
         <i className="hc-datebar-chevron-icon">chevron_left</i>
       </button>
 
-      {/* Date Picker Trigger with hidden native input */}
+      {/* Date Picker Trigger (opens BookingCalendar sheet) */}
       <div className="hc-datebar-picker-wrap">
-        <input
-          ref={dateInputRef}
-          type="date"
-          value={selectedDate}
-          onChange={(e) => {
-            if (e.target.value) {
-              onDateChange(e.target.value);
-            }
-          }}
-          className="hc-datebar-hidden-input"
-          tabIndex={-1}
-          aria-hidden="true"
-        />
         <button
           type="button"
           className="chip small primary-container bold no-margin hc-datebar-picker-btn"
-          onClick={() => {
-            if (dateInputRef.current) {
-              if ('showPicker' in HTMLInputElement.prototype) {
-                try {
-                  dateInputRef.current.showPicker();
-                } catch {
-                  dateInputRef.current.focus();
-                }
-              } else {
-                dateInputRef.current.focus();
-              }
-            }
-          }}
+          data-testid="booking-date-picker-btn"
           aria-label="เลือกวันที่"
           title="คลิกเพื่อเลือกวันที่"
+          aria-haspopup="dialog"
+          aria-expanded={calendarSheetOpen}
+          onClick={onCalendarClick}
         >
           <i className="small">calendar_month</i>
           <span className="hc-datebar-picker-text">{dateButtonLabel}</span>

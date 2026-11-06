@@ -1,26 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import {
-  formatDateThaiShort,
-  getTodayISO,
-  type Booking,
-  type BookingItemStatus,
-} from '../types/booking';
-import { useIsMobile } from '../hooks/useIsMobile';
-import { BookingCard } from './BookingCard';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { getTodayISO, type Booking } from '../types/booking';
 import { Stack } from './Stack';
 import './StatusBadge.css';
 import './BookingCalendar.css';
 
 export interface BookingCalendarProps {
+  isOpen?: boolean;
+  selectedDate: string;
+  today?: string;
   bookings: Booking[];
-  onEditBooking: (booking: Booking) => void;
-  onAdvanceItemStatus: (
-    bookingId: string,
-    itemId: string,
-    nextStatus: BookingItemStatus,
-    effectiveDate?: string
-  ) => Promise<void> | void;
-  onToggleDepositRefunded?: (booking: Booking) => Promise<void> | void;
+  onSelectDate: (isoDate: string) => void;
+  onClose?: () => void;
 }
 
 const THAI_MONTHS_FULL = [
@@ -66,19 +56,95 @@ function buildMonthGrid(year: number, monthIndex: number): (string | null)[] {
   return cells;
 }
 
-export const BookingCalendar: React.FC<BookingCalendarProps> = ({
-  bookings,
-  onEditBooking,
-  onAdvanceItemStatus,
-  onToggleDepositRefunded,
-}) => {
-  const isMobile = useIsMobile();
-  const todayIso = getTodayISO();
-  const initialParts = todayIso.split('-').map(Number);
+function parseYearMonth(isoDate: string, fallbackIso: string): [number, number] {
+  const target = /^\d{4}-\d{2}-\d{2}$/.test(isoDate) ? isoDate : fallbackIso;
+  const parts = target.split('-').map(Number);
+  return [parts[0], parts[1] - 1];
+}
 
-  const [viewYear, setViewYear] = useState<number>(initialParts[0]);
-  const [viewMonth, setViewMonth] = useState<number>(initialParts[1] - 1);
-  const [selectedDate, setSelectedDate] = useState<string>(todayIso);
+export const BookingCalendar: React.FC<BookingCalendarProps> = ({
+  isOpen = true,
+  selectedDate,
+  today,
+  bookings,
+  onSelectDate,
+  onClose,
+}) => {
+  const todayIso = useMemo(() => today ?? getTodayISO(), [today]);
+  const [initialYear, initialMonth] = parseYearMonth(selectedDate, todayIso);
+
+  const [viewYear, setViewYear] = useState<number>(initialYear);
+  const [viewMonth, setViewMonth] = useState<number>(initialMonth);
+  const [prevOpen, setPrevOpen] = useState<boolean>(isOpen);
+  const [prevSelectedDate, setPrevSelectedDate] = useState<string>(selectedDate);
+
+  if ((isOpen && !prevOpen) || selectedDate !== prevSelectedDate) {
+    setPrevOpen(isOpen);
+    setPrevSelectedDate(selectedDate);
+    const [y, m] = parseYearMonth(selectedDate, todayIso);
+    setViewYear(y);
+    setViewMonth(m);
+  } else if (!isOpen && prevOpen) {
+    setPrevOpen(false);
+  }
+
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (
+      document.activeElement instanceof HTMLElement &&
+      !dialogRef.current?.contains(document.activeElement)
+    ) {
+      previousActiveElementRef.current = document.activeElement;
+    }
+
+    const focusTimer = window.setTimeout(() => {
+      closeBtnRef.current?.focus();
+    }, 30);
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose?.();
+        return;
+      }
+
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>(
+            'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          )
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.clearTimeout(focusTimer);
+      window.removeEventListener('keydown', handleKeyDown);
+      if (
+        previousActiveElementRef.current &&
+        document.contains(previousActiveElementRef.current)
+      ) {
+        previousActiveElementRef.current.focus();
+      }
+    };
+  }, [isOpen, onClose]);
 
   const cells = useMemo(
     () => buildMonthGrid(viewYear, viewMonth),
@@ -108,13 +174,6 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
     return map;
   }, [cells, bookings]);
 
-  const selectedDateBookings = useMemo(() => {
-    if (!selectedDate) return [];
-    return bookings.filter(
-      (b) => selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
-    );
-  }, [bookings, selectedDate]);
-
   const handlePrevMonth = () => {
     if (viewMonth === 0) {
       setViewYear((y) => y - 1);
@@ -134,17 +193,38 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
   };
 
   const handleToday = () => {
-    const parts = todayIso.split('-').map(Number);
-    setViewYear(parts[0]);
-    setViewMonth(parts[1] - 1);
-    setSelectedDate(todayIso);
+    const [y, m] = parseYearMonth(todayIso, todayIso);
+    setViewYear(y);
+    setViewMonth(m);
+    onSelectDate(todayIso);
+    onClose?.();
+  };
+
+  const handleDaySelect = (isoDate: string) => {
+    onSelectDate(isoDate);
+    onClose?.();
   };
 
   return (
-    <Stack orientation="column" gap="medium">
-      <article className="border round surface hc-medium-padding no-margin">
+    <>
+      <div
+        className={`overlay ${isOpen ? 'active' : ''} hc-calendar-dialog-overlay`}
+        onClick={onClose}
+        aria-hidden={!isOpen}
+        data-testid="booking-calendar-backdrop"
+      />
+      <dialog
+        ref={dialogRef}
+        id="booking-calendar-dialog"
+        open={isOpen}
+        aria-hidden={!isOpen}
+        aria-modal="true"
+        aria-label="เลือกวันที่จากปฏิทิน"
+        data-testid="booking-calendar-dialog"
+        className={`hc-calendar-dialog ${isOpen ? 'active' : ''}`.trim()}
+      >
         <Stack orientation="column" gap="medium">
-          {/* Calendar Header */}
+          {/* Calendar Header: Month Navigation + Close Button */}
           <Stack
             orientation="row"
             align="center"
@@ -174,21 +254,34 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               </button>
             </Stack>
 
-            <Stack orientation="row" align="center" gap="small" wrap>
-              <span className="chip tiny primary-container no-margin">
-                วันเช่าชุด
-              </span>
-              <span className="chip tiny hc-status-badge-laundry no-margin">
-                วันซัก/เตรียมชุด
-              </span>
+            {onClose && (
               <button
+                ref={closeBtnRef}
                 type="button"
-                className="border small round no-margin hc-booking-calendar-today-btn"
-                onClick={handleToday}
+                className="circle transparent small no-margin hc-booking-calendar-nav-btn"
+                onClick={onClose}
+                aria-label="ปิดปฏิทิน"
               >
-                วันนี้
+                <i>close</i>
               </button>
-            </Stack>
+            )}
+          </Stack>
+
+          {/* Legend & Today Quick Jump */}
+          <Stack orientation="row" align="center" gap="small" wrap>
+            <span className="chip tiny primary-container no-margin">
+              วันเช่าชุด
+            </span>
+            <span className="chip tiny hc-status-badge-laundry no-margin">
+              วันซัก/เตรียมชุด
+            </span>
+            <button
+              type="button"
+              className="border small round no-margin hc-booking-calendar-today-btn"
+              onClick={handleToday}
+            >
+              วันนี้
+            </button>
           </Stack>
 
           {/* Weekday Headers */}
@@ -219,15 +312,14 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
               const isToday = isoDate === todayIso;
               const isSelected = isoDate === selectedDate;
               const entries = entriesByDate.get(isoDate) ?? [];
-              const visiblePills = entries.slice(0, 3);
-              const overflowCount = Math.max(0, entries.length - 3);
 
               return (
                 <button
                   key={isoDate}
                   type="button"
-                  onClick={() => setSelectedDate(isoDate)}
+                  onClick={() => handleDaySelect(isoDate)}
                   aria-label={`วันที่ ${isoDate}`}
+                  aria-pressed={isSelected}
                   className={`no-margin hc-booking-calendar-day-btn ${
                     isSelected
                       ? 'secondary-container is-selected'
@@ -246,53 +338,27 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
                     >
                       {dayNum}
                     </span>
-                    {isMobile && entries.length > 0 && (
+                    {entries.length > 0 && (
                       <span className="hc-micro-text bold primary-text">
                         {entries.length}
                       </span>
                     )}
                   </Stack>
 
-                  {isMobile ? (
-                    entries.length > 0 && (
-                      <Stack
-                        orientation="row"
-                        align="center"
-                        gap="tiny"
-                        wrap
-                        className="hc-booking-calendar-mobile-dots"
-                      >
-                        {entries.slice(0, 4).map((entry, eIdx) => (
-                          <span
-                            key={`${entry.booking.id}-${entry.itemCode}-${eIdx}`}
-                            className={`hc-booking-calendar-dot ${entry.windowType}`}
-                          />
-                        ))}
-                      </Stack>
-                    )
-                  ) : (
+                  {entries.length > 0 && (
                     <Stack
-                      orientation="column"
+                      orientation="row"
+                      align="center"
                       gap="tiny"
-                      className="hc-booking-calendar-pills-container"
+                      wrap
+                      className="hc-booking-calendar-mobile-dots"
                     >
-                      {visiblePills.map((entry, eIdx) => (
+                      {entries.slice(0, 4).map((entry, eIdx) => (
                         <span
                           key={`${entry.booking.id}-${entry.itemCode}-${eIdx}`}
-                          className={`hc-micro-text bold round truncate hc-booking-calendar-pill ${
-                            entry.windowType === 'rental'
-                              ? 'primary-container'
-                              : 'hc-status-badge-laundry'
-                          }`}
-                        >
-                          {entry.itemCode}
-                        </span>
+                          className={`hc-booking-calendar-dot ${entry.windowType}`}
+                        />
                       ))}
-                      {overflowCount > 0 && (
-                        <span className="hc-micro-text secondary-text bold">
-                          +{overflowCount} ชุด
-                        </span>
-                      )}
                     </Stack>
                   )}
                 </button>
@@ -300,40 +366,7 @@ export const BookingCalendar: React.FC<BookingCalendarProps> = ({
             })}
           </div>
         </Stack>
-      </article>
-
-      {/* Selected Day Bookings List */}
-      <Stack orientation="column" gap="small">
-        <Stack orientation="row" align="center" justify="space-between">
-          <h6 className="bold no-margin">
-            รายการวันที่ {formatDateThaiShort(selectedDate)} (
-            {selectedDateBookings.length} การจอง)
-          </h6>
-        </Stack>
-
-        {selectedDateBookings.length === 0 ? (
-          <article className="border round surface hc-medium-padding center-align no-margin">
-            <p className="secondary-text no-margin">
-              ไม่มีคิวเช่าหรือซักชุดในวันที่เลือก
-            </p>
-          </article>
-        ) : (
-          <div className="grid">
-            {selectedDateBookings.map((booking) => (
-              <div key={booking.id} className="s12 m6">
-                <BookingCard
-                  booking={booking}
-                  selectedDate={selectedDate}
-                  isAllDates={false}
-                  onEdit={onEditBooking}
-                  onAdvanceItemStatus={onAdvanceItemStatus}
-                  onToggleDepositRefunded={onToggleDepositRefunded}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </Stack>
-    </Stack>
+      </dialog>
+    </>
   );
 };

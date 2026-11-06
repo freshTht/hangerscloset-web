@@ -23,14 +23,6 @@
   min-width: 0;
 }
 
-.hc-datebar-hidden-input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-  width: 0;
-  height: 0;
-}
-
 .hc-datebar-picker-btn {
   position: relative;
   min-height: 32px;

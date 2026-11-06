@@ -1,3 +1,36 @@
+.hc-calendar-dialog-overlay {
+  z-index: 1000;
+}
+
+.hc-calendar-dialog-overlay.active {
+  pointer-events: auto;
+}
+
+.hc-calendar-dialog-overlay:not(.active) {
+  pointer-events: none;
+}
+
+.hc-calendar-dialog {
+  z-index: 1001;
+  box-sizing: border-box;
+  width: 440px;
+  max-width: calc(100vw - 24px);
+  padding: 20px;
+}
+
+@media (max-width: 600px) {
+  .hc-calendar-dialog {
+    padding: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-calendar-dialog,
+  .hc-calendar-dialog-overlay {
+    transition: none !important;
+  }
+}
+
 .hc-booking-calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -29,19 +62,19 @@
 }
 
 .hc-booking-calendar-empty-cell {
-  min-height: 84px;
-  border-radius: 10px;
+  min-height: 54px;
+  border-radius: 8px;
   opacity: 0.35;
 }
 
 .hc-booking-calendar-day-btn {
-  min-height: 84px;
+  min-height: 54px;
   min-width: 0;
   min-inline-size: 0;
   max-inline-size: 100%;
   width: 100%;
-  padding: 6px;
-  border-radius: 10px;
+  padding: 5px 6px;
+  border-radius: 8px;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
@@ -61,13 +94,11 @@
 @media (max-width: 600px) {
   .hc-booking-calendar-empty-cell {
     min-height: 52px;
-    border-radius: 8px;
   }
 
   .hc-booking-calendar-day-btn {
     min-height: 52px;
     padding: 4px 5px;
-    border-radius: 8px;
   }
 }
 
@@ -88,14 +119,4 @@
 
 .hc-booking-calendar-dot.cleaning {
   background-color: #0288d1;
-}
-
-.hc-booking-calendar-pills-container {
-  min-width: 0;
-  width: 100%;
-}
-
-.hc-booking-calendar-pill {
-  padding: 1px 6px;
-  display: block;
 }

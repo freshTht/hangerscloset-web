@@ -89,6 +89,16 @@ describe('BookingDateBar Component', () => {
     expect(onFilterClick).toHaveBeenCalledTimes(1);
   });
 
+  it('triggers onCalendarClick when date picker button is clicked', () => {
+    const onCalendarClick = vi.fn();
+    render(
+      <BookingDateBar {...defaultProps} onCalendarClick={onCalendarClick} />
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /เลือกวันที่/i }));
+    expect(onCalendarClick).toHaveBeenCalledTimes(1);
+  });
+
   it('updates label and badge style when a non-active status filter is selected', () => {
     render(
       <BookingDateBar
