@@ -66,6 +66,28 @@
   font-size: 8.5pt;
 }
 
+.hc-datebar-sort-btn {
+  position: relative;
+  min-height: 32px;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  max-width: 140px;
+}
+
+.hc-datebar-sort-label {
+  font-size: 9pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .hc-datebar-filter-btn {
   position: relative;
   min-height: 32px;
@@ -85,6 +107,7 @@
   .hc-datebar-chevron::before,
   .hc-datebar-picker-btn::before,
   .hc-datebar-today-btn::before,
+  .hc-datebar-sort-btn::before,
   .hc-datebar-filter-btn::before {
     content: '';
     position: absolute;

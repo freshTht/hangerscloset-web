@@ -8,6 +8,7 @@ import {
 
 describe('BookingFilterSheet Component', () => {
   const defaultCounts: Record<BookingFilterTab, number> = {
+    all: 10,
     active: 10,
     available: 4,
     reserved: 2,
@@ -28,33 +29,27 @@ describe('BookingFilterSheet Component', () => {
     onClose: vi.fn(),
   };
 
-  it('renders correctly when open with status options in 2-column grid and sort chips', () => {
+  it('renders correctly when open with status options in 2-column grid', () => {
     render(<BookingFilterSheet {...defaultProps} />);
 
-    expect(screen.getByRole('dialog', { name: /ตัวกรองและจัดเรียงรายการจอง/i })).toBeInTheDocument();
-    expect(screen.getByText('ตัวกรองและจัดเรียง')).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: /ตัวกรองสถานะการจอง/i })).toBeInTheDocument();
+    expect(screen.getByText('ตัวกรองสถานะ')).toBeInTheDocument();
 
-    // Check all filter tabs are present
-    expect(screen.getByRole('tab', { name: /กำลังดำเนินการ/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /ว่าง \(พร้อมเช่า\)/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /จองแล้ว/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /รอส่งมอบ/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /ส่งมอบแล้ว/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /ส่งซัก/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /รับคืนเสร็จสิ้น/i })).toBeInTheDocument();
+    // Check all filter options are present as checkboxes
+    expect(screen.getByRole('checkbox', { name: /ทั้งหมด/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /ว่าง \(พร้อมเช่า\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /จองแล้ว/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /รอส่งมอบ/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /ส่งมอบแล้ว/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /รอรับคืน/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /ส่งซัก/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /รับคืนเสร็จสิ้น/i })).toBeInTheDocument();
 
-    // Selected status has aria-selected true
-    expect(screen.getByRole('tab', { name: /กำลังดำเนินการ/i })).toHaveAttribute(
-      'aria-selected',
+    // "ทั้งหมด" checkbox has aria-checked true by default
+    expect(screen.getByRole('checkbox', { name: /ทั้งหมด/i })).toHaveAttribute(
+      'aria-checked',
       'true'
     );
-
-    // Check sort options are present
-    expect(screen.getByRole('button', { name: /วันรับชุด \(ใกล้สุดก่อน\)/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /รหัสชุด \(A-Z\)/i })).toBeInTheDocument();
-
-    // Redundant date section is excluded
-    expect(screen.queryByText('ขอบเขตวันที่')).not.toBeInTheDocument();
   });
 
   it('does not render when isOpen is false', () => {
@@ -62,7 +57,7 @@ describe('BookingFilterSheet Component', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  it('calls onSelectFilter when a filter tab is clicked', () => {
+  it('calls onSelectFilter when a filter checkbox is clicked', () => {
     const onSelectFilter = vi.fn();
 
     render(
@@ -72,22 +67,23 @@ describe('BookingFilterSheet Component', () => {
       />
     );
 
-    fireEvent.click(screen.getByRole('tab', { name: /ส่งซัก/i }));
-    expect(onSelectFilter).toHaveBeenCalledWith('in_laundry');
+    fireEvent.click(screen.getByRole('checkbox', { name: /ส่งซัก/i }));
+    expect(onSelectFilter).toHaveBeenCalledWith(['in_laundry']);
   });
 
-  it('calls onSelectSort when a sort chip is clicked', () => {
-    const onSelectSort = vi.fn();
+  it('allows selecting multiple filters', () => {
+    const onSelectFilter = vi.fn();
 
     render(
       <BookingFilterSheet
         {...defaultProps}
-        onSelectSort={onSelectSort}
+        selectedFilters={['reserved']}
+        onSelectFilter={onSelectFilter}
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: /รหัสชุด \(A-Z\)/i }));
-    expect(onSelectSort).toHaveBeenCalledWith('code_asc');
+    fireEvent.click(screen.getByRole('checkbox', { name: /ส่งซัก/i }));
+    expect(onSelectFilter).toHaveBeenCalledWith(['reserved', 'in_laundry']);
   });
 
   it('closes on Escape key press, close button, and apply button', () => {
@@ -104,17 +100,14 @@ describe('BookingFilterSheet Component', () => {
     expect(onClose).toHaveBeenCalledTimes(3);
   });
 
-  it('renders reset button when customized and resets both filter and sort when clicked', () => {
+  it('renders reset button when customized and resets filter when clicked', () => {
     const onSelectFilter = vi.fn();
-    const onSelectSort = vi.fn();
 
     render(
       <BookingFilterSheet
         {...defaultProps}
-        selectedFilter="in_laundry"
-        selectedSort="code_asc"
+        selectedFilters={['in_laundry']}
         onSelectFilter={onSelectFilter}
-        onSelectSort={onSelectSort}
       />
     );
 
@@ -122,7 +115,6 @@ describe('BookingFilterSheet Component', () => {
     expect(resetBtn).toBeEnabled();
 
     fireEvent.click(resetBtn);
-    expect(onSelectFilter).toHaveBeenCalledWith('active');
-    expect(onSelectSort).toHaveBeenCalledWith('startDate_asc');
+    expect(onSelectFilter).toHaveBeenCalledWith(['all']);
   });
 });

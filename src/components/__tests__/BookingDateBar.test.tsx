@@ -4,6 +4,7 @@ import { BookingDateBar, type BookingDateBarProps } from '../BookingDateBar';
 
 describe('BookingDateBar Component', () => {
   const defaultTabCounts = {
+    all: 43,
     active: 43,
     available: 37,
     reserved: 0,
@@ -111,5 +112,24 @@ describe('BookingDateBar Component', () => {
     expect(filterBtn).toHaveTextContent('ส่งซัก');
     expect(filterBtn).toHaveTextContent('2');
     expect(filterBtn).toHaveClass('primary');
+  });
+
+  it('renders sort menu button and triggers onSelectSort when sort options are provided', () => {
+    const onSelectSort = vi.fn();
+    render(
+      <BookingDateBar
+        {...defaultProps}
+        selectedSort="startDate_asc"
+        onSelectSort={onSelectSort}
+      />
+    );
+
+    const sortBtn = screen.getByTestId('booking-sort-button');
+    expect(sortBtn).toBeInTheDocument();
+    expect(sortBtn).toHaveTextContent('จัดเรียง');
+
+    fireEvent.click(sortBtn);
+    fireEvent.click(screen.getByRole('radio', { name: /รหัสชุด \(A-Z\)/i }));
+    expect(onSelectSort).toHaveBeenCalledWith('code_asc');
   });
 });

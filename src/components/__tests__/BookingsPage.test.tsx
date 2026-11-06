@@ -25,8 +25,8 @@ describe('BookingsPage Component', () => {
 
     // Clicking filter dropdown opens the bottom sheet
     fireEvent.click(filterDropdown);
-    expect(screen.getByRole('dialog', { name: /ตัวกรองและจัดเรียงรายการจอง/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /กำลังดำเนินการ/i })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('dialog', { name: /ตัวกรองสถานะการจอง/i })).toBeInTheDocument();
+    expect(screen.getByRole('checkbox', { name: /ทั้งหมด/i })).toHaveAttribute('aria-checked', 'true');
 
     // Close the sheet
     fireEvent.click(screen.getByRole('button', { name: /ปิดตัวกรอง/i }));
@@ -43,27 +43,25 @@ describe('BookingsPage Component', () => {
     fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
 
     // Open filter sheet and choose "ส่งซัก"
-    const laundryTab = screen.getByRole('tab', { name: /ส่งซัก/i });
-    fireEvent.click(laundryTab);
+    const laundryCheckbox = screen.getByRole('checkbox', { name: /ส่งซัก/i });
+    fireEvent.click(laundryCheckbox);
 
     // Filter dropdown button displays current filter
     expect(screen.getByTestId('booking-filter-dropdown')).toHaveTextContent('ส่งซัก');
     expect(screen.getAllByText('คุณเนย วริศรา').length).toBeGreaterThan(0);
   });
 
-  it('changes booking sort order via the filter & sort bottom sheet', () => {
+  it('changes booking sort order via the sort dialog', () => {
     render(<BookingsPage />);
 
-    // Open filter & sort sheet
-    fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
+    // Open sort dialog
+    fireEvent.click(screen.getByTestId('booking-sort-button'));
 
     // Click sort by item code Z-A
-    fireEvent.click(screen.getByRole('button', { name: /รหัสชุด \(Z-A\)/i }));
+    fireEvent.click(screen.getByRole('radio', { name: /รหัสชุด \(Z-A\)/i }));
 
-    // Close sheet
-    fireEvent.click(screen.getByRole('button', { name: /ดูผลลัพธ์/i }));
-
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    // Sort button should now reflect the selected sort
+    expect(screen.getByTestId('booking-sort-button')).toHaveTextContent('รหัสชุด (Z-A)');
   });
 
   it('advances an item status with 1-tap button on BookingCard', async () => {

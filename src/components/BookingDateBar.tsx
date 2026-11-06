@@ -1,9 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { HeaderToolbar, ToolbarDivider } from './HeaderToolbar';
 import {
   FILTER_TABS,
   type BookingFilterTab,
 } from './BookingFilterSheet';
+import {
+  BookingSortDialog,
+  type BookingSortKey,
+  BOOKING_SORT_OPTIONS,
+} from './BookingSortDialog';
 import {
   formatDateThaiShort,
   formatDateThaiShortWithYear,
@@ -15,13 +20,18 @@ export interface BookingDateBarProps {
   selectedDate: string;
   today: string;
   isAllDates?: boolean;
-  statusFilter: BookingFilterTab;
+  statusFilter?: BookingFilterTab;
+  statusFilters?: BookingFilterTab[];
   tabCounts: Record<BookingFilterTab, number>;
+  selectedSort?: BookingSortKey;
   filterSheetOpen?: boolean;
   calendarSheetOpen?: boolean;
+  sortDialogOpen?: boolean;
   onDateChange: (newDate: string) => void;
   onFilterClick: () => void;
   onCalendarClick?: () => void;
+  onSortClick?: () => void;
+  onSelectSort?: (sort: BookingSortKey) => void;
 }
 
 /**
@@ -33,23 +43,59 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   today,
   isAllDates = false,
   statusFilter,
+  statusFilters,
   tabCounts,
+  selectedSort,
   filterSheetOpen = false,
   calendarSheetOpen = false,
+  sortDialogOpen,
   onDateChange,
   onFilterClick,
   onCalendarClick,
+  onSortClick,
+  onSelectSort,
 }) => {
-  const currentFilterTab = useMemo(
-    () => FILTER_TABS.find((t) => t.id === statusFilter),
-    [statusFilter]
+  const [internalSortOpen, setInternalSortOpen] = useState(false);
+  const isSortOpen = sortDialogOpen ?? internalSortOpen;
+  const handleSortClick = onSortClick ?? (() => setInternalSortOpen(true));
+  const handleSelectSort = (sort: BookingSortKey) => {
+    onSelectSort?.(sort);
+    if (!onSortClick) setInternalSortOpen(false);
+  };
+
+  const currentSortOption = useMemo(
+    () => BOOKING_SORT_OPTIONS.find((opt) => opt.key === selectedSort),
+    [selectedSort]
   );
+  const isCustomSort = selectedSort !== 'startDate_asc';
+
+  const activeFilters = useMemo<BookingFilterTab[]>(() => {
+    if (statusFilters && statusFilters.length > 0) return statusFilters;
+    if (statusFilter) return [statusFilter];
+    return ['all'];
+  }, [statusFilters, statusFilter]);
+
+  const isAll =
+    activeFilters.includes('all') ||
+    activeFilters.includes('active') ||
+    activeFilters.length === 0;
 
   const currentFilterLabel = useMemo(() => {
-    if (statusFilter === 'active') return 'ตัวกรอง';
-    if (statusFilter === 'available') return 'ว่าง';
-    return currentFilterTab?.label ?? 'ตัวกรอง';
-  }, [statusFilter, currentFilterTab]);
+    if (isAll) return 'ตัวกรอง';
+    if (activeFilters.length === 1) {
+      if (activeFilters[0] === 'available') return 'ว่าง';
+      const tab = FILTER_TABS.find((t) => t.id === activeFilters[0]);
+      return tab?.label ?? 'ตัวกรอง';
+    }
+    return `${activeFilters.length} สถานะ`;
+  }, [isAll, activeFilters]);
+
+  const activeCount = useMemo(() => {
+    if (isAll) {
+      return tabCounts.all ?? tabCounts.active ?? 0;
+    }
+    return activeFilters.reduce((sum, s) => sum + (tabCounts[s] ?? 0), 0);
+  }, [isAll, activeFilters, tabCounts]);
 
   const dateButtonLabel = useMemo(() => {
     if (isAllDates) return 'แสดงทุกวัน (คลิกเพื่อเลือกวัน)';
@@ -115,18 +161,52 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
       {/* Material 3 Expressive Divider separating Date Navigation from Status Filter */}
       <ToolbarDivider />
 
-      {/* BeerCSS Max Spacer: Pushes Filter Dropdown to Far Right */}
+      {/* BeerCSS Max Spacer: Pushes Sort & Filter to Far Right */}
       <div className="max" />
+
+      {/* Sort Button */}
+      {selectedSort && (
+        <>
+          <button
+            type="button"
+            className={`chip small bold no-margin ${
+              isCustomSort ? 'primary' : 'tertiary-container'
+            } hc-datebar-sort-btn`}
+            data-testid="booking-sort-button"
+            aria-label={`จัดเรียงตาม: ${currentSortOption?.label ?? 'วันรับชุด'}`}
+            title={`จัดเรียงตาม: ${currentSortOption?.label ?? 'วันรับชุด'}`}
+            aria-haspopup="dialog"
+            aria-expanded={isSortOpen}
+            onClick={handleSortClick}
+          >
+            <i className="small">sort</i>
+            <span className="hc-datebar-sort-label">
+              {isCustomSort ? currentSortOption?.label : 'จัดเรียง'}
+            </span>
+            <i className="tiny">arrow_drop_down</i>
+          </button>
+
+          {/* Self-contained dialog when not controlled externally */}
+          {!onSortClick && onSelectSort && (
+            <BookingSortDialog
+              isOpen={internalSortOpen}
+              selectedSort={selectedSort}
+              onSelectSort={handleSelectSort}
+              onClose={() => setInternalSortOpen(false)}
+            />
+          )}
+        </>
+      )}
 
       {/* Filter Dropdown Button */}
       <button
         type="button"
         className={`chip small bold no-margin ${
-          statusFilter !== 'active' ? 'primary' : 'tertiary-container'
+          !isAll ? 'primary' : 'tertiary-container'
         } hc-datebar-filter-btn`}
         data-testid="booking-filter-dropdown"
-        aria-label={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
-        title={`ตัวกรองสถานะ: ${currentFilterTab?.label ?? currentFilterLabel}`}
+        aria-label={`ตัวกรองสถานะ: ${currentFilterLabel}`}
+        title={`ตัวกรองสถานะ: ${currentFilterLabel}`}
         aria-haspopup="dialog"
         aria-expanded={filterSheetOpen}
         onClick={onFilterClick}
@@ -135,10 +215,10 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
         <span className="hc-datebar-filter-label">{currentFilterLabel}</span>
         <span
           className={`hc-datebar-badge ${
-            statusFilter !== 'active' ? 'is-active-filter' : ''
+            !isAll ? 'is-active-filter' : ''
           }`.trim()}
         >
-          {tabCounts[statusFilter]}
+          {activeCount}
         </span>
         <i className="tiny">arrow_drop_down</i>
       </button>

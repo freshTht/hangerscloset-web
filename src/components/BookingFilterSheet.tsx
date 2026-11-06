@@ -1,19 +1,19 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { type BookingItemStatus } from '../types/booking';
+import {
+  type BookingSortKey,
+  BOOKING_SORT_OPTIONS as SORT_OPTIONS,
+} from './BookingSortMenu';
 import './BookingFilterSheet.css';
 
-export type BookingFilterTab = 'active' | 'available' | BookingItemStatus;
+export type { BookingSortKey };
+export { SORT_OPTIONS };
 
-export type BookingSortKey =
-  | 'startDate_asc'
-  | 'startDate_desc'
-  | 'code_asc'
-  | 'code_desc'
-  | 'createdAt_desc';
+export type BookingFilterTab = 'all' | 'active' | 'available' | BookingItemStatus;
 
 export const FILTER_TABS = [
-  { id: 'active', label: 'กำลังดำเนินการ' },
+  { id: 'all', label: 'ทั้งหมด' },
   { id: 'available', label: 'ว่าง (พร้อมเช่า)' },
   { id: 'reserved', label: 'จองแล้ว' },
   { id: 'pending_delivery', label: 'รอส่งมอบ' },
@@ -23,18 +23,11 @@ export const FILTER_TABS = [
   { id: 'returned', label: 'รับคืนเสร็จสิ้น' },
 ] as const;
 
-export const SORT_OPTIONS = [
-  { key: 'startDate_asc', label: 'วันรับชุด (ใกล้สุดก่อน)', icon: 'event' },
-  { key: 'startDate_desc', label: 'วันรับชุด (ไกลสุดก่อน)', icon: 'schedule' },
-  { key: 'code_asc', label: 'รหัสชุด (A-Z)', icon: 'sort_by_alpha' },
-  { key: 'code_desc', label: 'รหัสชุด (Z-A)', icon: 'sort_by_alpha' },
-  { key: 'createdAt_desc', label: 'วันที่ทำรายการล่าสุด', icon: 'history' },
-] as const;
-
 function getBookingFilterIcon(id: BookingFilterTab): string {
   switch (id) {
+    case 'all':
     case 'active':
-      return 'pending_actions';
+      return 'select_all';
     case 'available':
       return 'check_circle';
     case 'reserved':
@@ -56,21 +49,21 @@ function getBookingFilterIcon(id: BookingFilterTab): string {
 
 export interface BookingFilterSheetProps {
   isOpen: boolean;
-  selectedFilter: BookingFilterTab;
+  selectedFilters?: BookingFilterTab[];
+  selectedFilter?: BookingFilterTab | BookingFilterTab[];
   tabCounts: Record<BookingFilterTab, number>;
-  selectedSort: BookingSortKey;
-  onSelectFilter: (filter: BookingFilterTab) => void;
-  onSelectSort: (sort: BookingSortKey) => void;
+  selectedSort?: BookingSortKey;
+  onSelectFilter: (filter: BookingFilterTab[]) => void;
+  onSelectSort?: (sort: BookingSortKey) => void;
   onClose: () => void;
 }
 
 export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
   isOpen,
+  selectedFilters,
   selectedFilter,
   tabCounts,
-  selectedSort,
   onSelectFilter,
-  onSelectSort,
   onClose,
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -138,15 +131,61 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen) return null;
+  const selectedList = useMemo<BookingFilterTab[]>(() => {
+    if (selectedFilters && selectedFilters.length > 0) return selectedFilters;
+    if (Array.isArray(selectedFilter)) return selectedFilter;
+    if (selectedFilter) return [selectedFilter === 'active' ? 'all' : selectedFilter];
+    return ['all'];
+  }, [selectedFilters, selectedFilter]);
 
-  const isCustomized =
-    selectedFilter !== 'active' || selectedSort !== 'startDate_asc';
+  const isAllSelected =
+    selectedList.includes('all') ||
+    selectedList.includes('active') ||
+    selectedList.length === 0;
+
+  const INDIVIDUAL_STATUS_IDS: BookingFilterTab[] = [
+    'available',
+    'reserved',
+    'pending_delivery',
+    'delivered',
+    'pending_return',
+    'in_laundry',
+    'returned',
+  ];
+
+  const handleToggleStatus = (id: BookingFilterTab) => {
+    if (id === 'all' || id === 'active') {
+      onSelectFilter(['all']);
+      return;
+    }
+
+    const currentIndividual = isAllSelected
+      ? []
+      : selectedList.filter((s) => s !== 'all' && s !== 'active');
+
+    let next: BookingFilterTab[];
+    if (currentIndividual.includes(id)) {
+      next = currentIndividual.filter((s) => s !== id);
+      if (next.length === 0) {
+        next = ['all'];
+      }
+    } else {
+      next = [...currentIndividual, id];
+      const allSelected = INDIVIDUAL_STATUS_IDS.every((s) => next.includes(s));
+      if (allSelected) {
+        next = ['all'];
+      }
+    }
+
+    onSelectFilter(next);
+  };
+
+  const isCustomized = !isAllSelected;
 
   return (
     <>
       <div
-        className="overlay active hc-filter-sheet-overlay"
+        className={`overlay ${isOpen ? 'active' : ''} hc-booking-filter-sheet-overlay`}
         onClick={onClose}
         aria-hidden={!isOpen}
       />
@@ -154,23 +193,21 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
       <dialog
         ref={dialogRef}
         id="booking-filter-sheet"
-        className="bottom active hc-filter-sheet-dialog"
+        className={`hc-booking-filter-sheet-dialog ${isOpen ? 'active' : ''}`.trim()}
         open={isOpen}
         aria-modal="true"
-        aria-label="ตัวกรองและจัดเรียงรายการจอง"
+        aria-hidden={!isOpen}
+        aria-label="ตัวกรองสถานะการจอง"
       >
-        {/* Drag pill handle */}
-        <div className="hc-filter-sheet-handle" />
-
         {/* Header */}
-        <div className="row items-center no-margin hc-filter-sheet-header">
+        <div className="row items-center no-margin hc-booking-filter-sheet-header">
           <i className="primary-text">tune</i>
-          <h6 className="bold no-margin">ตัวกรองและจัดเรียง</h6>
+          <h6 className="bold no-margin">ตัวกรองสถานะ</h6>
           <div className="max" />
           <button
             ref={closeBtnRef}
             type="button"
-            className="circle transparent no-margin hc-filter-sheet-close-btn"
+            className="circle transparent no-margin hc-booking-filter-sheet-close-btn"
             onClick={onClose}
             aria-label="ปิดตัวกรอง"
           >
@@ -178,45 +215,58 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
           </button>
         </div>
 
-        {/* Section 1: Status Picker (2-Column Grid) */}
-        <div className="hc-filter-sheet-section">
-          <div className="small-text secondary-text bold hc-filter-sheet-section-title">
+        {/* Status Picker (2-Column Grid) */}
+        <div className="hc-booking-filter-sheet-section">
+          <div className="small-text secondary-text bold hc-booking-filter-sheet-section-title">
             สถานะการจอง
           </div>
 
           <div
-            role="tablist"
+            role="group"
             aria-label="ตัวกรองสถานะการจอง"
-            className="hc-filter-sheet-grid"
+            className="hc-booking-filter-sheet-grid"
           >
             {FILTER_TABS.map((tab) => {
-              const isSelected = selectedFilter === tab.id;
-              const count = tabCounts[tab.id] ?? 0;
+              const isSelected =
+                tab.id === 'all'
+                  ? isAllSelected
+                  : !isAllSelected && selectedList.includes(tab.id);
+              const count =
+                (tab.id === 'all'
+                  ? (tabCounts.all ?? tabCounts.active)
+                  : tabCounts[tab.id]) ?? 0;
               const icon = getBookingFilterIcon(tab.id);
 
               return (
                 <button
                   key={tab.id}
-                  role="tab"
-                  aria-selected={isSelected}
+                  role="checkbox"
+                  aria-checked={isSelected}
                   type="button"
-                  className={`row items-center no-margin hc-filter-sheet-tab-btn ${
+                  className={`row items-center no-margin hc-booking-filter-sheet-tab-btn ${
                     isSelected
                       ? 'primary-container bold is-selected'
                       : 'surface-container-high'
                   }`}
-                  onClick={() => onSelectFilter(tab.id)}
+                  onClick={() => handleToggleStatus(tab.id)}
                 >
-                  <div className="hc-filter-sheet-tab-label-wrap">
+                  <div className="hc-booking-filter-sheet-tab-label-wrap">
                     <i
-                      className={`small hc-filter-sheet-tab-icon ${
+                      className={`small hc-booking-filter-sheet-checkbox-icon ${
+                        isSelected ? 'primary-text' : 'secondary-text'
+                      }`}
+                    >
+                      {isSelected ? 'check_box' : 'check_box_outline_blank'}
+                    </i>
+                    <i
+                      className={`small hc-booking-filter-sheet-tab-icon ${
                         isSelected ? 'primary-text' : 'secondary-text'
                       }`}
                     >
                       {icon}
                     </i>
                     <span
-                      className="small-text hc-filter-sheet-tab-label"
+                      className="small-text hc-booking-filter-sheet-tab-label"
                       title={tab.label}
                     >
                       {tab.label}
@@ -224,7 +274,7 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
                   </div>
 
                   <span
-                    className={`hc-micro-text hc-filter-sheet-tab-count ${
+                    className={`hc-micro-text hc-booking-filter-sheet-tab-count ${
                       isSelected ? 'is-selected' : ''
                     }`}
                   >
@@ -236,47 +286,13 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
           </div>
         </div>
 
-        {/* Section 2: Sorting Options (Structured 2-Column Grid) */}
-        <div className="hc-filter-sheet-section">
-          <div className="small-text secondary-text bold hc-filter-sheet-section-title">
-            จัดเรียงตาม
-          </div>
-
-          <div className="hc-filter-sheet-grid">
-            {SORT_OPTIONS.map((opt) => {
-              const isSelected = selectedSort === opt.key;
-
-              return (
-                <button
-                  key={opt.key}
-                  type="button"
-                  className={`chip small no-margin hc-filter-sheet-sort-btn ${
-                    isSelected
-                      ? 'fill primary bold'
-                      : 'border surface-container-high'
-                  } ${opt.key === 'createdAt_desc' ? 'span-2' : ''}`.trim()}
-                  onClick={() => onSelectSort(opt.key)}
-                >
-                  <i className="tiny hc-filter-sheet-sort-icon">
-                    {isSelected ? 'check' : opt.icon}
-                  </i>
-                  <span className="small-text hc-filter-sheet-sort-label">
-                    {opt.label}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         {/* Footer Actions */}
-        <div className="row items-center no-margin hc-filter-sheet-footer">
+        <div className="row items-center no-margin hc-booking-filter-sheet-footer">
           <button
             type="button"
-            className="transparent secondary-text small-text no-margin hc-filter-sheet-reset-btn"
+            className="transparent secondary-text small-text no-margin hc-booking-filter-sheet-reset-btn"
             onClick={() => {
-              onSelectFilter('active');
-              onSelectSort('startDate_asc');
+              onSelectFilter(['all']);
             }}
             disabled={!isCustomized}
           >
@@ -288,7 +304,7 @@ export const BookingFilterSheet: React.FC<BookingFilterSheetProps> = ({
 
           <button
             type="button"
-            className="primary round no-margin bold hc-filter-sheet-apply-btn"
+            className="primary round no-margin bold hc-booking-filter-sheet-apply-btn"
             onClick={onClose}
           >
             <span>ดูผลลัพธ์</span>

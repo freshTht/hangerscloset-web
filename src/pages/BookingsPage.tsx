@@ -22,6 +22,7 @@ import { BookingCard } from '../components/BookingCard';
 import { BookingInventoryCard } from '../components/BookingInventoryCard';
 import { BookingDateBar } from '../components/BookingDateBar';
 import { BookingCalendar } from '../components/BookingCalendar';
+import { BookingSortDialog } from '../components/BookingSortDialog';
 import { BookingSheet } from '../components/BookingSheet';
 import {
   BookingFilterSheet,
@@ -60,7 +61,7 @@ function findItemBooking(
   bookings: Booking[],
   selectedDate: string,
   isAllDates: boolean,
-  statusFilter?: BookingFilterTab
+  statusFilters?: BookingFilterTab[]
 ): {
   booking: Booking | null;
   lineItem: BookingLineItem | null;
@@ -79,7 +80,7 @@ function findItemBooking(
   }
 
   // If user is specifically viewing the 'returned' tab, check if any booking has returned status
-  if (statusFilter === 'returned') {
+  if (statusFilters?.includes('returned')) {
     for (const b of itemBookings) {
       const match = b.items.find(
         (li) =>
@@ -169,7 +170,8 @@ function matchesBookingSearch(booking: Booking, rawQuery: string): boolean {
 interface BookingsEmptyStateParams {
   layout: 'items' | 'bookings';
   searchQuery: string;
-  statusFilter: BookingFilterTab;
+  statusFilters?: BookingFilterTab[];
+  statusFilter?: BookingFilterTab;
   isAllDates: boolean;
   selectedDate: string;
   onOpenAdd: () => void;
@@ -182,6 +184,7 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
   const {
     layout,
     searchQuery,
+    statusFilters,
     statusFilter,
     isAllDates,
     selectedDate,
@@ -190,6 +193,12 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
     onViewAllDates,
     onResetFilter,
   } = params;
+
+  const currentFilters = statusFilters ?? (statusFilter ? [statusFilter] : ['all']);
+  const isDefaultAll =
+    currentFilters.includes('all') ||
+    currentFilters.includes('active') ||
+    currentFilters.length === 0;
 
   if (searchQuery) {
     return {
@@ -225,75 +234,52 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
     };
   }
 
-  const isDefaultActive = statusFilter === 'active';
-  const secondaryAction = !isDefaultActive
+  const secondaryAction = !isDefaultAll
     ? {
         secondaryActionIcon: 'restart_alt',
         secondaryActionText:
-          layout === 'items' ? 'ดูชุดทั้งหมด' : 'ดูการจองที่กำลังดำเนินการ',
+          layout === 'items' ? 'ดูชุดทั้งหมด' : 'ดูการจองทั้งหมด',
         onSecondaryAction: onResetFilter,
       }
     : {};
 
   if (layout === 'items') {
-    switch (statusFilter) {
-      case 'available':
-        return {
-          icon: 'event_note',
-          title: 'ไม่มีชุดว่างในหมวดหมู่นี้',
-          description:
-            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
-          actionIcon: 'add',
-          actionText: 'สร้างการจองใหม่',
-          onAction: onOpenAdd,
-          ...secondaryAction,
-        };
-      case 'active':
-        return {
-          icon: 'event_note',
-          title: 'ไม่มีรายการชุดที่กำลังดำเนินการ',
-          description:
-            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
-          actionIcon: 'add',
-          actionText: 'สร้างการจองใหม่',
-          onAction: onOpenAdd,
-        };
-      default:
-        return {
-          icon: 'event_note',
-          title: 'ไม่พบรายการชุดในหมวดหมู่นี้',
-          description:
-            'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
-          actionIcon: 'add',
-          actionText: 'สร้างการจองใหม่',
-          onAction: onOpenAdd,
-          ...secondaryAction,
-        };
-    }
-  }
-
-  // layout === 'bookings'
-  switch (statusFilter) {
-    case 'active':
+    if (currentFilters.length === 1 && currentFilters[0] === 'available') {
       return {
         icon: 'event_note',
-        title: 'ไม่มีรายการจองที่กำลังดำเนินการ',
-        description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
-        actionIcon: 'add',
-        actionText: 'สร้างการจองใหม่',
-        onAction: onOpenAdd,
-      };
-    default:
-      return {
-        icon: 'event_note',
-        title: 'ไม่พบรายการจองในหมวดหมู่นี้',
-        description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
+        title: 'ไม่มีชุดว่างในหมวดหมู่นี้',
+        description:
+          'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
         actionIcon: 'add',
         actionText: 'สร้างการจองใหม่',
         onAction: onOpenAdd,
         ...secondaryAction,
       };
+    }
+    return {
+      icon: 'event_note',
+      title: 'ไม่พบชุดในสถานะที่เลือก',
+      description:
+        'ลองเปลี่ยนตัวกรอง หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
+      actionIcon: 'add',
+      actionText: 'สร้างการจองใหม่',
+      onAction: onOpenAdd,
+      ...secondaryAction,
+    };
   }
+
+  // layout === 'bookings'
+  return {
+    icon: 'event_note',
+    title: isDefaultAll
+      ? 'ไม่มีรายการจองที่กำลังดำเนินการ'
+      : 'ไม่พบรายการจองในหมวดหมู่นี้',
+    description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
+    actionIcon: 'add',
+    actionText: 'สร้างการจองใหม่',
+    onAction: onOpenAdd,
+    ...secondaryAction,
+  };
 }
 
 export const BookingsPage: React.FC = () => {
@@ -313,12 +299,13 @@ export const BookingsPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
 
-  const [statusFilter, setStatusFilter] = useState<BookingFilterTab>('active');
+  const [statusFilters, setStatusFilters] = useState<BookingFilterTab[]>(['all']);
   const [listLayout, setListLayout] = useState<BookingListLayout>('items');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortKey, setSortKey] = useState<BookingSortKey>('startDate_asc');
   const [filterSheetOpen, setFilterSheetOpen] = useState(false);
+  const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
   const [pendingStatusConfirm, setPendingStatusConfirm] =
     useState<PendingStatusConfirm | null>(null);
@@ -337,20 +324,23 @@ export const BookingsPage: React.FC = () => {
         bookings,
         selectedDate,
         isAllDates,
-        statusFilter
+        statusFilters
       );
       return { item, ...result };
     });
-  }, [inventoryItems, bookings, selectedDate, isAllDates, statusFilter]);
+  }, [inventoryItems, bookings, selectedDate, isAllDates, statusFilters]);
 
   const filteredItemEntries = useMemo(() => {
+    const isAll =
+      statusFilters.includes('all') ||
+      statusFilters.includes('active') ||
+      statusFilters.length === 0;
+
     const list = itemBookingEntries.filter((entry) => {
-      if (statusFilter === 'active') {
-        // Active shows all items (both available and active bookings)
-      } else if (statusFilter === 'available') {
-        if (entry.status !== 'available') return false;
-      } else {
-        if (entry.status !== statusFilter) return false;
+      if (!isAll) {
+        if (!statusFilters.includes(entry.status as BookingFilterTab)) {
+          return false;
+        }
       }
 
       if (searchQuery.trim()) {
@@ -411,14 +401,19 @@ export const BookingsPage: React.FC = () => {
       }
       return 0;
     });
-  }, [itemBookingEntries, statusFilter, searchQuery, sortKey]);
+  }, [itemBookingEntries, statusFilters, searchQuery, sortKey]);
 
   // Order-centric bookings list
   const filteredBookings = useMemo(() => {
+    const isAll =
+      statusFilters.includes('all') ||
+      statusFilters.includes('active') ||
+      statusFilters.length === 0;
+
     const byDate = isAllDates
       ? bookings
       : bookings.filter((b) => {
-          if (statusFilter === 'returned') {
+          if (!isAll && statusFilters.includes('returned') && !statusFilters.some(s => s !== 'returned')) {
             return (
               (selectedDate >= b.startDate &&
                 selectedDate <= b.cleaningEndDate &&
@@ -431,16 +426,16 @@ export const BookingsPage: React.FC = () => {
 
     const byStatus = byDate.filter((b) => {
       const computed = getEffectiveBookingStatus(b, selectedDate, isAllDates);
-      if (statusFilter === 'active') {
+      if (isAll) {
         return isAllDates ? !isBookingFullyReturned(b) : computed !== 'returned';
       }
-      if (statusFilter === 'available') {
+      if (statusFilters.includes('available') && statusFilters.length === 1) {
         return false;
       }
-      if (statusFilter === 'returned') {
-        return computed === 'returned' || getLatestBookingStatus(b) === 'returned';
-      }
-      return computed === statusFilter;
+      return (
+        statusFilters.includes(computed as BookingFilterTab) ||
+        (statusFilters.includes('returned') && getLatestBookingStatus(b) === 'returned')
+      );
     });
 
     const bySearch = byStatus.filter((b) =>
@@ -456,10 +451,11 @@ export const BookingsPage: React.FC = () => {
       }
       return b.createdAt.localeCompare(a.createdAt);
     });
-  }, [bookings, statusFilter, isAllDates, selectedDate, searchQuery, sortKey]);
+  }, [bookings, statusFilters, isAllDates, selectedDate, searchQuery, sortKey]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<BookingFilterTab, number> = {
+      all: itemBookingEntries.length,
       active: itemBookingEntries.length,
       available: 0,
       reserved: 0,
@@ -735,13 +731,13 @@ export const BookingsPage: React.FC = () => {
             {...getBookingsEmptyStateProps({
               layout: 'items',
               searchQuery,
-              statusFilter,
+              statusFilters,
               isAllDates,
               selectedDate,
               onOpenAdd: handleOpenAdd,
               onClearSearch: () => setSearchQuery(''),
               onViewAllDates: () => setIsAllDates(true),
-              onResetFilter: () => setStatusFilter('active'),
+              onResetFilter: () => setStatusFilters(['all']),
             })}
           />
         );
@@ -773,13 +769,13 @@ export const BookingsPage: React.FC = () => {
           {...getBookingsEmptyStateProps({
             layout: 'bookings',
             searchQuery,
-            statusFilter,
+            statusFilters,
             isAllDates,
             selectedDate,
             onOpenAdd: handleOpenAdd,
             onClearSearch: () => setSearchQuery(''),
             onViewAllDates: () => setIsAllDates(true),
-            onResetFilter: () => setStatusFilter('active'),
+            onResetFilter: () => setStatusFilters(['all']),
           })}
         />
       );
@@ -810,16 +806,21 @@ export const BookingsPage: React.FC = () => {
         selectedDate={selectedDate}
         today={today}
         isAllDates={isAllDates}
-        statusFilter={statusFilter}
+        statusFilter={statusFilters[0] ?? 'all'}
+        statusFilters={statusFilters}
         tabCounts={tabCounts}
+        selectedSort={sortKey}
         filterSheetOpen={filterSheetOpen}
+        sortDialogOpen={sortDialogOpen}
         calendarSheetOpen={calendarSheetOpen}
         onDateChange={(newDate) => {
           setSelectedDate(newDate);
           setIsAllDates(false);
         }}
         onFilterClick={() => setFilterSheetOpen(true)}
+        onSortClick={() => setSortDialogOpen(true)}
         onCalendarClick={() => setCalendarSheetOpen(true)}
+        onSelectSort={setSortKey}
       />
 
       {/* Main Content Area */}
@@ -908,15 +909,24 @@ export const BookingsPage: React.FC = () => {
         onClose={() => setCalendarSheetOpen(false)}
       />
 
-      {/* Booking Filter & Sort Bottom Sheet */}
+      {/* Booking Filter Dialog */}
       <BookingFilterSheet
         isOpen={filterSheetOpen}
-        selectedFilter={statusFilter}
+        selectedFilters={statusFilters}
         tabCounts={tabCounts}
-        selectedSort={sortKey}
-        onSelectFilter={setStatusFilter}
-        onSelectSort={setSortKey}
+        onSelectFilter={setStatusFilters}
         onClose={() => setFilterSheetOpen(false)}
+      />
+
+      {/* Booking Sort Dialog */}
+      <BookingSortDialog
+        isOpen={sortDialogOpen}
+        selectedSort={sortKey}
+        onSelectSort={(newSort) => {
+          setSortKey(newSort);
+          setSortDialogOpen(false);
+        }}
+        onClose={() => setSortDialogOpen(false)}
       />
 
       {/* Booking Add / Edit Sheet */}
