@@ -100,7 +100,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
   if (selectedCustomer && !isCreatingNew) {
     return (
-      <article className="border surface-container-low small-padding no-margin">
+      <div className="border surface-container-low small-padding no-margin hc-customer-selected-card">
         <div className="hc-customer-selected-row">
           <div className="hc-customer-selected-info">
             <i className="primary-text hc-customer-selected-icon">
@@ -132,7 +132,15 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             </button>
           )}
         </div>
-      </article>
+      </div>
+    );
+  }
+
+  if (disabled && !selectedCustomer) {
+    return (
+      <div className="padding secondary-text small-text center-align hc-customer-empty-readonly">
+        ไม่มีข้อมูลลูกค้า
+      </div>
     );
   }
 
@@ -257,12 +265,18 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
               id="customer-search-input"
               type="search"
               value={searchTerm}
+              disabled={disabled}
               onChange={(e) => {
+                if (disabled) return;
                 setSearchTerm(e.target.value);
                 setIsDropdownOpen(true);
               }}
-              onFocus={() => setIsDropdownOpen(true)}
-              onClick={() => setIsDropdownOpen(true)}
+              onFocus={() => {
+                if (!disabled) setIsDropdownOpen(true);
+              }}
+              onClick={() => {
+                if (!disabled) setIsDropdownOpen(true);
+              }}
               placeholder=" "
               autoComplete="off"
             />
@@ -271,7 +285,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
             </label>
           </div>
 
-          {isDropdownOpen && (
+          {isDropdownOpen && !disabled && (
             <div className="card surface-container-high small-padding no-margin medium-elevate hc-customer-dropdown">
               <Stack orientation="column" gap="tiny">
                 {filteredCustomers.length > 0 ? (
@@ -320,6 +334,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
 
         <button
           type="button"
+          disabled={disabled}
           className={`border no-margin medium-text hc-customer-add-btn ${isMobile ? 'mobile' : ''}`.trim()}
           onClick={handleOpenCreateForm}
           title="เพิ่มลูกค้าใหม่"

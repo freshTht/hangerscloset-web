@@ -16,11 +16,12 @@ const sampleInventory: InventoryItem[] = [
     brand: 'Avaalene',
     color: 'Pink',
     size: 'S',
-    imageUrl: '',
+    imageUrl: 'https://example.com/avl01.jpg',
     rentalPrices: [
       { durationDays: 1, price: 80 },
       { durationDays: 3, price: 120 },
       { durationDays: 5, price: 150 },
+      { durationDays: 7, price: 200 },
     ],
     status: 'available',
   },
@@ -30,12 +31,13 @@ const sampleInventory: InventoryItem[] = [
     name: 'Dieu Ann Dress',
     brand: 'Dieu Ann',
     color: 'Beige',
-    size: 'S',
+    size: 'M',
     imageUrl: '',
     rentalPrices: [
       { durationDays: 1, price: 280 },
       { durationDays: 3, price: 300 },
       { durationDays: 5, price: 420 },
+      { durationDays: 7, price: 550 },
     ],
     status: 'available',
   },
@@ -51,12 +53,35 @@ const sampleCustomers: Customer[] = [
   },
 ];
 
+function createMockBooking(overrides: Partial<Booking> = {}): Booking {
+  return {
+    id: 'mock-booking-id',
+    customerId: '',
+    customerName: '',
+    customerPhone: '',
+    customerLineId: null,
+    startDate: today,
+    endDate: addDaysISO(today, 2),
+    cleaningEndDate: addDaysISO(today, 4),
+    durationDays: 3,
+    rentalPrice: 0,
+    deposit: 0,
+    depositRefunded: false,
+    note: null,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    transactionDates: { reserved: today },
+    items: [],
+    ...overrides,
+  };
+}
+
 const conflictingBookings: Booking[] = [
-  {
+  createMockBooking({
     id: 'existing-booking',
-    customerId: 'cust-1',
-    customerName: 'คุณพลอย รัตนากร',
-    customerPhone: '081-234-5678',
+    customerId: 'cust-99',
+    customerName: 'คุณสมชาย ใจดี',
+    customerPhone: '089-999-9999',
     items: [
       {
         itemId: 'inv-2',
@@ -65,27 +90,141 @@ const conflictingBookings: Booking[] = [
         itemImageUrl: '',
       },
     ],
-    transactionDates: {
-      reserved: today,
-    },
-    startDate: today,
-    endDate: addDaysISO(today, 2),
-    cleaningEndDate: addDaysISO(today, 4),
-    durationDays: 3,
     rentalPrice: 300,
-    deposit: 1000,
-    depositRefunded: false,
-    createdAt: '2026-01-01T00:00:00.000Z',
-    updatedAt: '2026-01-01T00:00:00.000Z',
-  },
+  }),
 ];
 
-describe('BookingSheet Component', () => {
-  it('blocks selecting items that have a conflicting booking in the chosen date range', () => {
+describe('BookingSheet Component (Stepless Card-Based)', () => {
+  it('renders the 4 card sections cleanly without wizard steps or stepper bar', () => {
     render(
       <BookingSheet
         isOpen={true}
         mode="add"
+        booking={createMockBooking({
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // No stepper bar or wizard next/prev buttons
+    expect(screen.queryByTestId('wizard-stepper')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wizard-next-step-1')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('wizard-prev-step-2')).not.toBeInTheDocument();
+
+    // Card sections exist (unified Grouped Booking Card, Customer info, Payment)
+    expect(screen.getByTestId('grouped-booking-card-mock-booking-id')).toBeInTheDocument();
+    expect(screen.getByText(/ข้อมูลลูกค้า/)).toBeInTheDocument();
+    expect(screen.getByText(/การชำระเงิน/)).toBeInTheDocument();
+
+    // Deposit field is completely removed
+    expect(screen.queryByLabelText(/เงินมัดจำ/i)).not.toBeInTheDocument();
+  });
+
+  it('displays dates, turnaround date, and suggested prices based on booking durationDays prop', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          durationDays: 5,
+          rentalPrice: 570,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+            {
+              itemId: 'inv-2',
+              itemCode: 'DIA01',
+              itemName: 'Dieu Ann Dress',
+              itemImageUrl: '',
+            },
+          ],
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // 5 days: AVL01=150, DIA01=420 -> Total = 570
+    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
+    expect(priceInput).toHaveValue(570);
+    expect(screen.getByText('฿570')).toBeInTheDocument();
+    expect(screen.getByTestId('grouped-outfit-card-AVL01')).toBeInTheDocument();
+    expect(screen.getByTestId('grouped-outfit-card-DIA01')).toBeInTheDocument();
+  });
+
+  it('displays outfit thumbnail, code, size, color, and status badge in BookingCard carousel', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: 'https://example.com/avl01.jpg',
+            },
+          ],
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTestId('grouped-outfit-card-AVL01')).toBeInTheDocument();
+    expect(screen.getByText('AVL01')).toBeInTheDocument();
+    expect(screen.getByText('Avaalene Beach Set')).toBeInTheDocument();
+    expect(screen.getByText('Avaalene')).toBeInTheDocument();
+    expect(screen.getByText('S')).toBeInTheDocument();
+    expect(screen.getByText('Pink')).toBeInTheDocument();
+    expect(screen.getByTestId('status-badge-AVL01')).toHaveTextContent('จองแล้ว');
+    expect(screen.getByText('฿120')).toBeInTheDocument();
+  });
+
+  it('detects conflicting preselected outfits and disables booking creation', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          customerId: 'cust-1',
+          customerName: 'คุณพลอย รัตนากร',
+          customerPhone: '081-234-5678',
+          rentalPrice: 300,
+          items: [
+            {
+              itemId: 'inv-2',
+              itemCode: 'DIA01',
+              itemName: 'Dieu Ann Dress',
+              itemImageUrl: '',
+            },
+          ],
+        })}
         bookings={conflictingBookings}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
@@ -95,17 +234,148 @@ describe('BookingSheet Component', () => {
     );
 
     expect(
-      screen.getByText(/ติดจองช่วงเวลานี้ \(คุณพลอย รัตนากร\)/i)
+      screen.getByText(/ติดจองช่วงเวลานี้ \(คุณสมชาย ใจดี\)/i)
     ).toBeInTheDocument();
 
-    const dia01Button = screen.getByRole('button', { name: /เลือกชุด DIA01/i });
-    expect(dia01Button).toBeDisabled();
-
-    const avl01Button = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
-    expect(avl01Button).not.toBeDisabled();
+    const submitBtn = screen.getByTestId('submit-booking-button');
+    expect(submitBtn).toBeDisabled();
   });
 
-  it('auto-calculates suggested rental price when items and duration are selected, and submits booking through wizard steps', async () => {
+  it('allows removing an outfit directly from the carousel to resolve conflict or update selection', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          customerId: 'cust-1',
+          customerName: 'คุณพลอย รัตนากร',
+          customerPhone: '081-234-5678',
+          rentalPrice: 420,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+            {
+              itemId: 'inv-2',
+              itemCode: 'DIA01',
+              itemName: 'Dieu Ann Dress',
+              itemImageUrl: '',
+            },
+          ],
+        })}
+        bookings={conflictingBookings}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // DIA01 has a conflict
+    expect(screen.getByTestId('grouped-outfit-card-DIA01')).toBeInTheDocument();
+    expect(screen.getByTestId('submit-booking-button')).toBeDisabled();
+
+    // Click remove button on DIA01
+    const removeDiaBtn = screen.getByTestId('remove-outfit-btn-DIA01');
+    fireEvent.click(removeDiaBtn);
+
+    // DIA01 is removed, conflict is gone, submit button becomes enabled
+    expect(screen.queryByTestId('grouped-outfit-card-DIA01')).not.toBeInTheDocument();
+    expect(screen.getByTestId('grouped-outfit-card-AVL01')).toBeInTheDocument();
+    expect(screen.getByTestId('submit-booking-button')).not.toBeDisabled();
+  });
+
+  it('displays discount text directly below rental price input when price is reduced below suggested total', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          rentalPrice: 300,
+          items: [
+            {
+              itemId: 'inv-2',
+              itemCode: 'DIA01',
+              itemName: 'Dieu Ann Dress',
+              itemImageUrl: '',
+            },
+          ],
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
+    expect(priceInput).toHaveValue(300);
+    expect(screen.queryByTestId('booking-discount-text')).not.toBeInTheDocument();
+
+    // Edit price from 300 to 250 (50 baht discount)
+    fireEvent.change(priceInput, { target: { value: '250' } });
+    expect(screen.getByTestId('booking-discount-text')).toHaveTextContent('ลดราคา 50 ฿');
+
+    // Reset button appears
+    const resetBtn = screen.getByRole('button', { name: /ใช้ราคาแนะนำ/i });
+    expect(resetBtn).toBeInTheDocument();
+    fireEvent.click(resetBtn);
+
+    expect(priceInput).toHaveValue(300);
+    expect(screen.queryByTestId('booking-discount-text')).not.toBeInTheDocument();
+  });
+
+  it('disables submit button when no customer is selected or price is invalid', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    const submitBtn = screen.getByTestId('submit-booking-button');
+    // Disabled initially because no customer is selected
+    expect(submitBtn).toBeDisabled();
+
+    // Select customer
+    const customerInput = screen.getByLabelText(/ค้นหาลูกค้า/i);
+    fireEvent.focus(customerInput);
+    fireEvent.click(screen.getByText('คุณพลอย รัตนากร'));
+
+    // Now submit button is enabled
+    expect(submitBtn).not.toBeDisabled();
+
+    // Change rental price to negative
+    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
+    fireEvent.change(priceInput, { target: { value: '-50' } });
+    expect(submitBtn).toBeDisabled();
+
+    // Restore valid price
+    fireEvent.change(priceInput, { target: { value: '100' } });
+    expect(submitBtn).not.toBeDisabled();
+  });
+
+  it('opens confirmation modal on submit, allows dismissing with "ยกเลิก", and submits on "ยืนยัน"', async () => {
     const onSubmitSpy = vi.fn().mockResolvedValue(undefined);
     const onCloseSpy = vi.fn();
 
@@ -113,6 +383,17 @@ describe('BookingSheet Component', () => {
       <BookingSheet
         isOpen={true}
         mode="add"
+        booking={createMockBooking({
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        })}
         bookings={[]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
@@ -121,35 +402,33 @@ describe('BookingSheet Component', () => {
       />
     );
 
-    // Step 1: Select outfits and duration
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด DIA01/i }));
-
-    // Change duration to 5 days
-    fireEvent.click(screen.getByTestId('filter-duration-button'));
-    fireEvent.click(screen.getByRole('button', { name: '5 วัน' }));
-
-    // Advance to Step 2 (Customer & Price)
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-
-    // Step 2: Select customer
+    // Select customer
     const customerInput = screen.getByLabelText(/ค้นหาลูกค้า/i);
     fireEvent.focus(customerInput);
     fireEvent.click(screen.getByText('คุณพลอย รัตนากร'));
 
-    // Check auto-calculated suggested price (5 days: 150 + 420 = 570)
-    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
-    expect(priceInput).toHaveValue(570);
+    // Click submit button in footer
+    const submitBtn = screen.getByTestId('submit-booking-button');
+    fireEvent.click(submitBtn);
 
-    // Advance to Step 3 (Confirmation & Review)
-    fireEvent.click(screen.getByTestId('wizard-next-step-2'));
+    // Compact confirmation modal appears
+    const confirmDialog = screen.getByTestId('confirm-booking-dialog');
+    expect(confirmDialog).toBeInTheDocument();
+    expect(confirmDialog).toHaveTextContent(
+      'ยืนยันการจอง 1 ชุด สำหรับ คุณพลอย รัตนากร ยอดชำระ ฿120?'
+    );
 
-    // Step 3: Review summary contains customer and item details
-    expect(screen.getByText('สรุปยอดชำระ')).toBeInTheDocument();
-    expect(screen.getByText(/5 วัน/)).toBeInTheDocument();
+    // Dismiss with "ยกเลิก" in modal
+    const cancelModalBtn = screen.getByTestId('confirm-booking-cancel');
+    fireEvent.click(cancelModalBtn);
 
-    // Confirm & Submit booking
-    fireEvent.click(screen.getByTestId('wizard-submit-booking'));
+    expect(screen.queryByTestId('confirm-booking-dialog')).not.toBeInTheDocument();
+    expect(onSubmitSpy).not.toHaveBeenCalled();
+
+    // Click submit again and confirm
+    fireEvent.click(submitBtn);
+    const confirmModalBtn = screen.getByTestId('confirm-booking-submit');
+    fireEvent.click(confirmModalBtn);
 
     await waitFor(() => {
       expect(onSubmitSpy).toHaveBeenCalledTimes(1);
@@ -159,22 +438,34 @@ describe('BookingSheet Component', () => {
       expect.objectContaining({
         customerId: 'cust-1',
         customerName: 'คุณพลอย รัตนากร',
-        durationDays: 5,
-        rentalPrice: 570,
-        deposit: 1000,
+        customerPhone: '081-234-5678',
+        durationDays: 3,
+        rentalPrice: 120,
+        deposit: 0,
       })
     );
     expect(onCloseSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('supports inline creation of a new customer inside CustomerPicker during wizard step 2', async () => {
-    const onAddCustomerSpy = vi.fn().mockResolvedValue('new-cust-99');
+  it('supports inline customer creation in Card 3', async () => {
+    const onAddCustomerSpy = vi.fn().mockResolvedValue('new-cust-55');
     const onSubmitSpy = vi.fn().mockResolvedValue(undefined);
 
     render(
       <BookingSheet
         isOpen={true}
         mode="add"
+        booking={createMockBooking({
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        })}
         bookings={[]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
@@ -184,18 +475,13 @@ describe('BookingSheet Component', () => {
       />
     );
 
-    // Step 1: Select an item and proceed to Step 2
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-
-    // Step 2: Create new customer inline
     fireEvent.click(screen.getByRole('button', { name: /\+ เพิ่มลูกค้าใหม่/i }));
 
     fireEvent.change(screen.getByLabelText(/ชื่อลูกค้า \*/i), {
-      target: { value: 'คุณโบว์ เมลดา' },
+      target: { value: 'คุณนภา รุ่งโรจน์' },
     });
     fireEvent.change(screen.getByLabelText(/เบอร์โทรศัพท์ \*/i), {
-      target: { value: '082-333-4444' },
+      target: { value: '089-111-2233' },
     });
 
     fireEvent.click(screen.getByRole('button', { name: /บันทึกลูกค้าใหม่/i }));
@@ -203,81 +489,39 @@ describe('BookingSheet Component', () => {
     await waitFor(() => {
       expect(onAddCustomerSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          name: 'คุณโบว์ เมลดา',
-          phone: '082-333-4444',
+          name: 'คุณนภา รุ่งโรจน์',
+          phone: '089-111-2233',
         })
       );
     });
 
-    // Proceed to Step 3 and submit
-    fireEvent.click(screen.getByTestId('wizard-next-step-2'));
-    fireEvent.click(screen.getByTestId('wizard-submit-booking'));
+    // Customer profile chip is shown (in CustomerPicker and BookingCard preview)
+    expect(screen.getAllByText('คุณนภา รุ่งโรจน์').length).toBeGreaterThan(0);
+
+    // Submit booking
+    fireEvent.click(screen.getByTestId('submit-booking-button'));
+    fireEvent.click(screen.getByTestId('confirm-booking-submit'));
 
     await waitFor(() => {
       expect(onSubmitSpy).toHaveBeenCalledWith(
         expect.objectContaining({
-          customerId: 'new-cust-99',
-          customerName: 'คุณโบว์ เมลดา',
-          customerPhone: '082-333-4444',
+          customerId: 'new-cust-55',
+          customerName: 'คุณนภา รุ่งโรจน์',
+          customerPhone: '089-111-2233',
         })
       );
     });
   });
 
-  it('navigates backward and forward through wizard steps and responds to browser popstate', async () => {
-    const onCloseSpy = vi.fn();
-    render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={[]}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={onCloseSpy}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Starts on Step 1
-    expect(screen.getByTestId('booking-date-filter-bar')).toBeInTheDocument();
-    expect(screen.getByTestId('wizard-outfit-list')).toBeInTheDocument();
-
-    // Select item
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-
-    // Advance to Step 2
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-    expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
-
-    // Go back to Step 1 using in-wizard Prev button
-    fireEvent.click(screen.getByTestId('wizard-prev-step-2'));
-    expect(screen.getByTestId('booking-date-filter-bar')).toBeInTheDocument();
-
-    // Advance back to Step 2
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-    expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
-
-    // Simulate browser back button (popstate event with step 1)
-    fireEvent(window, new PopStateEvent('popstate', { state: { bookingWizardStep: 1 } }));
-
-    await waitFor(() => {
-      expect(screen.getByTestId('booking-date-filter-bar')).toBeInTheDocument();
-    });
-
-    // Simulate browser back button past step 1 (popstate event without step)
-    fireEvent(window, new PopStateEvent('popstate', { state: null }));
-
-    await waitFor(() => {
-      expect(onCloseSpy).toHaveBeenCalled();
-    });
-  });
-
-  it('renders existing single-form layout when in edit mode', () => {
-    const existingBooking: Booking = {
-      id: 'book-edit-1',
+  it('renders correctly in edit mode with "บันทึกการแก้ไข" and handles deletion', async () => {
+    const onDeleteSpy = vi.fn().mockResolvedValue(undefined);
+    const existingBooking: Booking = createMockBooking({
+      id: 'book-edit-99',
       customerId: 'cust-1',
       customerName: 'คุณพลอย รัตนากร',
       customerPhone: '081-234-5678',
+      rentalPrice: 120,
+      note: 'นัดรับที่ร้าน',
       items: [
         {
           itemId: 'inv-1',
@@ -286,221 +530,60 @@ describe('BookingSheet Component', () => {
           itemImageUrl: '',
         },
       ],
-      transactionDates: { reserved: today },
-      startDate: today,
-      endDate: addDaysISO(today, 2),
-      cleaningEndDate: addDaysISO(today, 4),
-      durationDays: 3,
-      rentalPrice: 120,
-      deposit: 1000,
-      depositRefunded: false,
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z',
-    };
+    });
 
     render(
       <BookingSheet
         isOpen={true}
         mode="edit"
         booking={existingBooking}
-        bookings={[]}
+        bookings={[existingBooking]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
+        onDelete={onDeleteSpy}
         onClose={vi.fn()}
         onSubmit={vi.fn()}
       />
     );
 
-    // In edit mode: heading is "แก้ไขการจอง" and wizard stepper is NOT rendered
-    expect(screen.getByRole('heading', { name: /แก้ไขการจอง/i })).toBeInTheDocument();
-    expect(screen.queryByTestId('wizard-stepper')).not.toBeInTheDocument();
-    expect(screen.getByLabelText(/วันรับชุด \*/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /บันทึก/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'แก้ไขการจอง' })).toBeInTheDocument();
+    expect(screen.getByTestId('submit-booking-button')).toHaveTextContent('บันทึกการแก้ไข');
+
+    // Delete button exists
+    const deleteBtn = screen.getByTestId('delete-booking-button');
+    expect(deleteBtn).toBeInTheDocument();
+    fireEvent.click(deleteBtn);
+
+    // Delete confirmation appears
+    expect(screen.getByText(/ยืนยันการลบรายการนี้/i)).toBeInTheDocument();
+    const confirmDeleteBtn = screen.getByTestId('confirm-delete-button');
+    fireEvent.click(confirmDeleteBtn);
+
+    await waitFor(() => {
+      expect(onDeleteSpy).toHaveBeenCalledWith('book-edit-99');
+    });
   });
 
-  it('unwinds browser history stack when closing wizard via close button so no ghost entries remain', () => {
-    const historyGoSpy = vi.spyOn(window.history, 'go').mockImplementation(() => {});
+  it('renders read-only view sheet when mode is view and supports "ปิด" and "แก้ไขการจอง"', () => {
     const onCloseSpy = vi.fn();
+    const onEditBookingSpy = vi.fn();
 
-    render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={[]}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={onCloseSpy}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Advanced to step 2
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-
-    // Click close button on step 2
-    fireEvent.click(screen.getByRole('button', { name: /ปิดหน้าต่าง/i }));
-
-    // Should call history.go(-2) to rewind both pushed steps
-    expect(historyGoSpy).toHaveBeenCalledWith(-2);
-    expect(onCloseSpy).toHaveBeenCalledTimes(1);
-
-    historyGoSpy.mockRestore();
-  });
-
-  it('detects conflict and disables next button when date is changed to overlap existing booking', async () => {
-    // Existing booking on today + 5 days for AVL01
-    const futureBookingDate = addDaysISO(today, 5);
-    const existingBookings: Booking[] = [
-      {
-        id: 'future-b1',
-        customerId: 'cust-1',
-        customerName: 'คุณสมชาย',
-        customerPhone: '081-111-2222',
-        items: [
-          {
-            itemId: 'inv-1',
-            itemCode: 'AVL01',
-            itemName: 'Avaalene Beach Set',
-            itemImageUrl: '',
-          },
-        ],
-        transactionDates: { reserved: futureBookingDate },
-        startDate: futureBookingDate,
-        endDate: addDaysISO(futureBookingDate, 2),
-        cleaningEndDate: addDaysISO(futureBookingDate, 4),
-        durationDays: 3,
-        rentalPrice: 120,
-        deposit: 1000,
-        depositRefunded: false,
-        createdAt: '2026-01-01T00:00:00.000Z',
-        updatedAt: '2026-01-01T00:00:00.000Z',
-      },
-    ];
-
-    render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={existingBookings}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={vi.fn()}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Step 1: select AVL01 on today (no conflict initially)
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    const nextBtn = screen.getByTestId('wizard-next-step-1');
-    expect(nextBtn).not.toBeDisabled();
-
-    // Now change start date to futureBookingDate
-    const startDateInput = screen.getByLabelText(/เลือกวันรับชุด/i);
-    fireEvent.change(startDateInput, { target: { value: futureBookingDate } });
-
-    // Next button should now be disabled because AVL01 is conflicted
-    expect(nextBtn).toBeDisabled();
-    expect(screen.getByText(/มีชุดที่ติดจองในช่วงเวลานี้ \(AVL01\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/ติดจอง \(คลิกเพื่อยกเลิก\)/i)).toBeInTheDocument();
-
-    // Unselect AVL01 using footer chip
-    const avlChip = screen.getByTitle('คลิกเพื่อยกเลิกการเลือกชุดนี้');
-    fireEvent.click(avlChip);
-
-    // Conflict banner disappears
-    expect(screen.queryByText(/มีชุดที่ติดจองในช่วงเวลานี้/i)).not.toBeInTheDocument();
-  });
-
-  it('clamps return date so it cannot be before pickup date', () => {
-    render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={[]}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={vi.fn()}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Attempt to set end date earlier than start date
-    const endDateInput = screen.getByLabelText(/เลือกวันส่งคืน/i);
-    const pastDate = addDaysISO(today, -5);
-    fireEvent.change(endDateInput, { target: { value: pastDate } });
-
-    // Input should be clamped to start date (today), not pastDate
-    expect(endDateInput).toHaveValue(today);
-  });
-
-  it('preserves user input across parent re-renders while sheet is open', () => {
-    const { rerender } = render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={[]}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={vi.fn()}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Select outfit and advance to Step 2
-    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    fireEvent.click(screen.getByTestId('wizard-next-step-1'));
-
-    // User types in note in Step 2
-    const noteInput = screen.getByLabelText(/หมายเหตุการจัดส่ง/i);
-    fireEvent.change(noteInput, { target: { value: 'ส่งที่โรงแรมตอนเที่ยง' } });
-
-    // Simulate parent re-render with new bookings/customers array references
-    rerender(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        bookings={[...conflictingBookings]}
-        inventoryItems={[...sampleInventory]}
-        customers={[...sampleCustomers]}
-        onClose={vi.fn()}
-        onSubmit={vi.fn()}
-      />
-    );
-
-    // Still on Step 2 and note is preserved!
-    expect(screen.getByLabelText(/หมายเหตุการจัดส่ง/i)).toHaveValue('ส่งที่โรงแรมตอนเที่ยง');
-    expect(screen.getByTestId('wizard-prev-step-2')).toBeInTheDocument();
-  });
-
-  it('renders read-only view sheet when mode is view', () => {
-    const handleClose = vi.fn();
-    const sampleBooking: Booking = {
+    const sampleBooking: Booking = createMockBooking({
       id: 'book-view-1',
       customerId: 'cust-1',
       customerName: 'คุณพลอย รัตนากร',
       customerPhone: '081-234-5678',
-      startDate: today,
-      endDate: addDaysISO(today, 2),
-      cleaningEndDate: addDaysISO(today, 4),
-      durationDays: 3,
       rentalPrice: 300,
-      deposit: 1000,
-      depositRefunded: true,
       note: 'คืนชุดเรียบร้อย',
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z',
-      transactionDates: { reserved: today, returned: addDaysISO(today, 2) },
       items: [
         {
           itemId: 'inv-2',
           itemCode: 'DIA01',
           itemName: 'Dieu Ann Dress',
           itemImageUrl: '',
-          conditionNote: 'สภาพสมบูรณ์',
         },
       ],
-    };
+    });
 
     render(
       <BookingSheet
@@ -510,163 +593,120 @@ describe('BookingSheet Component', () => {
         bookings={[sampleBooking]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
-        onClose={handleClose}
+        onClose={onCloseSpy}
         onSubmit={vi.fn()}
+        onEditBooking={onEditBookingSpy}
       />
     );
 
-    // Title should be "รายละเอียดการจอง"
     expect(screen.getByRole('heading', { name: 'รายละเอียดการจอง' })).toBeInTheDocument();
 
-    // Inputs inside form should be disabled
-    const noteInput = screen.getByLabelText(/หมายเหตุการจัดส่ง \/ การจอง/i);
-    expect(noteInput).toBeDisabled();
+    // Inputs disabled
+    expect(screen.getByLabelText(/ราคาเช่ารวม/i)).toBeDisabled();
+    expect(screen.getByLabelText(/หมายเหตุการจอง \/ จัดส่ง/i)).toBeDisabled();
 
-    // Outfit picker / search should not be visible in view mode
-    expect(screen.queryByLabelText(/ค้นหาชุดในคลัง/i)).not.toBeInTheDocument();
-
-    // Delete button should not be visible
-    expect(screen.queryByRole('button', { name: /ลบการจอง/i })).not.toBeInTheDocument();
-
-    // Footer should display a single "ปิด" button
+    // Footer has "ปิด" and "แก้ไขการจอง"
     const closeBtn = screen.getByRole('button', { name: 'ปิด' });
     expect(closeBtn).toBeInTheDocument();
+
+    const editBtn = screen.getByRole('button', { name: /แก้ไขการจอง/i });
+    expect(editBtn).toBeInTheDocument();
+    fireEvent.click(editBtn);
+
+    expect(onEditBookingSpy).toHaveBeenCalledWith(sampleBooking);
+
     fireEvent.click(closeBtn);
-    expect(handleClose).toHaveBeenCalled();
+    expect(onCloseSpy).toHaveBeenCalled();
   });
 
-  it('locks navigation to Step 2 & 3 when lockStepMin=2 and closes cleanly on Step 1 stepper click', () => {
-    const handleClose = vi.fn();
-    const historyGoSpy = vi.spyOn(window.history, 'go').mockImplementation(() => {});
+  it('displays accurate suggested price when opened in edit mode', () => {
+    const bookingAtSuggestedPrice: Booking = createMockBooking({
+      id: 'book-suggested-1',
+      customerId: 'cust-1',
+      customerName: 'คุณพลอย รัตนากร',
+      customerPhone: '081-234-5678',
+      durationDays: 5,
+      rentalPrice: 150, // AVL01 5-day suggested price is 150
+      items: [
+        {
+          itemId: 'inv-1',
+          itemCode: 'AVL01',
+          itemName: 'Avaalene Beach Set',
+          itemImageUrl: '',
+        },
+      ],
+    });
 
     render(
       <BookingSheet
         isOpen={true}
-        mode="add"
-        initialStep={2}
-        lockStepMin={2}
-        allowStepBackTo1={false}
-        booking={{
-          id: '',
-          customerId: '',
-          customerName: '',
-          customerPhone: '',
-          startDate: today,
-          endDate: addDaysISO(today, 2),
-          cleaningEndDate: addDaysISO(today, 4),
-          durationDays: 3,
-          rentalPrice: 120,
-          deposit: 1000,
-          depositRefunded: false,
-          createdAt: '',
-          updatedAt: '',
-          transactionDates: { reserved: today },
-          items: [
-            {
-              itemId: 'inv-1',
-              itemCode: 'AVL01',
-              itemName: 'Avaalene Beach Set',
-              itemImageUrl: '',
-            },
-          ],
-        }}
-        bookings={[]}
+        mode="edit"
+        booking={bookingAtSuggestedPrice}
+        bookings={[bookingAtSuggestedPrice]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
-        onClose={handleClose}
+        onClose={vi.fn()}
         onSubmit={vi.fn()}
       />
     );
 
-    // Initial step is Step 2
-    expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
-
-    // Step 1 stepper button reflects restriction with close icon
-    const stepper = screen.getByTestId('wizard-stepper');
-    expect(stepper).toBeInTheDocument();
-    const step1Btn = screen.getByRole('button', { name: /เลือกชุด/i });
-    expect(step1Btn.querySelector('i')).toHaveTextContent('close');
-
-    // Tapping Step 1 stepper button closes the sheet
-    fireEvent.click(step1Btn);
-    expect(handleClose).toHaveBeenCalledTimes(1);
-
-    historyGoSpy.mockRestore();
+    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
+    expect(priceInput).toHaveValue(150);
+    expect(screen.queryByTestId('booking-discount-text')).not.toBeInTheDocument();
   });
 
-  it('closes cleanly when tapping "ย้อนกลับ" on Step 2 when lockStepMin=2', () => {
-    const handleClose = vi.fn();
-    const historyGoSpy = vi.spyOn(window.history, 'go').mockImplementation(() => {});
+  it('renders read-only placeholder in Card 3 when in view mode and customer is null', () => {
+    const bookingWithoutCustomer: Booking = createMockBooking({
+      id: 'book-nocust-1',
+      customerId: '',
+      customerName: '',
+      customerPhone: '',
+      items: [
+        {
+          itemId: 'inv-1',
+          itemCode: 'AVL01',
+          itemName: 'Avaalene Beach Set',
+          itemImageUrl: '',
+        },
+      ],
+    });
 
     render(
       <BookingSheet
         isOpen={true}
-        mode="add"
-        initialStep={2}
-        lockStepMin={2}
-        allowStepBackTo1={false}
-        booking={{
-          id: '',
-          customerId: '',
-          customerName: '',
-          customerPhone: '',
-          startDate: today,
-          endDate: addDaysISO(today, 2),
-          cleaningEndDate: addDaysISO(today, 4),
-          durationDays: 3,
-          rentalPrice: 120,
-          deposit: 1000,
-          depositRefunded: false,
-          createdAt: '',
-          updatedAt: '',
-          transactionDates: { reserved: today },
-          items: [
-            {
-              itemId: 'inv-1',
-              itemCode: 'AVL01',
-              itemName: 'Avaalene Beach Set',
-              itemImageUrl: '',
-            },
-          ],
-        }}
-        bookings={[]}
+        mode="view"
+        booking={bookingWithoutCustomer}
+        bookings={[bookingWithoutCustomer]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
-        onClose={handleClose}
+        onClose={vi.fn()}
         onSubmit={vi.fn()}
       />
     );
 
-    // Tapping "ย้อนกลับ" on Step 2 calls handleCloseCleanly and closes the sheet
-    const prevBtn = screen.getByTestId('wizard-prev-step-2');
-    fireEvent.click(prevBtn);
-    expect(handleClose).toHaveBeenCalledTimes(1);
-
-    historyGoSpy.mockRestore();
+    // Shows read-only text without rendering search input or "+ เพิ่มลูกค้าใหม่" button
+    expect(screen.getByText('ไม่มีข้อมูลลูกค้า')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/ค้นหาลูกค้า/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /\+ เพิ่มลูกค้าใหม่/i })).not.toBeInTheDocument();
   });
 
-  it('allows navigation between Step 2 and Step 3 when lockStepMin=2 and going back from Step 3 returns to Step 2', () => {
+  it('shows loading indicator on confirm button while submitting and disables actions until completion', async () => {
+    let resolveSubmit: () => void = () => {};
+    const submitPromise = new Promise<void>((resolve) => {
+      resolveSubmit = resolve;
+    });
+    const onSubmitSpy = vi.fn().mockReturnValue(submitPromise);
+    const onCloseSpy = vi.fn();
+
     render(
       <BookingSheet
         isOpen={true}
         mode="add"
-        initialStep={2}
-        lockStepMin={2}
-        booking={{
-          id: '',
+        booking={createMockBooking({
           customerId: 'cust-1',
           customerName: 'คุณพลอย รัตนากร',
           customerPhone: '081-234-5678',
-          startDate: today,
-          endDate: addDaysISO(today, 2),
-          cleaningEndDate: addDaysISO(today, 4),
-          durationDays: 3,
           rentalPrice: 120,
-          deposit: 1000,
-          depositRefunded: false,
-          createdAt: '',
-          updatedAt: '',
-          transactionDates: { reserved: today },
           items: [
             {
               itemId: 'inv-1',
@@ -675,7 +715,61 @@ describe('BookingSheet Component', () => {
               itemImageUrl: '',
             },
           ],
-        }}
+        })}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={onCloseSpy}
+        onSubmit={onSubmitSpy}
+      />
+    );
+
+    // Click submit in sheet footer
+    fireEvent.click(screen.getByTestId('submit-booking-button'));
+
+    // Confirmation dialog appears
+    const confirmModal = screen.getByTestId('confirm-booking-dialog');
+    expect(confirmModal).toBeInTheDocument();
+
+    // Click confirm in modal
+    const confirmBtn = screen.getByTestId('confirm-booking-submit');
+    const cancelBtn = screen.getByTestId('confirm-booking-cancel');
+    fireEvent.click(confirmBtn);
+
+    // Modal stays visible and buttons are disabled with loading indicator
+    expect(confirmBtn).toBeDisabled();
+    expect(cancelBtn).toBeDisabled();
+    expect(confirmBtn.querySelector('.loading-indicator')).toBeInTheDocument();
+    expect(onCloseSpy).not.toHaveBeenCalled();
+
+    // Resolve submission
+    resolveSubmit();
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('confirm-booking-dialog')).not.toBeInTheDocument();
+      expect(onCloseSpy).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('renders confirmation dialog properly with long customer name and emoji', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        booking={createMockBooking({
+          customerId: 'cust-long',
+          customerName: 'คุณอภิสิทธิ์ วรวงศ์ตระกูลไพศาล 🌸 (VIP)',
+          customerPhone: '089-999-8888',
+          rentalPrice: 120,
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        })}
         bookings={[]}
         inventoryItems={sampleInventory}
         customers={sampleCustomers}
@@ -684,64 +778,11 @@ describe('BookingSheet Component', () => {
       />
     );
 
-    // Step 2 is active, select customer to enable Next button
-    const customerInput = screen.getByLabelText(/ค้นหาลูกค้า/i);
-    fireEvent.focus(customerInput);
-    fireEvent.click(screen.getByText('คุณพลอย รัตนากร'));
-
-    // Advance to Step 3
-    fireEvent.click(screen.getByTestId('wizard-next-step-2'));
-    expect(screen.getByText('สรุปยอดชำระ')).toBeInTheDocument();
-
-    // On Step 3, clicking "ย้อนกลับ" navigates back to Step 2 (does not close)
-    fireEvent.click(screen.getByTestId('wizard-prev-step-3'));
-    expect(screen.getByTestId('wizard-next-step-2')).toBeInTheDocument();
-    expect(screen.getByText('คุณพลอย รัตนากร')).toBeInTheDocument();
-  });
-
-  it('closes cleanly on browser popstate event when popping past lockStepMin', () => {
-    const handleClose = vi.fn();
-    render(
-      <BookingSheet
-        isOpen={true}
-        mode="add"
-        initialStep={2}
-        lockStepMin={2}
-        allowStepBackTo1={false}
-        booking={{
-          id: '',
-          customerId: 'cust-1',
-          customerName: 'คุณพลอย รัตนากร',
-          customerPhone: '081-234-5678',
-          startDate: today,
-          endDate: addDaysISO(today, 2),
-          cleaningEndDate: addDaysISO(today, 4),
-          durationDays: 3,
-          rentalPrice: 120,
-          deposit: 1000,
-          depositRefunded: false,
-          createdAt: '',
-          updatedAt: '',
-          transactionDates: { reserved: today },
-          items: [
-            {
-              itemId: 'inv-1',
-              itemCode: 'AVL01',
-              itemName: 'Avaalene Beach Set',
-              itemImageUrl: '',
-            },
-          ],
-        }}
-        bookings={[]}
-        inventoryItems={sampleInventory}
-        customers={sampleCustomers}
-        onClose={handleClose}
-        onSubmit={vi.fn()}
-      />
+    fireEvent.click(screen.getByTestId('submit-booking-button'));
+    const confirmModal = screen.getByTestId('confirm-booking-dialog');
+    expect(confirmModal).toBeInTheDocument();
+    expect(confirmModal).toHaveTextContent(
+      'ยืนยันการจอง 1 ชุด สำหรับ คุณอภิสิทธิ์ วรวงศ์ตระกูลไพศาล 🌸 (VIP) ยอดชำระ ฿120?'
     );
-
-    // Browser back dispatches popstate with step 1, which is below lockStepMin=2
-    fireEvent(window, new PopStateEvent('popstate', { state: { bookingWizardStep: 1 } }));
-    expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

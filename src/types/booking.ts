@@ -14,6 +14,9 @@ export interface BookingLineItem {
   itemName: string;
   itemImageUrl: string;
   conditionNote?: string | null;
+  status?: BookingItemStatus | null;
+  returnedDate?: string | null;
+  cleaningEndDate?: string | null;
 }
 
 export interface Booking {
@@ -40,8 +43,11 @@ export {
   BOOKING_STATUS_ORDER,
   BOOKING_STATUS_META,
   getBookingStatusOnDate,
+  getItemStatusOnDate,
   getLatestBookingStatus,
   getEffectiveBookingStatus,
+  getEffectiveBookingStatusInfo,
+  getBookingReturnProgress,
   getSubsequentStatusBlock,
   normalizeTransactionDates,
   isBookingFullyReturned,
@@ -53,4 +59,5 @@ export {
   formatDateThaiShortWithYear,
   formatDateThaiFull,
 } from '../lib/bookingAvailability';
+export type { EffectiveBookingStatusInfo } from '../lib/bookingAvailability';
 

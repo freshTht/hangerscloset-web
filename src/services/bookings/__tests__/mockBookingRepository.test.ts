@@ -125,25 +125,86 @@ describe('MockBookingRepository & Availability Helpers', () => {
     );
     expect(excludedSelf).toHaveLength(0);
 
-    // Once booking is returned, it no longer blocks availability
+    // When item-1 is returned on 2026-03-14, its cleaning window is until 2026-03-16
     await repo.updateItemStatus('b1', 'item-1', 'returned', undefined, '2026-03-14');
     const updatedBookings = await repo.getAll();
-    const afterReturn = getConflictingBookingsForItem(
+    // After cleaningEndDate (2026-03-17 onwards), it is available!
+    const afterCleaning = getConflictingBookingsForItem(
       'item-1',
-      '2026-03-10',
-      '2026-03-14',
+      '2026-03-17',
+      '2026-03-20',
       updatedBookings
     );
-    expect(afterReturn).toHaveLength(0);
+    expect(afterCleaning).toHaveLength(0);
+
+    // During its cleaning window (2026-03-15 to 2026-03-16), it still conflicts
+    const duringCleaning = getConflictingBookingsForItem(
+      'item-1',
+      '2026-03-15',
+      '2026-03-17',
+      updatedBookings
+    );
+    expect(duringCleaning).toHaveLength(1);
   });
 
-  it('isBookingFullyReturned returns true when booking has returned in transactionDates', async () => {
+  it('isBookingFullyReturned tracks partial and full returns accurately', async () => {
     let bookings = await repo.getAll();
     expect(isBookingFullyReturned(bookings[0])).toBe(false);
 
+    // b1 has 2 items: item-1 and item-2. Returning only item-1 leaves b1 partially returned
     await repo.updateItemStatus('b1', 'item-1', 'returned', undefined, '2026-03-14');
     bookings = await repo.getAll();
+    expect(isBookingFullyReturned(bookings[0])).toBe(false);
+
+    // Returning item-2 marks the booking fully returned and sets transactionDates.returned and cleaningEndDate
+    await repo.updateItemStatus('b1', 'item-2', 'returned', undefined, '2026-03-14');
+    bookings = await repo.getAll();
     expect(isBookingFullyReturned(bookings[0])).toBe(true);
+    expect(bookings[0].transactionDates.returned).toBe('2026-03-14');
+    expect(bookings[0].cleaningEndDate).toBe('2026-03-16');
+  });
+
+  it('updateItemStatus supports matching by itemCode as well as itemId', async () => {
+    // b1 has item-1 with itemCode 'DIA01'
+    await repo.updateItemStatus('b1', 'DIA01', 'pending_return', 'หมายเหตุ', '2026-03-12');
+    const [booking] = await repo.getAll();
+    const item1 = booking.items.find((it) => it.itemId === 'item-1');
+    expect(item1?.status).toBe('pending_return');
+    expect(item1?.conditionNote).toBe('หมายเหตุ');
+  });
+
+  it('updateBookingStatus atomically advances all remaining items and updates cleaningEndDate on return', async () => {
+    await repo.updateBookingStatus('b1', 'returned', '2026-03-14');
+    const [booking] = await repo.getAll();
+    expect(isBookingFullyReturned(booking)).toBe(true);
+    expect(booking.items.every((it) => it.status === 'returned')).toBe(true);
+    expect(booking.transactionDates.returned).toBe('2026-03-14');
+    expect(booking.cleaningEndDate).toBe('2026-03-16');
+  });
+
+  it('addBooking throws an error when attempting to double-book an item during an active booking window', async () => {
+    await expect(
+      repo.addBooking({
+        customerId: 'c99',
+        customerName: 'คุณทดสอบ',
+        customerPhone: '081-111-2222',
+        items: [
+          {
+            itemId: 'item-1',
+            itemCode: 'DIA01',
+            itemName: 'Dieu Ann Dress',
+            itemImageUrl: '',
+          },
+        ],
+        startDate: '2026-03-11',
+        endDate: '2026-03-13',
+        cleaningEndDate: '2026-03-15',
+        durationDays: 3,
+        rentalPrice: 300,
+        deposit: 0,
+        depositRefunded: false,
+      })
+    ).rejects.toThrow(/ติดจองในช่วงเวลาดังกล่าว/);
   });
 
   it('addBooking and deleteBooking work and notify subscribers', async () => {

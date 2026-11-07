@@ -17,6 +17,11 @@ interface UseBookingsResult {
     id: string,
     booking: Partial<Omit<Booking, 'id'>>
   ) => Promise<void>;
+  updateBookingStatus: (
+    bookingId: string,
+    status: BookingItemStatus,
+    effectiveDate?: string
+  ) => Promise<void>;
   updateItemStatus: (
     bookingId: string,
     itemId: string,
@@ -73,6 +78,21 @@ export function useBookings(
     [repository]
   );
 
+  const updateBookingStatus = useCallback(
+    async (
+      bookingId: string,
+      status: BookingItemStatus,
+      effectiveDate?: string
+    ) => {
+      try {
+        await repository.updateBookingStatus(bookingId, status, effectiveDate);
+      } catch (err: unknown) {
+        throw toError(err, 'Failed to update booking status');
+      }
+    },
+    [repository]
+  );
+
   const updateItemStatus = useCallback(
     async (
       bookingId: string,
@@ -114,6 +134,7 @@ export function useBookings(
     provider: repository.providerName,
     addBooking,
     updateBooking,
+    updateBookingStatus,
     updateItemStatus,
     deleteBooking,
   };

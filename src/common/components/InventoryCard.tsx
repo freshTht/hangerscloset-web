@@ -117,48 +117,27 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
     .filter(Boolean)
     .join(' ');
 
-  const hasDefaultMeta = Boolean(item.brand || item.color || item.size);
   const showFooter = Boolean(footerLeftSlot || footerRightSlot);
 
   const renderDefaultMeta = () => {
-    if (hideDefaultMeta || !hasDefaultMeta) return null;
-    const parts: React.ReactNode[] = [];
-
-    if (item.brand) {
-      parts.push(
-        <span key="brand" className="hc-common-inv-card-attr">
-          <i className="tiny">sell</i>
-          <b className="on-surface-text">{item.brand}</b>
-        </span>
-      );
-    }
-
-    if (item.color) {
-      parts.push(
-        <span key="color" className="hc-common-inv-card-attr">
-          <i className="tiny">palette</i>
-          <span>{item.color}</span>
-        </span>
-      );
-    }
-
-    if (item.size) {
-      parts.push(
-        <span key="size" className="hc-common-inv-card-attr">
-          <i className="tiny">height</i>
-          <b>{item.size}</b>
-        </span>
-      );
-    }
+    if (hideDefaultMeta || (!item.size && !item.color)) return null;
 
     return (
       <div className="hc-micro-text secondary-text hc-common-inv-card-meta">
-        {parts.map((part, idx) => (
-          <React.Fragment key={idx}>
-            {idx > 0 && <span className="medium-opacity">•</span>}
-            {part}
-          </React.Fragment>
-        ))}
+        {item.size && (
+          <span className="hc-common-inv-card-attr" title={`ไซส์: ${item.size}`}>
+            <i className="tiny" aria-hidden="true">height</i>
+            <b className="on-surface-text">{item.size}</b>
+          </span>
+        )}
+        {item.color && (
+          <span
+            className="chip tiny surface-container-high no-margin hc-micro-text hc-common-inv-card-color-badge"
+            title={`สี: ${item.color}`}
+          >
+            <span>{item.color}</span>
+          </span>
+        )}
       </div>
     );
   };
@@ -189,22 +168,45 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({
         </div>
 
         <div className="hc-common-inv-card-body">
-          <div className="hc-common-inv-card-top-row">
-            <div className="hc-common-inv-card-title-group">
-              <span className="chip tiny surface-container-high bold no-margin hc-micro-text hc-common-inv-card-code">
-                {item.code}
-              </span>
-              <span
-                className={`bold ${size === 'sm' ? 'small-text' : 'medium-text'} hc-common-inv-card-title`}
-              >
-                {item.name}
-              </span>
-              {badgeSlot}
+          {/* Line 1: Brand (no icon), SKU code, and trailing badge / headerAction */}
+          <div className="hc-common-inv-card-line1">
+            <div className="hc-common-inv-card-brand-sku">
+              {item.brand && (
+                <span className="medium secondary-text hc-micro-text hc-common-inv-card-brand">
+                  {item.brand}
+                </span>
+              )}
+              {item.brand && item.code && (
+                <span
+                  className="medium-opacity secondary-text hc-micro-text hc-common-inv-card-sep"
+                  aria-hidden="true"
+                >
+                  •
+                </span>
+              )}
+              {item.code && (
+                <span className="bold primary-text hc-micro-text hc-common-inv-card-code">
+                  {item.code}
+                </span>
+              )}
             </div>
 
-            {headerActionSlot}
+            <div className="hc-common-inv-card-line1-right">
+              {badgeSlot}
+              {headerActionSlot}
+            </div>
           </div>
 
+          {/* Line 2 (title): Name */}
+          <div className="hc-common-inv-card-title-row">
+            <span
+              className={`bold ${size === 'sm' ? 'small-text' : 'medium-text'} hc-common-inv-card-title`}
+            >
+              {item.name}
+            </span>
+          </div>
+
+          {/* Line 3: Size (icon + text) & Color (badged text) */}
           {metaSlot !== undefined ? (
             <div className="hc-micro-text secondary-text hc-common-inv-card-meta">
               {metaSlot}

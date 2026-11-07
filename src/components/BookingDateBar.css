@@ -1,10 +1,13 @@
 /* Colocated styles for BookingDateBar */
 
-/* Compact Connected Date Navigator */
-.hc-datebar-nav-group {
-  display: inline-flex;
+/* Connected Date Navigator expanded to full width */
+.hc-datebar-nav-group,
+.hc-header-toolbar > .hc-datebar-nav-group {
+  display: flex !important;
   align-items: center;
-  flex-shrink: 0;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
   vertical-align: middle;
   background: none !important;
   gap: 1px !important;
@@ -33,8 +36,9 @@
 
 /* Compact Chevrons */
 .hc-datebar-chevron {
-  width: 28px;
-  min-width: 28px;
+  flex-shrink: 0;
+  width: 32px;
+  min-width: 32px;
   padding: 0;
 }
 
@@ -43,12 +47,15 @@
   line-height: 1;
 }
 
-/* Compact Date Picker Trigger */
+/* Date Picker Trigger Expanded */
 .hc-datebar-picker-btn {
-  padding: 0 8px;
-  gap: 3px;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  justify-content: center;
+  padding: 0 10px;
+  gap: 4px;
   font-weight: 700;
-  min-width: 0;
 }
 
 .hc-datebar-cal-icon {
@@ -62,6 +69,8 @@
 .hc-datebar-picker-text {
   font-size: 8.5pt;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   line-height: 1;
 }
 
@@ -78,7 +87,7 @@
   position: relative;
   height: 32px;
   min-height: 32px;
-  padding: 0 8px;
+  padding: 0 10px;
   border-radius: 9999px;
   border: none;
   cursor: pointer;
@@ -89,12 +98,20 @@
   background-color: var(--primary-container);
   color: var(--on-primary-container);
   font-weight: 700;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
 }
 
-.hc-datebar-today-btn:hover {
+.hc-datebar-today-btn:not(:disabled):hover {
   background-color: var(--primary);
   color: var(--on-primary);
+}
+
+.hc-datebar-today-btn:disabled {
+  opacity: 0.38;
+  cursor: default;
+  pointer-events: none;
+  background-color: var(--surface-container-high) !important;
+  color: var(--on-surface-variant) !important;
 }
 
 .hc-datebar-today-text {

@@ -1,51 +1,166 @@
-/* 2-Level Nested Booking Card (Orders View) */
+/* Grouped Booking Card Sub-Card Carousel Styles */
 
-.hc-booking-card {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  background-color: var(--surface-container);
+.hc-booking-card-carousel {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  width: 100%;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 0;
+}
+
+.hc-booking-card-carousel.is-single {
+  overflow-x: hidden !important;
+}
+
+.hc-booking-card-carousel.is-multi {
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 2px;
+}
+
+.hc-booking-card-carousel.is-single > .hc-booking-card-subcard {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.hc-booking-card-carousel.is-multi > .hc-booking-card-subcard {
+  flex: 0 0 82% !important;
+  width: 82% !important;
+  min-width: 240px !important;
+  max-width: 320px !important;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 601px) {
+  .hc-booking-card-carousel.is-multi.items-2 > .hc-booking-card-subcard {
+    flex: 1 1 calc(50% - 4px) !important;
+    width: calc(50% - 4px) !important;
+    max-width: 50% !important;
+  }
+}
+
+/* Ensure sub-card title group doesn't wrap badge onto second row */
+.hc-booking-card-subcard .hc-common-inv-card-title-group {
+  flex-wrap: nowrap !important;
+  width: 100%;
+}
+
+.hc-booking-card-subcard .hc-common-inv-card-title {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.hc-booking-card-subcard .hc-status-badge {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+  font-size: 7.5pt;
+  padding: 2px 6px;
+  height: 20px;
+  line-height: 1;
+}
+
+.hc-booking-inv-card-item-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 7.5pt;
+  height: 20px;
+  padding-inline: 6px;
+  border-radius: 10px;
+  color: var(--on-surface-variant);
+}
+
+/* Shared Horizontal Carousel for BookingSheet */
+.hc-grouped-card-carousel {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  gap: 8px !important;
+  padding: 2px 0 6px 0;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.hc-grouped-outfit-card {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 215px !important;
+  min-width: 200px !important;
+  max-width: 220px !important;
+  flex: 0 0 215px !important;
+  padding: 8px !important;
+  gap: 8px !important;
+  box-sizing: border-box;
+  align-items: flex-start;
+  scroll-snap-align: start;
+  background-color: var(--surface);
   border: 1px solid var(--outline-variant);
-  box-shadow: none;
-  /* Defer off-screen rendering calculations for heavy order lists */
-  content-visibility: auto;
-  contain-intrinsic-size: auto none auto 180px;
+  border-radius: 8px;
 }
 
-.hc-booking-card-outer-header {
-  padding: 2px 4px;
+.hc-grouped-outfit-thumb {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: var(--surface-container-high);
 }
 
-.hc-booking-card-inner-item {
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.hc-booking-card-outer-footer {
-  padding: 4px 4px 2px 4px;
-}
-
-.hc-booking-card-edit-btn,
-.hc-booking-card-info-btn,
-.hc-booking-card-action-btn,
-.hc-booking-card-deposit-btn {
-  position: relative;
+.hc-grouped-outfit-thumb-placeholder {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+  max-width: 56px !important;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
 
-@media (pointer: coarse), (max-width: 600px) {
-  .hc-booking-card-edit-btn::before,
-  .hc-booking-card-info-btn::before,
-  .hc-booking-card-action-btn::before,
-  .hc-booking-card-deposit-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    min-width: 48px;
-    min-height: 48px;
-    width: 100%;
-    height: 48px;
-  }
+.hc-grouped-outfit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hc-grouped-outfit-code {
+  font-size: 8.5pt;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.hc-grouped-outfit-name {
+  font-size: 7.5pt;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hc-grouped-outfit-price {
+  font-size: 8pt;
+  font-weight: 700;
+}
+
+.hc-grouped-outfit-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
 }

@@ -104,28 +104,35 @@ describe('BookingsPage Component', () => {
     expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
   });
 
-  it('toggles between Items list view and Orders list view', () => {
+  it('filters rental duration via chips in ready section and updates displayed prices dynamically', () => {
     render(<BookingsPage />);
 
-    // Default is items list view
-    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    // Available item AVL01 defaults to 3 days price (120 / 3 วัน)
+    const avlCard = screen.getByTestId('inventory-booking-card-AVL01');
+    expect(within(avlCard).getByText(/฿120/)).toBeInTheDocument();
+    expect(within(avlCard).getByText(/\/ 3 วัน/)).toBeInTheDocument();
 
-    // Toggle to orders list view
-    const toggleToOrdersBtns = screen.getAllByRole('button', {
-      name: /สลับเป็นมุมมองใบจอง/i,
-    });
-    fireEvent.click(toggleToOrdersBtns[0]);
+    // Duration filter chips exist: 1 วัน, 3 วัน, 5 วัน
+    const chip1 = screen.getByTestId('duration-filter-1');
+    const chip3 = screen.getByTestId('duration-filter-3');
+    const chip5 = screen.getByTestId('duration-filter-5');
+    expect(chip1).toBeInTheDocument();
+    expect(chip3).toBeInTheDocument();
+    expect(chip5).toBeInTheDocument();
+    expect(chip3).toHaveAttribute('aria-pressed', 'true');
 
-    // In orders list view, unbooked AVL01 is not rendered, but booked DIA01 order is rendered
-    expect(screen.queryByTestId('inventory-booking-card-AVL01')).not.toBeInTheDocument();
-    expect(screen.getAllByText('คุณพลอย รัตนากร').length).toBeGreaterThan(0);
+    // Switch to 1 day
+    fireEvent.click(chip1);
+    expect(chip1).toHaveAttribute('aria-pressed', 'true');
+    expect(chip3).toHaveAttribute('aria-pressed', 'false');
+    expect(within(avlCard).getByText(/฿80/)).toBeInTheDocument();
+    expect(within(avlCard).getByText(/\/ 1 วัน/)).toBeInTheDocument();
 
-    // Toggle back to items view
-    const toggleToItemsBtns = screen.getAllByRole('button', {
-      name: /สลับเป็นมุมมองรายชุด/i,
-    });
-    fireEvent.click(toggleToItemsBtns[0]);
-    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    // Switch to 5 days
+    fireEvent.click(chip5);
+    expect(chip5).toHaveAttribute('aria-pressed', 'true');
+    expect(within(avlCard).getByText(/฿150/)).toBeInTheDocument();
+    expect(within(avlCard).getByText(/\/ 5 วัน/)).toBeInTheDocument();
   });
 
   it('computes different booking statuses across days and blocks status change when a subsequent date progressed further', () => {
@@ -188,24 +195,28 @@ describe('BookingsPage Component', () => {
     expect(deliveredCollapsible).toBeInTheDocument();
     expect(deliveredCollapsible).toHaveClass('is-closed');
 
+    // 'available' (ว่าง (พร้อมเช่า)) is the bottom-most section
+    const allCollapsibles = document.querySelectorAll('.hc-bookings-status-collapsible');
+    expect(allCollapsibles.length).toBeGreaterThan(1);
+    expect(allCollapsibles[allCollapsibles.length - 1]).toBe(availableCollapsible);
+
     // Title is simple text with Beer CSS typography h6
     const heading = screen.getByRole('heading', { level: 6, name: 'ส่งมอบแล้ว' });
     expect(heading).toBeInTheDocument();
     expect(heading).toHaveClass('small');
     expect(heading).toHaveClass('bold');
 
-    // Count is a solid filled badge with status color in the right header section
+    // Count and chevron are inside the status-colored chip-style container in the right header section
     const badgeDelivered = screen.getByTestId('badge-count-delivered');
     expect(badgeDelivered).toBeInTheDocument();
-    expect(badgeDelivered).toHaveClass('badge');
-    expect(badgeDelivered).toHaveClass('none');
-    expect(badgeDelivered).toHaveClass('circle');
-    expect(badgeDelivered).toHaveClass('primary');
+    expect(badgeDelivered).toHaveClass('hc-collapsible-chip-count');
 
     const deliveredChevronArea = deliveredCollapsible.querySelector(
       '[data-testid="collapsible-chevron-btn"]'
     );
     expect(deliveredChevronArea).toBeInTheDocument();
+    expect(deliveredChevronArea).toHaveClass('hc-collapsible-status-chip');
+    expect(deliveredChevronArea).toHaveClass('primary');
     expect(deliveredChevronArea).toContainElement(badgeDelivered);
 
     // Toggle expand for delivered section
@@ -221,7 +232,7 @@ describe('BookingsPage Component', () => {
     expect(deliveredCollapsible).toHaveClass('is-closed');
   });
 
-  it('manages extended FAB lifecycle across item selection, view mode toggle, sheet close, and date change', async () => {
+  it('manages extended FAB lifecycle across item selection, sheet close, and date change', async () => {
     render(<BookingsPage />);
 
     // Bottom toolbar is removed
@@ -239,23 +250,13 @@ describe('BookingsPage Component', () => {
     expect(bookFab).toHaveTextContent('จอง 1 ชุด');
     expect(bookFab).toHaveClass('hc-booking-action-fab');
 
-    // Switch to orders view -> FAB must be hidden
-    const toggleToOrdersBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองใบจอง/i });
-    fireEvent.click(toggleToOrdersBtn);
-    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
-
-    // Switch back to items view -> FAB is visible again
-    const toggleToItemsBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองรายชุด/i });
-    fireEvent.click(toggleToItemsBtn);
-    expect(screen.getByTestId('bookings-action-fab')).toBeInTheDocument();
-
     // Click FAB to open BookingSheet
     fireEvent.click(screen.getByTestId('bookings-action-fab'));
     expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
 
-    // Close the sheet via Step 2 "ย้อนกลับ" button
-    const prevBtn = screen.getByTestId('wizard-prev-step-2');
-    fireEvent.click(prevBtn);
+    // Close the sheet via "ยกเลิก" button
+    const cancelBtn = within(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).getByRole('button', { name: 'ยกเลิก' });
+    fireEvent.click(cancelBtn);
 
     // Sheet closes, but selection is retained and FAB remains
     await waitFor(() => {
@@ -288,9 +289,9 @@ describe('BookingsPage Component', () => {
     expect(searchInput).toBeInTheDocument();
     fireEvent.change(searchInput, { target: { value: 'AVL01' } });
 
-    // Filtered result: AVL01 is visible, others are filtered out
+    // Filtered result: AVL01 is visible, non-matching outfits/orders like DIA01 are filtered out
     expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
-    expect(screen.queryByTestId('inventory-booking-card-DIA01')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('grouped-outfit-card-DIA01')).not.toBeInTheDocument();
 
     // Clicking Back FAB collapses search toolbar back to date toolbar while preserving query
     const backFab = screen.getByTestId('bookings-search-back-fab');
@@ -305,16 +306,16 @@ describe('BookingsPage Component', () => {
     expect(screen.getByTestId('search-active-dot')).toBeInTheDocument();
     // Result is still filtered
     expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
-    expect(screen.queryByTestId('inventory-booking-card-DIA01')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('grouped-outfit-card-DIA01')).not.toBeInTheDocument();
 
     // Reopen search and clear query
     fireEvent.click(screen.getByTestId('bookings-search-fab'));
     const clearBtn = screen.getByTestId('bookings-search-clear-btn');
     fireEvent.click(clearBtn);
 
-    // After clear, all items are visible again
+    // After clear, all items are visible again (AVL01 in available, DIA01 in grouped card)
     expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
-    expect(screen.getByTestId('inventory-booking-card-DIA01')).toBeInTheDocument();
+    expect(screen.getByTestId('grouped-outfit-card-DIA01')).toBeInTheDocument();
   });
 
   it('prevents page scroll Y jumping and uses preventScroll when toggling search mode', () => {
@@ -401,16 +402,18 @@ describe('BookingsPage Component', () => {
     const dialog = screen.getByRole('dialog', { name: /สร้างการจองใหม่/i });
     expect(dialog).toBeInTheDocument();
 
-    // Select customer on Step 2
+    // Select customer
     const customerInput = within(dialog).getByLabelText(/ค้นหาลูกค้า/i);
     fireEvent.focus(customerInput);
     fireEvent.click(within(dialog).getByText('คุณพลอย รัตนากร'));
 
-    // Advance to Step 3
-    fireEvent.click(within(dialog).getByTestId('wizard-next-step-2'));
+    // Submit booking button opens confirmation modal
+    fireEvent.click(within(dialog).getByTestId('submit-booking-button'));
 
-    // Confirm & Submit booking
-    fireEvent.click(within(dialog).getByTestId('wizard-submit-booking'));
+    // Confirm booking in modal
+    const confirmModal = screen.getByTestId('confirm-booking-dialog');
+    expect(confirmModal).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('confirm-booking-submit'));
 
     // Sheet closes
     await waitFor(() => {
@@ -419,5 +422,33 @@ describe('BookingsPage Component', () => {
 
     // Selection is cleared and extended FAB is hidden
     expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
+  });
+
+  it('opens BookingSheet with correct 3-day rental price without showing false discount', () => {
+    render(<BookingsPage />);
+
+    // Select CHA01 (which has 1-day: 190, 3-day: 300)
+    const selectCha01Btn = screen.getByRole('button', {
+      name: /เลือกชุด CHA01/i,
+    });
+    expect(selectCha01Btn).toBeInTheDocument();
+    fireEvent.click(selectCha01Btn);
+
+    // Click extended FAB "จอง 1 ชุด"
+    const bookFab = screen.getByTestId('bookings-action-fab');
+    expect(bookFab).toBeInTheDocument();
+    fireEvent.click(bookFab);
+
+    // BookingSheet opens in add mode
+    const dialog = screen.getByRole('dialog', { name: /สร้างการจองใหม่/i });
+    expect(dialog).toBeInTheDocument();
+
+    // Check that CHA01 is in Card 2
+    expect(within(dialog).getByText('CHA01')).toBeInTheDocument();
+
+    // Check that rental price is auto-populated with 300 (3-day price), not 190 (1-day price)
+    const priceInput = within(dialog).getByLabelText(/ราคาเช่ารวม/i);
+    expect(priceInput).toHaveValue(300);
+    expect(within(dialog).queryByTestId('booking-discount-text')).not.toBeInTheDocument();
   });
 });

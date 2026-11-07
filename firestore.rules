@@ -39,6 +39,35 @@ service cloud.firestore {
     // Fields:
     //   - name: string (required, 1..100 chars) - Display name of the option
     //
+    // Collection: customers
+    // Document ID: customerId
+    // Fields:
+    //   - name: string (required, 1..200 chars)
+    //   - phone: string (required, 1..40 chars)
+    //   - lineId: string | null (optional, 0..100 chars)
+    //   - note: string | null (optional, 0..2000 chars)
+    //   - createdAt: string (required, 1..60 chars)
+    //
+    // Collection: bookings
+    // Document ID: bookingId
+    // Fields:
+    //   - customerId: string (required, 1..100 chars)
+    //   - customerName: string (required, 1..200 chars)
+    //   - customerPhone: string (required, 1..40 chars)
+    //   - customerLineId: string | null (optional, 0..100 chars)
+    //   - items: list (required, 1..50 items)
+    //   - transactionDates: map (optional) - Map of booking item status to ISO date strings
+    //   - startDate: string (required, 10 chars YYYY-MM-DD)
+    //   - endDate: string (required, 10 chars YYYY-MM-DD)
+    //   - cleaningEndDate: string (required, 10 chars YYYY-MM-DD)
+    //   - durationDays: number (required, >= 1)
+    //   - rentalPrice: number (required, >= 0)
+    //   - deposit: number (required, >= 0)
+    //   - depositRefunded: bool (required)
+    //   - note: string | null (optional, 0..2000 chars)
+    //   - createdAt: string (required, 1..60 chars)
+    //   - updatedAt: string (required, 1..60 chars)
+    //
     // ===============================================================
 
     // Default deny for all unspecified collections
@@ -126,7 +155,7 @@ service cloud.firestore {
       ];
       let allowedFields = [
         'customerId', 'customerName', 'customerPhone', 'customerLineId',
-        'items', 'startDate', 'endDate', 'cleaningEndDate', 'durationDays',
+        'items', 'transactionDates', 'startDate', 'endDate', 'cleaningEndDate', 'durationDays',
         'rentalPrice', 'deposit', 'depositRefunded', 'note', 'createdAt', 'updatedAt'
       ];
 
@@ -137,6 +166,7 @@ service cloud.firestore {
         data.customerPhone is string && data.customerPhone.size() > 0 && data.customerPhone.size() <= 40 &&
         (!('customerLineId' in data) || data.customerLineId == null || (data.customerLineId is string && data.customerLineId.size() <= 100)) &&
         data.items is list && data.items.size() > 0 && data.items.size() <= 50 &&
+        (!('transactionDates' in data) || data.transactionDates is map) &&
         data.startDate is string && data.startDate.size() == 10 &&
         data.endDate is string && data.endDate.size() == 10 &&
         data.cleaningEndDate is string && data.cleaningEndDate.size() == 10 &&

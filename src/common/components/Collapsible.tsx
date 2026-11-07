@@ -14,6 +14,8 @@ export interface CollapsibleProps {
   leadingSlot?: React.ReactNode;
   /** Optional badge next to title (e.g. count chip) */
   badgeSlot?: React.ReactNode;
+  /** Optional status color class to wrap count & chevron in a unified status-colored chip container */
+  statusChipClass?: string;
   /** Optional action element in header */
   headerActionSlot?: React.ReactNode;
   /** Collapsible body content */
@@ -39,6 +41,7 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
   title,
   leadingSlot,
   badgeSlot,
+  statusChipClass,
   headerActionSlot,
   children,
   disabled = false,
@@ -90,7 +93,12 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
             )}
           </div>
 
-          <div className="hc-collapsible-trigger-right" data-testid="collapsible-chevron-btn">
+          <div
+            className={`hc-collapsible-trigger-right ${
+              statusChipClass ? `hc-collapsible-status-chip ${statusChipClass}` : ''
+            }`.trim()}
+            data-testid="collapsible-chevron-btn"
+          >
             {badgeSlot && (
               <span className="hc-collapsible-badge">{badgeSlot}</span>
             )}

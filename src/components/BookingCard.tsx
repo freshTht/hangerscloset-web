@@ -3,41 +3,56 @@ import {
   BOOKING_STATUS_META,
   formatDateThaiShort,
   getEffectiveBookingStatus,
+  getItemStatusOnDate,
   getSubsequentStatusBlock,
   getTodayISO,
   type Booking,
   type BookingItemStatus,
 } from '../types/booking';
+import type { InventoryItem } from '../types/inventory';
 import { InventoryCard } from '../common/components/InventoryCard';
-import { Stack } from './Stack';
 import { StatusBadge } from './StatusBadge';
+import './BookingInventoryCard.css';
 import './BookingCard.css';
 
 export interface BookingCardProps {
   booking: Booking;
   selectedDate?: string;
   isAllDates?: boolean;
-  onEdit: (booking: Booking) => void;
+  inventoryMap?: Map<string, InventoryItem>;
+  onEdit?: (booking: Booking) => void;
   onView?: (booking: Booking) => void;
-  onAdvanceItemStatus: (
+  onAdvanceItemStatus?: (
     bookingId: string,
     itemId: string,
     nextStatus: BookingItemStatus,
     effectiveDate?: string
   ) => Promise<void> | void;
+  onAdvanceBookingStatus?: (
+    bookingId: string,
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
+  ) => Promise<void> | void;
   onToggleDepositRefunded?: (booking: Booking) => Promise<void> | void;
+  hideActions?: boolean;
+  onRemoveItem?: (itemId: string) => void;
+  conflictMap?: Map<string, Booking[]>;
 }
 
 export const BookingCard: React.FC<BookingCardProps> = ({
   booking,
   selectedDate,
   isAllDates = false,
+  inventoryMap,
   onEdit,
   onView,
   onAdvanceItemStatus,
-  onToggleDepositRefunded,
+  onAdvanceBookingStatus,
+  hideActions = false,
+  onRemoveItem,
+  conflictMap,
 }) => {
-  const [updatingItemId, setUpdatingItemId] = useState<string | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const today = getTodayISO();
   const effectiveDate = isAllDates ? today : (selectedDate ?? today);
@@ -46,215 +61,256 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     selectedDate ?? today,
     isAllDates
   );
+  const isReturned = computedStatus === 'returned';
   const meta = BOOKING_STATUS_META[computedStatus];
-  const subsequentBlock = meta.nextStatus
-    ? getSubsequentStatusBlock(booking, effectiveDate, meta.nextStatus)
-    : null;
 
-  const handleAdvanceStatus = async (
-    itemId: string,
-    nextStatus: BookingItemStatus
-  ) => {
+  const subsequentBlock =
+    !hideActions && meta.nextStatus
+      ? getSubsequentStatusBlock(booking, effectiveDate, meta.nextStatus)
+      : null;
+
+  const handleAdvanceStatus = async (nextStatus: BookingItemStatus) => {
     try {
-      setUpdatingItemId(itemId);
-      await onAdvanceItemStatus(booking.id, itemId, nextStatus, effectiveDate);
+      setIsUpdating(true);
+      if (onAdvanceBookingStatus) {
+        await onAdvanceBookingStatus(booking.id, nextStatus, effectiveDate);
+      } else if (onAdvanceItemStatus) {
+        for (const item of booking.items) {
+          if (item.status !== 'returned') {
+            await onAdvanceItemStatus(
+              booking.id,
+              item.itemId,
+              nextStatus,
+              effectiveDate
+            );
+          }
+        }
+      }
     } finally {
-      setUpdatingItemId(null);
+      setIsUpdating(false);
     }
   };
 
+  const advanceAriaLabel = meta.nextActionLabel
+    ? booking.items
+        .map((i) => `ปรับสถานะ ${i.itemCode} เป็น ${meta.nextActionLabel}`)
+        .join(' / ')
+    : undefined;
+
   return (
-    <article className="border medium-round no-margin hc-booking-card">
-      {/* Outer Level Header: Dates, Customer & Edit Button */}
-      <div className="hc-booking-card-outer-header">
-        <Stack
-          orientation="row"
-          align="flex-start"
-          justify="space-between"
-          gap="small"
-          wrap
+    <article
+      className="border medium-round no-margin hc-booking-inv-card hc-booking-card"
+      data-testid={`grouped-booking-card-${booking.id}`}
+    >
+      {/* Inner Level: Horizontal Carousel of Sub-Cards (InventoryCard) */}
+      {booking.items.length === 0 ? (
+        <div className="center-align padding secondary-text small-text">
+          ยังไม่ได้เลือกชุด
+        </div>
+      ) : (
+        <div
+          className={`row scroll no-wrap hc-booking-card-carousel ${
+            booking.items.length > 1 ? 'is-multi' : 'is-single'
+          } items-${booking.items.length}`}
+          role="region"
+          aria-label={`ชุดในรายการจองของ ${booking.customerName || 'ลูกค้า'}`}
         >
-          <Stack orientation="column" gap="tiny">
-            <Stack orientation="row" align="center" gap="small" wrap>
-              <span className="chip small primary-container bold no-margin">
-                <i>date_range</i>
-                <span>
-                  {formatDateThaiShort(booking.startDate)} –{' '}
-                  {formatDateThaiShort(booking.endDate)} ({booking.durationDays}{' '}
-                  วัน)
-                </span>
-              </span>
-              <span
-                className="chip small surface-container-high no-margin"
-                title={`เผื่อซักถึง ${booking.cleaningEndDate}`}
-              >
-                <i>local_laundry_service</i>
-                <span>
-                  พร้อมเช่าต่อหลัง {formatDateThaiShort(booking.cleaningEndDate)}
-                </span>
-              </span>
-            </Stack>
+          {booking.items.map((lineItem) => {
+            const inv =
+              inventoryMap?.get(lineItem.itemId) ??
+              (lineItem.itemCode
+                ? inventoryMap?.get(lineItem.itemCode.toLowerCase())
+                : undefined);
+            const itemStatus = getItemStatusOnDate(
+              booking,
+              lineItem,
+              effectiveDate
+            );
+            const itemMeta = BOOKING_STATUS_META[itemStatus];
+            const conflicts = conflictMap?.get(lineItem.itemId) ?? [];
+            const hasConflict = conflicts.length > 0;
 
-            <Stack orientation="row" align="center" gap="small" wrap>
-              <i className="small primary-text">person</i>
-              <span className="bold medium-text">{booking.customerName}</span>
-              <span className="small-text secondary-text">
-                {booking.customerPhone}
-              </span>
-              {booking.customerLineId && (
-                <span className="chip tiny surface-container-high no-margin">
-                  Line: {booking.customerLineId}
-                </span>
-              )}
-            </Stack>
-          </Stack>
-        </Stack>
-      </div>
-
-      {/* Inner Level: Inventory Items List */}
-      <Stack orientation="column" gap="small">
-        {booking.items.map((lineItem) => {
-          const isUpdating = updatingItemId === lineItem.itemId;
-
-          return (
-            <InventoryCard
-              key={lineItem.itemId}
-              item={{
-                id: lineItem.itemId,
-                code: lineItem.itemCode,
-                name: lineItem.itemName,
-                imageUrl: lineItem.itemImageUrl,
-                conditionNote: lineItem.conditionNote,
-              }}
-              size="md"
-              variant="embedded"
-              className="hc-booking-card-inner-item"
-              badgeSlot={
-                <StatusBadge
-                  size="small"
-                  className={meta.chipClass}
-                  data-testid={`status-badge-${lineItem.itemCode}`}
-                >
-                  {meta.label}
-                </StatusBadge>
-              }
-              trailingActionSlot={
-                meta.nextStatus && meta.nextActionLabel ? (
-                  <button
-                    type="button"
-                    className="small round border primary no-margin hc-booking-card-action-btn"
-                    disabled={isUpdating || Boolean(subsequentBlock)}
-                    onClick={() =>
-                      handleAdvanceStatus(lineItem.itemId, meta.nextStatus!)
-                    }
-                    aria-label={`ปรับสถานะ ${lineItem.itemCode} เป็น ${meta.nextActionLabel}`}
-                    title={
-                      subsequentBlock
-                        ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
-                        : undefined
-                    }
-                  >
-                    {isUpdating ? (
-                      <div
-                        className="shape loading-indicator tiny"
-                        role="status"
-                      />
-                    ) : (
-                      <>
-                        <i>{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
-                        <span>{meta.nextActionLabel}</span>
-                      </>
-                    )}
-                  </button>
-                ) : undefined
-              }
-            />
-          );
-        })}
-      </Stack>
-
-      {/* Note */}
-      {booking.note && (
-        <div className="round surface-container-high small-padding">
-          <Stack orientation="row" align="flex-start" gap="small">
-            <i className="tiny secondary-text">sticky_note_2</i>
-            <span className="small-text secondary-text">{booking.note}</span>
-          </Stack>
+            return (
+              <InventoryCard
+                key={lineItem.itemId}
+                item={{
+                  id: lineItem.itemId,
+                  code: lineItem.itemCode,
+                  name: lineItem.itemName,
+                  imageUrl: lineItem.itemImageUrl || inv?.imageUrl,
+                  brand: inv?.brand,
+                  color: inv?.color,
+                  size: inv?.size,
+                  rentalPrices: inv?.rentalPrices,
+                }}
+                size="md"
+                variant="embedded"
+                hasConflict={hasConflict}
+                className="hc-booking-inv-card-inner hc-booking-card-subcard"
+                testId={`grouped-outfit-card-${lineItem.itemCode}`}
+                badgeSlot={
+                  booking.items.length > 1 ? (
+                    <StatusBadge
+                      size="small"
+                      className={itemMeta.chipClass}
+                      data-testid={`status-badge-${lineItem.itemCode}`}
+                    >
+                      {itemMeta.label}
+                    </StatusBadge>
+                  ) : (
+                    <span
+                      className="sr-only"
+                      data-testid={`status-badge-${lineItem.itemCode}`}
+                    >
+                      {itemMeta.label}
+                    </span>
+                  )
+                }
+                headerActionSlot={
+                  onRemoveItem ? (
+                    <button
+                      type="button"
+                      className="circle tiny transparent no-margin hc-grouped-outfit-remove-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveItem(lineItem.itemId);
+                      }}
+                      aria-label={`ลบชุด ${lineItem.itemCode} ออกจากการจอง`}
+                      data-testid={`remove-outfit-btn-${lineItem.itemCode}`}
+                      title="ลบชุดนี้ออกจากการจอง"
+                    >
+                      <i className="tiny" aria-hidden="true">close</i>
+                    </button>
+                  ) : undefined
+                }
+                noteSlot={
+                  hasConflict ? (
+                    <span className="hc-micro-text error-text bold">
+                      ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
+                    </span>
+                  ) : undefined
+                }
+              />
+            );
+          })}
         </div>
       )}
 
-      {/* Outer Footer: Financials & Deposit Toggle */}
-      <div className="hc-booking-card-outer-footer">
-        <Stack
-          orientation="row"
-          align="center"
-          justify="space-between"
-          gap="small"
-          wrap
-        >
-          <Stack orientation="row" align="center" gap="medium" wrap>
-            <span className="small-text">
-              ค่าเช่า:{' '}
-              <b className="primary-text">
-                ฿{booking.rentalPrice.toLocaleString()}
-              </b>
-            </span>
-            <span className="small-text">
-              มัดจำ: <b>฿{booking.deposit.toLocaleString()}</b>
-            </span>
-          </Stack>
+      {/* Outer Level: Bottom Actions & Booking Info */}
+      <div className="hc-booking-inv-card-outer-footer">
+        {subsequentBlock && (
+          <span
+            className="hc-micro-text error-text hc-booking-inv-card-subsequent-msg"
+            data-testid={`subsequent-block-msg-${booking.items[0]?.itemCode ?? booking.id}`}
+          >
+            อัปเดตเป็น &quot;{BOOKING_STATUS_META[subsequentBlock.status].label}&quot; เมื่อ{' '}
+            {formatDateThaiShort(subsequentBlock.date)} แล้ว
+          </span>
+        )}
 
-          <Stack orientation="row" align="center" gap="small">
-            {computedStatus === 'returned' ? (
-              <button
-                type="button"
-                className="circle primary-container no-margin hc-booking-card-info-btn"
-                onClick={() => (onView ? onView(booking) : onEdit(booking))}
-                aria-label={`ดูรายละเอียดการจองของ ${booking.customerName}`}
-                title="ดูรายละเอียดการจอง"
-              >
-                <i>info</i>
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="circle primary-container no-margin hc-booking-card-edit-btn"
-                onClick={() => onEdit(booking)}
-                aria-label={`แก้ไขการจองของ ${booking.customerName}`}
-                title="แก้ไขการจอง"
-              >
-                <i>edit</i>
-              </button>
-            )}
-
-            {onToggleDepositRefunded && (
-              <button
-                type="button"
-                className={`chip small no-margin hc-booking-card-deposit-btn ${
-                  booking.depositRefunded
-                    ? 'hc-status-badge-available'
-                    : 'surface-container-high'
-                }`}
-                onClick={() => onToggleDepositRefunded(booking)}
-                aria-label={
-                  booking.depositRefunded
-                    ? 'คืนเงินมัดจำแล้ว'
-                    : 'ทำเครื่องหมายว่าคืนมัดจำแล้ว'
-                }
-              >
-                <i>
-                  {booking.depositRefunded
-                    ? 'check_circle'
-                    : 'radio_button_unchecked'}
-                </i>
-                <span>
-                  {booking.depositRefunded ? 'คืนมัดจำแล้ว' : 'ยังไม่คืนมัดจำ'}
+        <div className="hc-booking-inv-card-outer-actions">
+          <div className="hc-booking-inv-card-footer-left">
+            {booking.customerName && (
+              <div className="hc-booking-inv-card-outer-info">
+                <span className="small-text hc-booking-inv-card-customer-pill">
+                  <i className="tiny primary-text" aria-hidden="true">person</i>
+                  <b className="truncate on-surface-text">
+                    {booking.customerName}
+                  </b>
                 </span>
-              </button>
+              </div>
             )}
-          </Stack>
-        </Stack>
+
+            <div className="hc-booking-inv-card-meta-row">
+              <div className="hc-booking-inv-card-price">
+                <span className="bold primary-text medium-text">
+                  ฿{booking.rentalPrice.toLocaleString()}
+                </span>
+              </div>
+              <span
+                className="chip tiny surface-container-highest no-margin hc-booking-inv-card-item-count"
+                data-testid={`item-count-${booking.id}`}
+              >
+                <i className="tiny" aria-hidden="true">checkroom</i>
+                <span>{booking.items.length} ชุด</span>
+              </span>
+              <span className="secondary-text hc-micro-text hc-booking-inv-card-date-pill">
+                <i className="tiny" aria-hidden="true">date_range</i>
+                <span>
+                  {formatDateThaiShort(booking.startDate)} –{' '}
+                  {formatDateThaiShort(booking.endDate)}
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {!hideActions && (
+            <div className="hc-booking-inv-card-footer-right">
+              {isReturned ? (
+                <button
+                  type="button"
+                  className="circle primary-container no-margin hc-booking-inv-card-info-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onView) {
+                      onView(booking);
+                    } else if (onEdit) {
+                      onEdit(booking);
+                    }
+                  }}
+                  aria-label={`ดูรายละเอียดการจองของ ${booking.customerName}`}
+                  title="ดูรายละเอียดการจอง"
+                >
+                  <i className="small" aria-hidden="true">info</i>
+                </button>
+              ) : (
+                onEdit && (
+                  <button
+                    type="button"
+                    className="circle primary-container no-margin hc-booking-inv-card-edit-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(booking);
+                    }}
+                    aria-label={`แก้ไขการจองของ ${booking.customerName}`}
+                    title="แก้ไขการจอง"
+                  >
+                    <i className="small" aria-hidden="true">edit</i>
+                  </button>
+                )
+              )}
+
+              {meta && meta.nextStatus && meta.nextActionLabel && (
+                <button
+                  type="button"
+                  className="small round border primary bold no-margin small-text hc-booking-inv-card-advance-btn"
+                  disabled={isUpdating || Boolean(subsequentBlock)}
+                  onClick={() => handleAdvanceStatus(meta.nextStatus!)}
+                  aria-label={advanceAriaLabel}
+                  title={
+                    subsequentBlock
+                      ? `ไม่สามารถเปลี่ยนสถานะในวันนี้ได้ เนื่องจากวันที่ ${formatDateThaiShort(subsequentBlock.date)} ได้อัปเดตเป็น "${BOOKING_STATUS_META[subsequentBlock.status].label}" แล้ว`
+                      : undefined
+                  }
+                >
+                  {isUpdating ? (
+                    <div className="shape loading-indicator tiny" role="status" />
+                  ) : (
+                    <>
+                      <i aria-hidden="true">{subsequentBlock ? 'lock' : 'arrow_forward'}</i>
+                      <span className="hc-booking-inv-card-advance-label">
+                        {meta.nextActionLabel}
+                      </span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </article>
   );
 };
+
+export const GroupedBookingCard = BookingCard;

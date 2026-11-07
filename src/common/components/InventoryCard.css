@@ -103,29 +103,67 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
-.hc-common-inv-card-top-row {
+/* Line 1: Brand & SKU Group + Trailing Slots */
+.hc-common-inv-card-line1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  min-width: 0;
-}
-
-.hc-common-inv-card-title-group {
-  display: flex;
-  align-items: center;
   gap: 6px;
   min-width: 0;
-  flex-wrap: wrap;
+  width: 100%;
+}
+
+.hc-common-inv-card-brand-sku {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  flex-wrap: nowrap;
+}
+
+.hc-common-inv-card-brand {
+  font-size: 8pt;
+  line-height: normal;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--on-surface-variant);
+}
+
+.hc-common-inv-card-sep {
+  flex-shrink: 0;
+  font-size: 8pt;
+  line-height: normal;
+  user-select: none;
 }
 
 .hc-common-inv-card-code {
   flex-shrink: 0;
-  height: 22px;
-  padding-inline: 8px;
+  font-size: 8pt;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 0.03em;
+  color: var(--primary);
+}
+
+.hc-common-inv-card-line1-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
+/* Line 2 (title): Name */
+.hc-common-inv-card-title-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
 }
 
 .hc-common-inv-card-title {
@@ -136,15 +174,17 @@
   text-overflow: ellipsis;
   line-height: 1.3;
   min-width: 0;
+  width: 100%;
 }
 
-/* Metadata / Attributes Row */
+/* Line 3: Size & Color Row */
 .hc-common-inv-card-meta {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
+  padding-top: 1px;
 }
 
 .hc-common-inv-card-attr {
@@ -152,6 +192,17 @@
   align-items: center;
   gap: 3px;
   white-space: nowrap;
+}
+
+.hc-common-inv-card-color-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding-inline: 8px;
+  border-radius: 9999px;
+  font-size: 7.5pt;
+  line-height: normal;
 }
 
 .hc-common-inv-card-note {

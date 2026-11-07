@@ -22,8 +22,10 @@ describe('BookingDateBar Component', () => {
     expect(screen.getByRole('button', { name: /วันถัดไป/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /เลือกวันที่/i })).toHaveTextContent('1 พ.ย. (วันนี้)');
 
-    // "วันนี้" quick jump should NOT be rendered when selectedDate is today
-    expect(screen.queryByRole('button', { name: /กลับไปวันนี้/i })).not.toBeInTheDocument();
+    // "วันนี้" quick jump should be rendered but disabled when selectedDate is today
+    const todayJumpBtn = screen.getByRole('button', { name: /กลับไปวันนี้/i });
+    expect(todayJumpBtn).toBeInTheDocument();
+    expect(todayJumpBtn).toBeDisabled();
   });
 
   it('navigates to previous day on previous button click', () => {
@@ -70,26 +72,4 @@ describe('BookingDateBar Component', () => {
     expect(onCalendarClick).toHaveBeenCalledTimes(1);
   });
 
-  it('renders view switcher connected buttons and calls onViewModeChange when clicked', () => {
-    const onViewModeChange = vi.fn();
-    render(
-      <BookingDateBar
-        {...defaultProps}
-        viewMode="items"
-        onViewModeChange={onViewModeChange}
-      />
-    );
-
-    const switcher = screen.getByTestId('booking-view-switcher');
-    expect(switcher).toBeInTheDocument();
-
-    const itemsBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองรายชุด/i });
-    const ordersBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองใบจอง/i });
-
-    expect(itemsBtn).toHaveClass('active');
-    expect(ordersBtn).not.toHaveClass('active');
-
-    fireEvent.click(ordersBtn);
-    expect(onViewModeChange).toHaveBeenCalledWith('orders');
-  });
 });

@@ -8,7 +8,7 @@
 }
 
 .hc-collapsible-card {
-  border-radius: 1rem;
+  border-radius: 1.5rem;
   background-color: var(--surface-container);
   border: 1px solid var(--outline-variant);
   overflow: hidden;
@@ -19,11 +19,17 @@
 }
 
 
+/*
+ * Explicit border-radius: 0 on header wrapper and inner trigger blocks:
+ * Prevents Beer CSS universal `* { border-radius: inherit; }` from passing down
+ * the outer card's large border-radius (e.g. 1.5rem on status collapsibles) to inner layout blocks.
+ */
 .hc-collapsible-header-wrapper {
   display: flex;
   align-items: center;
   gap: 4px;
   width: 100%;
+  border-radius: 0 !important;
 }
 
 .hc-collapsible-trigger {
@@ -62,12 +68,14 @@
   cursor: not-allowed;
 }
 
+/* Left container and title must stay border-radius: 0 so text doesn't curve when highlighted or hovered */
 .hc-collapsible-trigger-left {
   display: flex;
   align-items: center;
   gap: 8px;
   min-width: 0;
   flex: 1;
+  border-radius: 0 !important;
 }
 
 .hc-collapsible-leading {
@@ -82,11 +90,13 @@
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1rem;
+  border-radius: 0 !important;
 }
 
 h6.hc-collapsible-title {
   font-size: 1.125rem;
   line-height: 1.4;
+  border-radius: 0 !important;
 }
 
 .hc-collapsible-trigger-right {
@@ -95,6 +105,50 @@ h6.hc-collapsible-title {
   gap: 8px;
   flex-shrink: 0;
   margin-inline-start: 12px;
+}
+
+/* Status-colored chip container combining count and animated chevron */
+.hc-collapsible-trigger-right.hc-collapsible-status-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  padding: 0 8px 0 10px !important;
+  border-radius: 9999px !important;
+  box-sizing: border-box !important;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.hc-collapsible-trigger:hover .hc-collapsible-trigger-right.hc-collapsible-status-chip {
+  filter: brightness(0.95);
+}
+
+.hc-collapsible-status-chip .hc-collapsible-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.hc-collapsible-chip-count {
+  font-size: 8.5pt;
+  font-weight: 700;
+  line-height: 1;
+  color: inherit !important;
+}
+
+.hc-collapsible-status-chip .hc-collapsible-chevron {
+  --_size: 16px;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  min-height: 16px;
+  font-size: 16px;
+  line-height: 1;
+  color: inherit !important;
 }
 
 .hc-collapsible-badge {

@@ -4,6 +4,7 @@ import {
   BOOKING_STATUS_ORDER,
   isBookingFullyReturned,
   getBookingStatusOnDate,
+  getItemStatusOnDate,
   getLatestBookingStatus,
   getEffectiveBookingStatus,
   getSubsequentStatusBlock,
@@ -35,8 +36,6 @@ import {
 } from '../common/components';
 import './BookingsPage.css';
 
-export type BookingListLayout = 'items' | 'orders';
-
 // Mapping for solid filled status badges on section counts
 const STATUS_FILLED_CLASS_MAP: Record<BookingItemStatus | 'available', string> = {
   available: 'hc-status-badge-filled-available',
@@ -52,13 +51,11 @@ interface SheetState {
   isOpen: boolean;
   mode: 'add' | 'edit' | 'view';
   booking?: Booking | null;
-  initialStep?: number;
-  lockStepMin?: number;
 }
 
 interface PendingStatusConfirm {
   booking: Booking;
-  itemId: string;
+  itemId?: string | null;
   currentStatus: BookingItemStatus;
   nextStatus: BookingItemStatus;
   targetDate: string;
@@ -87,9 +84,20 @@ function findItemBooking(
   }
 
   if (!isAllDates) {
-    const matching = itemBookings.find(
-      (b) => selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
-    );
+    const matching = itemBookings.find((b) => {
+      const lineItem = b.items.find(
+        (li) =>
+          li.itemId === item.id ||
+          li.itemCode.toLowerCase() === item.code.toLowerCase()
+      );
+      if (!lineItem) return false;
+      const itemCleaningEnd =
+        lineItem.status === 'returned' && lineItem.cleaningEndDate
+          ? lineItem.cleaningEndDate
+          : b.cleaningEndDate;
+      return selectedDate >= b.startDate && selectedDate <= itemCleaningEnd;
+    });
+
     if (matching) {
       const lineItem = matching.items.find(
         (li) =>
@@ -97,14 +105,22 @@ function findItemBooking(
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
       if (lineItem) {
-        const status = getBookingStatusOnDate(matching, selectedDate);
+        const status = getItemStatusOnDate(matching, lineItem, selectedDate);
         return { booking: matching, lineItem, status };
       }
     }
     return { booking: null, lineItem: null, status: 'available' };
   } else {
     // isAllDates: check for active booking
-    const active = itemBookings.find((b) => !isBookingFullyReturned(b));
+    const active = itemBookings.find((b) => {
+      const lineItem = b.items.find(
+        (li) =>
+          li.itemId === item.id ||
+          li.itemCode.toLowerCase() === item.code.toLowerCase()
+      );
+      return lineItem && lineItem.status !== 'returned' && !isBookingFullyReturned(b);
+    });
+
     if (active) {
       const lineItem = active.items.find(
         (li) =>
@@ -156,7 +172,6 @@ function matchesBookingSearch(booking: Booking, query: string): boolean {
 }
 
 interface BookingsEmptyStateParams {
-  layout: 'items' | 'bookings';
   searchQuery: string;
   isAllDates: boolean;
   selectedDate: string;
@@ -167,7 +182,6 @@ interface BookingsEmptyStateParams {
 
 function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
   const {
-    layout,
     searchQuery,
     isAllDates,
     selectedDate,
@@ -179,10 +193,7 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
   if (searchQuery) {
     return {
       icon: 'search_off',
-      title:
-        layout === 'items'
-          ? 'ไม่พบชุดที่ตรงกับเงื่อนไขการค้นหา'
-          : 'ไม่พบรายการจองที่ตรงกับคำค้นหา',
+      title: 'ไม่พบชุดหรือรายการจองที่ตรงกับเงื่อนไขการค้นหา',
       description: 'ลองค้นหาด้วยชื่อลูกค้า เบอร์โทรศัพท์ หรือรหัสชุดอื่น',
       actionIcon: 'add',
       actionText: 'สร้างการจองใหม่',
@@ -197,10 +208,7 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
     return {
       icon: 'event_note',
       title: 'ไม่มีคิวจองในวันที่เลือก',
-      description:
-        layout === 'items'
-          ? `ไม่มีชุดในวันที่ ${formatDateThaiFull(selectedDate)}`
-          : `ไม่มีรายการจองหรือส่งซักชุดในวันที่ ${formatDateThaiFull(selectedDate)}`,
+      description: `ไม่มีชุดหรือรายการจองในวันที่ ${formatDateThaiFull(selectedDate)}`,
       actionIcon: 'add',
       actionText: 'สร้างการจองใหม่',
       onAction: onOpenAdd,
@@ -212,10 +220,7 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
 
   return {
     icon: 'event_note',
-    title:
-      layout === 'items'
-        ? 'ไม่มีชุดในระบบ'
-        : 'ไม่มีรายการจองที่กำลังดำเนินการ',
+    title: 'ไม่มีชุดในระบบ',
     description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
     actionIcon: 'add',
     actionText: 'สร้างการจองใหม่',
@@ -230,6 +235,7 @@ export const BookingsPage: React.FC = () => {
     error,
     addBooking,
     updateBooking,
+    updateBookingStatus,
     updateItemStatus,
     deleteBooking,
   } = useBookings();
@@ -240,8 +246,8 @@ export const BookingsPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(() => new Set());
+  const [selectedDurationDays, setSelectedDurationDays] = useState<number>(3);
 
-  const [listLayout, setListLayout] = useState<BookingListLayout>('items');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
@@ -271,20 +277,17 @@ export const BookingsPage: React.FC = () => {
 
     const targetY = scrollPosOnToggleRef.current;
 
-    // 1. Focus element with preventScroll: true to avoid native browser scrolling
     if (searchOpen) {
       searchInputRef.current?.focus({ preventScroll: true });
     } else {
       searchFabRef.current?.focus({ preventScroll: true });
     }
 
-    // 2. Synchronously check and restore scroll position if focus or DOM swapping caused a jump
     if (targetY !== null) {
       if (window.scrollY !== targetY) {
         window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
       }
 
-      // 3. Backup safeguard for browsers (e.g. mobile Safari / Chrome) with deferred focus scrolling
       const rafId = requestAnimationFrame(() => {
         if (window.scrollY !== targetY) {
           window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
@@ -301,6 +304,17 @@ export const BookingsPage: React.FC = () => {
     mode: 'add',
     booking: null,
   });
+
+  const inventoryMap = useMemo(() => {
+    const map = new Map<string, InventoryItem>();
+    for (const item of inventoryItems) {
+      map.set(item.id, item);
+      if (item.code) {
+        map.set(item.code.toLowerCase(), item);
+      }
+    }
+    return map;
+  }, [inventoryItems]);
 
   // Inventory-centric items list with booking status on selected date
   const itemBookingEntries = useMemo(() => {
@@ -339,14 +353,24 @@ export const BookingsPage: React.FC = () => {
     });
   }, [itemBookingEntries, searchQuery]);
 
-  // Order-centric bookings list
+  // Available items for the 'ว่าง (พร้อมเช่า)' section
+  const availableEntries = useMemo(() => {
+    return filteredItemEntries.filter((entry) => entry.status === 'available');
+  }, [filteredItemEntries]);
+
+  // Filtered bookings list for non-ว่าง sections
   const filteredBookings = useMemo(() => {
     const byDate = isAllDates
       ? bookings.filter((b) => !isBookingFullyReturned(b))
-      : bookings.filter(
-          (b) =>
-            selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
-        );
+      : bookings.filter((b) => {
+          const effectiveCleaningEnd =
+            isBookingFullyReturned(b) && b.transactionDates?.returned
+              ? addDaysISO(b.transactionDates.returned, 2)
+              : b.cleaningEndDate;
+          return (
+            selectedDate >= b.startDate && selectedDate <= effectiveCleaningEnd
+          );
+        });
 
     const bySearch = byDate.filter((b) => matchesBookingSearch(b, searchQuery));
 
@@ -356,48 +380,6 @@ export const BookingsPage: React.FC = () => {
       return b.createdAt.localeCompare(a.createdAt);
     });
   }, [bookings, isAllDates, selectedDate, searchQuery]);
-
-  // Group item entries by status for collapsible sections
-  const groupedItemEntries = useMemo(() => {
-    const statusOrder: (BookingItemStatus | 'available')[] = [
-      ...BOOKING_STATUS_ORDER,
-      'available',
-    ];
-
-    const groups: {
-      status: BookingItemStatus | 'available';
-      label: string;
-      chipClass: string;
-      filledBadgeClass: string;
-      entries: typeof filteredItemEntries;
-    }[] = [];
-
-    for (const st of statusOrder) {
-      const entries = filteredItemEntries.filter((entry) => entry.status === st);
-      if (entries.length > 0) {
-        if (st === 'available') {
-          groups.push({
-            status: st,
-            label: 'ว่าง (พร้อมเช่า)',
-            chipClass: 'hc-status-badge-available',
-            filledBadgeClass: 'hc-status-badge-filled-available',
-            entries,
-          });
-        } else {
-          const meta = BOOKING_STATUS_META[st];
-          groups.push({
-            status: st,
-            label: meta.label,
-            chipClass: meta.chipClass,
-            filledBadgeClass: STATUS_FILLED_CLASS_MAP[st],
-            entries,
-          });
-        }
-      }
-    }
-
-    return groups;
-  }, [filteredItemEntries]);
 
   // Group bookings by status for collapsible sections
   const groupedBookings = useMemo(() => {
@@ -455,26 +437,24 @@ export const BookingsPage: React.FC = () => {
     if (selectedItemsList.length === 0) return;
 
     const start = isAllDates ? today : selectedDate;
-    const end = addDaysISO(start, 2);
+    const end = addDaysISO(start, selectedDurationDays - 1);
     const cleaning = addDaysISO(end, 2);
 
     const defaultPrice = selectedItemsList.reduce((sum, item) => {
       const sorted = [...(item.rentalPrices ?? [])].sort(
         (a, b) => a.durationDays - b.durationDays
       );
-      const exact = sorted.find((t) => t.durationDays === 3);
+      const exact = sorted.find((t) => t.durationDays === selectedDurationDays);
       if (exact) return sum + exact.price;
       const lowerOrEqual = [...sorted]
         .reverse()
-        .find((t) => t.durationDays <= 3);
+        .find((t) => t.durationDays <= selectedDurationDays);
       return sum + ((lowerOrEqual ?? sorted[0])?.price ?? 0);
     }, 0);
 
     setSheetState({
       isOpen: true,
       mode: 'add',
-      initialStep: 2,
-      lockStepMin: 2,
       booking: {
         id: '',
         customerId: '',
@@ -484,9 +464,9 @@ export const BookingsPage: React.FC = () => {
         startDate: start,
         endDate: end,
         cleaningEndDate: cleaning,
-        durationDays: 3,
+        durationDays: selectedDurationDays,
         rentalPrice: defaultPrice,
-        deposit: 1000,
+        deposit: 0,
         depositRefunded: false,
         note: '',
         createdAt: '',
@@ -503,14 +483,16 @@ export const BookingsPage: React.FC = () => {
   };
 
   const handleOpenAdd = () => {
+    if (selectedItemIds.size > 0) {
+      handleBookSelected();
+      return;
+    }
     const start = isAllDates ? today : selectedDate;
-    const end = addDaysISO(start, 2);
+    const end = addDaysISO(start, selectedDurationDays - 1);
     const cleaning = addDaysISO(end, 2);
     setSheetState({
       isOpen: true,
       mode: 'add',
-      initialStep: 1,
-      lockStepMin: 1,
       booking: {
         id: '',
         customerId: '',
@@ -519,9 +501,9 @@ export const BookingsPage: React.FC = () => {
         startDate: start,
         endDate: end,
         cleaningEndDate: cleaning,
-        durationDays: 3,
+        durationDays: selectedDurationDays,
         rentalPrice: 0,
-        deposit: 1000,
+        deposit: 0,
         depositRefunded: false,
         createdAt: '',
         updatedAt: '',
@@ -533,15 +515,20 @@ export const BookingsPage: React.FC = () => {
 
   const handleReserveItem = (item: InventoryItem) => {
     const start = isAllDates ? today : selectedDate;
-    const end = addDaysISO(start, 2);
+    const end = addDaysISO(start, selectedDurationDays - 1);
     const cleaning = addDaysISO(end, 2);
-    const defaultPrice = item.rentalPrices?.[0]?.price ?? 0;
+    const sorted = [...(item.rentalPrices ?? [])].sort(
+      (a, b) => a.durationDays - b.durationDays
+    );
+    const exact = sorted.find((t) => t.durationDays === selectedDurationDays);
+    const lowerOrEqual = [...sorted]
+      .reverse()
+      .find((t) => t.durationDays <= selectedDurationDays);
+    const defaultPrice = (exact ?? lowerOrEqual ?? sorted[0])?.price ?? 0;
 
     setSheetState({
       isOpen: true,
       mode: 'add',
-      initialStep: 2,
-      lockStepMin: 2,
       booking: {
         id: '',
         customerId: '',
@@ -551,9 +538,9 @@ export const BookingsPage: React.FC = () => {
         startDate: start,
         endDate: end,
         cleaningEndDate: cleaning,
-        durationDays: 3,
+        durationDays: selectedDurationDays,
         rentalPrice: defaultPrice,
-        deposit: 1000,
+        deposit: 0,
         depositRefunded: false,
         note: '',
         createdAt: '',
@@ -604,6 +591,32 @@ export const BookingsPage: React.FC = () => {
     await deleteBooking(id);
   };
 
+  const handleAdvanceBookingStatus = async (
+    bookingId: string,
+    nextStatus: BookingItemStatus,
+    effectiveDate?: string
+  ) => {
+    const targetDate = effectiveDate ?? (isAllDates ? today : selectedDate);
+    const booking = bookings.find((b) => b.id === bookingId);
+    if (booking) {
+      const block = getSubsequentStatusBlock(booking, targetDate, nextStatus);
+      if (block) {
+        return;
+      }
+      if (targetDate !== today && nextStatus !== 'reserved') {
+        setPendingStatusConfirm({
+          booking,
+          itemId: null,
+          currentStatus: getBookingStatusOnDate(booking, targetDate),
+          nextStatus,
+          targetDate,
+        });
+        return;
+      }
+    }
+    await updateBookingStatus(bookingId, nextStatus, targetDate);
+  };
+
   const handleAdvanceItemStatus = async (
     bookingId: string,
     itemId: string,
@@ -635,7 +648,11 @@ export const BookingsPage: React.FC = () => {
     if (!pendingStatusConfirm) return;
     const { booking, itemId, nextStatus, targetDate } = pendingStatusConfirm;
     setPendingStatusConfirm(null);
-    await updateItemStatus(booking.id, itemId, nextStatus, undefined, targetDate);
+    if (itemId) {
+      await updateItemStatus(booking.id, itemId, nextStatus, undefined, targetDate);
+    } else {
+      await updateBookingStatus(booking.id, nextStatus, targetDate);
+    }
   };
 
   const handleToggleDepositRefunded = async (booking: Booking) => {
@@ -643,7 +660,6 @@ export const BookingsPage: React.FC = () => {
       depositRefunded: !booking.depositRefunded,
     });
   };
-
 
   const renderContent = () => {
     if (loading) {
@@ -684,80 +700,12 @@ export const BookingsPage: React.FC = () => {
       );
     }
 
-    if (listLayout === 'items') {
-      if (filteredItemEntries.length === 0) {
-        return (
-          <EmptyState
-            {...getBookingsEmptyStateProps({
-              layout: 'items',
-              searchQuery,
-              isAllDates,
-              selectedDate,
-              onOpenAdd: handleOpenAdd,
-              onClearSearch: () => setSearchQuery(''),
-              onViewAllDates: () => {
-                setIsAllDates(true);
-                setSelectedItemIds(new Set());
-              },
-            })}
-          />
-        );
-      }
+    const hasAnyContent = availableEntries.length > 0 || groupedBookings.length > 0;
 
-      return (
-        <div className="hc-bookings-status-sections">
-          {groupedItemEntries.map((group) => {
-            // Collapse all sections except 'ready' (available / พร้อมเช่า) by default
-            const defaultOpen = group.status === 'available';
-
-            return (
-              <Collapsible
-                key={group.status}
-                testId={`collapsible-status-${group.status}`}
-                className="hc-bookings-status-collapsible"
-                variant="plain"
-                title={group.label}
-                defaultOpen={defaultOpen}
-                badgeSlot={
-                  <span
-                    className={`badge none circle bold ${group.filledBadgeClass}`}
-                    data-testid={`badge-count-${group.status}`}
-                  >
-                    {group.entries.length}
-                  </span>
-                }
-              >
-                <div className="grid">
-                  {group.entries.map((entry) => (
-                    <div key={entry.item.id} className="s12 m12 l6">
-                      <BookingInventoryCard
-                        item={entry.item}
-                        booking={entry.booking}
-                        lineItem={entry.lineItem}
-                        selectedDate={selectedDate}
-                        isAllDates={isAllDates}
-                        isSelected={selectedItemIds.has(entry.item.id)}
-                        onToggleSelect={handleToggleSelectItem}
-                        onReserve={handleReserveItem}
-                        onEditBooking={handleOpenEdit}
-                        onViewBooking={handleOpenView}
-                        onAdvanceItemStatus={handleAdvanceItemStatus}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </Collapsible>
-            );
-          })}
-        </div>
-      );
-    }
-
-    if (filteredBookings.length === 0) {
+    if (!hasAnyContent) {
       return (
         <EmptyState
           {...getBookingsEmptyStateProps({
-            layout: 'bookings',
             searchQuery,
             isAllDates,
             selectedDate,
@@ -774,6 +722,7 @@ export const BookingsPage: React.FC = () => {
 
     return (
       <div className="hc-bookings-status-sections">
+        {/* Non-ว่าง Sections: Grouped Booking Cards (collapsed by default) */}
         {groupedBookings.map((group) => {
           return (
             <Collapsible
@@ -782,10 +731,11 @@ export const BookingsPage: React.FC = () => {
               className="hc-bookings-status-collapsible"
               variant="plain"
               title={group.label}
-              defaultOpen={true}
+              defaultOpen={false}
+              statusChipClass={group.filledBadgeClass}
               badgeSlot={
                 <span
-                  className={`badge none circle bold ${group.filledBadgeClass}`}
+                  className="bold hc-collapsible-chip-count"
                   data-testid={`badge-count-${group.status}`}
                 >
                   {group.bookings.length}
@@ -794,14 +744,16 @@ export const BookingsPage: React.FC = () => {
             >
               <div className="grid">
                 {group.bookings.map((booking) => (
-                  <div key={booking.id} className="s12 m6">
+                  <div key={booking.id} className="s12 m12 l6">
                     <BookingCard
                       booking={booking}
                       selectedDate={selectedDate}
                       isAllDates={isAllDates}
+                      inventoryMap={inventoryMap}
                       onEdit={handleOpenEdit}
                       onView={handleOpenView}
                       onAdvanceItemStatus={handleAdvanceItemStatus}
+                      onAdvanceBookingStatus={handleAdvanceBookingStatus}
                       onToggleDepositRefunded={handleToggleDepositRefunded}
                     />
                   </div>
@@ -810,6 +762,71 @@ export const BookingsPage: React.FC = () => {
             </Collapsible>
           );
         })}
+
+        {/* Bottom-most Section: Available (ว่าง - พร้อมเช่า) expanded by default */}
+        {availableEntries.length > 0 && (
+          <Collapsible
+            key="available"
+            testId="collapsible-status-available"
+            className="hc-bookings-status-collapsible"
+            variant="plain"
+            title="ว่าง (พร้อมเช่า)"
+            defaultOpen={true}
+            statusChipClass="hc-status-badge-filled-available"
+            badgeSlot={
+              <span
+                className="bold hc-collapsible-chip-count"
+                data-testid="badge-count-available"
+              >
+                {availableEntries.length}
+              </span>
+            }
+          >
+            {/* Duration Selector Filter Bar inside 'ว่าง' Section */}
+            <div
+              className="hc-bookings-duration-filter-bar"
+              role="group"
+              aria-label="เลือกระยะเวลาเช่า"
+            >
+              <span className="hc-bookings-duration-filter-label">ระยะเวลาเช่า:</span>
+              {[1, 3, 5].map((days) => (
+                <button
+                  key={days}
+                  type="button"
+                  className={`chip small no-margin hc-bookings-duration-chip ${
+                    selectedDurationDays === days ? 'primary' : 'border'
+                  }`}
+                  onClick={() => setSelectedDurationDays(days)}
+                  aria-pressed={selectedDurationDays === days}
+                  data-testid={`duration-filter-${days}`}
+                >
+                  {days} วัน
+                </button>
+              ))}
+            </div>
+
+            <div className="grid">
+              {availableEntries.map((entry) => (
+                <div key={entry.item.id} className="s12 m12 l6">
+                  <BookingInventoryCard
+                    item={entry.item}
+                    booking={entry.booking}
+                    lineItem={entry.lineItem}
+                    selectedDate={selectedDate}
+                    isAllDates={isAllDates}
+                    selectedDurationDays={selectedDurationDays}
+                    isSelected={selectedItemIds.has(entry.item.id)}
+                    onToggleSelect={handleToggleSelectItem}
+                    onReserve={handleReserveItem}
+                    onEditBooking={handleOpenEdit}
+                    onViewBooking={handleOpenView}
+                    onAdvanceItemStatus={handleAdvanceItemStatus}
+                  />
+                </div>
+              ))}
+            </div>
+          </Collapsible>
+        )}
       </div>
     );
   };
@@ -830,8 +847,6 @@ export const BookingsPage: React.FC = () => {
                   calendarSheetOpen={calendarSheetOpen}
                   onDateChange={handleDateChange}
                   onCalendarClick={() => setCalendarSheetOpen(true)}
-                  viewMode={listLayout}
-                  onViewModeChange={setListLayout}
                 />
               </div>
 
@@ -863,7 +878,7 @@ export const BookingsPage: React.FC = () => {
                 title="กลับสู่แถบวันที่"
                 data-testid="bookings-search-back-fab"
               >
-                <i aria-hidden="true">chevron_left</i>
+                <i aria-hidden="true">chevron_right</i>
               </button>
 
               <div className="hc-bookings-top-search">
@@ -922,8 +937,8 @@ export const BookingsPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Dynamic Extended 'Book N Outfits' FAB (Only when items selected in items view) */}
-      {selectedItemIds.size > 0 && listLayout === 'items' && (
+      {/* Dynamic Extended 'Book N Outfits' FAB */}
+      {selectedItemIds.size > 0 && (
         <button
           type="button"
           className="fixed bottom right round extra primary medium-elevate margin front hc-booking-action-fab"
@@ -1007,7 +1022,7 @@ export const BookingsPage: React.FC = () => {
         onClose={() => setCalendarSheetOpen(false)}
       />
 
-      {/* Booking Add / Edit Sheet */}
+      {/* Booking Add / Edit / View Sheet */}
       <BookingSheet
         isOpen={sheetState.isOpen}
         mode={sheetState.mode}
@@ -1016,17 +1031,11 @@ export const BookingsPage: React.FC = () => {
         selectedDate={isAllDates ? today : selectedDate}
         inventoryItems={inventoryItems}
         customers={customers}
-        initialStep={sheetState.initialStep ?? 1}
-        lockStepMin={sheetState.lockStepMin}
-        allowStepBackTo1={
-          sheetState.lockStepMin !== undefined
-            ? sheetState.lockStepMin <= 1
-            : true
-        }
         onAddCustomer={addCustomer}
         onClose={handleCloseSheet}
         onSubmit={handleSubmitSheet}
         onDelete={sheetState.mode === 'edit' ? handleDeleteSheet : undefined}
+        onEditBooking={handleOpenEdit}
       />
     </div>
   );

@@ -79,3 +79,29 @@ main.responsive {
   --_round: 1rem;
   border-radius: var(--_round) !important;
 }
+
+/*
+ * Typography & Plain Text Border-Radius Reset
+ *
+ * Beer CSS (beer.css line 128) defines universal `* { border-radius: inherit; }`.
+ * While intended for full-bleed image/pseudo-element wrappers to conform to card corners,
+ * this universal inheritance causes plain typography (headings, paragraphs, labels, inline text)
+ * to inherit large border radii from parent containers (e.g. .round 2rem, .medium-round 1rem,
+ * or 1.5rem collapsible sections). When text elements have backgrounds (e.g. surface, error,
+ * primary-container) or during focus/selection, they render with distorted, rounded corners.
+ *
+ * This rule resets plain text and typography back to `border-radius: 0` while exempting
+ * elements explicitly designed to be rounded (chips, badges, pills, and buttons).
+ */
+h1, h2, h3, h4, h5, h6,
+p,
+b,
+strong,
+em,
+label {
+  border-radius: 0;
+}
+
+span:not(.chip, .badge, [class*="chip"], [class*="badge"], [class*="pill"], [class*="btn"], button, .button) {
+  border-radius: 0;
+}

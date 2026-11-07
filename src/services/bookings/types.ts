@@ -24,6 +24,11 @@ export interface IBookingRepository {
     id: string,
     booking: Partial<Omit<Booking, 'id'>>
   ): Promise<void>;
+  updateBookingStatus(
+    bookingId: string,
+    status: BookingItemStatus,
+    effectiveDate?: string
+  ): Promise<void>;
   updateItemStatus(
     bookingId: string,
     itemId: string,

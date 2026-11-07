@@ -126,16 +126,96 @@ export function getLatestBookingStatus(
 }
 
 /**
- * Returns the effective status for display depending on whether "All Dates" mode is active.
+ * Determines an item's status, honoring `lineItem.status` and `lineItem.cleaningEndDate` when returned early.
+ */
+export function getItemStatusOnDate(
+  booking: Booking,
+  lineItem: BookingLineItem,
+  targetDate: string
+): BookingItemStatus {
+  if (lineItem.status === 'returned') {
+    if (lineItem.returnedDate && targetDate < lineItem.returnedDate) {
+      return getBookingStatusOnDate(booking, targetDate);
+    }
+    return 'returned';
+  }
+
+  if (lineItem.status) {
+    const statusDate = booking.transactionDates?.[lineItem.status];
+    if (statusDate && targetDate < statusDate) {
+      return getBookingStatusOnDate(booking, targetDate);
+    }
+    return lineItem.status;
+  }
+
+  return getBookingStatusOnDate(booking, targetDate);
+}
+
+/**
+ * Returns progress counts of returned items in a booking.
+ */
+export function getBookingReturnProgress(
+  booking: Booking,
+  targetDate?: string
+): { isPartiallyReturned: boolean; returnedCount: number; totalCount: number } {
+  const totalCount = booking.items?.length ?? 0;
+  if (totalCount === 0) {
+    return { isPartiallyReturned: false, returnedCount: 0, totalCount: 0 };
+  }
+  const returnedCount = booking.items.filter((li) => {
+    if (targetDate) {
+      return getItemStatusOnDate(booking, li, targetDate) === 'returned';
+    }
+    return li.status === 'returned' || Boolean(booking.transactionDates?.returned);
+  }).length;
+  const isPartiallyReturned = returnedCount > 0 && returnedCount < totalCount;
+  return { isPartiallyReturned, returnedCount, totalCount };
+}
+
+export interface EffectiveBookingStatusInfo {
+  status: BookingItemStatus;
+  isPartiallyReturned: boolean;
+  returnedCount: number;
+  totalCount: number;
+}
+
+/**
+ * Returns the effective status for display.
+ * If all items are returned -> 'returned'. If some or none are returned -> active status.
  */
 export function getEffectiveBookingStatus(
-  booking: Pick<Booking, 'transactionDates'>,
+  booking: Booking | Pick<Booking, 'transactionDates'>,
   selectedDate: string,
   isAllDates = false
 ): BookingItemStatus {
+  if ('items' in booking && Array.isArray(booking.items) && booking.items.length > 0) {
+    if (isBookingFullyReturned(booking as Booking, isAllDates ? undefined : selectedDate)) {
+      return 'returned';
+    }
+  }
+
   return isAllDates
     ? getLatestBookingStatus(booking)
     : getBookingStatusOnDate(booking, selectedDate);
+}
+
+/**
+ * Returns effective status together with return progress info.
+ */
+export function getEffectiveBookingStatusInfo(
+  booking: Booking,
+  selectedDate: string,
+  isAllDates = false
+): EffectiveBookingStatusInfo {
+  const status = getEffectiveBookingStatus(booking, selectedDate, isAllDates);
+  const progress = getBookingReturnProgress(
+    booking,
+    isAllDates ? undefined : selectedDate
+  );
+  return {
+    status,
+    ...progress,
+  };
 }
 
 /**
@@ -178,11 +258,15 @@ export function isBookingFullyReturned(
   booking: Booking,
   onDate?: string
 ): boolean {
-  if (booking.items.length === 0) return false;
+  if (!booking.items || booking.items.length === 0) return false;
   if (onDate) {
-    return getBookingStatusOnDate(booking, onDate) === 'returned';
+    return booking.items.every(
+      (li) => getItemStatusOnDate(booking, li, onDate) === 'returned'
+    );
   }
-  return getLatestBookingStatus(booking) === 'returned';
+  return booking.items.every(
+    (li) => li.status === 'returned' || Boolean(booking.transactionDates?.returned)
+  );
 }
 
 export function getConflictingBookingsForItem(
@@ -196,18 +280,37 @@ export function getConflictingBookingsForItem(
     return [];
   }
 
+  const normalizedItemId = itemId.trim().toLowerCase();
+
   return bookings.filter((b) => {
     if (excludeBookingId && b.id === excludeBookingId) {
       return false;
     }
-    if (isBookingFullyReturned(b)) {
+    const lineItem = b.items.find(
+      (li) =>
+        li.itemId === itemId ||
+        (li.itemCode && li.itemCode.toLowerCase() === normalizedItemId)
+    );
+    if (!lineItem) {
       return false;
     }
-    const hasItem = b.items.some((li) => li.itemId === itemId);
-    if (!hasItem) {
+
+    let itemCleaningEnd = b.cleaningEndDate;
+    if (lineItem.status === 'returned' && lineItem.cleaningEndDate) {
+      itemCleaningEnd = lineItem.cleaningEndDate;
+    } else if (b.transactionDates?.returned) {
+      itemCleaningEnd = addDaysISO(b.transactionDates.returned, 2);
+    }
+
+    if (targetStart > itemCleaningEnd) {
       return false;
     }
-    return targetStart <= b.cleaningEndDate && targetCleaningEnd >= b.startDate;
+
+    if (targetCleaningEnd < b.startDate) {
+      return false;
+    }
+
+    return true;
   });
 }
 

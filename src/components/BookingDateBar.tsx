@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import {
   HeaderToolbar,
-  ToolbarDivider,
-  ConnectedButtons,
   type HeaderToolbarVariant,
   type HeaderToolbarElevation,
 } from '../common/components';
@@ -20,8 +18,6 @@ export interface BookingDateBarProps {
   calendarSheetOpen?: boolean;
   onDateChange: (newDate: string) => void;
   onCalendarClick?: () => void;
-  viewMode?: 'items' | 'orders';
-  onViewModeChange?: (mode: 'items' | 'orders') => void;
   variant?: HeaderToolbarVariant;
   elevation?: HeaderToolbarElevation;
   outlined?: boolean;
@@ -29,7 +25,7 @@ export interface BookingDateBarProps {
 }
 
 /**
- * BookingDateBar - BeerCSS Toolbar component for date navigation and view switching on Bookings page.
+ * BookingDateBar - BeerCSS Toolbar component for date navigation on Bookings page.
  * Features a horizontally compact connected date navigator (Prev, Date Picker, Next) and defaults to blurred background with clean outline.
  */
 export const BookingDateBar: React.FC<BookingDateBarProps> = ({
@@ -39,8 +35,6 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   calendarSheetOpen = false,
   onDateChange,
   onCalendarClick,
-  viewMode,
-  onViewModeChange,
   variant,
   elevation,
   outlined,
@@ -51,6 +45,8 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
     if (selectedDate === today) return `${formatDateThaiShort(selectedDate)} (วันนี้)`;
     return formatDateThaiShortWithYear(selectedDate);
   }, [isAllDates, selectedDate, today]);
+
+  const isToday = selectedDate === today && !isAllDates;
 
   return (
     <HeaderToolbar
@@ -105,49 +101,18 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
         </button>
       </nav>
 
-      {/* Return to Today Quick-Jump (Shown only when selectedDate !== today) */}
-      {selectedDate !== today && !isAllDates && (
-        <button
-          type="button"
-          className="chip small primary-container bold no-margin hc-datebar-today-btn"
-          onClick={() => onDateChange(today)}
-          title="กลับไปวันนี้"
-          aria-label="กลับไปวันนี้"
-        >
-          <span className="hc-datebar-today-text">วันนี้</span>
-        </button>
-      )}
-
-      {/* Material 3 Expressive Divider separating Date Navigation from View Switcher */}
-      <ToolbarDivider />
-
-      {/* View Switcher: Items vs Orders */}
-      {viewMode && onViewModeChange && (
-        <ConnectedButtons<'items' | 'orders'>
-          value={viewMode}
-          onChange={onViewModeChange}
-          size="small"
-          testId="booking-view-switcher"
-          ariaLabel="เลือกมุมมองการจอง"
-          className="hc-datebar-view-switcher"
-          items={[
-            {
-              value: 'items',
-              icon: 'checkroom',
-              label: 'รายชุด',
-              ariaLabel: 'สลับเป็นมุมมองรายชุด',
-              title: 'สลับเป็นมุมมองรายชุด',
-            },
-            {
-              value: 'orders',
-              icon: 'receipt_long',
-              label: 'ใบจอง',
-              ariaLabel: 'สลับเป็นมุมมองใบจอง',
-              title: 'สลับเป็นมุมมองใบจอง',
-            },
-          ]}
-        />
-      )}
+      {/* Return to Today Quick-Jump: Always visible, disabled when already today */}
+      <button
+        type="button"
+        disabled={isToday}
+        className="chip small primary-container bold no-margin hc-datebar-today-btn"
+        onClick={() => onDateChange(today)}
+        title="กลับไปวันนี้"
+        aria-label="กลับไปวันนี้"
+        data-testid="booking-date-today-btn"
+      >
+        <span className="hc-datebar-today-text">วันนี้</span>
+      </button>
     </HeaderToolbar>
   );
 };

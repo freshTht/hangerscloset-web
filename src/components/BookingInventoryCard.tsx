@@ -19,6 +19,7 @@ export interface BookingInventoryCardProps {
   lineItem: BookingLineItem | null;
   selectedDate: string;
   isAllDates: boolean;
+  selectedDurationDays?: number;
   isSelected?: boolean;
   onToggleSelect?: (item: InventoryItem) => void;
   onReserve?: (item: InventoryItem) => void;
@@ -38,6 +39,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   lineItem,
   selectedDate,
   isAllDates,
+  selectedDurationDays = 3,
   isSelected = false,
   onToggleSelect,
   onReserve,
@@ -81,7 +83,6 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   const sortedTiers = [...(item.rentalPrices ?? [])].sort(
     (a, b) => a.durationDays - b.durationDays
   );
-  const startingTier = sortedTiers[0] ?? null;
 
   const renderPrice = () => {
     if (isBooked && booking) {
@@ -94,14 +95,21 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
       );
     }
 
-    if (startingTier) {
+    if (sortedTiers.length > 0) {
+      const duration = selectedDurationDays ?? 3;
+      const exactTier = sortedTiers.find((t) => t.durationDays === duration);
+      const lowerOrEqual = [...sortedTiers]
+        .reverse()
+        .find((t) => t.durationDays <= duration);
+      const activeTier = exactTier ?? lowerOrEqual ?? sortedTiers[0];
+
       return (
         <div className="hc-booking-inv-card-price">
           <span className="bold primary-text medium-text">
-            ฿{startingTier.price.toLocaleString()}
+            ฿{activeTier.price.toLocaleString()}
           </span>
           <span className="hc-micro-text secondary-text">
-            / {startingTier.durationDays} วัน
+            / {duration} วัน
           </span>
         </div>
       );

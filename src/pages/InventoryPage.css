@@ -36,6 +36,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.hc-inventory-search-box:focus-within {
+  border-color: var(--primary) !important;
 }
 
 .hc-inventory-search-input-row {
@@ -45,12 +50,23 @@
 
 .hc-inventory-search-input {
   flex: 1;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   background: transparent;
   color: var(--on-surface);
   height: 32px;
   min-width: 0;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.hc-inventory-search-input:focus,
+.hc-inventory-search-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 .hc-inventory-search-clear-btn {

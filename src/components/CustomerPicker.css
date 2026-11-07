@@ -1,5 +1,18 @@
 /* CustomerPicker Styles */
 
+.hc-customer-selected-card {
+  border-radius: 8px;
+  background-color: var(--surface);
+  border: 1px solid var(--outline-variant);
+}
+
+.hc-customer-empty-readonly {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .hc-customer-selected-row {
   display: flex;
   align-items: center;
