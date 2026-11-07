@@ -77,6 +77,29 @@ export async function applyThemeColor(hex: string): Promise<void> {
   } catch (err) {
     console.warn('[themeColorManager] Failed to apply theme with ui("theme", hex):', err);
   }
+
+  // Compute and set dark nav variables for persistent dark theme on nav bars
+  try {
+    const globalObj = globalThis as typeof globalThis & {
+      materialDynamicColors?: (hex: string) => Promise<{
+        dark?: {
+          primary: string;
+          onPrimary: string;
+        };
+      }>;
+    };
+    const mdc = globalObj.materialDynamicColors;
+    if (typeof mdc === 'function') {
+      const res = await mdc(hex);
+      if (res?.dark && typeof document !== 'undefined') {
+        const root = document.documentElement;
+        root.style.setProperty('--hc-nav-primary', res.dark.primary);
+        root.style.setProperty('--hc-nav-on-primary', res.dark.onPrimary);
+      }
+    }
+  } catch {
+    // Graceful fallback to CSS var(--inverse-primary)
+  }
 }
 
 export function initColorPreference(): void {
@@ -89,6 +112,10 @@ export function initColorPreference(): void {
 export function resetColorForTesting(): void {
   try {
     localStorage.removeItem(APP_COLOR_STORAGE_KEY);
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.removeProperty('--hc-nav-primary');
+      document.documentElement.style.removeProperty('--hc-nav-on-primary');
+    }
   } catch {
     // Ignore in non-storage environments
   }

@@ -10,6 +10,35 @@
   box-sizing: border-box;
 }
 
+/* Force Beer CSS Dark Theme locally on Navigation Bars (Android 12 Two-Tone Shell) */
+.hc-force-dark,
+header.hc-top-header,
+nav.left {
+  color-scheme: dark !important;
+  --surface: #000000 !important;
+  --on-surface: #ffffff !important;
+  --on-surface-variant: rgba(255, 255, 255, 0.7) !important;
+  --outline: rgba(255, 255, 255, 0.15) !important;
+  --outline-variant: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* When the global theme is Light Mode, map nav bar variables to the Tone 80 Dark Mode equivalents */
+body:not(.dark) header.hc-top-header,
+body:not(.dark) nav.left,
+body.light header.hc-top-header,
+body.light nav.left {
+  --primary: var(--hc-nav-primary, var(--inverse-primary)) !important;
+  --on-primary: var(--hc-nav-on-primary, var(--inverse-on-surface)) !important;
+  --secondary: var(--hc-nav-primary, var(--inverse-primary)) !important;
+  --on-secondary: var(--hc-nav-on-primary, var(--inverse-on-surface)) !important;
+  --secondary-container: var(--hc-nav-secondary-container, #2b2930) !important;
+  --on-secondary-container: var(--hc-nav-primary, var(--inverse-primary)) !important;
+  --surface-container: #1c1b1f !important;
+  --surface-container-high: #2b2930 !important;
+  --on-surface: #ffffff !important;
+  --on-surface-variant: rgba(255, 255, 255, 0.7) !important;
+}
+
 /* Small Screens (<= 600px): Vertical Stack (Black Top Bar -> Surface Sheet) */
 @media (max-width: 600px) {
   .hc-app-container {
@@ -24,8 +53,10 @@
     color: #ffffff !important;
     min-height: 52px;
     height: 52px;
-    padding: 0 12px;
     padding-top: env(safe-area-inset-top, 0);
+    padding-bottom: 0;
+    padding-left: calc(28px + env(safe-area-inset-left, 0px));
+    padding-right: calc(28px + env(safe-area-inset-right, 0px));
     margin: 0 !important;
     border: none !important;
     display: flex;
@@ -45,28 +76,45 @@
   }
 
   .hc-top-header .tabs > a {
-    color: rgba(255, 255, 255, 0.65);
+    color: rgba(255, 255, 255, 0.7) !important;
     transition: color 0.15s ease, background-color 0.15s ease;
     height: 100%;
     min-block-size: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 2px;
+    padding: 4px 6px;
     text-decoration: none;
     position: relative;
+    font-size: 8.5pt;
+    font-weight: 500;
   }
 
-  .hc-top-header .tabs > a:hover {
-    color: #ffffff;
+  .hc-top-header .tabs > a > i {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    line-height: 20px;
   }
 
-  .hc-top-header .tabs > a.active {
+  .hc-top-header .tabs > a > span {
+    font-size: 8.5pt;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .hc-top-header .tabs > a:hover:not(.active) {
     color: #ffffff !important;
   }
 
-  .hc-top-header .tabs > a.active > i {
-    color: #ffffff !important;
+  .hc-top-header .tabs > a.active,
+  .hc-top-header .tabs > a.active > i,
+  .hc-top-header .tabs > a.active > span,
+  .hc-top-header .tabs > a.active * {
+    color: var(--primary) !important;
+    font-weight: 600;
   }
 
   .hc-top-header .tabs > a.active::before {
@@ -97,7 +145,7 @@
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-    padding: 16px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    padding: 8px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
     box-sizing: border-box;
   }
 }
@@ -153,7 +201,7 @@
   }
 
   nav.left > a {
-    color: rgba(255, 255, 255, 0.65) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
     text-decoration: none;
   }
 
@@ -195,7 +243,7 @@
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-    padding: 24px !important;
+    padding: 16px 24px !important;
     box-sizing: border-box;
   }
 }
