@@ -10,3 +10,8 @@ export {
   Collapsible,
   type CollapsibleProps,
 } from './Collapsible';
+export {
+  ConnectedButtons,
+  type ConnectedButtonsProps,
+  type ConnectedButtonItem,
+} from './ConnectedButtons';

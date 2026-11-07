@@ -73,7 +73,7 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
         <button
           id={triggerId}
           type="button"
-          className="hc-collapsible-trigger ripple"
+          className="hc-collapsible-trigger wave"
           aria-expanded={isOpen}
           aria-controls={contentId}
           disabled={disabled}

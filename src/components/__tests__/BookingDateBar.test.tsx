@@ -3,30 +3,14 @@ import { describe, it, expect, vi } from 'vitest';
 import { BookingDateBar, type BookingDateBarProps } from '../BookingDateBar';
 
 describe('BookingDateBar Component', () => {
-  const defaultTabCounts = {
-    all: 43,
-    active: 43,
-    available: 37,
-    reserved: 0,
-    pending_delivery: 1,
-    delivered: 2,
-    pending_return: 1,
-    in_laundry: 2,
-    returned: 1,
-  };
-
   const defaultProps: BookingDateBarProps = {
     selectedDate: '2026-11-01',
     today: '2026-11-01',
     isAllDates: false,
-    statusFilter: 'active',
-    tabCounts: defaultTabCounts,
-    filterSheetOpen: false,
     onDateChange: vi.fn(),
-    onFilterClick: vi.fn(),
   };
 
-  it('renders BeerCSS toolbar container with date navigation and filter dropdown', () => {
+  it('renders BeerCSS toolbar container with date navigation', () => {
     render(<BookingDateBar {...defaultProps} />);
 
     const bar = screen.getByTestId('bookings-date-bar');
@@ -40,12 +24,6 @@ describe('BookingDateBar Component', () => {
 
     // "วันนี้" quick jump should NOT be rendered when selectedDate is today
     expect(screen.queryByRole('button', { name: /กลับไปวันนี้/i })).not.toBeInTheDocument();
-
-    // Filter dropdown displays default label and count
-    const filterBtn = screen.getByTestId('booking-filter-dropdown');
-    expect(filterBtn).toBeInTheDocument();
-    expect(filterBtn).toHaveTextContent('ตัวกรอง');
-    expect(filterBtn).toHaveTextContent('43');
   });
 
   it('navigates to previous day on previous button click', () => {
@@ -82,14 +60,6 @@ describe('BookingDateBar Component', () => {
     expect(onDateChange).toHaveBeenCalledWith('2026-11-01');
   });
 
-  it('triggers onFilterClick when filter dropdown is clicked', () => {
-    const onFilterClick = vi.fn();
-    render(<BookingDateBar {...defaultProps} onFilterClick={onFilterClick} />);
-
-    fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
-    expect(onFilterClick).toHaveBeenCalledTimes(1);
-  });
-
   it('triggers onCalendarClick when date picker button is clicked', () => {
     const onCalendarClick = vi.fn();
     render(
@@ -100,36 +70,26 @@ describe('BookingDateBar Component', () => {
     expect(onCalendarClick).toHaveBeenCalledTimes(1);
   });
 
-  it('updates label and badge style when a non-active status filter is selected', () => {
+  it('renders view switcher connected buttons and calls onViewModeChange when clicked', () => {
+    const onViewModeChange = vi.fn();
     render(
       <BookingDateBar
         {...defaultProps}
-        statusFilter="in_laundry"
+        viewMode="items"
+        onViewModeChange={onViewModeChange}
       />
     );
 
-    const filterBtn = screen.getByTestId('booking-filter-dropdown');
-    expect(filterBtn).toHaveTextContent('ส่งซัก');
-    expect(filterBtn).toHaveTextContent('2');
-    expect(filterBtn).toHaveClass('primary');
-  });
+    const switcher = screen.getByTestId('booking-view-switcher');
+    expect(switcher).toBeInTheDocument();
 
-  it('renders sort menu button and triggers onSelectSort when sort options are provided', () => {
-    const onSelectSort = vi.fn();
-    render(
-      <BookingDateBar
-        {...defaultProps}
-        selectedSort="startDate_asc"
-        onSelectSort={onSelectSort}
-      />
-    );
+    const itemsBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองรายชุด/i });
+    const ordersBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองใบจอง/i });
 
-    const sortBtn = screen.getByTestId('booking-sort-button');
-    expect(sortBtn).toBeInTheDocument();
-    expect(sortBtn).toHaveTextContent('จัดเรียง');
+    expect(itemsBtn).toHaveClass('active');
+    expect(ordersBtn).not.toHaveClass('active');
 
-    fireEvent.click(sortBtn);
-    fireEvent.click(screen.getByRole('radio', { name: /รหัสชุด \(A-Z\)/i }));
-    expect(onSelectSort).toHaveBeenCalledWith('code_asc');
+    fireEvent.click(ordersBtn);
+    expect(onViewModeChange).toHaveBeenCalledWith('orders');
   });
 });

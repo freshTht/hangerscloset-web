@@ -23,15 +23,7 @@ import { BookingCard } from '../components/BookingCard';
 import { BookingInventoryCard } from '../components/BookingInventoryCard';
 import { BookingDateBar } from '../components/BookingDateBar';
 import { BookingCalendar } from '../components/BookingCalendar';
-import { BookingSortDialog } from '../components/BookingSortDialog';
 import { BookingSheet } from '../components/BookingSheet';
-import {
-  BookingFilterSheet,
-  FILTER_TABS,
-  SORT_OPTIONS,
-  type BookingFilterTab,
-  type BookingSortKey,
-} from '../components/BookingFilterSheet';
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
@@ -39,8 +31,6 @@ import { FloatingBottomToolbar } from '../components/FloatingBottomToolbar';
 import { Modal, Collapsible } from '../common/components';
 import './BookingsPage.css';
 
-export type { BookingFilterTab, BookingSortKey };
-export { FILTER_TABS, SORT_OPTIONS };
 export type BookingListLayout = 'items' | 'orders';
 
 // Mapping for solid filled status badges on section counts
@@ -73,8 +63,7 @@ function findItemBooking(
   item: InventoryItem,
   bookings: Booking[],
   selectedDate: string,
-  isAllDates: boolean,
-  statusFilters?: BookingFilterTab[]
+  isAllDates: boolean
 ): {
   booking: Booking | null;
   lineItem: BookingLineItem | null;
@@ -90,28 +79,6 @@ function findItemBooking(
 
   if (itemBookings.length === 0) {
     return { booking: null, lineItem: null, status: 'available' };
-  }
-
-  // If user is specifically viewing the 'returned' tab, check if any booking has returned status
-  if (statusFilters?.includes('returned')) {
-    for (const b of itemBookings) {
-      const match = b.items.find(
-        (li) =>
-          li.itemId === item.id ||
-          li.itemCode.toLowerCase() === item.code.toLowerCase()
-      );
-      let computed: BookingItemStatus;
-      if (isAllDates) {
-        computed = getLatestBookingStatus(b);
-      } else if (selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate) {
-        computed = getBookingStatusOnDate(b, selectedDate);
-      } else {
-        computed = getLatestBookingStatus(b);
-      }
-      if (match && computed === 'returned') {
-        return { booking: b, lineItem: match, status: 'returned' };
-      }
-    }
   }
 
   if (!isAllDates) {
@@ -162,56 +129,47 @@ function findItemBooking(
   }
 }
 
-function matchesBookingSearch(booking: Booking, rawQuery: string): boolean {
-  const q = rawQuery.trim().toLowerCase();
-  if (!q) return true;
+function matchesBookingSearch(booking: Booking, query: string): boolean {
+  if (!query.trim()) return true;
+  const q = query.trim().toLowerCase();
   const qDigits = q.replace(/[\s-]/g, '');
-  const phoneDigits = booking.customerPhone.replace(/[\s-]/g, '').toLowerCase();
 
-  if (booking.customerName.toLowerCase().includes(q)) return true;
-  if (booking.customerPhone.toLowerCase().includes(q)) return true;
-  if (qDigits.length > 0 && phoneDigits.includes(qDigits)) return true;
-  if (booking.customerLineId?.toLowerCase().includes(q)) return true;
-
-  return booking.items.some(
-    (li) =>
-      li.itemCode.toLowerCase().includes(q) ||
-      li.itemName.toLowerCase().includes(q)
+  return (
+    booking.customerName.toLowerCase().includes(q) ||
+    (booking.customerPhone
+      ? booking.customerPhone.replace(/[\s-]/g, '').includes(qDigits)
+      : false) ||
+    (booking.customerLineId
+      ? booking.customerLineId.toLowerCase().includes(q)
+      : false) ||
+    booking.items.some(
+      (li) =>
+        li.itemCode.toLowerCase().includes(q) ||
+        li.itemName.toLowerCase().includes(q)
+    )
   );
 }
 
 interface BookingsEmptyStateParams {
   layout: 'items' | 'bookings';
   searchQuery: string;
-  statusFilters?: BookingFilterTab[];
-  statusFilter?: BookingFilterTab;
   isAllDates: boolean;
   selectedDate: string;
   onOpenAdd: () => void;
   onClearSearch: () => void;
   onViewAllDates: () => void;
-  onResetFilter: () => void;
 }
 
 function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
   const {
     layout,
     searchQuery,
-    statusFilters,
-    statusFilter,
     isAllDates,
     selectedDate,
     onOpenAdd,
     onClearSearch,
     onViewAllDates,
-    onResetFilter,
   } = params;
-
-  const currentFilters = statusFilters ?? (statusFilter ? [statusFilter] : ['all']);
-  const isDefaultAll =
-    currentFilters.includes('all') ||
-    currentFilters.includes('active') ||
-    currentFilters.length === 0;
 
   if (searchQuery) {
     return {
@@ -236,7 +194,7 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
       title: 'ไม่มีคิวจองในวันที่เลือก',
       description:
         layout === 'items'
-          ? `ไม่มีชุดในสถานะนี้ในวันที่ ${formatDateThaiFull(selectedDate)}`
+          ? `ไม่มีชุดในวันที่ ${formatDateThaiFull(selectedDate)}`
           : `ไม่มีรายการจองหรือส่งซักชุดในวันที่ ${formatDateThaiFull(selectedDate)}`,
       actionIcon: 'add',
       actionText: 'สร้างการจองใหม่',
@@ -247,51 +205,16 @@ function getBookingsEmptyStateProps(params: BookingsEmptyStateParams) {
     };
   }
 
-  const secondaryAction = !isDefaultAll
-    ? {
-        secondaryActionIcon: 'restart_alt',
-        secondaryActionText:
-          layout === 'items' ? 'ดูชุดทั้งหมด' : 'ดูการจองทั้งหมด',
-        onSecondaryAction: onResetFilter,
-      }
-    : {};
-
-  if (layout === 'items') {
-    if (currentFilters.length === 1 && currentFilters[0] === 'available') {
-      return {
-        icon: 'event_note',
-        title: 'ไม่มีชุดว่างในหมวดหมู่นี้',
-        description:
-          'ลองเลือกดูหมวดหมู่อื่น หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
-        actionIcon: 'add',
-        actionText: 'สร้างการจองใหม่',
-        onAction: onOpenAdd,
-        ...secondaryAction,
-      };
-    }
-    return {
-      icon: 'event_note',
-      title: 'ไม่พบชุดในสถานะที่เลือก',
-      description:
-        'ลองเปลี่ยนตัวกรอง หรือกดปุ่มด้านล่างเพื่อสร้างการจองใหม่',
-      actionIcon: 'add',
-      actionText: 'สร้างการจองใหม่',
-      onAction: onOpenAdd,
-      ...secondaryAction,
-    };
-  }
-
-  // layout === 'bookings'
   return {
     icon: 'event_note',
-    title: isDefaultAll
-      ? 'ไม่มีรายการจองที่กำลังดำเนินการ'
-      : 'ไม่พบรายการจองในหมวดหมู่นี้',
+    title:
+      layout === 'items'
+        ? 'ไม่มีชุดในระบบ'
+        : 'ไม่มีรายการจองที่กำลังดำเนินการ',
     description: 'กดปุ่มด้านล่างเพื่อสร้างรายการจองชุดใหม่',
     actionIcon: 'add',
     actionText: 'สร้างการจองใหม่',
     onAction: onOpenAdd,
-    ...secondaryAction,
   };
 }
 
@@ -312,13 +235,9 @@ export const BookingsPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
 
-  const [statusFilters, setStatusFilters] = useState<BookingFilterTab[]>(['all']);
   const [listLayout, setListLayout] = useState<BookingListLayout>('items');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortKey, setSortKey] = useState<BookingSortKey>('startDate_asc');
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
-  const [sortDialogOpen, setSortDialogOpen] = useState(false);
   const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
   const [pendingStatusConfirm, setPendingStatusConfirm] =
     useState<PendingStatusConfirm | null>(null);
@@ -332,139 +251,57 @@ export const BookingsPage: React.FC = () => {
   // Inventory-centric items list with booking status on selected date
   const itemBookingEntries = useMemo(() => {
     return inventoryItems.map((item) => {
-      const result = findItemBooking(
-        item,
-        bookings,
-        selectedDate,
-        isAllDates,
-        statusFilters
-      );
+      const result = findItemBooking(item, bookings, selectedDate, isAllDates);
       return { item, ...result };
     });
-  }, [inventoryItems, bookings, selectedDate, isAllDates, statusFilters]);
+  }, [inventoryItems, bookings, selectedDate, isAllDates]);
 
   const filteredItemEntries = useMemo(() => {
-    const isAll =
-      statusFilters.includes('all') ||
-      statusFilters.includes('active') ||
-      statusFilters.length === 0;
+    if (!searchQuery.trim()) {
+      return itemBookingEntries;
+    }
 
-    const list = itemBookingEntries.filter((entry) => {
-      if (!isAll) {
-        if (!statusFilters.includes(entry.status as BookingFilterTab)) {
-          return false;
-        }
-      }
+    const q = searchQuery.trim().toLowerCase();
+    const qDigits = q.replace(/[\s-]/g, '');
 
-      if (searchQuery.trim()) {
-        const q = searchQuery.trim().toLowerCase();
-        const qDigits = q.replace(/[\s-]/g, '');
-        const item = entry.item;
-        const b = entry.booking;
+    return itemBookingEntries.filter((entry) => {
+      const item = entry.item;
+      const b = entry.booking;
 
-        const matchItem =
-          item.code.toLowerCase().includes(q) ||
-          item.name.toLowerCase().includes(q) ||
-          (item.brand && item.brand.toLowerCase().includes(q)) ||
-          (item.color && item.color.toLowerCase().includes(q));
+      const matchItem =
+        item.code.toLowerCase().includes(q) ||
+        item.name.toLowerCase().includes(q) ||
+        (item.brand && item.brand.toLowerCase().includes(q)) ||
+        (item.color && item.color.toLowerCase().includes(q));
 
-        const matchBooking =
-          b &&
-          (b.customerName.toLowerCase().includes(q) ||
-            (b.customerPhone &&
-              b.customerPhone.replace(/[\s-]/g, '').includes(qDigits)) ||
-            (b.customerLineId && b.customerLineId.toLowerCase().includes(q)));
+      const matchBooking =
+        b &&
+        (b.customerName.toLowerCase().includes(q) ||
+          (b.customerPhone &&
+            b.customerPhone.replace(/[\s-]/g, '').includes(qDigits)) ||
+          (b.customerLineId && b.customerLineId.toLowerCase().includes(q)));
 
-        if (!matchItem && !matchBooking) return false;
-      }
-
-      return true;
+      return matchItem || matchBooking;
     });
-
-    return [...list].sort((a, b) => {
-      if (sortKey === 'code_asc') {
-        return a.item.code.localeCompare(b.item.code, undefined, { numeric: true });
-      }
-      if (sortKey === 'code_desc') {
-        return b.item.code.localeCompare(a.item.code, undefined, { numeric: true });
-      }
-      if (sortKey === 'startDate_asc') {
-        if (a.booking && !b.booking) return -1;
-        if (!a.booking && b.booking) return 1;
-        if (a.booking && b.booking) {
-          return a.booking.startDate.localeCompare(b.booking.startDate);
-        }
-        return a.item.code.localeCompare(b.item.code, undefined, { numeric: true });
-      }
-      if (sortKey === 'startDate_desc') {
-        if (a.booking && !b.booking) return -1;
-        if (!a.booking && b.booking) return 1;
-        if (a.booking && b.booking) {
-          return b.booking.startDate.localeCompare(a.booking.startDate);
-        }
-        return b.item.code.localeCompare(a.item.code, undefined, { numeric: true });
-      }
-      if (sortKey === 'createdAt_desc') {
-        if (a.booking && !b.booking) return -1;
-        if (!a.booking && b.booking) return 1;
-        if (a.booking && b.booking) {
-          return b.booking.createdAt.localeCompare(a.booking.createdAt);
-        }
-        return a.item.code.localeCompare(b.item.code, undefined, { numeric: true });
-      }
-      return 0;
-    });
-  }, [itemBookingEntries, statusFilters, searchQuery, sortKey]);
+  }, [itemBookingEntries, searchQuery]);
 
   // Order-centric bookings list
   const filteredBookings = useMemo(() => {
-    const isAll =
-      statusFilters.includes('all') ||
-      statusFilters.includes('active') ||
-      statusFilters.length === 0;
-
     const byDate = isAllDates
-      ? bookings
-      : bookings.filter((b) => {
-          if (!isAll && statusFilters.includes('returned') && !statusFilters.some(s => s !== 'returned')) {
-            return (
-              (selectedDate >= b.startDate &&
-                selectedDate <= b.cleaningEndDate &&
-                getBookingStatusOnDate(b, selectedDate) === 'returned') ||
-              getLatestBookingStatus(b) === 'returned'
-            );
-          }
-          return selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate;
-        });
+      ? bookings.filter((b) => !isBookingFullyReturned(b))
+      : bookings.filter(
+          (b) =>
+            selectedDate >= b.startDate && selectedDate <= b.cleaningEndDate
+        );
 
-    const byStatus = byDate.filter((b) => {
-      const computed = getEffectiveBookingStatus(b, selectedDate, isAllDates);
-      if (isAll) {
-        return isAllDates ? !isBookingFullyReturned(b) : computed !== 'returned';
-      }
-      if (statusFilters.includes('available') && statusFilters.length === 1) {
-        return false;
-      }
-      return (
-        statusFilters.includes(computed as BookingFilterTab) ||
-        (statusFilters.includes('returned') && getLatestBookingStatus(b) === 'returned')
-      );
-    });
-
-    const bySearch = byStatus.filter((b) =>
-      matchesBookingSearch(b, searchQuery)
-    );
+    const bySearch = byDate.filter((b) => matchesBookingSearch(b, searchQuery));
 
     return [...bySearch].sort((a, b) => {
-      if (sortKey === 'startDate_asc') {
-        return a.startDate.localeCompare(b.startDate);
-      }
-      if (sortKey === 'startDate_desc') {
-        return b.startDate.localeCompare(a.startDate);
-      }
+      const cmp = a.startDate.localeCompare(b.startDate);
+      if (cmp !== 0) return cmp;
       return b.createdAt.localeCompare(a.createdAt);
     });
-  }, [bookings, statusFilters, isAllDates, selectedDate, searchQuery, sortKey]);
+  }, [bookings, isAllDates, selectedDate, searchQuery]);
 
   // Group item entries by status for collapsible sections
   const groupedItemEntries = useMemo(() => {
@@ -538,41 +375,6 @@ export const BookingsPage: React.FC = () => {
 
     return groups;
   }, [filteredBookings, selectedDate, isAllDates]);
-
-  const tabCounts = useMemo(() => {
-    const counts: Record<BookingFilterTab, number> = {
-      all: itemBookingEntries.length,
-      active: itemBookingEntries.length,
-      available: 0,
-      reserved: 0,
-      pending_delivery: 0,
-      delivered: 0,
-      pending_return: 0,
-      in_laundry: 0,
-      returned: 0,
-    };
-
-    for (const entry of itemBookingEntries) {
-      if (entry.status === 'available') {
-        counts.available += 1;
-      } else if (entry.status in counts) {
-        counts[entry.status as BookingFilterTab] += 1;
-      }
-    }
-
-    counts.returned = inventoryItems.filter((item) =>
-      bookings.some(
-        (b) =>
-          b.items.some(
-            (li) =>
-              li.itemId === item.id ||
-              li.itemCode.toLowerCase() === item.code.toLowerCase()
-          ) && getLatestBookingStatus(b) === 'returned'
-      )
-    ).length;
-
-    return counts;
-  }, [itemBookingEntries, inventoryItems, bookings]);
 
   const handleOpenAdd = () => {
     const start = isAllDates ? today : selectedDate;
@@ -752,26 +554,6 @@ export const BookingsPage: React.FC = () => {
           >
             <i>{searchOpen ? 'close' : 'search'}</i>
           </button>
-
-          <button
-            className={`circle no-margin ${listLayout === 'items' ? 'fill tertiary' : 'transparent'}`}
-            type="button"
-            onClick={() =>
-              setListLayout((prev) => (prev === 'items' ? 'orders' : 'items'))
-            }
-            aria-label={
-              listLayout === 'items'
-                ? 'สลับเป็นมุมมองใบจอง'
-                : 'สลับเป็นมุมมองรายชุด'
-            }
-            title={
-              listLayout === 'items'
-                ? 'สลับเป็นมุมมองใบจอง'
-                : 'สลับเป็นมุมมองรายชุด'
-            }
-          >
-            <i>{listLayout === 'items' ? 'checkroom' : 'receipt_long'}</i>
-          </button>
         </>
       }
       onFabClick={handleOpenAdd}
@@ -825,13 +607,11 @@ export const BookingsPage: React.FC = () => {
             {...getBookingsEmptyStateProps({
               layout: 'items',
               searchQuery,
-              statusFilters,
               isAllDates,
               selectedDate,
               onOpenAdd: handleOpenAdd,
               onClearSearch: () => setSearchQuery(''),
               onViewAllDates: () => setIsAllDates(true),
-              onResetFilter: () => setStatusFilters(['all']),
             })}
           />
         );
@@ -840,12 +620,8 @@ export const BookingsPage: React.FC = () => {
       return (
         <div className="hc-bookings-status-sections">
           {groupedItemEntries.map((group) => {
-            const isSingleStatusFilter =
-              statusFilters.length === 1 &&
-              !statusFilters.includes('all') &&
-              statusFilters.includes(group.status);
             // Collapse all sections except 'ready' (available / พร้อมเช่า) by default
-            const defaultOpen = group.status === 'available' || isSingleStatusFilter;
+            const defaultOpen = group.status === 'available';
 
             return (
               <Collapsible
@@ -894,13 +670,11 @@ export const BookingsPage: React.FC = () => {
           {...getBookingsEmptyStateProps({
             layout: 'bookings',
             searchQuery,
-            statusFilters,
             isAllDates,
             selectedDate,
             onOpenAdd: handleOpenAdd,
             onClearSearch: () => setSearchQuery(''),
             onViewAllDates: () => setIsAllDates(true),
-            onResetFilter: () => setStatusFilters(['all']),
           })}
         />
       );
@@ -909,12 +683,6 @@ export const BookingsPage: React.FC = () => {
     return (
       <div className="hc-bookings-status-sections">
         {groupedBookings.map((group) => {
-          const isSingleStatusFilter =
-            statusFilters.length === 1 &&
-            !statusFilters.includes('all') &&
-            statusFilters.includes(group.status);
-          const defaultOpen = isSingleStatusFilter;
-
           return (
             <Collapsible
               key={group.status}
@@ -922,7 +690,7 @@ export const BookingsPage: React.FC = () => {
               className="hc-bookings-status-collapsible"
               variant="plain"
               title={group.label}
-              defaultOpen={defaultOpen}
+              defaultOpen={true}
               badgeSlot={
                 <span
                   className={`badge none circle bold ${group.filledBadgeClass}`}
@@ -956,26 +724,19 @@ export const BookingsPage: React.FC = () => {
 
   return (
     <div className="bookings-page">
-      {/* Date Navigation & Filter Bar (BeerCSS Toolbar) */}
+      {/* Date Navigation & View Switcher Bar (BeerCSS Toolbar) */}
       <BookingDateBar
         selectedDate={selectedDate}
         today={today}
         isAllDates={isAllDates}
-        statusFilter={statusFilters[0] ?? 'all'}
-        statusFilters={statusFilters}
-        tabCounts={tabCounts}
-        selectedSort={sortKey}
-        filterSheetOpen={filterSheetOpen}
-        sortDialogOpen={sortDialogOpen}
         calendarSheetOpen={calendarSheetOpen}
         onDateChange={(newDate) => {
           setSelectedDate(newDate);
           setIsAllDates(false);
         }}
-        onFilterClick={() => setFilterSheetOpen(true)}
-        onSortClick={() => setSortDialogOpen(true)}
         onCalendarClick={() => setCalendarSheetOpen(true)}
-        onSelectSort={setSortKey}
+        viewMode={listLayout}
+        onViewModeChange={setListLayout}
       />
 
       {/* Main Content Area */}
@@ -1059,26 +820,6 @@ export const BookingsPage: React.FC = () => {
           setIsAllDates(false);
         }}
         onClose={() => setCalendarSheetOpen(false)}
-      />
-
-      {/* Booking Filter Dialog */}
-      <BookingFilterSheet
-        isOpen={filterSheetOpen}
-        selectedFilters={statusFilters}
-        tabCounts={tabCounts}
-        onSelectFilter={setStatusFilters}
-        onClose={() => setFilterSheetOpen(false)}
-      />
-
-      {/* Booking Sort Dialog */}
-      <BookingSortDialog
-        isOpen={sortDialogOpen}
-        selectedSort={sortKey}
-        onSelectSort={(newSort) => {
-          setSortKey(newSort);
-          setSortDialogOpen(false);
-        }}
-        onClose={() => setSortDialogOpen(false)}
       />
 
       {/* Booking Add / Edit Sheet */}

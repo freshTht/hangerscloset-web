@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BookingsPage } from '../../pages/BookingsPage';
 
 describe('BookingsPage Component', () => {
-  it('renders filter dropdown and active bookings by default, and date selection bar without all-day button', () => {
+  it('renders date selection bar and active bookings by default without filter or sort buttons', () => {
     render(<BookingsPage />);
 
     // Date selection bar is present
@@ -15,53 +15,16 @@ describe('BookingsPage Component', () => {
     // The 'all day' ("ทุกวัน") button was removed from the date selector bar
     expect(screen.queryByRole('button', { name: /^ทุกวัน$/i })).not.toBeInTheDocument();
 
-    // Filter dropdown button is on the date bar row
-    const filterDropdown = screen.getByTestId('booking-filter-dropdown');
-    expect(filterDropdown).toBeInTheDocument();
-    expect(filterDropdown).toHaveTextContent('ตัวกรอง');
+    // Filter and Sort buttons are removed
+    expect(screen.queryByTestId('booking-filter-dropdown')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('booking-sort-button')).not.toBeInTheDocument();
 
     // Active booking active on today
     expect(screen.getAllByText('คุณพลอย รัตนากร').length).toBeGreaterThan(0);
 
-    // Clicking filter dropdown opens the bottom sheet
-    fireEvent.click(filterDropdown);
-    expect(screen.getByRole('dialog', { name: /ตัวกรองสถานะการจอง/i })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: /ทั้งหมด/i })).toHaveAttribute('aria-checked', 'true');
-
-    // Close the sheet
-    fireEvent.click(screen.getByRole('button', { name: /ปิดตัวกรอง/i }));
-
     // Navigating to tomorrow (+1 day) shows tomorrow's active booking
     fireEvent.click(screen.getByRole('button', { name: /วันถัดไป/i }));
     expect(screen.getByText('คุณมายด์ พิมพ์ชนก')).toBeInTheDocument();
-  });
-
-  it('filters bookings when selecting status from filter bottom sheet', () => {
-    render(<BookingsPage />);
-
-    // Open filter bottom sheet
-    fireEvent.click(screen.getByTestId('booking-filter-dropdown'));
-
-    // Open filter sheet and choose "ส่งซัก"
-    const laundryCheckbox = screen.getByRole('checkbox', { name: /ส่งซัก/i });
-    fireEvent.click(laundryCheckbox);
-
-    // Filter dropdown button displays current filter
-    expect(screen.getByTestId('booking-filter-dropdown')).toHaveTextContent('ส่งซัก');
-    expect(screen.getAllByText('คุณเนย วริศรา').length).toBeGreaterThan(0);
-  });
-
-  it('changes booking sort order via the sort dialog', () => {
-    render(<BookingsPage />);
-
-    // Open sort dialog
-    fireEvent.click(screen.getByTestId('booking-sort-button'));
-
-    // Click sort by item code Z-A
-    fireEvent.click(screen.getByRole('radio', { name: /รหัสชุด \(Z-A\)/i }));
-
-    // Sort button should now reflect the selected sort
-    expect(screen.getByTestId('booking-sort-button')).toHaveTextContent('รหัสชุด (Z-A)');
   });
 
   it('advances an item status with 1-tap button on BookingCard', async () => {

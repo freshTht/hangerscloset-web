@@ -1,114 +1,111 @@
 /* Colocated styles for BookingDateBar */
-.hc-datebar-chevron {
+
+/* Compact Connected Date Navigator */
+.hc-datebar-nav-group {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background: none !important;
+  gap: 1px !important;
+}
+
+.hc-datebar-nav-btn {
   position: relative;
-  width: 32px;
   height: 32px;
-  min-width: 32px;
   min-height: 32px;
-  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  cursor: pointer;
+  background-color: var(--primary-container) !important;
+  color: var(--on-primary-container) !important;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--on-surface);
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hc-datebar-nav-btn:hover {
+  background-color: var(--primary) !important;
+  color: var(--on-primary) !important;
+}
+
+/* Compact Chevrons */
+.hc-datebar-chevron {
+  width: 28px;
+  min-width: 28px;
+  padding: 0;
 }
 
 .hc-datebar-chevron-icon {
   font-size: 18px;
+  line-height: 1;
 }
 
-.hc-datebar-picker-wrap {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-width: 0;
-}
-
+/* Compact Date Picker Trigger */
 .hc-datebar-picker-btn {
-  position: relative;
-  min-height: 32px;
-  height: 32px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-radius: 9999px;
-  border: none;
-  min-width: 0;
-  cursor: pointer;
-  background-color: var(--primary-container);
-  color: var(--on-primary-container);
+  padding: 0 8px;
+  gap: 3px;
   font-weight: 700;
+  min-width: 0;
+}
+
+.hc-datebar-cal-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
 .hc-datebar-picker-text {
-  font-size: 9pt;
+  font-size: 8.5pt;
   white-space: nowrap;
+  line-height: 1;
 }
 
+.hc-datebar-arrow-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Compact Today Quick-Jump */
 .hc-datebar-today-btn {
   position: relative;
   height: 32px;
   min-height: 32px;
-  padding: 0 10px;
+  padding: 0 8px;
   border-radius: 9999px;
   border: none;
   cursor: pointer;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
   background-color: var(--primary-container);
   color: var(--on-primary-container);
   font-weight: 700;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hc-datebar-today-btn:hover {
+  background-color: var(--primary);
+  color: var(--on-primary);
 }
 
 .hc-datebar-today-text {
-  font-size: 8.5pt;
-}
-
-.hc-datebar-sort-btn {
-  position: relative;
-  min-height: 32px;
-  height: 32px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  border-radius: 9999px;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  max-width: 140px;
-}
-
-.hc-datebar-sort-label {
-  font-size: 9pt;
+  font-size: 8pt;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1;
 }
 
-.hc-datebar-filter-btn {
-  position: relative;
-  min-height: 32px;
-  height: 32px;
-  padding: 0 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  border-radius: 9999px;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-  max-width: 145px;
-}
-
+/* Touch Target Protection (>= 48px) */
 @media (pointer: coarse), (max-width: 600px) {
-  .hc-datebar-chevron::before,
-  .hc-datebar-picker-btn::before,
-  .hc-datebar-today-btn::before,
-  .hc-datebar-sort-btn::before,
-  .hc-datebar-filter-btn::before {
+  .hc-datebar-chevron::before {
     content: '';
     position: absolute;
     top: 50%;
@@ -116,30 +113,18 @@
     transform: translate(-50%, -50%);
     min-width: 48px;
     min-height: 48px;
-    width: 100%;
+    width: 48px;
     height: 48px;
   }
-}
 
-.hc-datebar-filter-label {
-  font-size: 9pt;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.hc-datebar-badge {
-  font-size: 8pt;
-  font-weight: 700;
-  padding: 1px 6px;
-  border-radius: 9999px;
-  line-height: 14px;
-  flex-shrink: 0;
-  background-color: var(--tertiary);
-  color: var(--on-tertiary);
-}
-
-.hc-datebar-badge.is-active-filter {
-  background-color: var(--on-primary);
-  color: var(--primary);
+  .hc-datebar-picker-btn::before,
+  .hc-datebar-today-btn::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    min-height: 48px;
+  }
 }
