@@ -195,4 +195,53 @@ describe('BookingsPage Component', () => {
       expect(screen.queryByTestId('confirm-status-date-dialog')).not.toBeInTheDocument();
     });
   });
+
+  it('collapses all sections except "ready" (available) by default and supports toggling', () => {
+    render(<BookingsPage />);
+
+    // In default items layout:
+    // 'available' (ว่าง (พร้อมเช่า)) section is open by default
+    const availableCollapsible = screen.getByTestId('collapsible-status-available');
+    expect(availableCollapsible).toBeInTheDocument();
+    expect(availableCollapsible).toHaveClass('is-open');
+    const availableTrigger = availableCollapsible.querySelector('.hc-collapsible-trigger')!;
+    expect(availableTrigger).toHaveAttribute('aria-expanded', 'true');
+
+    // Other status sections like 'delivered' (ส่งมอบแล้ว) are collapsed by default
+    const deliveredCollapsible = screen.getByTestId('collapsible-status-delivered');
+    expect(deliveredCollapsible).toBeInTheDocument();
+    expect(deliveredCollapsible).toHaveClass('is-closed');
+
+    // Title is simple text with Beer CSS typography h6
+    const heading = screen.getByRole('heading', { level: 6, name: 'ส่งมอบแล้ว' });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveClass('small');
+    expect(heading).toHaveClass('bold');
+
+    // Count is a solid filled badge with status color in the right header section
+    const badgeDelivered = screen.getByTestId('badge-count-delivered');
+    expect(badgeDelivered).toBeInTheDocument();
+    expect(badgeDelivered).toHaveClass('badge');
+    expect(badgeDelivered).toHaveClass('none');
+    expect(badgeDelivered).toHaveClass('circle');
+    expect(badgeDelivered).toHaveClass('primary');
+
+    const deliveredChevronArea = deliveredCollapsible.querySelector(
+      '[data-testid="collapsible-chevron-btn"]'
+    );
+    expect(deliveredChevronArea).toBeInTheDocument();
+    expect(deliveredChevronArea).toContainElement(badgeDelivered);
+
+    // Toggle expand for delivered section
+    const deliveredTrigger = deliveredCollapsible.querySelector('.hc-collapsible-trigger')!;
+    expect(deliveredTrigger).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(deliveredTrigger);
+    expect(deliveredTrigger).toHaveAttribute('aria-expanded', 'true');
+    expect(deliveredCollapsible).toHaveClass('is-open');
+
+    // Toggle back to collapse
+    fireEvent.click(deliveredTrigger);
+    expect(deliveredTrigger).toHaveAttribute('aria-expanded', 'false');
+    expect(deliveredCollapsible).toHaveClass('is-closed');
+  });
 });

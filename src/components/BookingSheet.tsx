@@ -24,14 +24,14 @@ import { useInventory } from '../hooks/useInventory';
 import { useCustomers } from '../hooks/useCustomers';
 import { CustomerPicker } from './CustomerPicker';
 import { BookingDateFilterBar } from './BookingDateFilterBar';
-import { LazyImage } from './LazyImage';
+import { InventoryCard } from '../common/components/InventoryCard';
 import { Stack } from './Stack';
 import { Modal } from '../common/components/Modal';
 import './BookingSheet.css';
 
 export interface BookingSheetProps {
   isOpen: boolean;
-  mode: 'add' | 'edit';
+  mode: 'add' | 'edit' | 'view';
   booking?: Booking | null;
   bookings: Booking[];
   selectedDate?: string;
@@ -99,6 +99,18 @@ function getStepButtonClass(step: number, currentStep: number): string {
     return 'surface border primary-text clickable';
   }
   return 'border secondary-text';
+}
+
+function getSheetTitle(mode: 'add' | 'edit' | 'view'): string {
+  switch (mode) {
+    case 'add':
+      return 'สร้างการจองใหม่';
+    case 'view':
+      return 'รายละเอียดการจอง';
+    case 'edit':
+    default:
+      return 'แก้ไขการจอง';
+  }
 }
 
 function getOutfitCardClass(isSelected: boolean, hasConflict: boolean): string {
@@ -250,7 +262,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         prevModeRef.current = mode;
         prevBookingIdRef.current = booking?.id;
 
-        if (mode === 'edit' && booking) {
+        if ((mode === 'edit' || mode === 'view') && booking) {
           setStartDate(booking.startDate);
           setEndDate(booking.endDate);
           setCleaningEndDate(booking.cleaningEndDate);
@@ -467,7 +479,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     setCleaningEndDate(addDaysISO(validEnd, 2));
   };
 
-  const excludeBookingId = mode === 'edit' && booking ? booking.id : undefined;
+  const excludeBookingId =
+    (mode === 'edit' || mode === 'view') && booking ? booking.id : undefined;
 
   const selectedConflicts = useMemo(() => {
     return selectedItems.filter((li) => {
@@ -700,13 +713,13 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
       testId="booking-sheet"
       overlayClassName="hc-booking-sheet-overlay"
       className="hc-booking-sheet-dialog"
-      ariaLabel={mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
+      ariaLabel={getSheetTitle(mode)}
       dialogRef={dialogRef}
     >
         {/* Top bar */}
         <div className="row no-margin hc-booking-sheet-top-bar">
           <h6 className="bold no-margin">
-            {mode === 'add' ? 'สร้างการจองใหม่' : 'แก้ไขการจอง'}
+            {getSheetTitle(mode)}
           </h6>
           <div className="max" />
           <button
@@ -867,43 +880,21 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           );
 
                           return (
-                            <article
+                            <InventoryCard
                               key={invItem.id}
-                              className={`border small-padding no-margin hc-booking-sheet-outfit-item ${getOutfitCardClass(isSelected, hasConflict)}`}
+                              item={invItem}
+                              size="sm"
+                              variant="outlined"
+                              selected={isSelected}
+                              hasConflict={hasConflict}
+                              className={getOutfitCardClass(isSelected, hasConflict)}
                               onClick={() => {
                                 if (!hasConflict || isSelected) {
                                   handleToggleItem(invItem);
                                 }
                               }}
-                            >
-                              {/* Thumbnail */}
-                              <div className="surface-container-high small-round hc-booking-sheet-outfit-thumb">
-                                {invItem.imageUrl ? (
-                                  <LazyImage
-                                    src={invItem.imageUrl}
-                                    alt={invItem.name}
-                                    containerClassName="hc-booking-sheet-outfit-thumb-img"
-                                    className="hc-booking-sheet-outfit-thumb-image-el"
-                                  />
-                                ) : (
-                                  <div className="hc-booking-sheet-outfit-thumb-placeholder">
-                                    <i className="secondary-text">checkroom</i>
-                                  </div>
-                                )}
-                              </div>
-
-                              {/* Details */}
-                              <div className="hc-booking-sheet-outfit-details">
-                                <div className="hc-booking-sheet-outfit-title-row">
-                                  <span className="chip tiny primary-container bold no-margin hc-micro-text hc-booking-sheet-outfit-code-badge">
-                                    {invItem.code}
-                                  </span>
-                                  <span className="bold small-text truncate">
-                                    {invItem.name}
-                                  </span>
-                                </div>
-
-                                <div className="hc-booking-sheet-outfit-meta-row">
+                              metaSlot={
+                                <>
                                   {invItem.brand && (
                                     <span className="hc-micro-text secondary-text">
                                       {invItem.brand}
@@ -917,33 +908,34 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                   <span className="bold hc-micro-text primary-text">
                                     • ฿{priceForDuration.toLocaleString()} / {durationDays} วัน
                                   </span>
-                                </div>
-
-                                {hasConflict && (
+                                </>
+                              }
+                              noteSlot={
+                                hasConflict ? (
                                   <span className="hc-micro-text error-text bold hc-booking-sheet-outfit-conflict-text">
                                     ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
                                   </span>
-                                )}
-                              </div>
-
-                              {/* Action Button */}
-                              <button
-                                type="button"
-                                className={`small no-margin hc-booking-sheet-outfit-select-btn ${getOutfitButtonClass(isSelected, hasConflict)} small-text`}
-                                disabled={hasConflict && !isSelected}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleToggleItem(invItem);
-                                }}
-                                aria-label={
-                                  isSelected
-                                    ? `ยกเลิกเลือก ${invItem.code}`
-                                    : `เลือกชุด ${invItem.code}`
-                                }
-                              >
-                                {renderOutfitButtonContent(isSelected, hasConflict)}
-                              </button>
-                            </article>
+                                ) : undefined
+                              }
+                              trailingActionSlot={
+                                <button
+                                  type="button"
+                                  className={`small no-margin hc-booking-sheet-outfit-select-btn ${getOutfitButtonClass(isSelected, hasConflict)} small-text`}
+                                  disabled={hasConflict && !isSelected}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleToggleItem(invItem);
+                                  }}
+                                  aria-label={
+                                    isSelected
+                                      ? `ยกเลิกเลือก ${invItem.code}`
+                                      : `เลือกชุด ${invItem.code}`
+                                  }
+                                >
+                                  {renderOutfitButtonContent(isSelected, hasConflict)}
+                                </button>
+                              }
+                            />
                           );
                         })
                       )}
@@ -1427,13 +1419,17 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 )}
               </div>
             ) : (
-              /* ----------------- MODE === 'EDIT': EXISTING SINGLE SHEET LAYOUT ----------------- */
+              /* ----------------- MODE === 'EDIT' | 'VIEW': SINGLE SHEET LAYOUT ----------------- */
               <>
                 <form
                   id="booking-form"
                   onSubmit={handleSubmit}
                   className="hc-booking-sheet-edit-form"
                 >
+                  <fieldset
+                    disabled={mode === 'view'}
+                    className="no-border no-padding no-margin hc-booking-sheet-fieldset"
+                  >
                   {/* 1. Dates & Duration Section */}
                   <article className="border surface-container-low padding no-margin">
                     <Stack orientation="column" gap="medium">
@@ -1531,6 +1527,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       selectedCustomer={selectedCustomer}
                       onSelectCustomer={setSelectedCustomer}
                       onCreateCustomer={handleCreateCustomerInline}
+                      disabled={mode === 'view'}
                     />
                   </Stack>
 
@@ -1553,7 +1550,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         <select
                           aria-label="สถานะการจอง"
                           value={currentSheetStatus}
-                          disabled={Boolean(subsequentSheetBlock)}
+                          disabled={mode === 'view' || Boolean(subsequentSheetBlock)}
                           onChange={(e) =>
                             handleSheetStatusChange(
                               e.target.value as BookingItemStatus
@@ -1674,26 +1671,28 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                                     </span>
                                   </Stack>
 
-                                  <Stack
-                                    orientation="row"
-                                    align="center"
-                                    gap="tiny"
-                                  >
-                                    <button
-                                      type="button"
-                                      className="circle transparent small no-margin"
-                                      onClick={() =>
-                                        setSelectedItems((prev) =>
-                                          prev.filter(
-                                            (x) => x.itemId !== li.itemId
-                                          )
-                                        )
-                                      }
-                                      aria-label={`นำชุด ${li.itemCode} ออก`}
+                                  {mode !== 'view' && (
+                                    <Stack
+                                      orientation="row"
+                                      align="center"
+                                      gap="tiny"
                                     >
-                                      <i>delete</i>
-                                    </button>
-                                  </Stack>
+                                      <button
+                                        type="button"
+                                        className="circle transparent small no-margin"
+                                        onClick={() =>
+                                          setSelectedItems((prev) =>
+                                            prev.filter(
+                                              (x) => x.itemId !== li.itemId
+                                            )
+                                          )
+                                        }
+                                        aria-label={`นำชุด ${li.itemCode} ออก`}
+                                      >
+                                        <i>delete</i>
+                                      </button>
+                                    </Stack>
+                                  )}
                                 </Stack>
 
                                 <div className="field small label border no-margin">
@@ -1720,114 +1719,76 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       )}
 
                       {/* Search & Pick Inventory Items */}
-                      <div className="field small label border no-margin">
-                        <input
-                          id="booking-item-search"
-                          type="search"
-                          value={itemSearch}
-                          onChange={(e) => setItemSearch(e.target.value)}
-                          placeholder=" "
-                        />
-                        <label htmlFor="booking-item-search">
-                          ค้นหาชุดในคลัง (รหัส SKU, ชื่อชุด, แบรนด์)...
-                        </label>
-                        <i>search</i>
-                      </div>
+                      {mode !== 'view' && (
+                        <>
+                          <div className="field small label border no-margin">
+                            <input
+                              id="booking-item-search"
+                              type="search"
+                              value={itemSearch}
+                              onChange={(e) => setItemSearch(e.target.value)}
+                              placeholder=" "
+                            />
+                            <label htmlFor="booking-item-search">
+                              ค้นหาชุดในคลัง (รหัส SKU, ชื่อชุด, แบรนด์)...
+                            </label>
+                            <i>search</i>
+                          </div>
 
-                      <article className="border surface small-padding no-margin hc-booking-sheet-edit-outfit-picker">
-                        <Stack orientation="column" gap="tiny">
-                          {filteredInventory.map((invItem) => {
-                            const isSelected = selectedItems.some(
-                              (li) => li.itemId === invItem.id
-                            );
-                            const conflicts = getConflictingBookingsForItem(
-                              invItem.id,
-                              startDate,
-                              cleaningEndDate,
-                              bookings,
-                              excludeBookingId
-                            );
-                            const hasConflict = conflicts.length > 0;
+                          <article className="border surface small-padding no-margin hc-booking-sheet-edit-outfit-picker">
+                            <Stack orientation="column" gap="tiny">
+                              {filteredInventory.map((invItem) => {
+                                const isSelected = selectedItems.some(
+                                  (li) => li.itemId === invItem.id
+                                );
+                                const conflicts = getConflictingBookingsForItem(
+                                  invItem.id,
+                                  startDate,
+                                  cleaningEndDate,
+                                  bookings,
+                                  excludeBookingId
+                                );
+                                const hasConflict = conflicts.length > 0;
 
-                            return (
-                              <article
-                                key={invItem.id}
-                                className={`border small-padding no-margin hc-booking-sheet-edit-outfit-item ${getOutfitCardClass(isSelected, hasConflict)}`}
-                              >
-                                <Stack
-                                  orientation="row"
-                                  align="center"
-                                  justify="space-between"
-                                  gap="small"
-                                >
-                                  <Stack
-                                    orientation="row"
-                                    align="center"
-                                    gap="small"
-                                    className="hc-booking-card-item-content"
-                                  >
-                                    <div className="small-round surface-container-high hc-booking-sheet-edit-outfit-thumb">
-                                      {invItem.imageUrl ? (
-                                        <LazyImage
-                                          src={invItem.imageUrl}
-                                          alt={invItem.name}
-                                          containerClassName="hc-booking-sheet-edit-outfit-thumb-img"
-                                          className="hc-booking-card-image"
-                                        />
-                                      ) : (
-                                        <div className="hc-booking-sheet-edit-outfit-thumb-placeholder">
-                                          <i className="small secondary-text">
-                                            checkroom
-                                          </i>
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    <Stack
-                                      orientation="column"
-                                      gap="none"
-                                      className="hc-booking-card-item-content"
-                                    >
-                                      <Stack
-                                        orientation="row"
-                                        align="center"
-                                        gap="tiny"
-                                        wrap
-                                      >
-                                        <span className="bold small-text">
-                                          {invItem.code}
-                                        </span>
-                                        <span className="small-text">
-                                          {invItem.name}
-                                        </span>
-                                      </Stack>
-                                      {hasConflict && (
+                                return (
+                                  <InventoryCard
+                                    key={invItem.id}
+                                    item={invItem}
+                                    size="sm"
+                                    variant="outlined"
+                                    selected={isSelected}
+                                    hasConflict={hasConflict}
+                                    hideDefaultMeta
+                                    className={getOutfitCardClass(isSelected, hasConflict)}
+                                    noteSlot={
+                                      hasConflict ? (
                                         <span className="hc-micro-text error-text bold">
                                           ติดจองช่วงเวลานี้ ({conflicts[0].customerName})
                                         </span>
-                                      )}
-                                    </Stack>
-                                  </Stack>
-
-                                  <button
-                                    type="button"
-                                    className={`small no-margin ${isSelected ? 'primary' : 'border'}`}
-                                    disabled={hasConflict && !isSelected}
-                                    onClick={() => handleToggleItem(invItem)}
-                                    aria-label={
-                                      isSelected
-                                        ? `ยกเลิกเลือก ${invItem.code}`
-                                        : `เลือกชุด ${invItem.code}`
+                                      ) : undefined
                                     }
-                                  >
-                                    {renderEditOutfitButtonContent(isSelected, hasConflict)}
-                                  </button>
-                                </Stack>
-                              </article>
-                            );
-                          })}
-                        </Stack>
-                      </article>
+                                    trailingActionSlot={
+                                      <button
+                                        type="button"
+                                        className={`small no-margin ${isSelected ? 'primary' : 'border'}`}
+                                        disabled={hasConflict && !isSelected}
+                                        onClick={() => handleToggleItem(invItem)}
+                                        aria-label={
+                                          isSelected
+                                            ? `ยกเลิกเลือก ${invItem.code}`
+                                            : `เลือกชุด ${invItem.code}`
+                                        }
+                                      >
+                                        {renderEditOutfitButtonContent(isSelected, hasConflict)}
+                                      </button>
+                                    }
+                                  />
+                                );
+                              })}
+                            </Stack>
+                          </article>
+                        </>
+                      )}
                     </Stack>
                   </article>
 
@@ -1846,7 +1807,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                             ราคาเช่าและเงินมัดจำ (บาท)
                           </span>
                         </Stack>
-                        {priceManuallyEdited && (
+                        {mode !== 'view' && priceManuallyEdited && (
                           <button
                             type="button"
                             className="chip small border transparent no-margin"
@@ -1923,10 +1884,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     <label htmlFor="booking-note">หมายเหตุการจัดส่ง / การจอง</label>
                     <i>edit_note</i>
                   </div>
+                  </fieldset>
                 </form>
 
-                {/* 6. Delete Confirmation */}
-                {confirmDelete && (
+                {/* 6. Delete Confirmation (Edit mode only) */}
+                {mode === 'edit' && confirmDelete && (
                   <article className="border error-container margin-top margin-bottom hc-booking-sheet-edit-delete-banner">
                     <div className="vertical hc-booking-sheet-delete-confirm-content">
                       <div className="row no-margin">
@@ -1969,51 +1931,64 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   </article>
                 )}
 
-                {/* Footer Action Buttons for Edit Mode */}
-                <div className="row no-margin hc-booking-sheet-edit-footer">
-                  {mode === 'edit' && onDelete && !confirmDelete && (
+                {/* Footer Action Buttons for View or Edit Mode */}
+                {mode === 'view' ? (
+                  <div className="row no-margin hc-booking-sheet-edit-footer">
+                    <div className="max" />
                     <button
                       type="button"
-                      className="border round error-text no-margin"
-                      onClick={() => setConfirmDelete(true)}
-                      disabled={submitting}
-                      title="ลบการจองนี้"
+                      className="primary round no-margin"
+                      onClick={handleCloseCleanly}
                     >
-                      <i>delete</i>
-                      <span>ลบการจอง</span>
+                      ปิด
                     </button>
-                  )}
-
-                  <div className="max" />
-
-                  <button
-                    type="button"
-                    className="border round no-margin"
-                    onClick={handleCloseCleanly}
-                    disabled={submitting}
-                  >
-                    ยกเลิก
-                  </button>
-
-                  <button
-                    type="submit"
-                    form="booking-form"
-                    className="primary round no-margin hc-booking-sheet-edit-submit-btn"
-                    disabled={submitting}
-                  >
-                    {submitting ? (
-                      <div
-                        className="shape loading-indicator small"
-                        role="status"
-                      />
-                    ) : (
-                      <>
-                        <i>save</i>
-                        <span>บันทึก</span>
-                      </>
+                  </div>
+                ) : (
+                  <div className="row no-margin hc-booking-sheet-edit-footer">
+                    {mode === 'edit' && onDelete && !confirmDelete && (
+                      <button
+                        type="button"
+                        className="border round error-text no-margin"
+                        onClick={() => setConfirmDelete(true)}
+                        disabled={submitting}
+                        title="ลบการจองนี้"
+                      >
+                        <i>delete</i>
+                        <span>ลบการจอง</span>
+                      </button>
                     )}
-                  </button>
-                </div>
+
+                    <div className="max" />
+
+                    <button
+                      type="button"
+                      className="border round no-margin"
+                      onClick={handleCloseCleanly}
+                      disabled={submitting}
+                    >
+                      ยกเลิก
+                    </button>
+
+                    <button
+                      type="submit"
+                      form="booking-form"
+                      className="primary round no-margin hc-booking-sheet-edit-submit-btn"
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <div
+                          className="shape loading-indicator small"
+                          role="status"
+                        />
+                      ) : (
+                        <>
+                          <i>save</i>
+                          <span>บันทึก</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </>

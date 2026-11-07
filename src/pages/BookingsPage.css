@@ -70,3 +70,98 @@
   z-index: 999;
   min-width: 280px;
 }
+
+/* Collapsible Status Sections - Stacked Rounded Outlined Cards Illusion */
+.hc-bookings-status-sections {
+  --hc-section-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-inline: calc(-1 * var(--main-padding, 12px));
+  width: calc(100% + (2 * var(--main-padding, 12px)));
+  box-sizing: border-box;
+}
+
+/* Base card styling for each collapsible section */
+.hc-bookings-status-collapsible {
+  width: 100%;
+  border-top-left-radius: var(--hc-section-radius);
+  border-top-right-radius: var(--hc-section-radius);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: 1px solid var(--outline-variant);
+  background-color: var(--surface-container-low);
+  box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.06);
+  padding: 0;
+  padding-bottom: var(--hc-section-radius);
+  box-sizing: border-box;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Consecutive sections ALWAYS overlap using negative margin matching border-radius */
+.hc-bookings-status-collapsible:not(:first-child) {
+  margin-top: calc(-1 * var(--hc-section-radius)) !important;
+  transition: margin-top 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Section Header Trigger - identical height and padding across both collapsed and expanded states */
+.hc-bookings-status-collapsible .hc-collapsible-trigger {
+  padding: 12px var(--main-padding, 12px);
+  min-height: 48px;
+  border-top-left-radius: var(--hc-section-radius);
+  border-top-right-radius: var(--hc-section-radius);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+  box-sizing: border-box;
+}
+
+.hc-bookings-status-collapsible .hc-collapsible-trigger:hover {
+  background-color: var(--surface-container);
+}
+
+/* Last child has rounded bottom corners and no trailing overlap compensation */
+.hc-bookings-status-collapsible:last-child {
+  border-bottom-left-radius: var(--hc-section-radius);
+  border-bottom-right-radius: var(--hc-section-radius);
+  padding-bottom: 0;
+}
+
+/* When expanded, the entire collapsible section becomes a complete enclosed rounded card with outline */
+.hc-bookings-status-collapsible.is-open {
+  border-radius: var(--hc-section-radius);
+  border: 1px solid var(--outline-variant);
+  background-color: var(--surface-container-low);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.hc-bookings-status-collapsible.is-open .hc-collapsible-trigger {
+  border-bottom: none;
+}
+
+.hc-bookings-status-collapsible .hc-collapsible-content {
+  width: 100%;
+  background-color: transparent;
+}
+
+.hc-bookings-status-collapsible .hc-collapsible-inner {
+  width: 100%;
+  padding-inline: var(--main-padding, 12px);
+  box-sizing: border-box;
+}
+
+/* Spacing lives on the child so the collapsed (0fr) row is truly 0 height */
+.hc-bookings-status-collapsible .hc-collapsible-inner > .grid {
+  padding-top: 12px;
+  padding-bottom: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-bookings-status-collapsible:not(:first-child) {
+    transition: none !important;
+  }
+}

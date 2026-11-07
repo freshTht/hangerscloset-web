@@ -25,14 +25,16 @@ body {
 /* Responsive Switching Rules (Breakpoint 600px) */
 @media (max-width: 600px) {
   main.responsive {
-    padding: 12px !important;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    --main-padding: 12px;
+    padding: var(--main-padding) !important;
+    padding-bottom: calc(var(--main-padding) + env(safe-area-inset-bottom)) !important;
   }
 }
 
 @media (min-width: 601px) {
   main.responsive {
-    padding: 24px 24px !important;
+    --main-padding: 24px;
+    padding: var(--main-padding) !important;
   }
 }
 
@@ -52,7 +54,27 @@ main.responsive {
   line-height: normal;
 }
 
+/* Screen reader only utility */
+.sr-only,
+.hc-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Custom Beer CSS padding enhancement */
 .hc-medium-padding {
   --_padding: 20px !important;
+}
+
+/* Custom Beer CSS rounding enhancement (between small-round .5rem and round 2rem) */
+.medium-round {
+  --_round: 1rem;
+  border-radius: var(--_round) !important;
 }

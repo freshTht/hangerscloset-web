@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import {
   BOOKING_STATUS_META,
+  BOOKING_STATUS_ORDER,
   isBookingFullyReturned,
   getBookingStatusOnDate,
   getLatestBookingStatus,
@@ -35,16 +36,27 @@ import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
 import { FloatingBottomToolbar } from '../components/FloatingBottomToolbar';
-import { Modal } from '../common/components/Modal';
+import { Modal, Collapsible } from '../common/components';
 import './BookingsPage.css';
 
 export type { BookingFilterTab, BookingSortKey };
 export { FILTER_TABS, SORT_OPTIONS };
 export type BookingListLayout = 'items' | 'orders';
 
+// Mapping for solid filled status badges on section counts
+const STATUS_FILLED_CLASS_MAP: Record<BookingItemStatus | 'available', string> = {
+  available: 'hc-status-badge-filled-available',
+  reserved: 'hc-status-badge-filled-reserved',
+  pending_delivery: 'tertiary',
+  delivered: 'primary',
+  pending_return: 'error',
+  in_laundry: 'hc-status-badge-filled-laundry',
+  returned: 'hc-status-badge-filled-available',
+};
+
 interface SheetState {
   isOpen: boolean;
-  mode: 'add' | 'edit';
+  mode: 'add' | 'edit' | 'view';
   booking?: Booking | null;
   initialStep?: number;
 }
@@ -454,6 +466,79 @@ export const BookingsPage: React.FC = () => {
     });
   }, [bookings, statusFilters, isAllDates, selectedDate, searchQuery, sortKey]);
 
+  // Group item entries by status for collapsible sections
+  const groupedItemEntries = useMemo(() => {
+    const statusOrder: (BookingItemStatus | 'available')[] = [
+      ...BOOKING_STATUS_ORDER,
+      'available',
+    ];
+
+    const groups: {
+      status: BookingItemStatus | 'available';
+      label: string;
+      chipClass: string;
+      filledBadgeClass: string;
+      entries: typeof filteredItemEntries;
+    }[] = [];
+
+    for (const st of statusOrder) {
+      const entries = filteredItemEntries.filter((entry) => entry.status === st);
+      if (entries.length > 0) {
+        if (st === 'available') {
+          groups.push({
+            status: st,
+            label: 'ว่าง (พร้อมเช่า)',
+            chipClass: 'hc-status-badge-available',
+            filledBadgeClass: 'hc-status-badge-filled-available',
+            entries,
+          });
+        } else {
+          const meta = BOOKING_STATUS_META[st];
+          groups.push({
+            status: st,
+            label: meta.label,
+            chipClass: meta.chipClass,
+            filledBadgeClass: STATUS_FILLED_CLASS_MAP[st],
+            entries,
+          });
+        }
+      }
+    }
+
+    return groups;
+  }, [filteredItemEntries]);
+
+  // Group bookings by status for collapsible sections
+  const groupedBookings = useMemo(() => {
+    const groups: {
+      status: BookingItemStatus;
+      label: string;
+      chipClass: string;
+      filledBadgeClass: string;
+      bookings: typeof filteredBookings;
+    }[] = [];
+
+    for (const st of BOOKING_STATUS_ORDER) {
+      const bList = filteredBookings.filter((b) => {
+        const computed = getEffectiveBookingStatus(b, selectedDate, isAllDates);
+        return computed === st;
+      });
+
+      if (bList.length > 0) {
+        const meta = BOOKING_STATUS_META[st];
+        groups.push({
+          status: st,
+          label: meta.label,
+          chipClass: meta.chipClass,
+          filledBadgeClass: STATUS_FILLED_CLASS_MAP[st],
+          bookings: bList,
+        });
+      }
+    }
+
+    return groups;
+  }, [filteredBookings, selectedDate, isAllDates]);
+
   const tabCounts = useMemo(() => {
     const counts: Record<BookingFilterTab, number> = {
       all: itemBookingEntries.length,
@@ -560,6 +645,14 @@ export const BookingsPage: React.FC = () => {
     setSheetState({
       isOpen: true,
       mode: 'edit',
+      booking,
+    });
+  };
+
+  const handleOpenView = (booking: Booking) => {
+    setSheetState({
+      isOpen: true,
+      mode: 'view',
       booking,
     });
   };
@@ -745,21 +838,52 @@ export const BookingsPage: React.FC = () => {
       }
 
       return (
-        <div className="grid">
-          {filteredItemEntries.map((entry) => (
-            <div key={entry.item.id} className="s12 m12 l6">
-              <BookingInventoryCard
-                item={entry.item}
-                booking={entry.booking}
-                lineItem={entry.lineItem}
-                selectedDate={selectedDate}
-                isAllDates={isAllDates}
-                onReserve={handleReserveItem}
-                onEditBooking={handleOpenEdit}
-                onAdvanceItemStatus={handleAdvanceItemStatus}
-              />
-            </div>
-          ))}
+        <div className="hc-bookings-status-sections">
+          {groupedItemEntries.map((group) => {
+            const isSingleStatusFilter =
+              statusFilters.length === 1 &&
+              !statusFilters.includes('all') &&
+              statusFilters.includes(group.status);
+            // Collapse all sections except 'ready' (available / พร้อมเช่า) by default
+            const defaultOpen = group.status === 'available' || isSingleStatusFilter;
+
+            return (
+              <Collapsible
+                key={group.status}
+                testId={`collapsible-status-${group.status}`}
+                className="hc-bookings-status-collapsible"
+                variant="plain"
+                title={group.label}
+                defaultOpen={defaultOpen}
+                badgeSlot={
+                  <span
+                    className={`badge none circle bold ${group.filledBadgeClass}`}
+                    data-testid={`badge-count-${group.status}`}
+                  >
+                    {group.entries.length}
+                  </span>
+                }
+              >
+                <div className="grid">
+                  {group.entries.map((entry) => (
+                    <div key={entry.item.id} className="s12 m12 l6">
+                      <BookingInventoryCard
+                        item={entry.item}
+                        booking={entry.booking}
+                        lineItem={entry.lineItem}
+                        selectedDate={selectedDate}
+                        isAllDates={isAllDates}
+                        onReserve={handleReserveItem}
+                        onEditBooking={handleOpenEdit}
+                        onViewBooking={handleOpenView}
+                        onAdvanceItemStatus={handleAdvanceItemStatus}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </Collapsible>
+            );
+          })}
         </div>
       );
     }
@@ -783,19 +907,49 @@ export const BookingsPage: React.FC = () => {
     }
 
     return (
-      <div className="grid">
-        {filteredBookings.map((booking) => (
-          <div key={booking.id} className="s12 m6">
-            <BookingCard
-              booking={booking}
-              selectedDate={selectedDate}
-              isAllDates={isAllDates}
-              onEdit={handleOpenEdit}
-              onAdvanceItemStatus={handleAdvanceItemStatus}
-              onToggleDepositRefunded={handleToggleDepositRefunded}
-            />
-          </div>
-        ))}
+      <div className="hc-bookings-status-sections">
+        {groupedBookings.map((group) => {
+          const isSingleStatusFilter =
+            statusFilters.length === 1 &&
+            !statusFilters.includes('all') &&
+            statusFilters.includes(group.status);
+          const defaultOpen = isSingleStatusFilter;
+
+          return (
+            <Collapsible
+              key={group.status}
+              testId={`collapsible-status-${group.status}`}
+              className="hc-bookings-status-collapsible"
+              variant="plain"
+              title={group.label}
+              defaultOpen={defaultOpen}
+              badgeSlot={
+                <span
+                  className={`badge none circle bold ${group.filledBadgeClass}`}
+                  data-testid={`badge-count-${group.status}`}
+                >
+                  {group.bookings.length}
+                </span>
+              }
+            >
+              <div className="grid">
+                {group.bookings.map((booking) => (
+                  <div key={booking.id} className="s12 m6">
+                    <BookingCard
+                      booking={booking}
+                      selectedDate={selectedDate}
+                      isAllDates={isAllDates}
+                      onEdit={handleOpenEdit}
+                      onView={handleOpenView}
+                      onAdvanceItemStatus={handleAdvanceItemStatus}
+                      onToggleDepositRefunded={handleToggleDepositRefunded}
+                    />
+                  </div>
+                ))}
+              </div>
+            </Collapsible>
+          );
+        })}
       </div>
     );
   };

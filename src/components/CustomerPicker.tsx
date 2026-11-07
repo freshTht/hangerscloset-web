@@ -10,6 +10,7 @@ export interface CustomerPickerProps {
   selectedCustomer: Customer | null;
   onSelectCustomer: (customer: Customer | null) => void;
   onCreateCustomer: (data: NewCustomerInput) => Promise<Customer>;
+  disabled?: boolean;
 }
 
 export const CustomerPicker: React.FC<CustomerPickerProps> = ({
@@ -17,6 +18,7 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
   selectedCustomer,
   onSelectCustomer,
   onCreateCustomer,
+  disabled = false,
 }) => {
   const isMobile = useIsMobile();
   const [searchTerm, setSearchTerm] = useState('');
@@ -114,19 +116,21 @@ export const CustomerPicker: React.FC<CustomerPickerProps> = ({
               </span>
             </div>
           </div>
-          <button
-            type="button"
-            className="border small no-margin hc-customer-action-btn"
-            onClick={() => {
-              onSelectCustomer(null);
-              setSearchTerm('');
-              setIsDropdownOpen(true);
-            }}
-            aria-label="เปลี่ยนลูกค้า"
-          >
-            <i>swap_horiz</i>
-            <span>เปลี่ยนลูกค้า</span>
-          </button>
+          {!disabled && (
+            <button
+              type="button"
+              className="border small no-margin hc-customer-action-btn"
+              onClick={() => {
+                onSelectCustomer(null);
+                setSearchTerm('');
+                setIsDropdownOpen(true);
+              }}
+              aria-label="เปลี่ยนลูกค้า"
+            >
+              <i>swap_horiz</i>
+              <span>เปลี่ยนลูกค้า</span>
+            </button>
+          )}
         </div>
       </article>
     );

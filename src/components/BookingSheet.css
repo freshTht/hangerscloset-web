@@ -463,6 +463,16 @@
   min-height: 0;
 }
 
+.hc-booking-sheet-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .hc-booking-sheet-dates-grid {
   gap: 12px;
 }

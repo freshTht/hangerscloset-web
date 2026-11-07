@@ -472,4 +472,66 @@ describe('BookingSheet Component', () => {
     expect(screen.getByLabelText(/หมายเหตุการจัดส่ง/i)).toHaveValue('ส่งที่โรงแรมตอนเที่ยง');
     expect(screen.getByTestId('wizard-prev-step-2')).toBeInTheDocument();
   });
+
+  it('renders read-only view sheet when mode is view', () => {
+    const handleClose = vi.fn();
+    const sampleBooking: Booking = {
+      id: 'book-view-1',
+      customerId: 'cust-1',
+      customerName: 'คุณพลอย รัตนากร',
+      customerPhone: '081-234-5678',
+      startDate: today,
+      endDate: addDaysISO(today, 2),
+      cleaningEndDate: addDaysISO(today, 4),
+      durationDays: 3,
+      rentalPrice: 300,
+      deposit: 1000,
+      depositRefunded: true,
+      note: 'คืนชุดเรียบร้อย',
+      createdAt: '2026-01-01T00:00:00.000Z',
+      updatedAt: '2026-01-01T00:00:00.000Z',
+      transactionDates: { reserved: today, returned: addDaysISO(today, 2) },
+      items: [
+        {
+          itemId: 'inv-2',
+          itemCode: 'DIA01',
+          itemName: 'Dieu Ann Dress',
+          itemImageUrl: '',
+          conditionNote: 'สภาพสมบูรณ์',
+        },
+      ],
+    };
+
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="view"
+        booking={sampleBooking}
+        bookings={[sampleBooking]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={handleClose}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Title should be "รายละเอียดการจอง"
+    expect(screen.getByRole('heading', { name: 'รายละเอียดการจอง' })).toBeInTheDocument();
+
+    // Inputs inside form should be disabled
+    const noteInput = screen.getByLabelText(/หมายเหตุการจัดส่ง \/ การจอง/i);
+    expect(noteInput).toBeDisabled();
+
+    // Outfit picker / search should not be visible in view mode
+    expect(screen.queryByLabelText(/ค้นหาชุดในคลัง/i)).not.toBeInTheDocument();
+
+    // Delete button should not be visible
+    expect(screen.queryByRole('button', { name: /ลบการจอง/i })).not.toBeInTheDocument();
+
+    // Footer should display a single "ปิด" button
+    const closeBtn = screen.getByRole('button', { name: 'ปิด' });
+    expect(closeBtn).toBeInTheDocument();
+    fireEvent.click(closeBtn);
+    expect(handleClose).toHaveBeenCalled();
+  });
 });

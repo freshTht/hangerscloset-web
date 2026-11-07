@@ -1,0 +1,217 @@
+/* Common Reusable InventoryCard */
+
+.hc-common-inv-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  min-width: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Defer off-screen rendering for standalone inventory cards in long feeds */
+.hc-common-inv-card:not(.hc-common-inv-card-embedded) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 140px;
+}
+
+.hc-common-inv-card-sm {
+  padding: 8px 10px;
+  gap: 8px;
+}
+
+.hc-common-inv-card-lg {
+  padding: 16px;
+  gap: 12px;
+}
+
+.hc-common-inv-card-clickable {
+  cursor: pointer;
+}
+
+.hc-common-inv-card-selected {
+  border-color: var(--primary) !important;
+  background-color: var(--primary-container) !important;
+  color: var(--on-primary-container) !important;
+}
+
+.hc-common-inv-card-conflict {
+  opacity: 0.78;
+}
+
+/* Main Row: Thumbnail + Details + Optional Trailing Action */
+.hc-common-inv-card-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.hc-common-inv-card-sm .hc-common-inv-card-main {
+  gap: 10px;
+}
+
+/* Thumbnail */
+.hc-common-inv-card-thumb {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-common-inv-card-sm .hc-common-inv-card-thumb {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.hc-common-inv-card-lg .hc-common-inv-card-thumb {
+  width: 76px;
+  height: 76px;
+  min-width: 76px;
+  min-height: 76px;
+}
+
+.hc-common-inv-card-thumb-img {
+  width: 100%;
+  height: 100%;
+}
+
+.hc-common-inv-card-thumb-img-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hc-common-inv-card-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Details Column */
+.hc-common-inv-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hc-common-inv-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hc-common-inv-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.hc-common-inv-card-code {
+  flex-shrink: 0;
+  height: 22px;
+  padding-inline: 8px;
+}
+
+.hc-common-inv-card-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+  min-width: 0;
+}
+
+/* Metadata / Attributes Row */
+.hc-common-inv-card-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hc-common-inv-card-attr {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.hc-common-inv-card-note {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.hc-common-inv-card-note.secondary-container {
+  padding: 3px 8px;
+  background-color: var(--secondary-container);
+  color: var(--on-secondary-container);
+  border-radius: 1rem;
+}
+
+.hc-common-inv-card-note > i {
+  flex-shrink: 0;
+}
+
+.hc-common-inv-card-note > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Trailing Action (when placed inline on the right of the main row) */
+.hc-common-inv-card-trailing {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Footer Row: Price / Secondary Info on Left + Action Button on Right */
+.hc-common-inv-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 2px;
+}
+
+.hc-common-inv-card-footer-left {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hc-common-inv-card-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-inline-start: auto;
+}
+
+.hc-common-inv-card-bottom {
+  min-width: 0;
+}
