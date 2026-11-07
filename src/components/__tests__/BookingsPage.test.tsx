@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BookingsPage } from '../../pages/BookingsPage';
 
@@ -206,5 +206,132 @@ describe('BookingsPage Component', () => {
     fireEvent.click(deliveredTrigger);
     expect(deliveredTrigger).toHaveAttribute('aria-expanded', 'false');
     expect(deliveredCollapsible).toHaveClass('is-closed');
+  });
+
+  it('renders standalone bottom-right create FAB without bottom toolbar and count text', () => {
+    render(<BookingsPage />);
+
+    // Bottom toolbar is removed
+    expect(screen.queryByTestId('floating-bottom-toolbar')).not.toBeInTheDocument();
+    expect(screen.queryByText(/^\d+\s*ชุด$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^\d+\s*การจอง$/)).not.toBeInTheDocument();
+    expect(document.querySelector('.hc-bookings-toolbar-count')).not.toBeInTheDocument();
+
+    // Standalone FAB is present at bottom right
+    const addFab = screen.getByTestId('bookings-add-fab');
+    expect(addFab).toBeInTheDocument();
+    expect(addFab).toHaveClass('circle');
+    expect(addFab).toHaveClass('fixed');
+    expect(addFab).toHaveClass('bottom');
+    expect(addFab).toHaveClass('right');
+
+    // Clicking FAB opens BookingSheet
+    fireEvent.click(addFab);
+    expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
+  });
+
+  it('switches to dedicated top search toolbar on search FAB click, filters items, preserves query on back FAB, and supports clear', () => {
+    render(<BookingsPage />);
+
+    // In normal state, top search FAB is present on the right
+    const searchFab = screen.getByTestId('bookings-search-fab');
+    expect(searchFab).toBeInTheDocument();
+    expect(screen.getByTestId('bookings-date-bar')).toBeInTheDocument();
+    expect(screen.queryByTestId('bookings-search-bar')).not.toBeInTheDocument();
+
+    // Clicking search FAB opens dedicated search toolbar
+    fireEvent.click(searchFab);
+    expect(screen.getByTestId('bookings-search-bar')).toBeInTheDocument();
+    expect(screen.queryByTestId('bookings-date-bar')).not.toBeInTheDocument();
+
+    // Search input is focused and accepts query
+    const searchInput = screen.getByTestId('bookings-search-input');
+    expect(searchInput).toBeInTheDocument();
+    fireEvent.change(searchInput, { target: { value: 'AVL01' } });
+
+    // Filtered result: AVL01 is visible, others are filtered out
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    expect(screen.queryByTestId('inventory-booking-card-DIA01')).not.toBeInTheDocument();
+
+    // Clicking Back FAB collapses search toolbar back to date toolbar while preserving query
+    const backFab = screen.getByTestId('bookings-search-back-fab');
+    expect(backFab).toBeInTheDocument();
+    fireEvent.click(backFab);
+
+    // Normal date bar returns
+    expect(screen.getByTestId('bookings-date-bar')).toBeInTheDocument();
+    expect(screen.queryByTestId('bookings-search-bar')).not.toBeInTheDocument();
+
+    // Active query indicator dot is shown on search FAB
+    expect(screen.getByTestId('search-active-dot')).toBeInTheDocument();
+    // Result is still filtered
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    expect(screen.queryByTestId('inventory-booking-card-DIA01')).not.toBeInTheDocument();
+
+    // Reopen search and clear query
+    fireEvent.click(screen.getByTestId('bookings-search-fab'));
+    const clearBtn = screen.getByTestId('bookings-search-clear-btn');
+    fireEvent.click(clearBtn);
+
+    // After clear, all items are visible again
+    expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
+    expect(screen.getByTestId('inventory-booking-card-DIA01')).toBeInTheDocument();
+  });
+
+  it('prevents page scroll Y jumping and uses preventScroll when toggling search mode', () => {
+    const scrollToSpy = vi.fn();
+    window.scrollTo = scrollToSpy;
+
+    // Simulate scrolled down position
+    Object.defineProperty(window, 'scrollY', { value: 450, writable: true, configurable: true });
+
+    // Mock focus to simulate browser auto-scrolling to top on input focus
+    const focusSpy = vi.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (
+      this: HTMLElement
+    ) {
+      if (this.tagName.toLowerCase() === 'input') {
+        Object.defineProperty(window, 'scrollY', { value: 0, writable: true, configurable: true });
+      }
+    });
+
+    render(<BookingsPage />);
+
+    const searchFab = screen.getByTestId('bookings-search-fab');
+    fireEvent.click(searchFab);
+
+    // Search input should have received focus with preventScroll: true
+    const searchInput = screen.getByTestId('bookings-search-input');
+    expect(searchInput).toBeInTheDocument();
+    expect(focusSpy).toHaveBeenCalledWith({ preventScroll: true });
+
+    // Synchronous layout restoration should have detected the focus displacement (0 !== 450) and restored it
+    expect(scrollToSpy).toHaveBeenCalledWith({ top: 450, behavior: 'instant' });
+
+    // Reset scrollY to simulate user at 450
+    Object.defineProperty(window, 'scrollY', { value: 450, writable: true, configurable: true });
+
+    // Test clear button refocuses search input with preventScroll: true
+    fireEvent.change(searchInput, { target: { value: 'test' } });
+    const clearBtn = screen.getByTestId('bookings-search-clear-btn');
+    fireEvent.click(clearBtn);
+    expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
+
+    // Closing search via Back FAB
+    const backFab = screen.getByTestId('bookings-search-back-fab');
+    fireEvent.click(backFab);
+
+    // Focus restored to search FAB with preventScroll: true
+    expect(screen.getByTestId('bookings-search-fab')).toBeInTheDocument();
+    expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
+
+    // Reopen and test closing with Escape key
+    fireEvent.click(screen.getByTestId('bookings-search-fab'));
+    const reopenedInput = screen.getByTestId('bookings-search-input');
+    fireEvent.keyDown(reopenedInput, { key: 'Escape' });
+
+    expect(screen.getByTestId('bookings-search-fab')).toBeInTheDocument();
+    expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
+
+    focusSpy.mockRestore();
   });
 });

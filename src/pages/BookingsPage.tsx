@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useLayoutEffect } from 'react';
 import {
   BOOKING_STATUS_META,
   BOOKING_STATUS_ORDER,
@@ -27,8 +27,12 @@ import { BookingSheet } from '../components/BookingSheet';
 import { EmptyState } from '../components/EmptyState';
 import { Stack } from '../components/Stack';
 import { Skeleton } from '../components/Skeleton';
-import { FloatingBottomToolbar } from '../components/FloatingBottomToolbar';
-import { Modal, Collapsible } from '../common/components';
+import {
+  Modal,
+  Collapsible,
+  HeaderToolbar,
+  HeaderToolbarStickyWrapper,
+} from '../common/components';
 import './BookingsPage.css';
 
 export type BookingListLayout = 'items' | 'orders';
@@ -241,6 +245,54 @@ export const BookingsPage: React.FC = () => {
   const [calendarSheetOpen, setCalendarSheetOpen] = useState(false);
   const [pendingStatusConfirm, setPendingStatusConfirm] =
     useState<PendingStatusConfirm | null>(null);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchFabRef = useRef<HTMLButtonElement>(null);
+  const scrollPosOnToggleRef = useRef<number | null>(null);
+  const isFirstRender = useRef(true);
+
+  const handleOpenSearch = () => {
+    scrollPosOnToggleRef.current = window.scrollY;
+    setSearchOpen(true);
+  };
+
+  const handleCloseSearch = () => {
+    scrollPosOnToggleRef.current = window.scrollY;
+    setSearchOpen(false);
+  };
+
+  useLayoutEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const targetY = scrollPosOnToggleRef.current;
+
+    // 1. Focus element with preventScroll: true to avoid native browser scrolling
+    if (searchOpen) {
+      searchInputRef.current?.focus({ preventScroll: true });
+    } else {
+      searchFabRef.current?.focus({ preventScroll: true });
+    }
+
+    // 2. Synchronously check and restore scroll position if focus or DOM swapping caused a jump
+    if (targetY !== null) {
+      if (window.scrollY !== targetY) {
+        window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
+      }
+
+      // 3. Backup safeguard for browsers (e.g. mobile Safari / Chrome) with deferred focus scrolling
+      const rafId = requestAnimationFrame(() => {
+        if (window.scrollY !== targetY) {
+          window.scrollTo({ top: targetY, behavior: 'instant' as ScrollBehavior });
+        }
+      });
+
+      scrollPosOnToggleRef.current = null;
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [searchOpen]);
 
   const [sheetState, setSheetState] = useState<SheetState>({
     isOpen: false,
@@ -515,51 +567,6 @@ export const BookingsPage: React.FC = () => {
     });
   };
 
-  const renderFloatingToolbar = () => (
-    <FloatingBottomToolbar
-      status={
-        <span className="bold hc-bookings-toolbar-count">
-          {listLayout === 'items'
-            ? `${filteredItemEntries.length} ชุด`
-            : `${filteredBookings.length} การจอง`}
-        </span>
-      }
-      actions={
-        <>
-          {searchOpen && (
-            <div className="field small round border surface no-margin hc-bookings-search-field">
-              <input
-                type="search"
-                aria-label="ค้นหาการจอง"
-                placeholder="ค้นหาชื่อ, เบอร์, รหัสชุด..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                autoFocus
-              />
-            </div>
-          )}
-
-          <button
-            className="circle transparent no-margin"
-            type="button"
-            onClick={() => {
-              if (searchOpen && searchQuery) {
-                setSearchQuery('');
-              } else {
-                setSearchOpen((prev) => !prev);
-              }
-            }}
-            aria-label="ค้นหา"
-            title="ค้นหา"
-          >
-            <i>{searchOpen ? 'close' : 'search'}</i>
-          </button>
-        </>
-      }
-      onFabClick={handleOpenAdd}
-      fabAriaLabel="สร้างการจองใหม่"
-    />
-  );
 
   const renderContent = () => {
     if (loading) {
@@ -724,20 +731,107 @@ export const BookingsPage: React.FC = () => {
 
   return (
     <div className="bookings-page">
-      {/* Date Navigation & View Switcher Bar (BeerCSS Toolbar) */}
-      <BookingDateBar
-        selectedDate={selectedDate}
-        today={today}
-        isAllDates={isAllDates}
-        calendarSheetOpen={calendarSheetOpen}
-        onDateChange={(newDate) => {
-          setSelectedDate(newDate);
-          setIsAllDates(false);
-        }}
-        onCalendarClick={() => setCalendarSheetOpen(true)}
-        viewMode={listLayout}
-        onViewModeChange={setListLayout}
-      />
+      {/* Top Bar Sticky Wrapper: Date Navigation or Dedicated Search */}
+      <HeaderToolbarStickyWrapper>
+        <div className="hc-bookings-top-row">
+          {!searchOpen ? (
+            <>
+              <div className="hc-bookings-top-main">
+                <BookingDateBar
+                  sticky={false}
+                  selectedDate={selectedDate}
+                  today={today}
+                  isAllDates={isAllDates}
+                  calendarSheetOpen={calendarSheetOpen}
+                  onDateChange={(newDate) => {
+                    setSelectedDate(newDate);
+                    setIsAllDates(false);
+                  }}
+                  onCalendarClick={() => setCalendarSheetOpen(true)}
+                  viewMode={listLayout}
+                  onViewModeChange={setListLayout}
+                />
+              </div>
+
+              <button
+                ref={searchFabRef}
+                type="button"
+                className="circle large blur border no-margin hc-top-fab hc-search-fab"
+                onClick={handleOpenSearch}
+                aria-label="ค้นหา"
+                title="ค้นหา"
+                data-testid="bookings-search-fab"
+              >
+                <i aria-hidden="true">search</i>
+                {searchQuery.trim() && (
+                  <span
+                    className="badge circle tiny primary hc-search-active-dot"
+                    data-testid="search-active-dot"
+                  />
+                )}
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="circle large blur border no-margin hc-top-fab hc-back-fab"
+                onClick={handleCloseSearch}
+                aria-label="กลับสู่แถบวันที่"
+                title="กลับสู่แถบวันที่"
+                data-testid="bookings-search-back-fab"
+              >
+                <i aria-hidden="true">chevron_left</i>
+              </button>
+
+              <div className="hc-bookings-top-search">
+                <HeaderToolbar
+                  sticky={false}
+                  testId="bookings-search-bar"
+                  className="hc-bookings-search-toolbar"
+                >
+                  <i
+                    className="small hc-search-leading-icon"
+                    aria-hidden="true"
+                  >
+                    search
+                  </i>
+                  <input
+                    ref={searchInputRef}
+                    type="search"
+                    className="hc-bookings-search-input"
+                    placeholder="ค้นหาชื่อ, เบอร์, รหัสชุด..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Escape') {
+                        handleCloseSearch();
+                      }
+                    }}
+                    aria-label="ค้นหาการจองหรือชุด"
+                    data-testid="bookings-search-input"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      className="circle small transparent no-margin hc-search-clear-btn"
+                      onClick={() => {
+                        setSearchQuery('');
+                        searchInputRef.current?.focus({ preventScroll: true });
+                      }}
+                      aria-label="ล้างการค้นหา"
+                      title="ล้างการค้นหา"
+                      data-testid="bookings-search-clear-btn"
+                    >
+                      <i aria-hidden="true">close</i>
+                    </button>
+                  )}
+                </HeaderToolbar>
+              </div>
+            </>
+          )}
+        </div>
+      </HeaderToolbarStickyWrapper>
 
       {/* Main Content Area */}
       {renderContent()}
@@ -746,8 +840,17 @@ export const BookingsPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* M3 Expressive Floating Bottom Action Toolbar + FAB */}
-      {renderFloatingToolbar()}
+      {/* Standalone FAB (bottom right aligned, matching InventoryPage) */}
+      <button
+        className="extra circle primary medium-elevate fixed bottom right margin front"
+        type="button"
+        onClick={handleOpenAdd}
+        aria-label="สร้างการจองใหม่"
+        title="สร้างการจองใหม่"
+        data-testid="bookings-add-fab"
+      >
+        <i aria-hidden="true">add</i>
+      </button>
 
       {/* Past / Future Status Change Confirmation Dialog */}
       {pendingStatusConfirm && (
