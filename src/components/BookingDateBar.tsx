@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import {
   HeaderToolbar,
   ToolbarDivider,
+  ConnectedButtons,
   type HeaderToolbarVariant,
   type HeaderToolbarElevation,
-} from './HeaderToolbar';
-import { ConnectedButtons } from '../common/components';
+} from '../common/components';
 import {
   formatDateThaiShort,
   formatDateThaiShortWithYear,
@@ -25,6 +25,7 @@ export interface BookingDateBarProps {
   variant?: HeaderToolbarVariant;
   elevation?: HeaderToolbarElevation;
   outlined?: boolean;
+  sticky?: boolean;
 }
 
 /**
@@ -43,6 +44,7 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
   variant,
   elevation,
   outlined,
+  sticky = true,
 }) => {
   const dateButtonLabel = useMemo(() => {
     if (isAllDates) return 'แสดงทุกวัน (คลิกเพื่อเลือกวัน)';
@@ -56,6 +58,7 @@ export const BookingDateBar: React.FC<BookingDateBarProps> = ({
       variant={variant}
       elevation={elevation}
       outlined={outlined}
+      sticky={sticky}
     >
       {/* Horizontally Compact Connected Date Navigator (Prev, Date Picker, Next) */}
       <nav

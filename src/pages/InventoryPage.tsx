@@ -5,7 +5,11 @@ import { InventorySheet } from '../components/InventorySheet';
 import { InventoryFilterSheet } from '../components/InventoryFilterSheet';
 import { InventorySortDialog } from '../components/InventorySortDialog';
 import { EmptyState } from '../components/EmptyState';
-import { HeaderToolbar, ToolbarDivider } from '../components/HeaderToolbar';
+import {
+  HeaderToolbar,
+  ToolbarDivider,
+  HeaderToolbarStickyWrapper,
+} from '../common/components';
 import { useInventory } from '../hooks/useInventory';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import {
@@ -144,7 +148,7 @@ export const InventoryPage: React.FC = () => {
 
   const renderActiveFilterBar = () => {
     return (
-      <div className="hc-active-filters-sticky-wrapper">
+      <HeaderToolbarStickyWrapper className="hc-active-filters-sticky-wrapper">
         <HeaderToolbar sticky={false} testId="active-filters-bar">
           <button
             type="button"
@@ -369,7 +373,7 @@ export const InventoryPage: React.FC = () => {
             )}
           </div>
         )}
-      </div>
+      </HeaderToolbarStickyWrapper>
     );
   };
 

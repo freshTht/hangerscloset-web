@@ -1,5 +1,5 @@
 import React from 'react';
-import { ToolbarDivider } from './HeaderToolbar';
+import { ToolbarDivider } from '../common/components';
 import './FloatingBottomToolbar.css';
 
 export interface FloatingBottomToolbarProps {
