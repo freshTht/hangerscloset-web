@@ -1,0 +1,70 @@
+/* ConnectedButtons - Beer CSS native connected group selector */
+
+.hc-connected-buttons {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background: none !important;
+}
+
+.hc-connected-buttons.small > .hc-connected-button {
+  height: 32px;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 9pt;
+  gap: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hc-connected-buttons.small > .hc-connected-button i {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+}
+
+.hc-connected-buttons > .hc-connected-button {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 600;
+  white-space: nowrap;
+  box-sizing: border-box;
+  border: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Touch target enhancement (>= 48px) */
+.hc-connected-buttons > .hc-connected-button::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  left: 0;
+  right: 0;
+}
+
+.hc-connected-buttons > .hc-connected-button.active {
+  background-color: var(--primary) !important;
+  color: var(--on-primary) !important;
+  font-weight: 700;
+  z-index: 1;
+}
+
+.hc-connected-buttons > .hc-connected-button:not(.active) {
+  background-color: var(--surface-container-high) !important;
+  color: var(--on-surface-variant) !important;
+}
+
+.hc-connected-buttons > .hc-connected-button:not(.active):hover {
+  background-color: var(--surface-container-highest, rgba(0, 0, 0, 0.12)) !important;
+  color: var(--on-surface) !important;
+}
+
+.hc-connected-button-label {
+  white-space: nowrap;
+  line-height: 1;
+}

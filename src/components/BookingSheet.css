@@ -30,8 +30,7 @@
     height: 94dvh;
     max-height: 94dvh;
     width: 100%;
-    max-width: 100vw;
-    border-radius: 20px 20px 0 0;
+    max-width: 100%;
     padding: 12px 16px calc(16px + env(safe-area-inset-bottom)) 16px;
     margin: 0;
   }
@@ -93,9 +92,9 @@
 }
 
 .hc-booking-sheet-step-btn {
+  position: relative;
   height: 28px;
   padding: 0 10px;
-  border-radius: 14px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -113,6 +112,20 @@
   }
 }
 
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-booking-sheet-step-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
+}
+
 .hc-booking-sheet-step-arrow {
   flex-shrink: 0;
 }
@@ -127,7 +140,6 @@
 
 .hc-booking-sheet-search-wrap {
   width: 100%;
-  border-radius: 12px;
   margin-bottom: 8px;
   position: relative;
 }
@@ -146,7 +158,7 @@
 
 .hc-booking-sheet-search-clear {
   position: absolute;
-  right: 4px;
+  inset-inline-end: 4px;
   top: 50%;
   transform: translateY(-50%);
   width: 32px;
@@ -161,7 +173,7 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding-right: 4px;
+  padding-inline-end: 4px;
 }
 
 .hc-booking-sheet-outfit-item {
@@ -170,22 +182,10 @@
   align-items: center;
   gap: 10px;
   transition: all 0.15s ease;
-  border-width: 1px;
-  border-radius: 12px;
-}
-
-.hc-booking-sheet-outfit-item.is-selected {
-  border-width: 2px;
-  border-color: var(--primary);
 }
 
 .hc-booking-sheet-outfit-item.is-conflict:not(.is-selected) {
   opacity: 0.6;
-}
-
-.hc-booking-sheet-outfit-item.is-selected.is-conflict {
-  border-width: 2px;
-  border-color: var(--error);
 }
 
 .hc-booking-sheet-outfit-thumb {
@@ -193,7 +193,6 @@
   height: 52px;
   overflow: hidden;
   flex-shrink: 0;
-  border-radius: 8px;
 }
 
 .hc-booking-sheet-outfit-thumb-img {
@@ -229,7 +228,6 @@
 }
 
 .hc-booking-sheet-outfit-code-badge {
-  border-radius: 6px;
   padding: 0 6px;
   height: 20px;
 }
@@ -247,10 +245,11 @@
 }
 
 .hc-booking-sheet-outfit-select-btn {
+  position: relative;
   flex-shrink: 0;
-  border-radius: 8px;
   padding: 0 10px;
-  height: 32px;
+  height: 36px;
+  min-height: 36px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -263,7 +262,7 @@
 }
 
 .hc-booking-sheet-icon-gap-right {
-  margin-right: 2px;
+  margin-inline-end: 2px;
 }
 
 .hc-booking-sheet-step-footer {
@@ -271,6 +270,7 @@
   flex-direction: column;
   padding-top: 12px;
   border-top: 1px solid var(--surface-variant);
+  border-radius: 0 !important;
   flex-shrink: 0;
   gap: 8px;
   width: 100%;
@@ -286,6 +286,7 @@
 
 .hc-booking-sheet-footer-row {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
@@ -312,7 +313,6 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  border-radius: 6px;
   padding: 0 6px;
   height: 20px;
 }
@@ -325,7 +325,8 @@
 }
 
 .hc-booking-sheet-btn-round-10 {
-  border-radius: 10px;
+  position: relative;
+  min-height: 44px;
 }
 
 .hc-booking-sheet-step2-scroll {
@@ -336,20 +337,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-right: 4px;
+  padding-inline-end: 4px;
   padding-bottom: 16px;
-}
-
-.hc-booking-sheet-round-16 {
-  border-radius: 16px;
-}
-
-.hc-booking-sheet-round-12 {
-  border-radius: 12px;
-}
-
-.hc-booking-sheet-round-8 {
-  border-radius: 8px;
 }
 
 .hc-booking-sheet-recap-title {
@@ -382,11 +371,6 @@
   gap: 12px;
 }
 
-.hc-booking-sheet-condition-field {
-  border-radius: 12px;
-  width: 100%;
-}
-
 .hc-booking-sheet-note-input {
   min-height: 80px;
   resize: vertical;
@@ -408,7 +392,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding-right: 4px;
+  padding-inline-end: 4px;
   padding-bottom: 16px;
 }
 
@@ -425,7 +409,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-radius: 10px;
 }
 
 .hc-booking-sheet-outfit-review-left {
@@ -455,8 +438,9 @@
 }
 
 .hc-booking-sheet-step3-submit {
-  border-radius: 10px;
+  position: relative;
   min-width: 150px;
+  min-height: 44px;
 }
 
 @media (max-width: 600px) {
@@ -479,24 +463,39 @@
   min-height: 0;
 }
 
+.hc-booking-sheet-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .hc-booking-sheet-dates-grid {
   gap: 12px;
 }
 
 .hc-booking-sheet-status-select {
-  padding: 4px 8px;
-  height: 32px;
-  border-radius: 8px;
+  position: relative;
+  padding: 6px 12px;
+  height: 40px;
+  min-height: 40px;
+  border-radius: 10px;
+  background-color: var(--surface-container-high);
+  color: var(--on-surface);
+  border: 1px solid var(--outline-variant);
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.hc-booking-sheet-status-error-msg {
-  background-color: var(--error-container);
-  color: var(--on-error-container);
-}
-
-.hc-booking-sheet-status-confirm-msg {
-  background-color: var(--tertiary-container);
-  color: var(--on-tertiary-container);
+.hc-booking-sheet-status-select:disabled {
+  background-color: var(--surface-container);
+  color: var(--on-surface-variant);
+  border-color: var(--outline-variant);
+  opacity: 0.85;
+  cursor: not-allowed;
 }
 
 .hc-booking-sheet-history-chip {
@@ -547,10 +546,16 @@
 .hc-booking-sheet-edit-footer {
   padding-top: 12px;
   border-top: 1px solid var(--surface-variant);
+  border-radius: 0 !important;
   flex-shrink: 0;
   gap: 8px;
   width: 100%;
   box-sizing: border-box;
+}
+
+.hc-booking-sheet-edit-footer button {
+  position: relative;
+  min-height: 44px;
 }
 
 .hc-booking-sheet-edit-submit-btn {
@@ -560,5 +565,50 @@
 @media (max-width: 600px) {
   .hc-booking-sheet-edit-submit-btn {
     min-width: 96px;
+  }
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-booking-sheet-outfit-select-btn::before,
+  .hc-booking-sheet-btn-round-10::before,
+  .hc-booking-sheet-step3-submit::before,
+  .hc-booking-sheet-status-select::before,
+  .hc-booking-sheet-edit-footer button::before,
+  .hc-booking-sheet-edit-outfit-item button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
+
+  .hc-booking-sheet-edit-form button {
+    position: relative;
+  }
+
+  .hc-booking-sheet-edit-form button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-booking-sheet-dialog,
+  .hc-booking-sheet-overlay,
+  .hc-booking-sheet-outfit-item,
+  .hc-booking-sheet-edit-outfit-item {
+    transition: none !important;
+    animation: none !important;
   }
 }

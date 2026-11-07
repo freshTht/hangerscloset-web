@@ -14,6 +14,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "firebase:firestore:seed": "node scripts/seedFirestore.mjs",
     "firebase:firestore:deploy-rules": "pnpm dlx firebase-tools deploy --only firestore:rules",
     "postinstall": "node scripts/updateBeerCssDocs.mjs",
@@ -27,15 +29,21 @@
     "react-router-dom": "^7.1.5"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.8",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^10.14.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.7",
     "firebase": "^13.1.0",
+    "globals": "^17.14.0",
     "jsdom": "^30.1.3",
     "typescript": "~5.7.2",
+    "typescript-eslint": "^8.72.1",
     "vite": "^6.1.0",
     "vitest": "^5.0.5"
   }

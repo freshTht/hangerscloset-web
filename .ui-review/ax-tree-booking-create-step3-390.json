@@ -1,0 +1,8299 @@
+[
+  {
+    "role": "RootWebArea",
+    "name": "Hanger's Closet",
+    "properties": {
+      "focusable": true,
+      "focused": true,
+      "url": "http://localhost:5175/bookings#step-3"
+    }
+  },
+  {
+    "role": "link",
+    "name": "event_note การจอง",
+    "properties": {
+      "focusable": true,
+      "url": "http://localhost:5175/bookings"
+    }
+  },
+  {
+    "role": "link",
+    "name": "inventory_2 คลังสินค้า",
+    "properties": {
+      "focusable": true,
+      "url": "http://localhost:5175/inventory"
+    }
+  },
+  {
+    "role": "link",
+    "name": "settings การตั้งค่า",
+    "properties": {
+      "focusable": true,
+      "url": "http://localhost:5175/settings"
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "การจอง",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คลังสินค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "การตั้งค่า",
+    "properties": {}
+  },
+  {
+    "role": "dialog",
+    "name": "สร้างการจองใหม่",
+    "properties": {
+      "focusable": true,
+      "modal": false
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "event_note",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "การจอง",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "inventory_2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คลังสินค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "settings",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "การตั้งค่า",
+    "properties": {}
+  },
+  {
+    "role": "navigation",
+    "name": "การดำเนินการด่วน",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "สร้างการจองใหม่",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "event_note",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "inventory_2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "settings",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "วันก่อนหน้า",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "วันถัดไป",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "ตัวกรองสถานะ: กำลังดำเนินการ",
+    "properties": {
+      "invalid": "false",
+      "focusable": true,
+      "hasPopup": "dialog",
+      "expanded": false
+    }
+  },
+  {
+    "role": "heading",
+    "name": "สร้างการจองใหม่",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "button",
+    "name": "ปิดหน้าต่าง",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "เลือกวันที่",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "ตัวกรอง",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "43",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "43 ชุด",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ค้นหา",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "สลับเป็นมุมมองใบจอง",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "สลับเป็นมุมมองปฏิทิน",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "สร้างการจองใหม่",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "check เลือกชุด",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "check ลูกค้าและราคา",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "3 ยืนยันการจอง",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "chevron_left",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "6 พ.ย. (วันนี้)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "tune",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ตัวกรอง",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "43",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_drop_down",
+    "properties": {}
+  },
+  {
+    "role": "image",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/sel01.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/sel02.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "MHA Dress(long)",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/mha01.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Dieu Ann Dress",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/dia01.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Boots",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/sh01.jpg"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Avaalene Beach set2",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/avl01.jpg"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Avaalene Bodysuits",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/avl02.jpg"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Bikini Girl Beach Set",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/bkn01.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Chau Hy Beach set2",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/cha01.png"
+    }
+  },
+  {
+    "role": "image",
+    "name": "Dieu Ann Dress",
+    "properties": {
+      "url": "http://localhost:5175/src/assets/images/dia02.png"
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "43 ชุด",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "สร้างการจองใหม่",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "close",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "เลือกชุด",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ลูกค้าและราคา",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "3",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ยืนยันการจอง",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "arrow_back ย้อนกลับ",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "check ยืนยันการจอง",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "chevron_left",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "calendar_month",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "6 พ.ย. (วันนี้)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_drop_down",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "tune",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_drop_down",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "MHA Dress(long)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Nude",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "Dieu Ann Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Beige",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "Boots",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "heading",
+    "name": "Avaalene Beach set2",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด AVL01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Avaalene Bodysuits",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด AVL02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Bikini Girl Beach Set",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด BKN01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Chau Hy Beach set2",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด CHA01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Dieu Ann Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด DIA02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Duex Top(คล้องคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด DUE01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Feelfree Skirt",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด FFR01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Feelfree Set (ลูกไม้เปิดหลัง)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด FFR02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Feelfree Set(ลูกไม้เปิดหลัง)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด FFR03",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Feelfree Top(เกาะอกลายจีน)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Cream",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด FFR04",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(เกาะอกลายจีน)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด FFR05",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Glitmon Beach set(Bikini)2",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด GLM01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Mellow Set(เสื้อคล้องคอฟ้า กระโปรงขาว)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Blue/ White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด MEL01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "MHA Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Blue",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด MHA02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "NaryStudio Set(เสื้อแขนตุ๊กตา)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด NAR01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "NaryStudio Set(คล้องคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Cream",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด NAR02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "NaryStudio Set(ลุกไม้ผูกคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด NAR03",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Prime__official Beach set(Bodysuit)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด PRI01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด RDY01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด RDY02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Rudy.co Top(สายเดี่ยวคล้องคอซีทรู)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด RDY03",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SEL03",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(สายเดี่ยวคอวี)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pistachio",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SEL04",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SEL05",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SEL06",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Heels",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White (lace)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SH02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Solasta Beach set(Bikini)3",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด SLT01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Grey",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Set",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Grey",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB03",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "blue",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB04",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Beige",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB05",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Nude(floral)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB06",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress(long)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Beige (color floral)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB07",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Beige(bow detail)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB08",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress(long)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB09",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "TBB Dress(2 piece)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TBB10",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "heading",
+    "name": "Twenti/Liangshu Set(ชุดหนัง)",
+    "properties": {
+      "level": 6
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "จองชุด TWT01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "search",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "checkroom",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "calendar_month",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "close",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "เลือกชุด",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ลูกค้าและราคา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "chevron_right",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "3",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ยืนยันการจอง",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ย้อนกลับ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ยืนยันการจอง",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "calendar_month",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_drop_down",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SEL01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "095-111-2233",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "1 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SEL02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "095-111-2233",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "1 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง MHA01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Nude",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "092-888-7766",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "3 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "6 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "DIA01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ส่งมอบแล้ว",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง DIA01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "Dieu Ann Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Dieu Ann",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Beige",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "7 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SH01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ส่งมอบแล้ว",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SH01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "StaticText",
+    "name": "Boots",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "-",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "38",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "7 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "AVL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Avaalene Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Avaalene",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "AVL02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Avaalene Bodysuits",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Avaalene",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "BKN01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Bikini Girl Beach Set",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Bikini Girl",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "CHA01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Chau Hy Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Chau Hy",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "DIA02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Dieu Ann Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Dieu Ann",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "DUE01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Duex Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Duex",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "FFR01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree Skirt",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "FFR02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree Set (ลูกไม้เปิดหลัง)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Top M/ Skirt S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "FFR03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree Set(ลูกไม้เปิดหลัง)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Top M/Skirt S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "FFR04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree Top(เกาะอกลายจีน)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Cream",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "FFR05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(เกาะอกลายจีน)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "GLM01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Glitmon Beach set(Bikini)2",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Glitmon",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MEL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Mellow Set(เสื้อคล้องคอฟ้า กระโปรงขาว)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Mellow",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Blue/ White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "MHA",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Blue",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NAR01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio Set(เสื้อแขนตุ๊กตา)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NAR02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio Set(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Cream",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NAR03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio Set(ลุกไม้ผูกคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "PRI01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Prime__official Beach set(Bodysuit)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Prime__official",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "RDY01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "RDY02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "RDY03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co Top(สายเดี่ยวคล้องคอซีทรู)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(สายเดี่ยวคอวี)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pistachio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SEL06",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Pink",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SH02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Heels",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "-",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White (lace)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "38",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "SLT01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Solasta Beach set(Bikini)3",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Solasta",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Grey",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Set",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Grey",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "blue",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Beige",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB06",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Nude(floral)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB07",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Beige (color floral)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB08",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Beige(bow detail)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB09",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB10",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB Dress(2 piece)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "White",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "TWT01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Twenti/Liangshu Set(ชุดหนัง)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Twenti/Liangshu",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Black",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "•",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "search",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "checkroom",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "calendar_month",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_back",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ย้อนกลับ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ยืนยันการจอง",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL01",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณเนย วริศรา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "095-111-2233",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "1 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ปรับสถานะ SEL01 เป็น รับคืนเสร็จสิ้น",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SEL01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL02",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณเนย วริศรา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "095-111-2233",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "1 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ปรับสถานะ SEL02 เป็น รับคืนเสร็จสิ้น",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SEL02",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA01",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณฟ้า ณัฐชา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "092-888-7766",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "3 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "6 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ปรับสถานะ MHA01 เป็น ส่งซัก",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง MHA01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "DIA01",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ส่งมอบแล้ว",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Dieu Ann Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Dieu Ann",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "7 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ปรับสถานะ DIA01 เป็น รอรับคืน",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง DIA01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SH01",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ส่งมอบแล้ว",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Boots",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "-",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "38",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "(",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": ")",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "5 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " –",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "7 พ.ย.",
+    "properties": {}
+  },
+  {
+    "role": "button",
+    "name": "ปรับสถานะ SH01 เป็น รอรับคืน",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "button",
+    "name": "แก้ไขการจอง SH01",
+    "properties": {
+      "invalid": "false",
+      "focusable": true
+    }
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "AVL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Avaalene Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Avaalene",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "AVL02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Avaalene Bodysuits",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Avaalene",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "BKN01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Bikini Girl Beach Set",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Bikini Girl",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "CHA01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Chau Hy Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Chau Hy",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "DIA02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Dieu Ann Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Dieu Ann",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "DUE01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Duex Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Duex",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "FFR01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree Skirt",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "FFR02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree Set (ลูกไม้เปิดหลัง)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Top M/ Skirt S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "FFR03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree Set(ลูกไม้เปิดหลัง)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Top M/Skirt S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "FFR04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree Top(เกาะอกลายจีน)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Feelfree",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "FFR05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(เกาะอกลายจีน)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "GLM01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Glitmon Beach set(Bikini)2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Glitmon",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MEL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Mellow Set(เสื้อคล้องคอฟ้า ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "…",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "กระโปรงขาว)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Mellow",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "MHA",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NAR01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio Set(เสื้อแขน",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "…",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ตุ๊กตา)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NAR02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio Set(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NAR03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio Set(ลุกไม้ผูกคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "NaryStudio",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "PRI01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Prime__official Beach ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "…",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "set(Bodysuit)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Prime__official",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "RDY01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "RDY02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co Top(เกาะอก)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "RDY03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co Top(สายเดี่ยวคล้อง",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co Top(สายเดี่ยวคล้อ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "…",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คอซีทรู)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Rudy.co",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "F",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(คล้องคอ)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(สายเดี่ยวคอวี)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SEL06",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn Top(สายเดี่ยวลูกไม้)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Serlyn",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SH02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Heels",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "-",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "38",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "SLT01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Solasta Beach set(Bikini)3",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Solasta",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "M",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB02",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB03",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Set",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB04",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB05",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB06",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB07",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB08",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB09",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress(long)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB10",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB Dress(2 piece)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TBB",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "TWT01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ว่าง (พร้อมเช่า)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Twenti/Liangshu Set(ชุด",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "…",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "หนัง)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "sell",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Twenti/Liangshu",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "palette",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "height",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "S",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "จองชุดนี้",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ช่วงเวลาเช่า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ชุดที่เลือก (",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "1",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " ชุด)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ข้อมูลลูกค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "สรุปยอดชำระ",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_back",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณเนย วริศรา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "รับคืนเสร็จสิ้น",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณเนย วริศรา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "รับคืนเสร็จสิ้น",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณฟ้า ณัฐชา",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "date_range",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "check_circle",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "add",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "event",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ช่วงเวลาเช่า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "วันรับชุด",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "วันส่งคืน (",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "3",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " วัน)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "วันสิ้นสุดการทำความสะอาด (พร้อมให้เช่าต่อ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "checkroom",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ชุดที่เลือก (",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "1",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " ชุด)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ข้อมูลลูกค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ชื่อลูกค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "เบอร์โทรศัพท์",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "LINE ID",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "payments",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "สรุปยอดชำระ",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ราคาเช่ารวม:",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "120",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "เงินมัดจำ:",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "1,000",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " (รอโอนคืน)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "ยอดรวมสุทธิ:",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "1,120",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "รับคืนเสร็จสิ้น",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "รับคืนเสร็จสิ้น",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ส่งซัก",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "รอรับคืน",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "event",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "วันรับชุด",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "6 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "วันส่งคืน (",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "3",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " วัน)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "8 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "วันสิ้นสุดการทำความสะอาด (พร้อมให้เช่าต่อ)",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "10 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": " (รวมเวลาซัก 2 วัน)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "checkroom",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "AVL01",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "Avaalene Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "person",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ชื่อลูกค้า",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "เบอร์โทรศัพท์",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "LINE ID",
+    "properties": {}
+  },
+  {
+    "role": "StaticText",
+    "name": "@ploy_r",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "payments",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ราคาเช่ารวม:",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "120",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "เงินมัดจำ:",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "1,000",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " (รอโอนคืน)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "ยอดรวมสุทธิ:",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "฿",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "1,120",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "arrow_forward",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "edit",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "6 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "8 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "10 พ.ย. 2569",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": " (รวมเวลาซัก 2 วัน)",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "AVL01",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "Avaalene Beach set2",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "คุณพลอย รัตนากร",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "081-234-5678",
+    "properties": {}
+  },
+  {
+    "role": "InlineTextBox",
+    "name": "@ploy_r",
+    "properties": {}
+  }
+]

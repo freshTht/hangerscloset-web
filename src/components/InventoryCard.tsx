@@ -12,6 +12,13 @@ interface InventoryCardProps {
 const formatPrice = (amount: number): string =>
   `฿${amount.toLocaleString('en-US')}`;
 
+const getTierRoundingClass = (index: number, totalTiers: number): string => {
+  if (totalTiers === 1) return 'round';
+  if (index === 0) return 'left-round';
+  if (index === totalTiers - 1) return 'right-round';
+  return 'no-round';
+};
+
 export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) => {
   const isMobile = useIsMobile();
 
@@ -27,16 +34,7 @@ export const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit }) =>
         data-testid="price-tiers-group"
       >
         {sortedTiers.map((tier, idx) => {
-          const isFirst = idx === 0;
-          const isLast = idx === sortedTiers.length - 1;
-          const roundClass =
-            sortedTiers.length === 1
-              ? 'round'
-              : isFirst
-              ? 'left-round'
-              : isLast
-              ? 'right-round'
-              : 'no-round';
+          const roundClass = getTierRoundingClass(idx, sortedTiers.length);
 
           return (
             <div

@@ -43,16 +43,16 @@
 }
 
 .hc-tag-search-input {
-  padding-right: 40px;
+  padding-inline-end: 40px;
 }
 
 .hc-tag-search-input.has-clear {
-  padding-right: 68px;
+  padding-inline-end: 68px;
 }
 
 .hc-tag-clear-btn {
   position: absolute;
-  right: 36px;
+  inset-inline-end: 36px;
   top: 50%;
   transform: translateY(-50%);
   width: 28px;
@@ -65,7 +65,7 @@
 
 .hc-tag-toggle-btn {
   position: absolute;
-  right: 6px;
+  inset-inline-end: 6px;
   top: 50%;
   transform: translateY(-50%);
   width: 28px;
@@ -90,11 +90,11 @@
 }
 
 .hc-tag-dropdown.align-right {
-  right: 0;
+  inset-inline-end: 0;
 }
 
 .hc-tag-dropdown.align-left {
-  left: 0;
+  inset-inline-start: 0;
 }
 
 .hc-tag-options-grid {

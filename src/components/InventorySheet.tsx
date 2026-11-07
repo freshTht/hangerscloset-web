@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { InventoryItem, InventoryStatus } from '../types/inventory';
+import {
+  normalizeItemTags,
+  type InventoryItem,
+  type InventoryStatus,
+} from '../types/inventory';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useMetadataOptions } from '../hooks/useMetadataOptions';
 import { resizeImageFile } from '../lib/resizeImage';
@@ -8,6 +12,7 @@ import { OptionPicker } from './OptionPicker';
 import { TagPicker } from './TagPicker';
 import { Stack } from './Stack';
 import { Skeleton } from './Skeleton';
+import { Modal } from '../common/components/Modal';
 import './InventorySheet.css';
 
 export interface InventorySheetProps {
@@ -46,6 +51,19 @@ const DEFAULT_RENTAL_PRICES: FormRentalPriceTier[] = [
   { durationDays: '5', price: '' },
 ];
 
+const getNextTierDurationDays = (currentMaxDays: number): number => {
+  switch (currentMaxDays) {
+    case 0:
+      return 1;
+    case 1:
+      return 3;
+    case 3:
+      return 5;
+    default:
+      return currentMaxDays + 2;
+  }
+};
+
 const DEFAULT_FORM: FormState = {
   code: '',
   name: '',
@@ -65,11 +83,7 @@ const DEFAULT_FORM: FormState = {
 const CLOSE_CLEANUP_DELAY_MS = 350;
 
 const itemToForm = (item: InventoryItem): FormState => {
-  const tags: string[] = Array.isArray(item.tags)
-    ? item.tags
-    : typeof item.type === 'string' && item.type.trim()
-    ? [item.type.trim()]
-    : [];
+  const tags = normalizeItemTags(item.tags, item.type);
 
   const rentalPrices: FormRentalPriceTier[] =
     Array.isArray(item.rentalPrices) && item.rentalPrices.length > 0
@@ -137,17 +151,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     return () => window.clearTimeout(timer);
   }, [isOpen, mode, item]);
 
-  // Handle ESC key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -173,8 +176,7 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
         .map((t) => parseInt(t.durationDays, 10))
         .filter((d) => !isNaN(d) && d > 0);
       const maxDays = existingDays.length > 0 ? Math.max(...existingDays) : 0;
-      const nextDays =
-        maxDays === 0 ? 1 : maxDays === 1 ? 3 : maxDays === 3 ? 5 : maxDays + 2;
+      const nextDays = getNextTierDurationDays(maxDays);
 
       return {
         ...prev,
@@ -293,10 +295,6 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     }
   };
 
-  const sheetClass = isMobile
-    ? `bottom s ${isOpen ? 'active' : ''}`
-    : `right medium m l ${isOpen ? 'active' : ''}`;
-
   const renderImage = () => (
     <div className="round surface-container-high hc-inventory-sheet-image-wrap">
       {formData.imageUrl ? (
@@ -343,21 +341,38 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
     </div>
   );
 
-  return (
-    <>
-      <div
-        className={`overlay hc-inventory-sheet-overlay ${isOpen ? 'active' : ''}`}
-        onClick={onClose}
-        aria-hidden={!isOpen}
-      />
+  const renderSubmitButtonContent = () => {
+    if (submitting) {
+      return <div className="shape loading-indicator small" role="status" />;
+    }
+    if (mode === 'edit') {
+      return (
+        <>
+          <i>save</i>
+          <span>บันทึก</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <i>add</i>
+        <span>เพิ่มชุด</span>
+      </>
+    );
+  };
 
-      <dialog
-        id="inventory-sheet"
-        className={`${sheetClass} hc-inventory-sheet-dialog`.trim()}
-        open={isOpen}
-        aria-hidden={!isOpen}
-      >
-        {/* Top bar: title only for Add; SKU chip for Edit; close button */}
+  return (
+    <Modal
+      visible={isOpen}
+      variant="bottom-sheet"
+      onClose={onClose}
+      id="inventory-sheet"
+      testId="inventory-sheet"
+      overlayClassName="hc-inventory-sheet-overlay"
+      className="hc-inventory-sheet-dialog"
+      ariaLabel={mode === 'add' ? 'เพิ่มชุดใหม่' : 'แก้ไขข้อมูลชุด'}
+    >
+      {/* Top bar: title only for Add; SKU chip for Edit; close button */}
         <div className="row no-margin hc-inventory-sheet-top-bar">
           {mode === 'add' ? (
             <h6 className="bold no-margin">เพิ่มชุดใหม่</h6>
@@ -720,24 +735,11 @@ export const InventorySheet: React.FC<InventorySheetProps> = ({
                 className="primary round no-margin hc-inventory-sheet-submit-btn"
                 disabled={submitting}
               >
-                {submitting ? (
-                  <div className="shape loading-indicator small" role="status" />
-                ) : mode === 'edit' ? (
-                  <>
-                    <i>save</i>
-                    <span>บันทึก</span>
-                  </>
-                ) : (
-                  <>
-                    <i>add</i>
-                    <span>เพิ่มชุด</span>
-                  </>
-                )}
+                {renderSubmitButtonContent()}
               </button>
             </div>
           </>
         )}
-      </dialog>
-    </>
-  );
-};
+      </Modal>
+    );
+  };

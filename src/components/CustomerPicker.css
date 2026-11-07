@@ -1,9 +1,5 @@
 /* CustomerPicker Styles */
 
-.hc-customer-selected-card {
-  border-radius: 12px;
-}
-
 .hc-customer-selected-row {
   display: flex;
   align-items: center;
@@ -30,12 +26,24 @@
 }
 
 .hc-customer-action-btn {
+  position: relative;
   border-radius: 8px;
   flex-shrink: 0;
+  min-height: 40px;
 }
 
-.hc-customer-create-card {
-  border-radius: 16px;
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-customer-action-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
 }
 
 .hc-customer-create-header {
@@ -53,10 +61,6 @@
 
 .hc-customer-form-grid {
   gap: 12px;
-}
-
-.hc-customer-input-field {
-  border-radius: 12px;
 }
 
 .hc-customer-create-footer {
@@ -95,8 +99,7 @@
 .hc-customer-dropdown {
   position: absolute;
   top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   z-index: 100;
   max-height: 260px;
   overflow-y: auto;
@@ -129,6 +132,7 @@
 }
 
 .hc-customer-add-btn.mobile {
-  height: 38px;
+  height: 48px;
+  min-height: 48px;
   align-self: flex-end;
 }

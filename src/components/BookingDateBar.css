@@ -1,0 +1,130 @@
+/* Colocated styles for BookingDateBar */
+
+/* Compact Connected Date Navigator */
+.hc-datebar-nav-group {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+  background: none !important;
+  gap: 1px !important;
+}
+
+.hc-datebar-nav-btn {
+  position: relative;
+  height: 32px;
+  min-height: 32px;
+  box-sizing: border-box;
+  border: none;
+  cursor: pointer;
+  background-color: var(--primary-container) !important;
+  color: var(--on-primary-container) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hc-datebar-nav-btn:hover {
+  background-color: var(--primary) !important;
+  color: var(--on-primary) !important;
+}
+
+/* Compact Chevrons */
+.hc-datebar-chevron {
+  width: 28px;
+  min-width: 28px;
+  padding: 0;
+}
+
+.hc-datebar-chevron-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Compact Date Picker Trigger */
+.hc-datebar-picker-btn {
+  padding: 0 8px;
+  gap: 3px;
+  font-weight: 700;
+  min-width: 0;
+}
+
+.hc-datebar-cal-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.hc-datebar-picker-text {
+  font-size: 8.5pt;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.hc-datebar-arrow-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* Compact Today Quick-Jump */
+.hc-datebar-today-btn {
+  position: relative;
+  height: 32px;
+  min-height: 32px;
+  padding: 0 8px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-container);
+  color: var(--on-primary-container);
+  font-weight: 700;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.hc-datebar-today-btn:hover {
+  background-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.hc-datebar-today-text {
+  font-size: 8pt;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Touch Target Protection (>= 48px) */
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-datebar-chevron::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  .hc-datebar-picker-btn::before,
+  .hc-datebar-today-btn::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    min-height: 48px;
+  }
+}

@@ -22,19 +22,14 @@
   color: #1b5e20;
 }
 
-.hc-status-badge-reserved {
-  background-color: #fff3e0;
-  color: #b74700;
-}
-
-.hc-status-badge-laundry {
-  background-color: #e1f5fe;
-  color: #0277bd;
-}
-
 body.dark .hc-status-badge-available {
   background-color: rgba(76, 175, 80, 0.22);
   color: #81c784;
+}
+
+.hc-status-badge-reserved {
+  background-color: #fff3e0;
+  color: #b74700;
 }
 
 body.dark .hc-status-badge-reserved {
@@ -42,7 +37,43 @@ body.dark .hc-status-badge-reserved {
   color: #ffb74d;
 }
 
+.hc-status-badge-laundry {
+  background-color: #e1f5fe;
+  color: #0277bd;
+}
+
 body.dark .hc-status-badge-laundry {
   background-color: rgba(3, 169, 244, 0.22);
   color: #81d4fa;
+}
+
+/* Solid filled status badge colors for count indicators */
+.hc-status-badge-filled-available {
+  background-color: #2e7d32 !important;
+  color: #ffffff !important;
+}
+
+body.dark .hc-status-badge-filled-available {
+  background-color: #388e3c !important;
+  color: #ffffff !important;
+}
+
+.hc-status-badge-filled-reserved {
+  background-color: #e65100 !important;
+  color: #ffffff !important;
+}
+
+body.dark .hc-status-badge-filled-reserved {
+  background-color: #f57c00 !important;
+  color: #ffffff !important;
+}
+
+.hc-status-badge-filled-laundry {
+  background-color: #0288d1 !important;
+  color: #ffffff !important;
+}
+
+body.dark .hc-status-badge-filled-laundry {
+  background-color: #039be5 !important;
+  color: #ffffff !important;
 }

@@ -1,0 +1,68 @@
+/* Sticky container for page header toolbars */
+.hc-header-toolbar-sticky-wrapper {
+  position: sticky;
+  top: calc(var(--top, 0px) + 48px);
+  z-index: 10;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  margin-top: -12px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  background: transparent;
+}
+
+@media (min-width: 601px) {
+  .hc-header-toolbar-sticky-wrapper {
+    top: 0;
+    margin-top: -24px;
+    padding-top: 16px;
+  }
+}
+
+/* Header toolbar adhering to Beer CSS and M3 Expressive standards */
+nav.toolbar.hc-header-toolbar,
+.hc-header-toolbar {
+  width: 100%;
+  box-sizing: border-box !important;
+  min-block-size: 48px !important;
+  height: 48px;
+  padding-inline: 12px;
+  gap: 6px;
+  scrollbar-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-radius: 9999px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.hc-header-toolbar.is-outlined,
+.hc-header-toolbar.border {
+  border: 1px solid var(--outline-variant, rgba(0, 0, 0, 0.12)) !important;
+  box-sizing: border-box !important;
+}
+
+.hc-header-toolbar:not(.is-outlined):not(.border) {
+  border: none;
+}
+
+.hc-header-toolbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hc-header-toolbar > * {
+  flex-shrink: 0;
+}
+
+/* Material 3 Expressive Floating Toolbar Divider */
+.hc-toolbar-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--outline-variant, rgba(0, 0, 0, 0.12));
+  opacity: 0.6;
+  margin-inline: 4px;
+  flex-shrink: 0;
+  align-self: center;
+}

@@ -2,6 +2,7 @@ import type {
   Booking,
   BookingItemStatus,
   BookingTransactionDates,
+  BookingLineItem,
 } from '../types/booking';
 
 export const BOOKING_STATUS_ORDER: BookingItemStatus[] = [
@@ -61,7 +62,7 @@ export const BOOKING_STATUS_META: Record<
 export function normalizeTransactionDates(
   rawTxDates: unknown,
   startDate: string,
-  legacyItems?: Array<{ status?: BookingItemStatus }>
+  legacyItems?: Array<{ status?: BookingItemStatus } | BookingLineItem>
 ): BookingTransactionDates {
   const txDates: BookingTransactionDates = {};
   if (rawTxDates && typeof rawTxDates === 'object') {
@@ -76,7 +77,7 @@ export function normalizeTransactionDates(
   if (Object.keys(txDates).length === 0) {
     const fallbackDate = startDate || getTodayISO();
     txDates.reserved = fallbackDate;
-    const legacyStatus = legacyItems?.find((i) => i.status)?.status;
+    const legacyStatus = legacyItems?.find((i): i is { status: BookingItemStatus } => 'status' in i && Boolean(i.status))?.status;
     if (legacyStatus && legacyStatus !== 'reserved') {
       txDates[legacyStatus] = fallbackDate;
     }

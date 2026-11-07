@@ -71,6 +71,15 @@ const resolveGap = (gap?: BeerSpacing | number | string): string | undefined => 
   return gap;
 };
 
+const resolveFlexWrap = (
+  wrap?: boolean | React.CSSProperties['flexWrap']
+): React.CSSProperties['flexWrap'] => {
+  if (typeof wrap === 'boolean') {
+    return wrap ? 'wrap' : 'nowrap';
+  }
+  return wrap;
+};
+
 export const Stack = forwardRef<HTMLDivElement, StackProps>(
   (
     {
@@ -103,7 +112,7 @@ export const Stack = forwardRef<HTMLDivElement, StackProps>(
       gap: resolveGap(gap),
       alignItems: align,
       justifyContent: justify,
-      flexWrap: typeof wrap === 'boolean' ? (wrap ? 'wrap' : 'nowrap') : wrap,
+      flexWrap: resolveFlexWrap(wrap),
       ...style,
     };
 

@@ -1,32 +1,51 @@
-.hc-booking-card-item-content {
-  min-width: 0;
-  flex: 1;
-}
+/* 2-Level Nested Booking Card (Orders View) */
 
-.hc-booking-card-thumbnail {
-  width: 52px;
-  height: 52px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.hc-booking-card-thumbnail-placeholder {
-  width: 52px;
-  height: 52px;
+.hc-booking-card {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background-color: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  box-shadow: none;
+  /* Defer off-screen rendering calculations for heavy order lists */
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 180px;
 }
 
-.hc-booking-card-lazy-image {
-  width: 52px;
-  height: 52px;
+.hc-booking-card-outer-header {
+  padding: 2px 4px;
 }
 
-.hc-booking-card-image {
-  object-fit: cover;
+.hc-booking-card-inner-item {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.hc-booking-card-action-btn {
+.hc-booking-card-outer-footer {
+  padding: 4px 4px 2px 4px;
+}
+
+.hc-booking-card-edit-btn,
+.hc-booking-card-info-btn,
+.hc-booking-card-action-btn,
+.hc-booking-card-deposit-btn {
+  position: relative;
   flex-shrink: 0;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-booking-card-edit-btn::before,
+  .hc-booking-card-info-btn::before,
+  .hc-booking-card-action-btn::before,
+  .hc-booking-card-deposit-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 100%;
+    height: 48px;
+  }
 }

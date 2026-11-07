@@ -1,7 +1,7 @@
 ---
 beercss_version: "3.13.3"
 source: "https://raw.githubusercontent.com/beercss/beercss/v3.13.3/llms.md"
-last_synced: "2026-11-01T11:10:58.408Z"
+last_synced: "2026-11-05T17:56:55.031Z"
 ---
 
 > [!NOTE]
