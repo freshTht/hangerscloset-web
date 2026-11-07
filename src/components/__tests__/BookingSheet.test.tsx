@@ -534,4 +534,214 @@ describe('BookingSheet Component', () => {
     fireEvent.click(closeBtn);
     expect(handleClose).toHaveBeenCalled();
   });
+
+  it('locks navigation to Step 2 & 3 when lockStepMin=2 and closes cleanly on Step 1 stepper click', () => {
+    const handleClose = vi.fn();
+    const historyGoSpy = vi.spyOn(window.history, 'go').mockImplementation(() => {});
+
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        initialStep={2}
+        lockStepMin={2}
+        allowStepBackTo1={false}
+        booking={{
+          id: '',
+          customerId: '',
+          customerName: '',
+          customerPhone: '',
+          startDate: today,
+          endDate: addDaysISO(today, 2),
+          cleaningEndDate: addDaysISO(today, 4),
+          durationDays: 3,
+          rentalPrice: 120,
+          deposit: 1000,
+          depositRefunded: false,
+          createdAt: '',
+          updatedAt: '',
+          transactionDates: { reserved: today },
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        }}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={handleClose}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Initial step is Step 2
+    expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
+
+    // Step 1 stepper button reflects restriction with close icon
+    const stepper = screen.getByTestId('wizard-stepper');
+    expect(stepper).toBeInTheDocument();
+    const step1Btn = screen.getByRole('button', { name: /เลือกชุด/i });
+    expect(step1Btn.querySelector('i')).toHaveTextContent('close');
+
+    // Tapping Step 1 stepper button closes the sheet
+    fireEvent.click(step1Btn);
+    expect(handleClose).toHaveBeenCalledTimes(1);
+
+    historyGoSpy.mockRestore();
+  });
+
+  it('closes cleanly when tapping "ย้อนกลับ" on Step 2 when lockStepMin=2', () => {
+    const handleClose = vi.fn();
+    const historyGoSpy = vi.spyOn(window.history, 'go').mockImplementation(() => {});
+
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        initialStep={2}
+        lockStepMin={2}
+        allowStepBackTo1={false}
+        booking={{
+          id: '',
+          customerId: '',
+          customerName: '',
+          customerPhone: '',
+          startDate: today,
+          endDate: addDaysISO(today, 2),
+          cleaningEndDate: addDaysISO(today, 4),
+          durationDays: 3,
+          rentalPrice: 120,
+          deposit: 1000,
+          depositRefunded: false,
+          createdAt: '',
+          updatedAt: '',
+          transactionDates: { reserved: today },
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        }}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={handleClose}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Tapping "ย้อนกลับ" on Step 2 calls handleCloseCleanly and closes the sheet
+    const prevBtn = screen.getByTestId('wizard-prev-step-2');
+    fireEvent.click(prevBtn);
+    expect(handleClose).toHaveBeenCalledTimes(1);
+
+    historyGoSpy.mockRestore();
+  });
+
+  it('allows navigation between Step 2 and Step 3 when lockStepMin=2 and going back from Step 3 returns to Step 2', () => {
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        initialStep={2}
+        lockStepMin={2}
+        booking={{
+          id: '',
+          customerId: 'cust-1',
+          customerName: 'คุณพลอย รัตนากร',
+          customerPhone: '081-234-5678',
+          startDate: today,
+          endDate: addDaysISO(today, 2),
+          cleaningEndDate: addDaysISO(today, 4),
+          durationDays: 3,
+          rentalPrice: 120,
+          deposit: 1000,
+          depositRefunded: false,
+          createdAt: '',
+          updatedAt: '',
+          transactionDates: { reserved: today },
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        }}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Step 2 is active, select customer to enable Next button
+    const customerInput = screen.getByLabelText(/ค้นหาลูกค้า/i);
+    fireEvent.focus(customerInput);
+    fireEvent.click(screen.getByText('คุณพลอย รัตนากร'));
+
+    // Advance to Step 3
+    fireEvent.click(screen.getByTestId('wizard-next-step-2'));
+    expect(screen.getByText('สรุปยอดชำระ')).toBeInTheDocument();
+
+    // On Step 3, clicking "ย้อนกลับ" navigates back to Step 2 (does not close)
+    fireEvent.click(screen.getByTestId('wizard-prev-step-3'));
+    expect(screen.getByTestId('wizard-next-step-2')).toBeInTheDocument();
+    expect(screen.getByText('คุณพลอย รัตนากร')).toBeInTheDocument();
+  });
+
+  it('closes cleanly on browser popstate event when popping past lockStepMin', () => {
+    const handleClose = vi.fn();
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="add"
+        initialStep={2}
+        lockStepMin={2}
+        allowStepBackTo1={false}
+        booking={{
+          id: '',
+          customerId: 'cust-1',
+          customerName: 'คุณพลอย รัตนากร',
+          customerPhone: '081-234-5678',
+          startDate: today,
+          endDate: addDaysISO(today, 2),
+          cleaningEndDate: addDaysISO(today, 4),
+          durationDays: 3,
+          rentalPrice: 120,
+          deposit: 1000,
+          depositRefunded: false,
+          createdAt: '',
+          updatedAt: '',
+          transactionDates: { reserved: today },
+          items: [
+            {
+              itemId: 'inv-1',
+              itemCode: 'AVL01',
+              itemName: 'Avaalene Beach Set',
+              itemImageUrl: '',
+            },
+          ],
+        }}
+        bookings={[]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={handleClose}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Browser back dispatches popstate with step 1, which is below lockStepMin=2
+    fireEvent(window, new PopStateEvent('popstate', { state: { bookingWizardStep: 1 } }));
+    expect(handleClose).toHaveBeenCalledTimes(1);
+  });
 });

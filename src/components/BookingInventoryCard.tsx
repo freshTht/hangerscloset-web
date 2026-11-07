@@ -19,7 +19,9 @@ export interface BookingInventoryCardProps {
   lineItem: BookingLineItem | null;
   selectedDate: string;
   isAllDates: boolean;
-  onReserve: (item: InventoryItem) => void;
+  isSelected?: boolean;
+  onToggleSelect?: (item: InventoryItem) => void;
+  onReserve?: (item: InventoryItem) => void;
   onEditBooking: (booking: Booking) => void;
   onViewBooking?: (booking: Booking) => void;
   onAdvanceItemStatus: (
@@ -36,6 +38,8 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   lineItem,
   selectedDate,
   isAllDates,
+  isSelected = false,
+  onToggleSelect,
   onReserve,
   onEditBooking,
   onViewBooking,
@@ -143,20 +147,33 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
     return (
       <button
         type="button"
-        className="small round border primary bold no-margin hc-booking-inv-card-reserve-btn"
-        onClick={() => onReserve(item)}
-        aria-label={`จองชุด ${item.code}`}
-        title="สร้างการจองสำหรับชุดนี้"
+        className={`small round bold no-margin hc-booking-inv-card-reserve-btn hc-booking-inv-card-select-btn ${
+          isSelected ? 'fill primary' : 'border primary'
+        }`}
+        aria-pressed={isSelected}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (onToggleSelect) {
+            onToggleSelect(item);
+          } else if (onReserve) {
+            onReserve(item);
+          }
+        }}
+        aria-label={isSelected ? `เลือกแล้ว ${item.code}` : `เลือกชุด ${item.code}`}
+        title={isSelected ? 'ยกเลิกการเลือก' : 'เลือกชุดนี้'}
+        data-testid={`select-item-btn-${item.code}`}
       >
-        <i>add</i>
-        <span>จองชุดนี้</span>
+        <i aria-hidden="true">{isSelected ? 'check' : 'add'}</i>
+        <span>{isSelected ? 'เลือกแล้ว' : 'เลือก'}</span>
       </button>
     );
   };
 
   return (
     <article
-      className="border medium-round no-margin hc-booking-inv-card"
+      className={`border medium-round no-margin hc-booking-inv-card ${
+        isSelected ? 'is-selected' : ''
+      }`.trim()}
       data-testid={`inventory-booking-card-${item.code}`}
     >
       {/* Accessible status indicator for screen readers and semantic queries */}

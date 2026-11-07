@@ -42,8 +42,8 @@ describe('BookingInventoryCard Component', () => {
     ],
   };
 
-  it('renders available state with "จองชุดนี้" button and price on outer footer left', () => {
-    const handleReserve = vi.fn();
+  it('renders available unselected state with outlined "เลือก" button and toggles on click', () => {
+    const handleToggleSelect = vi.fn();
     const { container } = render(
       <BookingInventoryCard
         item={sampleItem}
@@ -51,7 +51,8 @@ describe('BookingInventoryCard Component', () => {
         lineItem={null}
         selectedDate="2026-05-10"
         isAllDates={false}
-        onReserve={handleReserve}
+        isSelected={false}
+        onToggleSelect={handleToggleSelect}
         onEditBooking={vi.fn()}
         onAdvanceItemStatus={vi.fn()}
       />
@@ -59,7 +60,9 @@ describe('BookingInventoryCard Component', () => {
 
     expect(screen.getByTestId('status-badge-DIA01')).toHaveClass('sr-only');
     expect(screen.getByTestId('status-badge-DIA01')).toHaveTextContent('ว่าง (พร้อมเช่า)');
-    expect(screen.getByTestId('inventory-booking-card-DIA01')).toHaveClass('border');
+    const cardArticle = screen.getByTestId('inventory-booking-card-DIA01');
+    expect(cardArticle).toHaveClass('border');
+    expect(cardArticle).not.toHaveClass('is-selected');
 
     // Price should be on the left side of the outer card footer
     const priceSlot = container.querySelector(
@@ -71,10 +74,53 @@ describe('BookingInventoryCard Component', () => {
     // Inner card should have no footer
     expect(container.querySelector('.hc-common-inv-card-footer')).not.toBeInTheDocument();
 
-    const reserveBtn = screen.getByRole('button', { name: 'จองชุด DIA01' });
-    expect(reserveBtn).toBeInTheDocument();
-    fireEvent.click(reserveBtn);
-    expect(handleReserve).toHaveBeenCalledWith(sampleItem);
+    const selectBtn = screen.getByRole('button', { name: 'เลือกชุด DIA01' });
+    expect(selectBtn).toBeInTheDocument();
+    expect(selectBtn).toHaveAttribute('aria-pressed', 'false');
+    expect(selectBtn).toHaveClass('border');
+    expect(selectBtn).toHaveClass('primary');
+    expect(selectBtn.querySelector('i')).toHaveTextContent('add');
+    expect(selectBtn).toHaveTextContent('เลือก');
+
+    fireEvent.click(selectBtn);
+    expect(handleToggleSelect).toHaveBeenCalledTimes(1);
+    expect(handleToggleSelect).toHaveBeenCalledWith(sampleItem);
+
+    // Clicking card body remains neutral and does not invoke onToggleSelect again
+    fireEvent.click(cardArticle);
+    expect(handleToggleSelect).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders available selected state with filled "เลือกแล้ว" button and is-selected class', () => {
+    const handleToggleSelect = vi.fn();
+    render(
+      <BookingInventoryCard
+        item={sampleItem}
+        booking={null}
+        lineItem={null}
+        selectedDate="2026-05-10"
+        isAllDates={false}
+        isSelected={true}
+        onToggleSelect={handleToggleSelect}
+        onEditBooking={vi.fn()}
+        onAdvanceItemStatus={vi.fn()}
+      />
+    );
+
+    const cardArticle = screen.getByTestId('inventory-booking-card-DIA01');
+    expect(cardArticle).toHaveClass('is-selected');
+
+    const selectBtn = screen.getByRole('button', { name: 'เลือกแล้ว DIA01' });
+    expect(selectBtn).toBeInTheDocument();
+    expect(selectBtn).toHaveAttribute('aria-pressed', 'true');
+    expect(selectBtn).toHaveClass('fill');
+    expect(selectBtn).toHaveClass('primary');
+    expect(selectBtn.querySelector('i')).toHaveTextContent('check');
+    expect(selectBtn).toHaveTextContent('เลือกแล้ว');
+
+    fireEvent.click(selectBtn);
+    expect(handleToggleSelect).toHaveBeenCalledTimes(1);
+    expect(handleToggleSelect).toHaveBeenCalledWith(sampleItem);
   });
 
   it('renders active booked state with edit button and advance status button on the right', () => {

@@ -126,11 +126,19 @@
   white-space: nowrap;
 }
 
-.hc-booking-inv-card-reserve-btn {
+.hc-booking-inv-card.is-selected {
+  border-color: var(--primary);
+  background-color: color-mix(in srgb, var(--primary) 8%, var(--surface-container));
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.hc-booking-inv-card-reserve-btn,
+.hc-booking-inv-card-select-btn {
   position: relative;
   padding: 0 14px;
   height: 36px;
   min-height: 36px;
+  transition: all 0.15s ease;
 }
 
 @media (pointer: coarse), (max-width: 600px) {
@@ -146,7 +154,8 @@
   }
 
   .hc-booking-inv-card-advance-btn::before,
-  .hc-booking-inv-card-reserve-btn::before {
+  .hc-booking-inv-card-reserve-btn::before,
+  .hc-booking-inv-card-select-btn::before {
     content: '';
     position: absolute;
     top: 50%;

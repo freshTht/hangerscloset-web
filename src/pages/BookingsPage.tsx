@@ -53,6 +53,7 @@ interface SheetState {
   mode: 'add' | 'edit' | 'view';
   booking?: Booking | null;
   initialStep?: number;
+  lockStepMin?: number;
 }
 
 interface PendingStatusConfirm {
@@ -238,6 +239,7 @@ export const BookingsPage: React.FC = () => {
   const today = useMemo(() => getTodayISO(), []);
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
+  const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(() => new Set());
 
   const [listLayout, setListLayout] = useState<BookingListLayout>('items');
   const [searchOpen, setSearchOpen] = useState(false);
@@ -428,6 +430,78 @@ export const BookingsPage: React.FC = () => {
     return groups;
   }, [filteredBookings, selectedDate, isAllDates]);
 
+  const handleDateChange = (newDate: string) => {
+    setSelectedDate(newDate);
+    setIsAllDates(false);
+    setSelectedItemIds(new Set());
+  };
+
+  const handleToggleSelectItem = (item: InventoryItem) => {
+    setSelectedItemIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(item.id)) {
+        next.delete(item.id);
+      } else {
+        next.add(item.id);
+      }
+      return next;
+    });
+  };
+
+  const handleBookSelected = () => {
+    const selectedItemsList = inventoryItems.filter((item) =>
+      selectedItemIds.has(item.id)
+    );
+    if (selectedItemsList.length === 0) return;
+
+    const start = isAllDates ? today : selectedDate;
+    const end = addDaysISO(start, 2);
+    const cleaning = addDaysISO(end, 2);
+
+    const defaultPrice = selectedItemsList.reduce((sum, item) => {
+      const sorted = [...(item.rentalPrices ?? [])].sort(
+        (a, b) => a.durationDays - b.durationDays
+      );
+      const exact = sorted.find((t) => t.durationDays === 3);
+      if (exact) return sum + exact.price;
+      const lowerOrEqual = [...sorted]
+        .reverse()
+        .find((t) => t.durationDays <= 3);
+      return sum + ((lowerOrEqual ?? sorted[0])?.price ?? 0);
+    }, 0);
+
+    setSheetState({
+      isOpen: true,
+      mode: 'add',
+      initialStep: 2,
+      lockStepMin: 2,
+      booking: {
+        id: '',
+        customerId: '',
+        customerName: '',
+        customerPhone: '',
+        customerLineId: null,
+        startDate: start,
+        endDate: end,
+        cleaningEndDate: cleaning,
+        durationDays: 3,
+        rentalPrice: defaultPrice,
+        deposit: 1000,
+        depositRefunded: false,
+        note: '',
+        createdAt: '',
+        updatedAt: '',
+        transactionDates: { reserved: start < today ? start : today },
+        items: selectedItemsList.map((item) => ({
+          itemId: item.id,
+          itemCode: item.code,
+          itemName: item.name,
+          itemImageUrl: item.imageUrl,
+        })),
+      },
+    });
+  };
+
   const handleOpenAdd = () => {
     const start = isAllDates ? today : selectedDate;
     const end = addDaysISO(start, 2);
@@ -436,6 +510,7 @@ export const BookingsPage: React.FC = () => {
       isOpen: true,
       mode: 'add',
       initialStep: 1,
+      lockStepMin: 1,
       booking: {
         id: '',
         customerId: '',
@@ -466,6 +541,7 @@ export const BookingsPage: React.FC = () => {
       isOpen: true,
       mode: 'add',
       initialStep: 2,
+      lockStepMin: 2,
       booking: {
         id: '',
         customerId: '',
@@ -521,6 +597,7 @@ export const BookingsPage: React.FC = () => {
     } else {
       await addBooking(data);
     }
+    setSelectedItemIds(new Set());
   };
 
   const handleDeleteSheet = async (id: string) => {
@@ -618,7 +695,10 @@ export const BookingsPage: React.FC = () => {
               selectedDate,
               onOpenAdd: handleOpenAdd,
               onClearSearch: () => setSearchQuery(''),
-              onViewAllDates: () => setIsAllDates(true),
+              onViewAllDates: () => {
+                setIsAllDates(true);
+                setSelectedItemIds(new Set());
+              },
             })}
           />
         );
@@ -656,6 +736,8 @@ export const BookingsPage: React.FC = () => {
                         lineItem={entry.lineItem}
                         selectedDate={selectedDate}
                         isAllDates={isAllDates}
+                        isSelected={selectedItemIds.has(entry.item.id)}
+                        onToggleSelect={handleToggleSelectItem}
                         onReserve={handleReserveItem}
                         onEditBooking={handleOpenEdit}
                         onViewBooking={handleOpenView}
@@ -681,7 +763,10 @@ export const BookingsPage: React.FC = () => {
             selectedDate,
             onOpenAdd: handleOpenAdd,
             onClearSearch: () => setSearchQuery(''),
-            onViewAllDates: () => setIsAllDates(true),
+            onViewAllDates: () => {
+              setIsAllDates(true);
+              setSelectedItemIds(new Set());
+            },
           })}
         />
       );
@@ -743,10 +828,7 @@ export const BookingsPage: React.FC = () => {
                   today={today}
                   isAllDates={isAllDates}
                   calendarSheetOpen={calendarSheetOpen}
-                  onDateChange={(newDate) => {
-                    setSelectedDate(newDate);
-                    setIsAllDates(false);
-                  }}
+                  onDateChange={handleDateChange}
                   onCalendarClick={() => setCalendarSheetOpen(true)}
                   viewMode={listLayout}
                   onViewModeChange={setListLayout}
@@ -840,17 +922,20 @@ export const BookingsPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Standalone FAB (bottom right aligned, matching InventoryPage) */}
-      <button
-        className="extra circle primary medium-elevate fixed bottom right margin front"
-        type="button"
-        onClick={handleOpenAdd}
-        aria-label="สร้างการจองใหม่"
-        title="สร้างการจองใหม่"
-        data-testid="bookings-add-fab"
-      >
-        <i aria-hidden="true">add</i>
-      </button>
+      {/* Dynamic Extended 'Book N Outfits' FAB (Only when items selected in items view) */}
+      {selectedItemIds.size > 0 && listLayout === 'items' && (
+        <button
+          type="button"
+          className="fixed bottom right round extra primary medium-elevate margin front hc-booking-action-fab"
+          onClick={handleBookSelected}
+          aria-label={`จอง ${selectedItemIds.size} ชุด`}
+          title={`จอง ${selectedItemIds.size} ชุด`}
+          data-testid="bookings-action-fab"
+        >
+          <i aria-hidden="true">shopping_bag</i>
+          <span>จอง {selectedItemIds.size} ชุด</span>
+        </button>
+      )}
 
       {/* Past / Future Status Change Confirmation Dialog */}
       {pendingStatusConfirm && (
@@ -918,10 +1003,7 @@ export const BookingsPage: React.FC = () => {
         selectedDate={isAllDates ? today : selectedDate}
         today={today}
         bookings={bookings}
-        onSelectDate={(newDate) => {
-          setSelectedDate(newDate);
-          setIsAllDates(false);
-        }}
+        onSelectDate={handleDateChange}
         onClose={() => setCalendarSheetOpen(false)}
       />
 
@@ -935,6 +1017,12 @@ export const BookingsPage: React.FC = () => {
         inventoryItems={inventoryItems}
         customers={customers}
         initialStep={sheetState.initialStep ?? 1}
+        lockStepMin={sheetState.lockStepMin}
+        allowStepBackTo1={
+          sheetState.lockStepMin !== undefined
+            ? sheetState.lockStepMin <= 1
+            : true
+        }
         onAddCustomer={addCustomer}
         onClose={handleCloseSheet}
         onSubmit={handleSubmitSheet}

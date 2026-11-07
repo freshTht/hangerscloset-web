@@ -38,6 +38,8 @@ export interface BookingSheetProps {
   inventoryItems?: InventoryItem[];
   customers?: Customer[];
   initialStep?: number;
+  lockStepMin?: number;
+  allowStepBackTo1?: boolean;
   onAddCustomer?: (customer: NewCustomerInput) => Promise<string>;
   onClose: () => void;
   onSubmit: (data: NewBookingInput) => Promise<void>;
@@ -190,6 +192,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   inventoryItems: propInventoryItems,
   customers: propCustomers,
   initialStep = 1,
+  lockStepMin,
+  allowStepBackTo1,
   onAddCustomer: propOnAddCustomer,
   onClose,
   onSubmit,
@@ -202,6 +206,9 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   const inventoryItems = propInventoryItems ?? hookInventoryItems;
   const customers = propCustomers ?? hookCustomers;
   const addCustomerFn = propOnAddCustomer ?? hookAddCustomer;
+
+  const isStep1Restricted =
+    (lockStepMin !== undefined && lockStepMin > 1) || allowStepBackTo1 === false;
 
   const inventoryMap = useMemo(() => {
     const map = new Map<string, InventoryItem>();
@@ -307,7 +314,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
           );
           if (initialItems.length > 0) {
             const suggested = computeSuggestedPrice(initialItems, inventoryMap, defaultDuration);
-            setRentalPrice(String(suggested));
+            setRentalPrice(String(booking?.rentalPrice || suggested));
           } else {
             setRentalPrice('0');
           }
@@ -319,7 +326,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
           // Multi-step browser history stack integration
           if (typeof window !== 'undefined' && window.history) {
-            pushedStepsCountRef.current = initialStep;
+            pushedStepsCountRef.current = 1;
             window.history.pushState(
               { bookingWizardStep: initialStep },
               '',
@@ -349,7 +356,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     }, CLOSE_CLEANUP_DELAY_MS);
 
     return () => window.clearTimeout(timer);
-  }, [isOpen, mode, booking, initialStep, inventoryMap, todayIso]);
+  }, [isOpen, mode, booking, initialStep, lockStepMin, allowStepBackTo1, inventoryMap, todayIso]);
 
   // Listen to popstate event for browser back / forward navigation through wizard steps
   useEffect(() => {
@@ -358,11 +365,12 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
     const handlePopState = (e: PopStateEvent) => {
       if (isClosingRef.current) return;
       const step = e.state?.bookingWizardStep;
-      if (typeof step === 'number' && step >= 1 && step <= 3) {
+      const minAllowedStep = isStep1Restricted ? 2 : 1;
+      if (typeof step === 'number' && step >= minAllowedStep && step <= 3) {
         setCurrentStep(step);
-        pushedStepsCountRef.current = step;
+        pushedStepsCountRef.current = Math.max(1, step - initialStep + 1);
       } else {
-        // Popped past step 1 (e.g. user pressed browser back on step 1) -> close cleanly
+        // Popped past min allowed step (e.g. user pressed browser back on step 1, or step 2 when restricted) -> close cleanly
         isClosingRef.current = true;
         pushedStepsCountRef.current = 0;
         onClose();
@@ -386,7 +394,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         );
       }
     };
-  }, [isOpen, mode, onClose]);
+  }, [isOpen, mode, isStep1Restricted, initialStep, onClose]);
 
   const handleCloseCleanly = useCallback(() => {
     if (isClosingRef.current) return;
@@ -413,7 +421,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
       const next = currentStep + 1;
       setCurrentStep(next);
       if (typeof window !== 'undefined' && window.history) {
-        pushedStepsCountRef.current = next;
+        pushedStepsCountRef.current += 1;
         window.history.pushState(
           { bookingWizardStep: next },
           '',
@@ -424,22 +432,30 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   };
 
   const handlePrevStep = () => {
+    if (isStep1Restricted && currentStep === 2) {
+      handleCloseCleanly();
+      return;
+    }
     if (currentStep > 1) {
       const prev = currentStep - 1;
       setCurrentStep(prev);
       if (typeof window !== 'undefined' && window.history) {
-        pushedStepsCountRef.current = prev;
+        pushedStepsCountRef.current = Math.max(0, pushedStepsCountRef.current - 1);
         window.history.back();
       }
     }
   };
 
   const handleGoToStep = (targetStep: number) => {
+    if (isStep1Restricted && targetStep < 2) {
+      handleCloseCleanly();
+      return;
+    }
     if (targetStep < currentStep) {
       const diff = currentStep - targetStep;
       setCurrentStep(targetStep);
       if (typeof window !== 'undefined' && window.history) {
-        pushedStepsCountRef.current = targetStep;
+        pushedStepsCountRef.current = Math.max(0, pushedStepsCountRef.current - diff);
         window.history.go(-diff);
       }
     }
@@ -760,15 +776,24 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                   <button
                     type="button"
                     className={`no-margin hc-booking-sheet-step-btn ${getStepButtonClass(1, currentStep)} ${isMobile ? 'small-text' : 'medium-text'}`}
-                    onClick={() => handleGoToStep(1)}
+                    onClick={() => {
+                      if (isStep1Restricted) {
+                        handleCloseCleanly();
+                      } else {
+                        handleGoToStep(1);
+                      }
+                    }}
+                    title={
+                      isStep1Restricted
+                        ? 'ปิดและกลับสู่หน้ารายการชุด'
+                        : undefined
+                    }
                   >
-                    {currentStep > 1 ? (
-                      <i className="small">check</i>
-                    ) : (
-                      <span className="bold small-text">
-                        1
-                      </span>
-                    )}
+                    {(() => {
+                      if (isStep1Restricted) return <i className="small">close</i>;
+                      if (currentStep > 1) return <i className="small">check</i>;
+                      return <span className="bold small-text">1</span>;
+                    })()}
                     <span>เลือกชุด</span>
                   </button>
 
@@ -1212,7 +1237,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                           type="button"
                           className="border no-margin hc-booking-sheet-btn-round-10"
                           data-testid="wizard-prev-step-2"
-                          onClick={handlePrevStep}
+                          onClick={isStep1Restricted ? handleCloseCleanly : handlePrevStep}
                         >
                           <i>arrow_back</i>
                           <span>ย้อนกลับ</span>

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import { BookingsPage } from '../../pages/BookingsPage';
 
 describe('BookingsPage Component', () => {
@@ -73,20 +73,33 @@ describe('BookingsPage Component', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('renders all inventory items with list view and supports reserving unbooked items', () => {
+  it('renders all inventory items with multi-select toggle and dynamic extended "จอง N ชุด" FAB', () => {
     render(<BookingsPage />);
 
-    // In default list view, all inventory items are shown
-    // AVL01 is unbooked today
+    // In default list view, unbooked AVL01 is shown
     expect(screen.getByTestId('inventory-booking-card-AVL01')).toBeInTheDocument();
     expect(screen.getByTestId('status-badge-AVL01')).toHaveTextContent('ว่าง (พร้อมเช่า)');
 
-    // Unbooked item has "จองชุดนี้" button
-    const reserveBtn = screen.getByRole('button', { name: /จองชุด AVL01/i });
-    expect(reserveBtn).toBeInTheDocument();
+    // No items selected yet -> dynamic FAB is not visible
+    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
 
-    // Clicking reserve button opens BookingSheet directly at Step 2 (Customer selection)
-    fireEvent.click(reserveBtn);
+    // Available item has "เลือก" toggle button
+    const selectBtn = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
+    expect(selectBtn).toBeInTheDocument();
+    expect(selectBtn).toHaveTextContent('เลือก');
+
+    // Click to select AVL01
+    fireEvent.click(selectBtn);
+    expect(screen.getByRole('button', { name: /เลือกแล้ว AVL01/i })).toBeInTheDocument();
+
+    // Extended FAB appears with "จอง 1 ชุด" and shopping_bag icon
+    const bookFab = screen.getByTestId('bookings-action-fab');
+    expect(bookFab).toBeInTheDocument();
+    expect(bookFab).toHaveTextContent('จอง 1 ชุด');
+    expect(bookFab.querySelector('i')).toHaveTextContent('shopping_bag');
+
+    // Clicking extended FAB opens BookingSheet directly at Step 2 (Customer selection)
+    fireEvent.click(bookFab);
     expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/ค้นหาลูกค้า/i)).toBeInTheDocument();
   });
@@ -208,26 +221,52 @@ describe('BookingsPage Component', () => {
     expect(deliveredCollapsible).toHaveClass('is-closed');
   });
 
-  it('renders standalone bottom-right create FAB without bottom toolbar and count text', () => {
+  it('manages extended FAB lifecycle across item selection, view mode toggle, sheet close, and date change', async () => {
     render(<BookingsPage />);
 
     // Bottom toolbar is removed
     expect(screen.queryByTestId('floating-bottom-toolbar')).not.toBeInTheDocument();
-    expect(screen.queryByText(/^\d+\s*ชุด$/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/^\d+\s*การจอง$/)).not.toBeInTheDocument();
-    expect(document.querySelector('.hc-bookings-toolbar-count')).not.toBeInTheDocument();
+    // Standalone + create FAB is removed
+    expect(screen.queryByTestId('bookings-add-fab')).not.toBeInTheDocument();
 
-    // Standalone FAB is present at bottom right
-    const addFab = screen.getByTestId('bookings-add-fab');
-    expect(addFab).toBeInTheDocument();
-    expect(addFab).toHaveClass('circle');
-    expect(addFab).toHaveClass('fixed');
-    expect(addFab).toHaveClass('bottom');
-    expect(addFab).toHaveClass('right');
+    // Select unbooked AVL01
+    const selectBtn = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
+    fireEvent.click(selectBtn);
 
-    // Clicking FAB opens BookingSheet
-    fireEvent.click(addFab);
+    // FAB is visible with "จอง 1 ชุด"
+    const bookFab = screen.getByTestId('bookings-action-fab');
+    expect(bookFab).toBeInTheDocument();
+    expect(bookFab).toHaveTextContent('จอง 1 ชุด');
+    expect(bookFab).toHaveClass('hc-booking-action-fab');
+
+    // Switch to orders view -> FAB must be hidden
+    const toggleToOrdersBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองใบจอง/i });
+    fireEvent.click(toggleToOrdersBtn);
+    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
+
+    // Switch back to items view -> FAB is visible again
+    const toggleToItemsBtn = screen.getByRole('button', { name: /สลับเป็นมุมมองรายชุด/i });
+    fireEvent.click(toggleToItemsBtn);
+    expect(screen.getByTestId('bookings-action-fab')).toBeInTheDocument();
+
+    // Click FAB to open BookingSheet
+    fireEvent.click(screen.getByTestId('bookings-action-fab'));
     expect(screen.getByRole('dialog', { name: /สร้างการจองใหม่/i })).toBeInTheDocument();
+
+    // Close the sheet via Step 2 "ย้อนกลับ" button
+    const prevBtn = screen.getByTestId('wizard-prev-step-2');
+    fireEvent.click(prevBtn);
+
+    // Sheet closes, but selection is retained and FAB remains
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: /สร้างการจองใหม่/i })).not.toBeInTheDocument();
+    });
+    expect(screen.getByTestId('bookings-action-fab')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /เลือกแล้ว AVL01/i })).toBeInTheDocument();
+
+    // Changing date via BookingDateBar clears selection and hides FAB
+    fireEvent.click(screen.getByRole('button', { name: /วันถัดไป/i }));
+    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
   });
 
   it('switches to dedicated top search toolbar on search FAB click, filters items, preserves query on back FAB, and supports clear', () => {
@@ -333,5 +372,52 @@ describe('BookingsPage Component', () => {
     expect(focusSpy).toHaveBeenLastCalledWith({ preventScroll: true });
 
     focusSpy.mockRestore();
+  });
+
+  it('supports selecting multiple outfits, updating FAB count, and clears selection upon successful submission', async () => {
+    render(<BookingsPage />);
+
+    // Select AVL01
+    const avl01Btn = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
+    fireEvent.click(avl01Btn);
+    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 1 ชุด');
+
+    // Select AVL02
+    const avl02Btn = screen.getByRole('button', { name: /เลือกชุด AVL02/i });
+    fireEvent.click(avl02Btn);
+    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 2 ชุด');
+
+    // Deselect AVL01
+    const avl01SelectedBtn = screen.getByRole('button', { name: /เลือกแล้ว AVL01/i });
+    fireEvent.click(avl01SelectedBtn);
+    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 1 ชุด');
+
+    // Re-select AVL01
+    fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
+    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 2 ชุด');
+
+    // Click FAB to open BookingSheet
+    fireEvent.click(screen.getByTestId('bookings-action-fab'));
+    const dialog = screen.getByRole('dialog', { name: /สร้างการจองใหม่/i });
+    expect(dialog).toBeInTheDocument();
+
+    // Select customer on Step 2
+    const customerInput = within(dialog).getByLabelText(/ค้นหาลูกค้า/i);
+    fireEvent.focus(customerInput);
+    fireEvent.click(within(dialog).getByText('คุณพลอย รัตนากร'));
+
+    // Advance to Step 3
+    fireEvent.click(within(dialog).getByTestId('wizard-next-step-2'));
+
+    // Confirm & Submit booking
+    fireEvent.click(within(dialog).getByTestId('wizard-submit-booking'));
+
+    // Sheet closes
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: /สร้างการจองใหม่/i })).not.toBeInTheDocument();
+    });
+
+    // Selection is cleared and extended FAB is hidden
+    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
   });
 });
