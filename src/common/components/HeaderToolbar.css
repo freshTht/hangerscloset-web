@@ -1,7 +1,7 @@
 /* Sticky container for page header toolbars */
 .hc-header-toolbar-sticky-wrapper {
   position: sticky;
-  top: calc(var(--top, 0px) + 48px);
+  top: 0;
   z-index: 10;
   width: 100%;
   min-width: 0;

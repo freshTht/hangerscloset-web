@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 export const Header: React.FC = () => {
   return (
-    <header className="fixed blur top s">
+    <header className="top s hc-top-header">
       {/* Default Tabs on small screens */}
       <div className="tabs s">
         <NavLink
