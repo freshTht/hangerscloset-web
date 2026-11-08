@@ -28,7 +28,7 @@ describe('Layout Component', () => {
 
     // Navigation links are present in both
     expect(screen.getAllByText('การจอง').length).toBeGreaterThanOrEqual(2);
-    expect(screen.getAllByText('คลังสินค้า').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText('คลังชุด').length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText('การตั้งค่า').length).toBeGreaterThanOrEqual(2);
 
     // Main content area

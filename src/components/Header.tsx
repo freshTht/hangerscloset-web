@@ -17,8 +17,8 @@ export const Header: React.FC = () => {
           to="/inventory"
           className={({ isActive }) => (isActive ? 'active' : '')}
         >
-          <i>inventory_2</i>
-          <span>คลังสินค้า</span>
+          <i>dresser</i>
+          <span>คลังชุด</span>
         </NavLink>
         <NavLink
           to="/settings"

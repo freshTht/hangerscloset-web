@@ -11,7 +11,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { to: '/bookings', label: 'การจอง', icon: 'event_note' },
-  { to: '/inventory', label: 'คลังสินค้า', icon: 'inventory_2' },
+  { to: '/inventory', label: 'คลังชุด', icon: 'dresser' },
   { to: '/settings', label: 'การตั้งค่า', icon: 'settings' },
 ];
 
