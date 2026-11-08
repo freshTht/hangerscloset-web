@@ -265,19 +265,25 @@ export class FirestoreBookingRepository implements IBookingRepository {
     }
 
     const isReturning = status === 'returned';
+    const isCancelling = status === 'cancelled';
     const updatedItems = current.items.map((li) => {
-      if (li.status === 'returned' && !isReturning) {
+      if (li.status === 'returned' && !isReturning && !isCancelling) {
         return li;
       }
+      let cleaningEnd: string | null = li.cleaningEndDate ?? null;
+      if (isReturning) {
+        cleaningEnd = li.cleaningEndDate ?? addDaysISO(targetDate, 2);
+      } else if (isCancelling) {
+        cleaningEnd = null;
+      }
+
       return {
         ...li,
         status,
         returnedDate: isReturning
           ? (li.returnedDate ?? targetDate)
           : li.returnedDate ?? null,
-        cleaningEndDate: isReturning
-          ? (li.cleaningEndDate ?? addDaysISO(targetDate, 2))
-          : li.cleaningEndDate ?? null,
+        cleaningEndDate: cleaningEnd,
       };
     });
 

@@ -235,4 +235,20 @@ describe('MockBookingRepository & Availability Helpers', () => {
     await repo.deleteBooking(newId);
     expect(await repo.getAll()).toHaveLength(1);
   });
+
+  it('updateBookingStatus with "cancelled" updates transactionDates and line items status to cancelled', async () => {
+    await repo.updateBookingStatus('b1', 'cancelled', '2026-03-05');
+    const [booking] = await repo.getAll();
+    expect(booking.transactionDates?.cancelled).toBe('2026-03-05');
+    expect(booking.items.every((it) => it.status === 'cancelled')).toBe(true);
+
+    // After cancellation, outfit item-1 is free for new bookings during original dates
+    const conflicts = getConflictingBookingsForItem(
+      'item-1',
+      '2026-03-10',
+      '2026-03-14',
+      await repo.getAll()
+    );
+    expect(conflicts).toHaveLength(0);
+  });
 });

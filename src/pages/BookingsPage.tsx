@@ -45,6 +45,7 @@ const STATUS_FILLED_CLASS_MAP: Record<BookingItemStatus | 'available', string> =
   pending_return: 'error',
   in_laundry: 'hc-status-badge-filled-laundry',
   returned: 'hc-status-badge-filled-available',
+  cancelled: 'hc-status-badge-filled-cancelled',
 };
 
 interface SheetState {
@@ -85,12 +86,13 @@ function findItemBooking(
 
   if (!isAllDates) {
     const matching = itemBookings.find((b) => {
+      if (b.transactionDates?.cancelled) return false;
       const lineItem = b.items.find(
         (li) =>
           li.itemId === item.id ||
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
-      if (!lineItem) return false;
+      if (!lineItem || lineItem.status === 'cancelled') return false;
       const itemCleaningEnd =
         lineItem.status === 'returned' && lineItem.cleaningEndDate
           ? lineItem.cleaningEndDate
@@ -113,12 +115,18 @@ function findItemBooking(
   } else {
     // isAllDates: check for active booking
     const active = itemBookings.find((b) => {
+      if (b.transactionDates?.cancelled) return false;
       const lineItem = b.items.find(
         (li) =>
           li.itemId === item.id ||
           li.itemCode.toLowerCase() === item.code.toLowerCase()
       );
-      return lineItem && lineItem.status !== 'returned' && !isBookingFullyReturned(b);
+      return (
+        lineItem &&
+        lineItem.status !== 'returned' &&
+        lineItem.status !== 'cancelled' &&
+        !isBookingFullyReturned(b)
+      );
     });
 
     if (active) {
@@ -237,7 +245,7 @@ export const BookingsPage: React.FC = () => {
     updateBooking,
     updateBookingStatus,
     updateItemStatus,
-    deleteBooking,
+    deleteBooking: _deleteBooking,
   } = useBookings();
   const { customers, addCustomer } = useCustomers();
   const { items: inventoryItems } = useInventory();
@@ -245,6 +253,7 @@ export const BookingsPage: React.FC = () => {
   const today = useMemo(() => getTodayISO(), []);
   const [selectedDate, setSelectedDate] = useState<string>(() => today);
   const [isAllDates, setIsAllDates] = useState(false);
+  const isPastDate = Boolean(selectedDate && selectedDate < today && !isAllDates);
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(() => new Set());
   const [selectedDurationDays, setSelectedDurationDays] = useState<number>(3);
 
@@ -363,6 +372,9 @@ export const BookingsPage: React.FC = () => {
     const byDate = isAllDates
       ? bookings.filter((b) => !isBookingFullyReturned(b))
       : bookings.filter((b) => {
+          if (b.transactionDates?.cancelled) {
+            return selectedDate >= b.startDate && selectedDate <= b.endDate;
+          }
           const effectiveCleaningEnd =
             isBookingFullyReturned(b) && b.transactionDates?.returned
               ? addDaysISO(b.transactionDates.returned, 2)
@@ -391,7 +403,9 @@ export const BookingsPage: React.FC = () => {
       bookings: typeof filteredBookings;
     }[] = [];
 
-    for (const st of BOOKING_STATUS_ORDER) {
+    const ALL_GROUPS: BookingItemStatus[] = [...BOOKING_STATUS_ORDER, 'cancelled'];
+
+    for (const st of ALL_GROUPS) {
       const bList = filteredBookings.filter((b) => {
         const computed = getEffectiveBookingStatus(b, selectedDate, isAllDates);
         return computed === st;
@@ -579,7 +593,7 @@ export const BookingsPage: React.FC = () => {
   };
 
   const handleSubmitSheet = async (data: NewBookingInput) => {
-    if (sheetState.mode === 'edit' && sheetState.booking) {
+    if (sheetState.mode === 'edit' && sheetState.booking?.id) {
       await updateBooking(sheetState.booking.id, data);
     } else {
       await addBooking(data);
@@ -587,8 +601,10 @@ export const BookingsPage: React.FC = () => {
     setSelectedItemIds(new Set());
   };
 
-  const handleDeleteSheet = async (id: string) => {
-    await deleteBooking(id);
+  const handleCancelBooking = async (id: string) => {
+    const targetDate = isAllDates ? today : selectedDate;
+    await updateBookingStatus(id, 'cancelled', targetDate);
+    setSheetState({ isOpen: false, mode: 'view', booking: null });
   };
 
   const handleAdvanceBookingStatus = async (
@@ -763,8 +779,8 @@ export const BookingsPage: React.FC = () => {
           );
         })}
 
-        {/* Bottom-most Section: Available (ว่าง - พร้อมเช่า) expanded by default */}
-        {availableEntries.length > 0 && (
+        {/* Bottom-most Section: Available (ว่าง - พร้อมเช่า) expanded by default (hidden when viewing past dates) */}
+        {!isPastDate && availableEntries.length > 0 && (
           <Collapsible
             key="available"
             testId="collapsible-status-available"
@@ -938,7 +954,7 @@ export const BookingsPage: React.FC = () => {
       <div className="large-space"></div>
 
       {/* Dynamic Extended 'Book N Outfits' FAB */}
-      {selectedItemIds.size > 0 && (
+      {!isPastDate && selectedItemIds.size > 0 && (
         <button
           type="button"
           className="fixed bottom right round extra primary medium-elevate margin front hc-booking-action-fab"
@@ -1029,12 +1045,14 @@ export const BookingsPage: React.FC = () => {
         booking={sheetState.booking}
         bookings={bookings}
         selectedDate={isAllDates ? today : selectedDate}
+        isPastDate={isPastDate}
         inventoryItems={inventoryItems}
         customers={customers}
         onAddCustomer={addCustomer}
         onClose={handleCloseSheet}
         onSubmit={handleSubmitSheet}
-        onDelete={sheetState.mode === 'edit' ? handleDeleteSheet : undefined}
+        onDelete={handleCancelBooking}
+        onCancelBooking={handleCancelBooking}
         onEditBooking={handleOpenEdit}
       />
     </div>

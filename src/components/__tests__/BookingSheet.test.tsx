@@ -554,8 +554,8 @@ describe('BookingSheet Component (Stepless Card-Based)', () => {
     expect(deleteBtn).toBeInTheDocument();
     fireEvent.click(deleteBtn);
 
-    // Delete confirmation appears
-    expect(screen.getByText(/ยืนยันการลบรายการนี้/i)).toBeInTheDocument();
+    // Cancel confirmation appears
+    expect(screen.getByText(/ยืนยันการยกเลิกการจองนี้/i)).toBeInTheDocument();
     const confirmDeleteBtn = screen.getByTestId('confirm-delete-button');
     fireEvent.click(confirmDeleteBtn);
 
@@ -784,5 +784,123 @@ describe('BookingSheet Component (Stepless Card-Based)', () => {
     expect(confirmModal).toHaveTextContent(
       'ยืนยันการจอง 1 ชุด สำหรับ คุณอภิสิทธิ์ วรวงศ์ตระกูลไพศาล 🌸 (VIP) ยอดชำระ ฿120?'
     );
+  });
+
+  it('makes customer, price, and outfit items read-only in edit mode, while allowing status and note updates', async () => {
+    const onSubmitSpy = vi.fn().mockResolvedValue(undefined);
+    const existingBooking = createMockBooking({
+      id: 'book-ro-1',
+      customerId: 'cust-1',
+      customerName: 'คุณพลอย รัตนากร',
+      rentalPrice: 300,
+      note: 'โน้ตเดิม',
+      items: [
+        {
+          itemId: 'inv-1',
+          itemCode: 'AVL01',
+          itemName: 'Avaalene Beach Set',
+          itemImageUrl: '',
+        },
+      ],
+    });
+
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="edit"
+        booking={existingBooking}
+        bookings={[existingBooking]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={onSubmitSpy}
+      />
+    );
+
+    // Customer cannot be changed (picker input is not shown, customer is displayed as read-only)
+    expect(screen.getAllByText('คุณพลอย รัตนากร').length).toBeGreaterThan(0);
+    expect(screen.queryByLabelText(/ค้นหาลูกค้า/i)).not.toBeInTheDocument();
+
+    // Rental price input is disabled
+    const priceInput = screen.getByLabelText(/ราคาเช่ารวม/i);
+    expect(priceInput).toBeDisabled();
+
+    // Outfit remove button is not rendered
+    expect(screen.queryByTestId('remove-outfit-btn-AVL01')).not.toBeInTheDocument();
+
+    // Status select is available and can be changed
+    const statusSelect = screen.getByTestId('booking-status-select');
+    expect(statusSelect).toBeInTheDocument();
+    fireEvent.change(statusSelect, { target: { value: 'delivered' } });
+
+    // Note textarea is editable
+    const noteInput = screen.getByLabelText(/หมายเหตุการจอง/i);
+    expect(noteInput).not.toBeDisabled();
+    fireEvent.change(noteInput, { target: { value: 'โน้ตใหม่ อัปเดตแล้ว' } });
+
+    // Submit saves updated status and note
+    fireEvent.click(screen.getByTestId('submit-booking-button'));
+
+    await waitFor(() => {
+      expect(onSubmitSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          customerId: 'cust-1',
+          rentalPrice: 300,
+          note: 'โน้ตใหม่ อัปเดตแล้ว',
+          items: [
+            expect.objectContaining({
+              itemId: 'inv-1',
+              status: 'delivered',
+            }),
+          ],
+        })
+      );
+    });
+  });
+
+  it('locks down editing completely when isPastDate is true', () => {
+    const existingBooking = createMockBooking({
+      id: 'book-past-1',
+      customerId: 'cust-1',
+      customerName: 'คุณพลอย รัตนากร',
+      rentalPrice: 300,
+      note: 'บันทึกในอดีต',
+      items: [
+        {
+          itemId: 'inv-1',
+          itemCode: 'AVL01',
+          itemName: 'Avaalene Beach Set',
+          itemImageUrl: '',
+        },
+      ],
+    });
+
+    render(
+      <BookingSheet
+        isOpen={true}
+        mode="edit"
+        isPastDate={true}
+        booking={existingBooking}
+        bookings={[existingBooking]}
+        inventoryItems={sampleInventory}
+        customers={sampleCustomers}
+        onClose={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    // Status select is not rendered (shows badge instead)
+    expect(screen.queryByTestId('booking-status-select')).not.toBeInTheDocument();
+
+    // Note is disabled
+    const noteInput = screen.getByLabelText(/หมายเหตุการจอง/i);
+    expect(noteInput).toBeDisabled();
+
+    // Delete/cancel button is not rendered
+    expect(screen.queryByTestId('delete-booking-button')).not.toBeInTheDocument();
+
+    // Save button is not rendered; only "ปิด" button
+    expect(screen.queryByTestId('submit-booking-button')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'ปิด' })).toBeInTheDocument();
   });
 });

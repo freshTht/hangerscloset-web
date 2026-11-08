@@ -219,7 +219,7 @@ describe('BookingCard (Grouped Sub-Card Carousel)', () => {
     });
   });
 
-  it('triggers onEdit from edit button', () => {
+  it('triggers onEdit from edit button when viewing all dates or future date', () => {
     const onEdit = vi.fn();
     const booking = createTestBooking();
 
@@ -227,7 +227,7 @@ describe('BookingCard (Grouped Sub-Card Carousel)', () => {
       <BookingCard
         booking={booking}
         inventoryMap={mockInventoryMap}
-        selectedDate="2026-03-11"
+        isAllDates={true}
         onEdit={onEdit}
         onAdvanceItemStatus={vi.fn()}
       />
@@ -238,6 +238,28 @@ describe('BookingCard (Grouped Sub-Card Carousel)', () => {
     });
     fireEvent.click(editBtn);
     expect(onEdit).toHaveBeenCalledWith(booking);
+  });
+
+  it('renders info button and triggers onView for past date bookings', () => {
+    const onView = vi.fn();
+    const booking = createTestBooking();
+
+    render(
+      <BookingCard
+        booking={booking}
+        inventoryMap={mockInventoryMap}
+        selectedDate="2026-03-11"
+        onView={onView}
+        onAdvanceItemStatus={vi.fn()}
+      />
+    );
+
+    const infoBtn = screen.getByRole('button', {
+      name: /ดูรายละเอียดการจองของ คุณพลอย รัตนากร/i,
+    });
+    expect(infoBtn).toBeInTheDocument();
+    fireEvent.click(infoBtn);
+    expect(onView).toHaveBeenCalledWith(booking);
   });
 
   it('renders single-item booking with clean 1-item layout and sr-only status badge', () => {

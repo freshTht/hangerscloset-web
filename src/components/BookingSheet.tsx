@@ -3,8 +3,12 @@ import {
   addDaysISO,
   getConflictingBookingsForItem,
   getTodayISO,
+  BOOKING_STATUS_ORDER,
+  BOOKING_STATUS_META,
+  getEffectiveBookingStatus,
   type Booking,
   type BookingLineItem,
+  type BookingItemStatus,
 } from '../types/booking';
 import type { Customer } from '../types/customer';
 import type { InventoryItem } from '../types/inventory';
@@ -14,6 +18,7 @@ import { useInventory } from '../hooks/useInventory';
 import { useCustomers } from '../hooks/useCustomers';
 import { BookingCard } from './BookingCard';
 import { CustomerPicker } from './CustomerPicker';
+import { StatusBadge } from './StatusBadge';
 import { Stack } from './Stack';
 import { Modal } from '../common/components/Modal';
 import './BookingSheet.css';
@@ -24,12 +29,14 @@ export interface BookingSheetProps {
   booking?: Booking | null;
   bookings: Booking[];
   selectedDate?: string;
+  isPastDate?: boolean;
   inventoryItems?: InventoryItem[];
   customers?: Customer[];
   onAddCustomer?: (customer: NewCustomerInput) => Promise<string>;
   onClose: () => void;
   onSubmit: (data: NewBookingInput) => Promise<void>;
   onDelete?: (id: string) => Promise<void>;
+  onCancelBooking?: (id: string) => Promise<void>;
   onEditBooking?: (booking: Booking) => void;
 }
 
@@ -84,12 +91,14 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   booking,
   bookings,
   selectedDate: propSelectedDate,
+  isPastDate: propIsPastDate,
   inventoryItems: propInventoryItems,
   customers: propCustomers,
   onAddCustomer: propOnAddCustomer,
   onClose,
   onSubmit,
   onDelete,
+  onCancelBooking,
   onEditBooking,
 }) => {
   const { items: hookInventoryItems } = useInventory();
@@ -111,6 +120,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   }, [inventoryItems]);
 
   const todayIso = getTodayISO();
+  const isPastDate = propIsPastDate ?? Boolean(propSelectedDate && propSelectedDate < todayIso);
 
   const [contentReady, setContentReady] = useState(false);
   const [activeMode, setActiveMode] = useState<'add' | 'edit' | 'view'>(mode);
@@ -120,6 +130,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   const [cleaningEndDate, setCleaningEndDate] = useState(addDaysISO(todayIso, 4));
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedItems, setSelectedItems] = useState<BookingLineItem[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<BookingItemStatus>('reserved');
   const [rentalPrice, setRentalPrice] = useState<string>('0');
   const [priceManuallyEdited, setPriceManuallyEdited] = useState(false);
   const [note, setNote] = useState('');
@@ -146,6 +157,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
         prevModeRef.current = mode;
         prevBookingIdRef.current = booking?.id;
         setActiveMode(mode);
+        setConfirmDelete(false);
 
         if ((mode === 'edit' || mode === 'view') && booking) {
           const bStart = booking.startDate;
@@ -157,6 +169,11 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
           setDurationDays(bDur);
           setEndDate(bEnd);
           setCleaningEndDate(bCleaning);
+          const currentEffStatus = getEffectiveBookingStatus(
+            booking,
+            propSelectedDate || todayIso
+          );
+          setSelectedStatus(currentEffStatus);
           if (booking.customerId || booking.customerName) {
             setSelectedCustomer({
               id: booking.customerId,
@@ -303,12 +320,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
   const isSubmitDisabled =
     submitting ||
-    !selectedCustomer ||
-    !isPriceValid ||
-    selectedItems.length === 0 ||
-    selectedConflicts.length > 0;
+    (activeMode === 'add' &&
+      (!selectedCustomer ||
+        !isPriceValid ||
+        selectedItems.length === 0 ||
+        selectedConflicts.length > 0)) ||
+    (activeMode === 'edit' && (isPastDate || selectedStatus === 'cancelled'));
 
   const handleOpenConfirm = () => {
+    if (activeMode === 'edit') {
+      handleExecuteSubmit();
+      return;
+    }
     setErrorMessage(null);
     if (!selectedCustomer) {
       setErrorMessage('กรุณาเลือกลูกค้าหรือเพิ่มลูกค้าใหม่');
@@ -333,6 +356,50 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
   const handleExecuteSubmit = async () => {
     setErrorMessage(null);
+
+    if (activeMode === 'edit' && booking) {
+      try {
+        setSubmitting(true);
+        const targetDate = propSelectedDate || todayIso;
+        await onSubmit({
+          customerId: booking.customerId,
+          customerName: booking.customerName,
+          customerPhone: booking.customerPhone,
+          customerLineId: booking.customerLineId ?? null,
+          items: booking.items.map((it) => ({
+            ...it,
+            status: selectedStatus,
+          })),
+          transactionDates: {
+            ...booking.transactionDates,
+            [selectedStatus]: booking.transactionDates?.[selectedStatus] || targetDate,
+          },
+          startDate: booking.startDate,
+          endDate: booking.endDate,
+          cleaningEndDate:
+            selectedStatus === 'returned'
+              ? addDaysISO(targetDate, 2)
+              : booking.cleaningEndDate,
+          durationDays: booking.durationDays,
+          rentalPrice: booking.rentalPrice,
+          deposit: booking.deposit,
+          depositRefunded: booking.depositRefunded,
+          note: note.trim() || null,
+        });
+        setShowConfirmModal(false);
+        onClose();
+      } catch (err: unknown) {
+        setShowConfirmModal(false);
+        setErrorMessage(
+          err instanceof Error
+            ? err.message
+            : 'เกิดข้อผิดพลาดในการบันทึกข้อมูลการจอง'
+        );
+      } finally {
+        setSubmitting(false);
+      }
+      return;
+    }
 
     if (!selectedCustomer) {
       setErrorMessage('กรุณาเลือกลูกค้าหรือเพิ่มลูกค้าใหม่');
@@ -375,14 +442,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!booking || !onDelete) return;
+    if (!booking) return;
     try {
       setSubmitting(true);
-      await onDelete(booking.id);
+      if (onCancelBooking) {
+        await onCancelBooking(booking.id);
+      } else if (onDelete) {
+        await onDelete(booking.id);
+      }
       onClose();
     } catch (err: unknown) {
       setErrorMessage(
-        err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการลบการจอง'
+        err instanceof Error ? err.message : 'เกิดข้อผิดพลาดในการยกเลิกการจอง'
       );
     } finally {
       setSubmitting(false);
@@ -463,7 +534,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 inventoryMap={inventoryMap}
                 hideActions={true}
                 onRemoveItem={
-                  activeMode !== 'view'
+                  activeMode === 'add'
                     ? (itemId) =>
                         setSelectedItems((prev) =>
                           prev.filter((item) => item.itemId !== itemId)
@@ -473,14 +544,14 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 conflictMap={conflictMap}
               />
 
-              {/* Card 3: Customer Info (ข้อมูลลูกค้า - Editable in add/edit) */}
+              {/* Card 3: Customer Info (ข้อมูลลูกค้า - Editable in add only) */}
               <article className="border surface-container-low padding no-margin hc-booking-sheet-card">
                 <Stack orientation="column" gap="small">
                   <div className="row no-margin align-center hc-booking-sheet-card-header">
                     <div className="row no-margin align-center hc-booking-sheet-card-title">
                       <i className="primary-text" aria-hidden="true">person</i>
                       <span className="bold small-text">
-                        ข้อมูลลูกค้า {activeMode !== 'view' && '*'}
+                        ข้อมูลลูกค้า {activeMode === 'add' && '*'}
                       </span>
                     </div>
                   </div>
@@ -490,22 +561,58 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     selectedCustomer={selectedCustomer}
                     onSelectCustomer={setSelectedCustomer}
                     onCreateCustomer={handleCreateCustomerInline}
-                    disabled={activeMode === 'view'}
+                    disabled={activeMode !== 'add'}
                   />
                 </Stack>
               </article>
 
-              {/* Card 4: Payment (การชำระเงิน - Editable in add/edit) */}
+              {/* Card 4: Status, Payment & Note */}
               <article className="border surface-container-low padding no-margin hc-booking-sheet-card">
                 <Stack orientation="column" gap="medium">
+                  {/* Status row (existing bookings only) */}
+                  {booking && (
+                    <div className="column no-margin">
+                      {activeMode === 'edit' && !isPastDate && selectedStatus !== 'cancelled' ? (
+                        <div className="field label border surface no-margin">
+                          <select
+                            id="booking-status-select"
+                            data-testid="booking-status-select"
+                            value={selectedStatus}
+                            onChange={(e) =>
+                              setSelectedStatus(e.target.value as BookingItemStatus)
+                            }
+                          >
+                            {BOOKING_STATUS_ORDER.map((st) => (
+                              <option key={st} value={st}>
+                                {BOOKING_STATUS_META[st].label}
+                              </option>
+                            ))}
+                          </select>
+                          <label htmlFor="booking-status-select">สถานะการจอง</label>
+                          <i aria-hidden="true">arrow_drop_down</i>
+                        </div>
+                      ) : (
+                        <div className="row no-margin align-center gap-small">
+                          <span className="small-text secondary-text">สถานะการจอง:</span>
+                          <StatusBadge
+                            size="small"
+                            className={BOOKING_STATUS_META[selectedStatus]?.chipClass}
+                          >
+                            {BOOKING_STATUS_META[selectedStatus]?.label}
+                          </StatusBadge>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="row no-margin align-center justify-between wrap hc-booking-sheet-card-header">
                     <div className="row no-margin align-center hc-booking-sheet-card-title">
                       <i className="primary-text" aria-hidden="true">payments</i>
                       <span className="bold small-text">
-                        การชำระเงิน {activeMode !== 'view' && '*'}
+                        การชำระเงิน {activeMode === 'add' && '*'}
                       </span>
                     </div>
-                    {activeMode !== 'view' && priceManuallyEdited && (
+                    {activeMode === 'add' && priceManuallyEdited && (
                       <button
                         type="button"
                         className="chip small border transparent no-margin hc-booking-sheet-btn-min-48"
@@ -527,7 +634,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         inputMode="numeric"
                         min="0"
                         value={rentalPrice}
-                        disabled={activeMode === 'view'}
+                        disabled={activeMode !== 'add'}
                         onChange={(e) => {
                           setRentalPrice(e.target.value);
                           setPriceManuallyEdited(true);
@@ -538,7 +645,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       <label htmlFor="booking-rental-price">ราคาเช่ารวม (฿) *</label>
                     </div>
 
-                    {discountAmount > 0 && (
+                    {discountAmount > 0 && activeMode === 'add' && (
                       <div
                         className="hc-booking-sheet-discount small-text tertiary-text bold"
                         data-testid="booking-discount-text"
@@ -553,7 +660,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       id="booking-note"
                       rows={3}
                       value={note}
-                      disabled={activeMode === 'view'}
+                      disabled={activeMode === 'view' || isPastDate || selectedStatus === 'cancelled'}
                       onChange={(e) => setNote(e.target.value)}
                       placeholder=" "
                       className="hc-booking-sheet-note-input"
@@ -564,18 +671,18 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 </Stack>
               </article>
 
-              {/* Delete Confirmation (Edit mode only) */}
-              {activeMode === 'edit' && confirmDelete && (
+              {/* Cancel Confirmation (Edit mode only) */}
+              {activeMode === 'edit' && confirmDelete && !isPastDate && selectedStatus !== 'cancelled' && (
                 <article className="border error-container margin-top margin-bottom hc-booking-sheet-delete-banner">
                   <div className="vertical hc-booking-sheet-delete-confirm-content">
                     <div className="row no-margin align-center">
                       <i className="error-text" aria-hidden="true">warning</i>
                       <div className="max">
                         <h6 className="bold no-margin error-text small">
-                          ยืนยันการลบรายการนี้?
+                          ยืนยันการยกเลิกการจองนี้?
                         </h6>
                         <p className="no-margin small-text secondary-text">
-                          ข้อมูลการจองของ &quot;{booking?.customerName}&quot; จะถูกลบออกจากระบบ
+                          ข้อมูลการจองของ &quot;{booking?.customerName}&quot; จะถูกเปลี่ยนสถานะเป็น &quot;ยกเลิกแล้ว&quot; และปล่อยชุดให้สามารถจองใหม่ได้
                         </p>
                       </div>
                     </div>
@@ -586,7 +693,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         onClick={() => setConfirmDelete(false)}
                         disabled={submitting}
                       >
-                        ยกเลิก
+                        กลับ
                       </button>
                       <button
                         type="button"
@@ -598,7 +705,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                         {submitting ? (
                           <div className="shape loading-indicator small" role="status" />
                         ) : (
-                          <span>ยืนยันลบ</span>
+                          <span>ยืนยันยกเลิก</span>
                         )}
                       </button>
                     </div>
@@ -609,7 +716,7 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
 
             {/* Footer */}
             <div className="row no-margin align-center hc-booking-sheet-footer">
-              {activeMode === 'view' ? (
+              {activeMode === 'view' && (
                 <>
                   <button
                     type="button"
@@ -619,37 +726,79 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                     ปิด
                   </button>
                   <div className="max" />
-                  <button
-                    type="button"
-                    className="primary round no-margin hc-booking-sheet-btn-min-48"
-                    onClick={() => {
-                      if (onEditBooking && booking) {
-                        onEditBooking(booking);
-                      } else {
-                        setActiveMode('edit');
-                      }
-                    }}
-                  >
-                    <i>edit</i>
-                    <span>แก้ไขการจอง</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  {activeMode === 'edit' && onDelete && !confirmDelete && (
+                  {!isPastDate && selectedStatus !== 'cancelled' && (
                     <button
                       type="button"
-                      className="border round error-text no-margin hc-booking-sheet-btn-min-48"
-                      onClick={() => setConfirmDelete(true)}
-                      disabled={submitting}
-                      title="ลบการจองนี้"
-                      data-testid="delete-booking-button"
+                      className="primary round no-margin hc-booking-sheet-btn-min-48"
+                      onClick={() => {
+                        if (onEditBooking && booking) {
+                          onEditBooking(booking);
+                        } else {
+                          setActiveMode('edit');
+                        }
+                      }}
+                      data-testid="edit-booking-button"
                     >
-                      <i>delete</i>
-                      <span>ลบการจอง</span>
+                      <i>edit</i>
+                      <span>แก้ไขการจอง</span>
                     </button>
                   )}
+                </>
+              )}
 
+              {activeMode === 'edit' && (
+                <>
+                  {(onCancelBooking || onDelete) &&
+                    !confirmDelete &&
+                    !isPastDate &&
+                    selectedStatus !== 'cancelled' && (
+                      <button
+                        type="button"
+                        className="border round error-text no-margin hc-booking-sheet-btn-min-48"
+                        onClick={() => setConfirmDelete(true)}
+                        disabled={submitting}
+                        title="ยกเลิกการจองนี้"
+                        data-testid="delete-booking-button"
+                      >
+                        <i>cancel</i>
+                        <span>ยกเลิกการจอง</span>
+                      </button>
+                    )}
+
+                  <div className="max" />
+
+                  <button
+                    type="button"
+                    className="border round no-margin hc-booking-sheet-btn-min-48"
+                    onClick={onClose}
+                    disabled={submitting}
+                  >
+                    {isPastDate || selectedStatus === 'cancelled' ? 'ปิด' : 'ยกเลิก'}
+                  </button>
+
+                  {!isPastDate && selectedStatus !== 'cancelled' && (
+                    <button
+                      type="button"
+                      className="primary round no-margin hc-booking-sheet-submit-btn hc-booking-sheet-btn-min-48"
+                      disabled={isSubmitDisabled}
+                      onClick={handleOpenConfirm}
+                      data-testid="submit-booking-button"
+                    >
+                      {submitting ? (
+                        <div className="shape loading-indicator small" role="status" />
+                      ) : (
+                        <>
+                          <i>save</i>
+                          <span>บันทึกการแก้ไข</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+                </>
+              )}
+
+              {activeMode === 'add' && (
+                <>
                   <div className="max" />
 
                   <button
@@ -672,10 +821,8 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                       <div className="shape loading-indicator small" role="status" />
                     ) : (
                       <>
-                        <i>{activeMode === 'edit' ? 'save' : 'check'}</i>
-                        <span>
-                          {activeMode === 'edit' ? 'บันทึกการแก้ไข' : 'สร้างการจอง'}
-                        </span>
+                        <i>check</i>
+                        <span>สร้างการจอง</span>
                       </>
                     )}
                   </button>

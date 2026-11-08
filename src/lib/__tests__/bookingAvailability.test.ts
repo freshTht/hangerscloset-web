@@ -306,5 +306,37 @@ describe('bookingAvailability library', () => {
       );
       expect(conflicts).toHaveLength(0);
     });
+
+    it('excludes cancelled bookings so outfits can be rebooked immediately', () => {
+      const cancelledBooking = createTestBooking({
+        transactionDates: {
+          reserved: '2026-03-01',
+          cancelled: '2026-03-05',
+        },
+        items: [
+          {
+            itemId: 'item-1',
+            itemCode: 'DIA01',
+            itemName: 'Dress',
+            itemImageUrl: '',
+            status: 'cancelled',
+          },
+        ],
+      });
+
+      expect(getEffectiveBookingStatus(cancelledBooking, '2026-03-10')).toBe('cancelled');
+      expect(getItemStatusOnDate(cancelledBooking, cancelledBooking.items[0], '2026-03-10')).toBe(
+        'cancelled'
+      );
+
+      // Same date range has zero conflicts
+      const conflicts = getConflictingBookingsForItem(
+        'item-1',
+        '2026-03-10',
+        '2026-03-14',
+        [cancelledBooking]
+      );
+      expect(conflicts).toHaveLength(0);
+    });
   });
 });

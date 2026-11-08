@@ -57,6 +57,10 @@ export const BOOKING_STATUS_META: Record<
     label: 'รับคืนเสร็จสิ้น',
     chipClass: 'hc-status-badge-available',
   },
+  cancelled: {
+    label: 'ยกเลิกแล้ว',
+    chipClass: 'hc-status-badge-cancelled',
+  },
 };
 
 export function normalizeTransactionDates(
@@ -66,7 +70,8 @@ export function normalizeTransactionDates(
 ): BookingTransactionDates {
   const txDates: BookingTransactionDates = {};
   if (rawTxDates && typeof rawTxDates === 'object') {
-    for (const st of BOOKING_STATUS_ORDER) {
+    const allStatuses = [...BOOKING_STATUS_ORDER, 'cancelled' as const];
+    for (const st of allStatuses) {
       const val = (rawTxDates as Record<string, unknown>)[st];
       if (typeof val === 'string' && val.trim().length > 0) {
         txDates[st] = val.trim();
@@ -94,8 +99,12 @@ export function getBookingStatusOnDate(
   booking: Pick<Booking, 'transactionDates'>,
   targetDate: string
 ): BookingItemStatus {
-  let matchedStatus: BookingItemStatus = 'reserved';
   const txDates = booking.transactionDates ?? {};
+  if (txDates.cancelled && txDates.cancelled <= targetDate) {
+    return 'cancelled';
+  }
+
+  let matchedStatus: BookingItemStatus = 'reserved';
 
   for (const status of BOOKING_STATUS_ORDER) {
     const activeDate = txDates[status];
@@ -113,8 +122,12 @@ export function getBookingStatusOnDate(
 export function getLatestBookingStatus(
   booking: Pick<Booking, 'transactionDates'>
 ): BookingItemStatus {
-  let latestStatus: BookingItemStatus = 'reserved';
   const txDates = booking.transactionDates ?? {};
+  if (txDates.cancelled) {
+    return 'cancelled';
+  }
+
+  let latestStatus: BookingItemStatus = 'reserved';
 
   for (const status of BOOKING_STATUS_ORDER) {
     if (txDates[status]) {
@@ -133,6 +146,10 @@ export function getItemStatusOnDate(
   lineItem: BookingLineItem,
   targetDate: string
 ): BookingItemStatus {
+  if (booking.transactionDates?.cancelled || lineItem.status === 'cancelled') {
+    return 'cancelled';
+  }
+
   if (lineItem.status === 'returned') {
     if (lineItem.returnedDate && targetDate < lineItem.returnedDate) {
       return getBookingStatusOnDate(booking, targetDate);
@@ -188,7 +205,14 @@ export function getEffectiveBookingStatus(
   selectedDate: string,
   isAllDates = false
 ): BookingItemStatus {
+  if (booking.transactionDates?.cancelled) {
+    return 'cancelled';
+  }
+
   if ('items' in booking && Array.isArray(booking.items) && booking.items.length > 0) {
+    if (booking.items.every((li) => li.status === 'cancelled')) {
+      return 'cancelled';
+    }
     if (isBookingFullyReturned(booking as Booking, isAllDates ? undefined : selectedDate)) {
       return 'returned';
     }
@@ -228,9 +252,15 @@ export function getSubsequentStatusBlock(
   targetDate: string,
   nextStatus?: BookingItemStatus
 ): { status: BookingItemStatus; date: string } | null {
-  const txDates = booking.transactionDates ?? {};
   const currentStatus = getBookingStatusOnDate(booking, targetDate);
+  if (currentStatus === 'cancelled' || nextStatus === 'cancelled') {
+    return null;
+  }
+  const txDates = booking.transactionDates ?? {};
   const currentIndex = BOOKING_STATUS_ORDER.indexOf(currentStatus);
+  if (currentIndex === -1) {
+    return null;
+  }
 
   for (let i = currentIndex + 1; i < BOOKING_STATUS_ORDER.length; i += 1) {
     const st = BOOKING_STATUS_ORDER[i];
@@ -286,12 +316,16 @@ export function getConflictingBookingsForItem(
     if (excludeBookingId && b.id === excludeBookingId) {
       return false;
     }
+    // Cancelled bookings never conflict
+    if (b.transactionDates?.cancelled) {
+      return false;
+    }
     const lineItem = b.items.find(
       (li) =>
         li.itemId === itemId ||
         (li.itemCode && li.itemCode.toLowerCase() === normalizedItemId)
     );
-    if (!lineItem) {
+    if (!lineItem || lineItem.status === 'cancelled') {
       return false;
     }
 

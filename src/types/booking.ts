@@ -4,7 +4,8 @@ export type BookingItemStatus =
   | 'delivered'         // ส่งมอบแล้ว (กำลังเช่า)
   | 'pending_return'    // รอรับคืน
   | 'in_laundry'        // ส่งซัก
-  | 'returned';         // รับคืนเสร็จสิ้น (พร้อมเช่าต่อ / ยกเลิก)
+  | 'returned'          // รับคืนเสร็จสิ้น (พร้อมเช่าต่อ)
+  | 'cancelled';        // ยกเลิกแล้ว (ไม่นับเป็นติดจอง)
 
 export type BookingTransactionDates = Partial<Record<BookingItemStatus, string>>;
 

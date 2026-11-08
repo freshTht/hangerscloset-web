@@ -73,7 +73,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
   const computedStatus = booking
     ? getEffectiveBookingStatus(booking, selectedDate, isAllDates)
     : null;
-  const isReturned = computedStatus === 'returned';
+  const isTerminal = computedStatus === 'returned' || computedStatus === 'cancelled';
   const meta = computedStatus ? BOOKING_STATUS_META[computedStatus] : null;
   const subsequentBlock =
     booking && meta?.nextStatus
@@ -260,7 +260,7 @@ export const BookingInventoryCard: React.FC<BookingInventoryCardProps> = ({
 
           <div className="hc-booking-inv-card-footer-right">
             {isBooked && booking && (
-              isReturned ? (
+              isTerminal ? (
                 <button
                   type="button"
                   className="circle primary-container no-margin hc-booking-inv-card-info-btn"

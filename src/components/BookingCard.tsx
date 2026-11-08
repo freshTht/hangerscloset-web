@@ -61,7 +61,9 @@ export const BookingCard: React.FC<BookingCardProps> = ({
     selectedDate ?? today,
     isAllDates
   );
-  const isReturned = computedStatus === 'returned';
+  const isPastDate = Boolean(selectedDate && selectedDate < today && !isAllDates);
+  const isTerminal = computedStatus === 'returned' || computedStatus === 'cancelled';
+  const showInfoIcon = isPastDate || isTerminal;
   const meta = BOOKING_STATUS_META[computedStatus];
 
   const subsequentBlock =
@@ -246,7 +248,7 @@ export const BookingCard: React.FC<BookingCardProps> = ({
 
           {!hideActions && (
             <div className="hc-booking-inv-card-footer-right">
-              {isReturned ? (
+              {showInfoIcon ? (
                 <button
                   type="button"
                   className="circle primary-container no-margin hc-booking-inv-card-info-btn"
@@ -260,20 +262,26 @@ export const BookingCard: React.FC<BookingCardProps> = ({
                   }}
                   aria-label={`ดูรายละเอียดการจองของ ${booking.customerName}`}
                   title="ดูรายละเอียดการจอง"
+                  data-testid={`booking-info-btn-${booking.id}`}
                 >
                   <i className="small" aria-hidden="true">info</i>
                 </button>
               ) : (
-                onEdit && (
+                (onEdit || onView) && (
                   <button
                     type="button"
                     className="circle primary-container no-margin hc-booking-inv-card-edit-btn"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onEdit(booking);
+                      if (onEdit) {
+                        onEdit(booking);
+                      } else if (onView) {
+                        onView(booking);
+                      }
                     }}
                     aria-label={`แก้ไขการจองของ ${booking.customerName}`}
                     title="แก้ไขการจอง"
+                    data-testid={`booking-edit-btn-${booking.id}`}
                   >
                     <i className="small" aria-hidden="true">edit</i>
                   </button>

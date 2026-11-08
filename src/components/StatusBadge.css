@@ -47,6 +47,17 @@ body.dark .hc-status-badge-laundry {
   color: #81d4fa;
 }
 
+.hc-status-badge-cancelled {
+  background-color: var(--surface-container-high) !important;
+  color: var(--on-surface-variant) !important;
+  border: 1px solid var(--outline-variant) !important;
+}
+
+body.dark .hc-status-badge-cancelled {
+  background-color: var(--surface-container-high) !important;
+  color: var(--on-surface-variant) !important;
+}
+
 /* Solid filled status badge colors for count indicators */
 .hc-status-badge-filled-available {
   background-color: #2e7d32 !important;
@@ -76,4 +87,14 @@ body.dark .hc-status-badge-filled-reserved {
 body.dark .hc-status-badge-filled-laundry {
   background-color: #039be5 !important;
   color: #ffffff !important;
+}
+
+.hc-status-badge-filled-cancelled {
+  background-color: var(--outline) !important;
+  color: var(--surface) !important;
+}
+
+body.dark .hc-status-badge-filled-cancelled {
+  background-color: var(--outline-variant) !important;
+  color: var(--on-surface) !important;
 }

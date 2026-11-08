@@ -451,4 +451,21 @@ describe('BookingsPage Component', () => {
     expect(priceInput).toHaveValue(300);
     expect(within(dialog).queryByTestId('booking-discount-text')).not.toBeInTheDocument();
   });
+
+  it('hides ready section on past dates and displays info icon on past booking cards', () => {
+    render(<BookingsPage />);
+
+    // In today view, ready (available) section is present
+    expect(screen.getByTestId('collapsible-status-available')).toBeInTheDocument();
+
+    // Navigate to yesterday (past date)
+    fireEvent.click(screen.getByRole('button', { name: /วันก่อนหน้า/i }));
+
+    // Ready section is completely hidden
+    expect(screen.queryByTestId('collapsible-status-available')).not.toBeInTheDocument();
+
+    // If there is any booking card, it shows the info button instead of the edit button
+    const editBtns = screen.queryAllByRole('button', { name: /แก้ไขการจอง/i });
+    expect(editBtns).toHaveLength(0);
+  });
 });
