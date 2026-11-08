@@ -35,5 +35,8 @@ describe('Layout Component', () => {
     const main = container.querySelector('main.responsive');
     expect(main).toBeInTheDocument();
     expect(container.querySelector('.hc-page-content')).toBeInTheDocument();
+
+    // Bottom gradient underlay for FABs
+    expect(container.querySelector('.hc-bottom-gradient-underlay')).toBeInTheDocument();
   });
 });

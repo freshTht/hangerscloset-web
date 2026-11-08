@@ -54,6 +54,9 @@ export const Layout: React.FC = () => {
           <Outlet />
         </div>
       </main>
+
+      {/* Bottom Underlay Gradient for Floating Action Buttons */}
+      <div className="hc-bottom-gradient-underlay" aria-hidden="true" />
     </div>
   );
 };

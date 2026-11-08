@@ -430,17 +430,17 @@ export const BookingsPage: React.FC = () => {
     });
   };
 
-  const handleBookSelected = () => {
-    const selectedItemsList = inventoryItems.filter((item) =>
-      selectedItemIds.has(item.id)
-    );
-    if (selectedItemsList.length === 0) return;
+  const handleClearSelection = () => {
+    setSelectedItemIds(new Set());
+  };
 
-    const start = isAllDates ? today : selectedDate;
-    const end = addDaysISO(start, selectedDurationDays - 1);
-    const cleaning = addDaysISO(end, 2);
+  const selectedItemsList = useMemo(
+    () => inventoryItems.filter((item) => selectedItemIds.has(item.id)),
+    [inventoryItems, selectedItemIds]
+  );
 
-    const defaultPrice = selectedItemsList.reduce((sum, item) => {
+  const selectedTotalPrice = useMemo(() => {
+    return selectedItemsList.reduce((sum, item) => {
       const sorted = [...(item.rentalPrices ?? [])].sort(
         (a, b) => a.durationDays - b.durationDays
       );
@@ -451,6 +451,16 @@ export const BookingsPage: React.FC = () => {
         .find((t) => t.durationDays <= selectedDurationDays);
       return sum + ((lowerOrEqual ?? sorted[0])?.price ?? 0);
     }, 0);
+  }, [selectedItemsList, selectedDurationDays]);
+
+  const handleBookSelected = () => {
+    if (selectedItemsList.length === 0) return;
+
+    const start = isAllDates ? today : selectedDate;
+    const end = addDaysISO(start, selectedDurationDays - 1);
+    const cleaning = addDaysISO(end, 2);
+
+    const defaultPrice = selectedTotalPrice;
 
     setSheetState({
       isOpen: true,
@@ -937,19 +947,48 @@ export const BookingsPage: React.FC = () => {
       <div className="extra-space"></div>
       <div className="large-space"></div>
 
-      {/* Dynamic Extended 'Book N Outfits' FAB */}
+      {/* Dynamic Floating Selection Toolbar with Price & Clear Selection */}
       {selectedItemIds.size > 0 && (
-        <button
-          type="button"
-          className="fixed bottom right round extra primary medium-elevate margin front hc-booking-action-fab"
-          onClick={handleBookSelected}
-          aria-label={`จอง ${selectedItemIds.size} ชุด`}
-          title={`จอง ${selectedItemIds.size} ชุด`}
-          data-testid="bookings-action-fab"
+        <div
+          className="hc-selection-bottom-bar secondary-container medium-elevate hc-bottom-fab"
+          data-testid="bookings-selection-bar"
         >
-          <i aria-hidden="true">shopping_bag</i>
-          <span>จอง {selectedItemIds.size} ชุด</span>
-        </button>
+          <div className="hc-selection-info-group">
+            <button
+              type="button"
+              className="circle transparent small hc-selection-clear-btn"
+              onClick={handleClearSelection}
+              aria-label="ล้างการเลือก"
+              title="ล้างการเลือก"
+              data-testid="bookings-clear-selection-btn"
+            >
+              <i aria-hidden="true">close</i>
+            </button>
+            <div className="hc-selection-text-group">
+              <span className="hc-selection-count">
+                เลือก {selectedItemIds.size} ชุด
+              </span>
+              <span className="hc-selection-divider" aria-hidden="true">
+                •
+              </span>
+              <span className="hc-selection-price">
+                ฿{selectedTotalPrice.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="round primary hc-selection-action-btn hc-booking-action-fab"
+            onClick={handleBookSelected}
+            aria-label={`จองชุด (${selectedItemIds.size} รายการ รวม ฿${selectedTotalPrice.toLocaleString()})`}
+            title={`จองชุด (${selectedItemIds.size} รายการ)`}
+            data-testid="bookings-action-fab"
+          >
+            <i aria-hidden="true">shopping_bag</i>
+            <span>จองชุด</span>
+          </button>
+        </div>
       )}
 
       {/* Past / Future Status Change Confirmation Dialog */}

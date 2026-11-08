@@ -142,7 +142,11 @@ body.light nav.left {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     overflow-y: auto !important;
+    overflow-y: overlay !important;
     overflow-x: hidden !important;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     padding: 8px 16px calc(24px + env(safe-area-inset-bottom, 0px)) 16px !important;
@@ -240,12 +244,35 @@ body.light nav.left {
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     overflow-y: auto !important;
+    overflow-y: overlay !important;
     overflow-x: hidden !important;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
     padding: 16px 24px !important;
     box-sizing: border-box;
   }
+}
+
+/* Overlay scrollbar styling to ensure layout width remains completely static */
+main.responsive::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+}
+
+main.responsive::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+main.responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 9999px;
+}
+
+main.responsive::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.5);
 }
 
 .hc-page-content {
@@ -262,6 +289,58 @@ body.light nav.left {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* Bottom Underlay Gradient for Floating Action Buttons */
+.hc-bottom-gradient-underlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(88px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+  z-index: 80;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              visibility 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(
+    to top,
+    var(--surface) 0%,
+    transparent 100%
+  );
+  background: linear-gradient(
+    to top,
+    var(--surface) 0%,
+    color-mix(in srgb, var(--surface) 80%, transparent) 30%,
+    color-mix(in srgb, var(--surface) 40%, transparent) 65%,
+    transparent 100%
+  );
+}
+
+/* Only show underlay gradient when a bottom FAB is present in the view */
+.hc-app-container:has(
+  .hc-bottom-fab,
+  .hc-booking-action-fab,
+  button.fixed.bottom.right,
+  .hc-floating-bottom-bar-container
+) .hc-bottom-gradient-underlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hc-bottom-gradient-underlay {
+    transition: none !important;
+  }
+}
+
+@media (min-width: 601px) {
+  .hc-bottom-gradient-underlay {
+    left: 80px;
+    height: 96px;
+    border-bottom-left-radius: 28px;
   }
 }
 

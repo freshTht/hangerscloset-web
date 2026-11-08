@@ -1,25 +1,63 @@
-/* Sticky container for page header toolbars */
+/* Sticky container for page header toolbars with underlay gradient */
 .hc-header-toolbar-sticky-wrapper {
   position: sticky;
-  top: 0;
-  z-index: 10;
-  width: 100%;
+  top: -8px;
+  z-index: 15;
+  width: calc(100% + 32px);
   min-width: 0;
-  max-width: 100%;
-  margin-top: 0;
-  padding-top: 2px;
-  padding-bottom: 6px;
-  margin-bottom: 6px;
-  background: transparent;
+  max-width: none;
+  margin-top: -8px;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding-top: 10px;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-bottom: 16px;
+  margin-bottom: -4px;
+  box-sizing: border-box;
+  background: linear-gradient(
+    to bottom,
+    var(--surface) 0%,
+    transparent 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    var(--surface) 0%,
+    color-mix(in srgb, var(--surface) 80%, transparent) 30%,
+    color-mix(in srgb, var(--surface) 40%, transparent) 65%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.hc-header-toolbar-sticky-wrapper > * {
+  pointer-events: auto;
 }
 
 @media (min-width: 601px) {
   .hc-header-toolbar-sticky-wrapper {
-    top: 0;
-    margin-top: 0;
-    padding-top: 0;
-    padding-bottom: 12px;
-    margin-bottom: 12px;
+    top: -16px;
+    margin-top: -16px;
+    margin-left: -24px;
+    margin-right: -24px;
+    padding-top: 16px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-bottom: 20px;
+    margin-bottom: -4px;
+    width: calc(100% + 48px);
+    background: linear-gradient(
+      to bottom,
+      var(--surface) 0%,
+      transparent 100%
+    );
+    background: linear-gradient(
+      to bottom,
+      var(--surface) 0%,
+      color-mix(in srgb, var(--surface) 80%, transparent) 30%,
+      color-mix(in srgb, var(--surface) 40%, transparent) 65%,
+      transparent 100%
+    );
   }
 }
 
