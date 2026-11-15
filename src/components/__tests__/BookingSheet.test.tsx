@@ -241,7 +241,7 @@ describe('BookingSheet Component (Stepless Card-Based)', () => {
     expect(submitBtn).toBeDisabled();
   });
 
-  it('allows removing an outfit directly from the carousel to resolve conflict or update selection', () => {
+  it('does not allow removing selected items inside the make booking sheet (view-only outfit list)', () => {
     render(
       <BookingSheet
         isOpen={true}
@@ -274,18 +274,13 @@ describe('BookingSheet Component (Stepless Card-Based)', () => {
       />
     );
 
-    // DIA01 has a conflict
+    // Items are displayed
     expect(screen.getByTestId('grouped-outfit-card-DIA01')).toBeInTheDocument();
-    expect(screen.getByTestId('submit-booking-button')).toBeDisabled();
-
-    // Click remove button on DIA01
-    const removeDiaBtn = screen.getByTestId('remove-outfit-btn-DIA01');
-    fireEvent.click(removeDiaBtn);
-
-    // DIA01 is removed, conflict is gone, submit button becomes enabled
-    expect(screen.queryByTestId('grouped-outfit-card-DIA01')).not.toBeInTheDocument();
     expect(screen.getByTestId('grouped-outfit-card-AVL01')).toBeInTheDocument();
-    expect(screen.getByTestId('submit-booking-button')).not.toBeDisabled();
+
+    // Remove buttons are not present in the sheet
+    expect(screen.queryByTestId('remove-outfit-btn-DIA01')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('remove-outfit-btn-AVL01')).not.toBeInTheDocument();
   });
 
   it('displays discount text directly below rental price input when price is reduced below suggested total', () => {

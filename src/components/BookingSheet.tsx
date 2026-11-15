@@ -533,14 +533,6 @@ export const BookingSheet: React.FC<BookingSheetProps> = ({
                 selectedDate={startDate}
                 inventoryMap={inventoryMap}
                 hideActions={true}
-                onRemoveItem={
-                  activeMode === 'add'
-                    ? (itemId) =>
-                        setSelectedItems((prev) =>
-                          prev.filter((item) => item.itemId !== itemId)
-                        )
-                    : undefined
-                }
                 conflictMap={conflictMap}
               />
 
