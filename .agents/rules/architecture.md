@@ -77,15 +77,20 @@ Routing is managed by `react-router-dom` using `BrowserRouter`.
   - `/unauthorized` &rarr; `UnauthorizedPage`: Access restricted page.
   - `*` &rarr; Fallback redirect to `/` via `<Navigate to="/" replace />`.
 
-## Navigation Model
+## Navigation Model & Android 12 Two-Tone Layout
+- **Android 12 Two-Tone Shell**:
+  - The outer viewport shell and navigation bars are always solid pitch black (`#000000`).
+  - The content area (`main.responsive`) uses dynamic theme surface (`var(--surface)`), filling full height and width with internal scrolling (`overflow-y: auto`), clipped to smooth Material 3 / Android 12 border-radii (`28px`).
+  - **Full-Viewport Modal & Sheet Scrim**: Modals, bottom sheets, and their backdrop overlays (`.overlay`, `dialog::backdrop`) render at `z-index: 1000+`, covering the entire viewport including the black top bar / left rail, following native Android 12 UX.
 - **Small Screens ($\le 600\text{px}$)**:
-  - Mobile Top App Bar with fixed sticky behavior (`<header className="fixed surface top s">`).
-  - Displays centered hanger icon (`checkroom`) in top app bar and Beer CSS default tabs (`<nav className="tabs s">`) below with active indicator underlines.
+  - Mobile Top Navigation Bar (`<header className="top s hc-top-header">`) is always black (`#000000`) with tabs (`.tabs.s`).
+  - Content area (`main.responsive`) takes full remaining height (`flex: 1; min-height: 0;`), with top corners clipped to `border-top-left-radius: 28px; border-top-right-radius: 28px;`.
   - No left navigation rail is shown.
 - **Medium & Large Screens ($> 600\text{px}$)**:
   - Top header is hidden.
-  - Navigation switches to a compact Left Navigation Rail (`<nav className="left m">`).
-  - Hanger icon (`checkroom`) is top-aligned, while tab navigation links are centered in the rail.
+  - Navigation switches to a Left Navigation Rail (`<nav className="left m l">`) which is always black (`#000000`).
+  - Hanger icon (`checkroom`) is top-aligned, and tab navigation links are centered vertically.
+  - Content area (`main.responsive`) takes full height (`100dvh`) and remaining width (`flex: 1; min-width: 0;`), with left corners facing the rail clipped to `border-top-left-radius: 28px; border-bottom-left-radius: 28px;`.
 - **Theme Switching**: Dark mode toggle is located in Settings (`SettingsPage.tsx`) using Beer CSS's `<label className="switch icon">`.
 
 - **Data Layer & Status Model**:

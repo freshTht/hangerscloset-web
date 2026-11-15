@@ -1,52 +1,17 @@
 /* Custom responsive and mobile optimizations */
 
-html {
-  scroll-padding-block-start: 64px;
-}
-
-@media (max-width: 600px) {
-  html {
-    scroll-padding-block-start: 112px;
-  }
-}
-
-body {
+html,
+body,
+#root {
+  height: 100dvh;
+  max-height: 100dvh;
   margin: 0;
   padding: 0;
-  min-height: 100dvh;
+  overflow: hidden;
+  background-color: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size-adjust: from-font;
-}
-
-#root {
-  min-height: 100dvh;
-}
-
-/* Responsive Switching Rules (Breakpoint 600px) */
-@media (max-width: 600px) {
-  main.responsive {
-    --main-padding: 12px;
-    padding: var(--main-padding) !important;
-    padding-bottom: calc(var(--main-padding) + env(safe-area-inset-bottom)) !important;
-  }
-}
-
-@media (min-width: 601px) {
-  main.responsive {
-    --main-padding: 24px;
-    padding: var(--main-padding) !important;
-  }
-}
-
-main,
-main.responsive {
-  width: 100%;
-  min-width: 0;
-  max-width: 1200px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  overflow: visible !important;
 }
 
 /* Micro text utility for compact metadata (e.g. SKU codes) */

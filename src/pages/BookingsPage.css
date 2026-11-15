@@ -352,29 +352,138 @@
   }
 }
 
-/* Dynamic Extended 'Book N Outfits' FAB */
-.hc-booking-action-fab {
+/* Dynamic Floating Selection Bottom Bar (Mobile Full-Width, Desktop Floating Pair) */
+.hc-selection-bottom-bar {
+  position: fixed;
   z-index: 100 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  border-radius: 9999px;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--outline-variant, rgba(0, 0, 0, 0.08));
+  animation: hcBookingFabEnter 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+/* Small screens (<= 600px): Full-width floating toolbar spanning edge-to-edge with margins */
+@media (max-width: 600px) {
+  .hc-selection-bottom-bar {
+    left: 16px;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    max-width: calc(100% - 32px);
+  }
+}
+
+/* Medium & Large screens (> 600px): Floating bar anchored at bottom-right */
+@media (min-width: 601px) {
+  .hc-selection-bottom-bar {
+    right: 24px;
+    bottom: 24px;
+    left: auto;
+    min-width: 340px;
+    max-width: 480px;
+  }
+}
+
+.hc-selection-info-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.hc-selection-clear-btn {
+  position: relative;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--on-secondary-container) !important;
+}
+
+@media (pointer: coarse), (max-width: 600px) {
+  .hc-selection-clear-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 48px;
+    min-height: 48px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
+.hc-selection-clear-btn:hover {
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.dark .hc-selection-clear-btn:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.hc-selection-text-group {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hc-selection-count {
+  font-size: 10pt;
+  font-weight: 700;
+  color: var(--on-secondary-container);
+}
+
+.hc-selection-divider {
+  color: var(--on-secondary-container);
+  opacity: 0.5;
+  font-size: 9pt;
+}
+
+.hc-selection-price {
+  font-size: 10.5pt;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.hc-selection-action-btn {
+  flex-shrink: 0;
+  height: 48px;
+  min-height: 48px;
+  padding: 0 20px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  border-radius: 9999px;
+  font-weight: 600;
   cursor: pointer;
-  padding: 0 20px;
-  min-height: 48px;
-  box-sizing: border-box;
-  animation: hcBookingFabEnter 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.12s ease, filter 0.15s ease;
 }
 
-.hc-booking-action-fab:active {
+.hc-selection-action-btn:active {
   transform: scale(0.96);
 }
 
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .hc-booking-action-fab {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-  }
+/* Dynamic Extended 'Book N Outfits' FAB */
+.hc-booking-action-fab {
+  cursor: pointer;
 }
 
 @keyframes hcBookingFabEnter {

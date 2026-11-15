@@ -2,13 +2,14 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 vi.mock('beercss', () => ({
-  default: vi.fn(),
+  default: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { SettingsPage } from '../SettingsPage';
 import { AuthProvider } from '../../contexts/AuthContext';
 import type { IAuthService, AuthUser } from '../../services/auth';
 import { resetFontForTesting, APP_FONT_STORAGE_KEY } from '../../lib/fontManager';
+import { resetColorForTesting, APP_COLOR_STORAGE_KEY } from '../../lib/themeColorManager';
 
 class MockTestAuthService implements IAuthService {
   readonly providerName = 'mock' as const;
@@ -39,6 +40,7 @@ class MockTestAuthService implements IAuthService {
 describe('SettingsPage', () => {
   beforeEach(() => {
     resetFontForTesting();
+    resetColorForTesting();
     localStorage.clear();
     document.body.className = 'light';
     document.head.innerHTML = '';
@@ -46,10 +48,11 @@ describe('SettingsPage', () => {
 
   afterEach(() => {
     resetFontForTesting();
+    resetColorForTesting();
     vi.restoreAllMocks();
   });
 
-  it('renders combined section card with compact dark mode row and horizontal font cards', () => {
+  it('renders combined section card with dark mode row, colors grid, and font cards', () => {
     const authService = new MockTestAuthService(null);
     render(
       <AuthProvider service={authService}>
@@ -61,19 +64,36 @@ describe('SettingsPage', () => {
     expect(screen.getByText('ธีมมืด')).toBeInTheDocument();
     expect(screen.getByLabelText('สลับธีมมืด')).toBeInTheDocument();
 
-    // Font section exists in the same card
-    expect(screen.getByText('แบบอักษร')).toBeInTheDocument();
+    // Color section exists
+    expect(screen.getByText('สีธีม')).toBeInTheDocument();
+    expect(screen.getByLabelText('ม่วงเข้ม')).toBeInTheDocument();
+    expect(screen.getByLabelText('แดง')).toBeInTheDocument();
 
-    // Each horizontal card has preview image on top and font name text below
+    // Font section exists
+    expect(screen.getByText('แบบอักษร')).toBeInTheDocument();
     expect(screen.getByAltText('ตัวอย่างฟอนต์ Sarabun')).toBeInTheDocument();
     expect(screen.getByText('Sarabun')).toBeInTheDocument();
     expect(screen.getByAltText('ตัวอย่างฟอนต์ IBM Plex Sans')).toBeInTheDocument();
     expect(screen.getByText('IBM Plex Sans')).toBeInTheDocument();
     expect(screen.getByAltText('ตัวอย่างฟอนต์ Playpen')).toBeInTheDocument();
     expect(screen.getByText('Playpen')).toBeInTheDocument();
+  });
 
-    // Default radio is Sarabun
-    expect(screen.getByRole('radio', { name: 'Sarabun' })).toBeChecked();
+  it('selects a predefined theme color and saves to localStorage', async () => {
+    const authService = new MockTestAuthService(null);
+    render(
+      <AuthProvider service={authService}>
+        <SettingsPage />
+      </AuthProvider>
+    );
+
+    const pinkSwatch = screen.getByLabelText('ชมพู');
+    fireEvent.click(pinkSwatch);
+
+    await waitFor(() => {
+      expect(localStorage.getItem(APP_COLOR_STORAGE_KEY)).toBe('#e91e63');
+      expect(pinkSwatch).toHaveAttribute('aria-pressed', 'true');
+    });
   });
 
   it('renders vertical center-aligned user card when user is logged in and handles sign out', async () => {
@@ -128,19 +148,15 @@ describe('SettingsPage', () => {
       </AuthProvider>
     );
 
-    // Click on IBM Plex Sans radio
     const ibmRadio = screen.getByRole('radio', { name: 'IBM Plex Sans' });
     fireEvent.click(ibmRadio);
 
-    // Verify localStorage updated
     expect(localStorage.getItem(APP_FONT_STORAGE_KEY)).toBe('ibm-plex-sans');
 
-    // Link tag should be injected for IBM Plex Sans Thai
     const fontLink = document.getElementById('hc-font-ibm-plex-sans') as HTMLLinkElement | null;
     expect(fontLink).not.toBeNull();
     expect(fontLink?.href).toContain('IBM+Plex+Sans+Thai');
 
-    // Simulate onload for stylesheet
     fontLink?.onload?.(new Event('load'));
 
     await waitFor(() => {
@@ -161,5 +177,24 @@ describe('SettingsPage', () => {
     fireEvent.keyDown(playpenCard, { key: 'Enter', code: 'Enter' });
 
     expect(localStorage.getItem(APP_FONT_STORAGE_KEY)).toBe('playpen');
+  });
+
+  it('renders all 21 color swatches and selects a color when clicked', async () => {
+    const authService = new MockTestAuthService(null);
+    render(
+      <AuthProvider service={authService}>
+        <SettingsPage />
+      </AuthProvider>
+    );
+
+    const redButton = screen.getByRole('button', { name: 'แดง' });
+    expect(redButton).toBeInTheDocument();
+
+    fireEvent.click(redButton);
+
+    expect(localStorage.getItem('theme-color')).toBe('#f44336');
+    await waitFor(() => {
+      expect(redButton).toHaveAttribute('aria-pressed', 'true');
+    });
   });
 });

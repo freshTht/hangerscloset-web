@@ -464,7 +464,7 @@ export const InventoryPage: React.FC = () => {
 
       {/* Standalone FAB (right aligned) */}
       <button
-        className="extra circle primary medium-elevate fixed bottom right margin front"
+        className="extra circle primary medium-elevate fixed bottom right margin front hc-bottom-fab"
         type="button"
         onClick={handleOpenAdd}
         aria-label="เพิ่มชุด"

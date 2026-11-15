@@ -92,10 +92,15 @@ describe('BookingsPage Component', () => {
     fireEvent.click(selectBtn);
     expect(screen.getByRole('button', { name: /เลือกแล้ว AVL01/i })).toBeInTheDocument();
 
-    // Extended FAB appears with "จอง 1 ชุด" and shopping_bag icon
+    // Floating selection bar appears with count, price, and action FAB
+    const selectionBar = screen.getByTestId('bookings-selection-bar');
+    expect(selectionBar).toBeInTheDocument();
+    expect(selectionBar).toHaveTextContent('เลือก 1 ชุด');
+    expect(selectionBar).toHaveTextContent(/฿[0-9,]+/);
+
     const bookFab = screen.getByTestId('bookings-action-fab');
     expect(bookFab).toBeInTheDocument();
-    expect(bookFab).toHaveTextContent('จอง 1 ชุด');
+    expect(bookFab).toHaveTextContent('จองชุด');
     expect(bookFab.querySelector('i')).toHaveTextContent('shopping_bag');
 
     // Clicking extended FAB opens BookingSheet directly at Step 2 (Customer selection)
@@ -244,10 +249,15 @@ describe('BookingsPage Component', () => {
     const selectBtn = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
     fireEvent.click(selectBtn);
 
-    // FAB is visible with "จอง 1 ชุด"
+    // Selection bar & FAB are visible
+    const selectionBar = screen.getByTestId('bookings-selection-bar');
+    expect(selectionBar).toBeInTheDocument();
+    expect(selectionBar).toHaveTextContent('เลือก 1 ชุด');
+    expect(screen.getByTestId('bookings-clear-selection-btn')).toBeInTheDocument();
+
     const bookFab = screen.getByTestId('bookings-action-fab');
     expect(bookFab).toBeInTheDocument();
-    expect(bookFab).toHaveTextContent('จอง 1 ชุด');
+    expect(bookFab).toHaveTextContent('จองชุด');
     expect(bookFab).toHaveClass('hc-booking-action-fab');
 
     // Click FAB to open BookingSheet
@@ -381,21 +391,22 @@ describe('BookingsPage Component', () => {
     // Select AVL01
     const avl01Btn = screen.getByRole('button', { name: /เลือกชุด AVL01/i });
     fireEvent.click(avl01Btn);
-    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 1 ชุด');
+    expect(screen.getByTestId('bookings-selection-bar')).toHaveTextContent('เลือก 1 ชุด');
+    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จองชุด');
 
     // Select AVL02
     const avl02Btn = screen.getByRole('button', { name: /เลือกชุด AVL02/i });
     fireEvent.click(avl02Btn);
-    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 2 ชุด');
+    expect(screen.getByTestId('bookings-selection-bar')).toHaveTextContent('เลือก 2 ชุด');
 
     // Deselect AVL01
     const avl01SelectedBtn = screen.getByRole('button', { name: /เลือกแล้ว AVL01/i });
     fireEvent.click(avl01SelectedBtn);
-    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 1 ชุด');
+    expect(screen.getByTestId('bookings-selection-bar')).toHaveTextContent('เลือก 1 ชุด');
 
     // Re-select AVL01
     fireEvent.click(screen.getByRole('button', { name: /เลือกชุด AVL01/i }));
-    expect(screen.getByTestId('bookings-action-fab')).toHaveTextContent('จอง 2 ชุด');
+    expect(screen.getByTestId('bookings-selection-bar')).toHaveTextContent('เลือก 2 ชุด');
 
     // Click FAB to open BookingSheet
     fireEvent.click(screen.getByTestId('bookings-action-fab'));
@@ -422,6 +433,24 @@ describe('BookingsPage Component', () => {
 
     // Selection is cleared and extended FAB is hidden
     expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
+  });
+
+  it('immediately clears multi-selection when clear icon button in bottom toolbar is clicked', () => {
+    render(<BookingsPage />);
+
+    // Select CHA01
+    const cha01Btn = screen.getByRole('button', { name: /เลือกชุด CHA01/i });
+    fireEvent.click(cha01Btn);
+    expect(screen.getByTestId('bookings-selection-bar')).toBeInTheDocument();
+
+    // Click clear button
+    const clearBtn = screen.getByTestId('bookings-clear-selection-btn');
+    fireEvent.click(clearBtn);
+
+    // Toolbar and FAB are removed, item is deselected
+    expect(screen.queryByTestId('bookings-selection-bar')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('bookings-action-fab')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /เลือกชุด CHA01/i })).toBeInTheDocument();
   });
 
   it('opens BookingSheet with correct 3-day rental price without showing false discount', () => {

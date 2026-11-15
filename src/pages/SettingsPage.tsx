@@ -8,6 +8,11 @@ import {
   getSavedFontId,
   applyFont,
 } from '../lib/fontManager';
+import {
+  PREDEFINED_COLORS,
+  getSavedColor,
+  applyThemeColor,
+} from '../lib/themeColorManager';
 import './SettingsPage.css';
 
 export const SettingsPage: React.FC = () => {
@@ -16,6 +21,7 @@ export const SettingsPage: React.FC = () => {
   const [isDark, setIsDark] = useState<boolean>(() => {
     return document.body.classList.contains('dark');
   });
+  const [selectedColor, setSelectedColor] = useState<string>(() => getSavedColor());
   const [selectedFontId, setSelectedFontId] = useState<string>(() => getSavedFontId());
   const [loadingFontId, setLoadingFontId] = useState<string | null>(null);
 
@@ -29,6 +35,16 @@ export const SettingsPage: React.FC = () => {
     ui('mode', nextMode);
     localStorage.setItem('theme-mode', nextMode);
     setIsDark(checked);
+  };
+
+  const handleColorChange = async (hex: string) => {
+    if (hex.toLowerCase() === selectedColor.toLowerCase()) return;
+    try {
+      setSelectedColor(hex);
+      await applyThemeColor(hex);
+    } catch (error) {
+      console.error('Failed to apply theme color:', error);
+    }
   };
 
   const handleSignOut = async () => {
@@ -102,7 +118,7 @@ export const SettingsPage: React.FC = () => {
         </article>
       )}
 
-      {/* Combined Appearance Section Card (Dark Mode + Fonts) */}
+      {/* Combined Appearance Section Card (Dark Mode + Colors + Fonts) */}
       <article className="border round no-padding hc-settings-section-card">
         {/* Compact Dark Mode Row */}
         <div className="hc-settings-compact-row">
@@ -121,6 +137,52 @@ export const SettingsPage: React.FC = () => {
               <i>dark_mode</i>
             </span>
           </label>
+        </div>
+
+        <div className="divider no-margin" />
+
+        {/* Colors Block (Between Dark Mode and Font section) */}
+        <div className="hc-settings-colors-block">
+          <div className="hc-settings-colors-header">
+            <div className="hc-settings-row-lead">
+              <i className="small primary-text">palette</i>
+              <span className="hc-settings-row-title">สีธีม</span>
+            </div>
+          </div>
+
+          <div className="hc-settings-colors-grid">
+            {PREDEFINED_COLORS.map((color) => {
+              const isSelected = selectedColor.toLowerCase() === color.hex.toLowerCase();
+              const isLightColor = ['#ffffff', '#ffeb3b', '#cddc39'].includes(
+                color.hex.toLowerCase()
+              );
+
+              return (
+                <button
+                  key={color.id}
+                  type="button"
+                  className={`hc-settings-color-swatch ${
+                    isSelected ? 'hc-settings-color-swatch-active' : ''
+                  }`}
+                  style={{ backgroundColor: color.hex }}
+                  onClick={() => handleColorChange(color.hex)}
+                  aria-label={color.name}
+                  aria-pressed={isSelected}
+                  title={color.name}
+                >
+                  {isSelected && (
+                    <i
+                      className={`hc-settings-color-check ${
+                        isLightColor ? 'hc-settings-color-check-dark' : ''
+                      }`}
+                    >
+                      check
+                    </i>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="divider no-margin" />

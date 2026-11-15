@@ -49,6 +49,12 @@ Beer CSS is built around 3 core concepts:
 > - Avoid inline `style={{ ... }}` for static styling rules. Extract static styles into the component's colocated `.css` file using the `hc-` class namespace. Inline styles should only be reserved for dynamic values calculated at runtime (e.g., dynamic coordinates, dynamic progress percentages, or runtime colors).
 > - **Do NOT add new shared or common CSS classes to global stylesheets (`index.css`) without explicit confirmation from the human author.** New styles should default to component-specific `.css` files unless authorized to become global design tokens.
 
+### F. UI Language & Translation Parenthesis Rule
+> [!IMPORTANT]
+> - The primary UI language of the application is **Thai**.
+> - **Do NOT automatically append English translations in parentheses** to Thai UI labels, headings, buttons, or section headers (e.g. write `สีธีม`, not `สีธีม (Colors)`; write `แบบอักษร`, not `แบบอักษร (Fonts)`).
+> - Only include English translations or subtitles when explicitly instructed by the user or when displaying proper nouns/technical names that are inherently in English (e.g. font family names like `Sarabun`, `IBM Plex Sans`).
+
 ---
 
 ## 3. Component & Layout Patterns
